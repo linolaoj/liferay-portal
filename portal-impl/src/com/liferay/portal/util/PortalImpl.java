@@ -801,15 +801,26 @@ public class PortalImpl implements Portal {
 
 		Enumeration<String> enu = actionRequest.getParameterNames();
 
+		String[] notToCopy = PropsUtil.getArray(
+							PropsKeys.PORTLET_URL_REFRESH_URL_RESERVED_PARAMETERS);
+		Arrays.sort(notToCopy);
+		
 		while (enu.hasMoreElements()) {
 			String param = enu.nextElement();
 			String[] values = actionRequest.getParameterValues(param);
 
-			if (renderParameters.get(
+			boolean okToCopy = Arrays.binarySearch(notToCopy, param) < 0;
+			
+			if (okToCopy && renderParameters.get(
 					actionResponse.getNamespace() + param) == null) {
 
 				actionResponse.setRenderParameter(param, values);
 			}
+			if(!okToCopy){
+				actionResponse.setRenderParameter(param, "");
+				actionResponse.removePublicRenderParameter(param);
+			}
+			
 		}
 	}
 

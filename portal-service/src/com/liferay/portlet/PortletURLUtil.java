@@ -14,6 +14,18 @@
 
 package com.liferay.portlet;
 
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Map;
+
+import javax.portlet.MimeResponse;
+import javax.portlet.PortletException;
+import javax.portlet.PortletMode;
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletURL;
+import javax.portlet.WindowState;
+import javax.servlet.http.HttpServletRequest;
+
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
@@ -31,18 +43,6 @@ import com.liferay.portal.model.LayoutTypePortlet;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
-
-import java.util.Enumeration;
-import java.util.Map;
-
-import javax.portlet.MimeResponse;
-import javax.portlet.PortletException;
-import javax.portlet.PortletMode;
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletURL;
-import javax.portlet.WindowState;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Brian Wing Shun Chan
@@ -298,24 +298,27 @@ public class PortletURLUtil {
 			return false;
 		}
 
-		for (int i = 0; i < _PORTLET_URL_REFRESH_URL_RESERVED_PARAMETERS.length;
-				i++) {
-
-			String reservedParameter = namespace.concat(
-				_PORTLET_URL_REFRESH_URL_RESERVED_PARAMETERS[i]);
-
-			if (parameter.equals(reservedParameter)) {
-				return true;
-			}
+		if(!parameter.startsWith(namespace) && parameter.startsWith("_")){
+			return true;
 		}
-
-		return false;
+		
+		boolean parameterFound = Arrays.binarySearch(_PORTLET_URL_REFRESH_URL_RESERVED_PARAMETERS, 
+									parameter.replaceFirst(namespace, StringPool.BLANK)) >= 0;
+		return parameterFound;
 	}
 
 	private static final int _CURRENT_URL_PARAMETER_THRESHOLD = 32768;
 
-	private static final String[] _PORTLET_URL_REFRESH_URL_RESERVED_PARAMETERS =
-		PropsUtil.getArray(
-			PropsKeys.PORTLET_URL_REFRESH_URL_RESERVED_PARAMETERS);
+	private static final String[]_PORTLET_URL_REFRESH_URL_RESERVED_PARAMETERS = getURLReserverdParameters();
+			
+		private static String [] getURLReserverdParameters(){
+		
+			String [] reserved = 
+	 		PropsUtil.getArray(
+	 			PropsKeys.PORTLET_URL_REFRESH_URL_RESERVED_PARAMETERS);
+			Arrays.sort(reserved);
+			
+			return reserved;
+		}
 
 }
