@@ -50,7 +50,7 @@ if (!selectableTree) {
 	var STR_CHILDREN = 'children';
 
 	var TREE_CSS_CLASSES = {
-		iconCheck: 'tree-icon icon-check',
+		iconCheck: 'icon-check',
 		iconCollapsed: 'icon-file',
 		iconExpanded: 'icon-file',
 		iconHitAreaCollapsed: 'tree-hitarea icon-plus',
