@@ -300,18 +300,18 @@ AUI.add(
 		   								try{
 			   									var checkedNodes = JSON.parse(this.get('responseData'));
 			   									var currentCheckedNodes = [];
-			   									
-			     								if(checkedNodes && checkedNodes.length > 0 ){
-													for(k in checkedNodes){
+
+			     								if (checkedNodes && checkedNodes.length > 0 ) {
+													for (k in checkedNodes) {
 														currentCheckedNodes.push(checkedNodes[k]);
 							     					}
 						     					}
-			     								
+
 			     								instance.set(STR_CHECKED_NODES, currentCheckedNodes);
-					     					}catch(e){
-					     					
+					     					}catch(e) {
+
 					     					}
-					     								
+
 		   								}
 									}
 							}
