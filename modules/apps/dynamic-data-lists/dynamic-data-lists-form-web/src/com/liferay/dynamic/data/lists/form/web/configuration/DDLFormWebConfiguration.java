@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.dynamic.data.lists.configuration;
+package com.liferay.dynamic.data.lists.form.web.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
@@ -20,19 +20,16 @@ import aQute.bnd.annotation.metatype.Meta;
  * @author Lino Alves
  */
 @Meta.OCD(
-	id = "com.liferay.dynamic.data.lists.configuration.DDLServiceConfiguration",
-	name = "Dynamic Data Lists Service Configuration"
+	id = "com.liferay.dynamic.data.lists.form.web.configuration.DDLFormWebConfiguration",
+	name = "Dynamic Data Lists Form Configuration"
 )
-public interface DDLServiceConfiguration {
+public interface DDLFormWebConfiguration {
 
-	@Meta.AD(deflt = "list", required = false)
+	@Meta.AD(deflt = "descriptive", required = false)
 	public String defaultDisplayView();
 
-	@Meta.AD(deflt = "json", required = false)
-	public String storageType();
-
 	@Meta.AD(
-			deflt = "descriptive | list", required = false
+			deflt = "icon | descriptive | list", required = false
 			)
 	public String[] supportedDisplayView();
 

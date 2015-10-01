@@ -12,28 +12,23 @@
  * details.
  */
 
-package com.liferay.dynamic.data.lists.configuration;
+package com.liferay.dynamic.data.lists.form.web.configuration.definition;
 
-import aQute.bnd.annotation.metatype.Meta;
+import com.liferay.dynamic.data.lists.form.web.configuration.DDLFormWebConfiguration;
+import com.liferay.portal.kernel.settings.definition.ConfigurationBeanDeclaration;
+
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Lino Alves
  */
-@Meta.OCD(
-	id = "com.liferay.dynamic.data.lists.configuration.DDLServiceConfiguration",
-	name = "Dynamic Data Lists Service Configuration"
-)
-public interface DDLServiceConfiguration {
+@Component
+public class DDLFormWebConfigurationBeanDeclaration
+	implements ConfigurationBeanDeclaration {
 
-	@Meta.AD(deflt = "list", required = false)
-	public String defaultDisplayView();
-
-	@Meta.AD(deflt = "json", required = false)
-	public String storageType();
-
-	@Meta.AD(
-			deflt = "descriptive | list", required = false
-			)
-	public String[] supportedDisplayView();
+	@Override
+	public Class<?> getConfigurationBeanClass() {
+		return DDLFormWebConfiguration.class;
+	}
 
 }
