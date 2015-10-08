@@ -52,7 +52,7 @@ public class EventUtil
 
 		_webExtenderBundle = _bundleContext.getBundle();
 
-		_eventAdminServiceTracker = new ServiceTracker<EventAdmin, EventAdmin>(
+		_eventAdminServiceTracker = new ServiceTracker<>(
 			_bundleContext, EventAdmin.class.getName(), this);
 
 		_eventAdminServiceTracker.open();
@@ -89,8 +89,7 @@ public class EventUtil
 		Bundle bundle, String eventTopic, Exception exception,
 		boolean collision) {
 
-		Dictionary<String, Object> properties =
-			new HashMapDictionary<String, Object>();
+		Dictionary<String, Object> properties = new HashMapDictionary<>();
 
 		properties.put("bundle", bundle);
 		properties.put("bundle.id", bundle.getBundleId());
@@ -103,7 +102,7 @@ public class EventUtil
 		if (collision) {
 			properties.put("collision", contextPath);
 
-			List<Long> collidedBundleIds = new ArrayList<Long>();
+			List<Long> collidedBundleIds = new ArrayList<>();
 
 			BundleContext bundleContext = bundle.getBundleContext();
 

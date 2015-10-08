@@ -44,7 +44,9 @@ public class BatchEventManager {
 				return batchDownloadEvent;
 			}
 			catch (Exception e) {
-				_logger.debug(e.getMessage(), e);
+				if (_logger.isDebugEnabled()) {
+					_logger.debug(e.getMessage(), e);
+				}
 
 				return null;
 			}
@@ -67,7 +69,9 @@ public class BatchEventManager {
 				return batchEvent;
 			}
 			catch (Exception e) {
-				_logger.debug(e.getMessage(), e);
+				if (_logger.isDebugEnabled()) {
+					_logger.debug(e.getMessage(), e);
+				}
 
 				return null;
 			}
@@ -78,8 +82,7 @@ public class BatchEventManager {
 		BatchDownloadEvent.class);
 
 	private static final Map<Long, BatchDownloadEvent> _batchDownloadEvents =
-		new HashMap<Long, BatchDownloadEvent>();
-	private static final Map<Long, BatchEvent> _batchEvents =
-		new HashMap<Long, BatchEvent>();
+		new HashMap<>();
+	private static final Map<Long, BatchEvent> _batchEvents = new HashMap<>();
 
 }

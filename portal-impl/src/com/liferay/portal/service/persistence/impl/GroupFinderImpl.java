@@ -32,6 +32,7 @@ import com.liferay.portal.model.GroupConstants;
 import com.liferay.portal.model.Organization;
 import com.liferay.portal.model.ResourceAction;
 import com.liferay.portal.model.impl.GroupImpl;
+import com.liferay.portal.security.permission.RolePermissions;
 import com.liferay.portal.service.ClassNameLocalServiceUtil;
 import com.liferay.portal.service.ResourceActionLocalServiceUtil;
 import com.liferay.portal.service.ResourceBlockLocalServiceUtil;
@@ -185,23 +186,19 @@ public class GroupFinderImpl
 
 	@Override
 	public int countByG_U(long groupId, long userId, boolean inherit) {
-		LinkedHashMap<String, Object> params1 =
-			new LinkedHashMap<String, Object>();
+		LinkedHashMap<String, Object> params1 = new LinkedHashMap<>();
 
 		params1.put("usersGroups", userId);
 
-		LinkedHashMap<String, Object> params2 =
-			new LinkedHashMap<String, Object>();
+		LinkedHashMap<String, Object> params2 = new LinkedHashMap<>();
 
 		params2.put("groupOrg", userId);
 
-		LinkedHashMap<String, Object> params3 =
-			new LinkedHashMap<String, Object>();
+		LinkedHashMap<String, Object> params3 = new LinkedHashMap<>();
 
 		params3.put("groupsOrgs", userId);
 
-		LinkedHashMap<String, Object> params4 =
-			new LinkedHashMap<String, Object>();
+		LinkedHashMap<String, Object> params4 = new LinkedHashMap<>();
 
 		params4.put("groupsUserGroups", userId);
 
@@ -260,17 +257,17 @@ public class GroupFinderImpl
 		boolean doUnion = Validator.isNotNull(userId);
 
 		if (doUnion) {
-			params2 = new LinkedHashMap<String, Object>(params1);
+			params2 = new LinkedHashMap<>(params1);
 
 			params2.remove("usersGroups");
 			params2.put("groupOrg", userId);
 
-			params3 = new LinkedHashMap<String, Object>(params1);
+			params3 = new LinkedHashMap<>(params1);
 
 			params3.remove("usersGroups");
 			params3.put("groupsOrgs", userId);
 
-			params4 = new LinkedHashMap<String, Object>(params1);
+			params4 = new LinkedHashMap<>(params1);
 
 			params4.remove("usersGroups");
 			params4.put("groupsUserGroups", userId);
@@ -281,7 +278,7 @@ public class GroupFinderImpl
 		try {
 			session = openSession();
 
-			Set<Long> groupIds = new HashSet<Long>();
+			Set<Long> groupIds = new HashSet<>();
 
 			groupIds.addAll(
 				countByC_C_PG_N_D(
@@ -487,17 +484,17 @@ public class GroupFinderImpl
 		boolean doUnion = Validator.isNotNull(userId) && inherit;
 
 		if (doUnion) {
-			params2 = new LinkedHashMap<String, Object>(params1);
+			params2 = new LinkedHashMap<>(params1);
 
 			params2.remove("usersGroups");
 			params2.put("groupOrg", userId);
 
-			params3 = new LinkedHashMap<String, Object>(params1);
+			params3 = new LinkedHashMap<>(params1);
 
 			params3.remove("usersGroups");
 			params3.put("groupsOrgs", userId);
 
-			params4 = new LinkedHashMap<String, Object>(params1);
+			params4 = new LinkedHashMap<>(params1);
 
 			params4.remove("usersGroups");
 			params4.put("groupsUserGroups", userId);
@@ -585,7 +582,7 @@ public class GroupFinderImpl
 			List<Long> groupIds = (List<Long>)QueryUtil.list(
 				q, getDialect(), start, end);
 
-			List<Group> groups = new ArrayList<Group>(groupIds.size());
+			List<Group> groups = new ArrayList<>(groupIds.size());
 
 			for (Long groupId : groupIds) {
 				Group group = GroupUtil.findByPrimaryKey(groupId);
@@ -721,17 +718,17 @@ public class GroupFinderImpl
 		boolean doUnion = Validator.isNotNull(userId) && inherit;
 
 		if (doUnion) {
-			params2 = new LinkedHashMap<String, Object>(params1);
+			params2 = new LinkedHashMap<>(params1);
 
 			params2.remove("usersGroups");
 			params2.put("groupOrg", userId);
 
-			params3 = new LinkedHashMap<String, Object>(params1);
+			params3 = new LinkedHashMap<>(params1);
 
 			params3.remove("usersGroups");
 			params3.put("groupsOrgs", userId);
 
-			params4 = new LinkedHashMap<String, Object>(params1);
+			params4 = new LinkedHashMap<>(params1);
 
 			params4.remove("usersGroups");
 			params4.put("groupsUserGroups", userId);
@@ -854,7 +851,7 @@ public class GroupFinderImpl
 			List<Long> groupIds = (List<Long>)QueryUtil.list(
 				q, getDialect(), start, end);
 
-			List<Group> groups = new ArrayList<Group>(groupIds.size());
+			List<Group> groups = new ArrayList<>(groupIds.size());
 
 			for (Long groupId : groupIds) {
 				Group group = GroupUtil.findByPrimaryKey(groupId);
@@ -969,11 +966,11 @@ public class GroupFinderImpl
 			}
 
 			if (key.equals("rolePermissions")) {
-				List<Object> values = (List<Object>)value;
+				RolePermissions rolePermissions = (RolePermissions)value;
 
-				String name = (String)values.get(0);
+				if (ResourceBlockLocalServiceUtil.isSupported(
+						rolePermissions.getName())) {
 
-				if (ResourceBlockLocalServiceUtil.isSupported(name)) {
 					key = "rolePermissions_6_block";
 				}
 				else {
@@ -1056,11 +1053,12 @@ public class GroupFinderImpl
 			}
 			else {
 				if (key.equals("rolePermissions")) {
-					List<Object> values = (List<Object>)entry.getValue();
+					RolePermissions rolePermissions =
+						(RolePermissions)entry.getValue();
 
-					String name = (String)values.get(0);
+					if (ResourceBlockLocalServiceUtil.isSupported(
+							rolePermissions.getName())) {
 
-					if (ResourceBlockLocalServiceUtil.isSupported(name)) {
 						key = "rolePermissions_6_block";
 					}
 					else {
@@ -1086,13 +1084,8 @@ public class GroupFinderImpl
 
 		if (params.isEmpty()) {
 			return StringUtil.replace(
-				sql,
-				new String[] {
-					"[$JOIN$]", "[$WHERE$]"
-				},
-				new String[] {
-					StringPool.BLANK, StringPool.BLANK
-				});
+				sql, new String[] {"[$JOIN$]", "[$WHERE$]"},
+				new String[] {StringPool.BLANK, StringPool.BLANK});
 		}
 
 		String cacheKey = _getCacheKey(sql, params);
@@ -1168,29 +1161,27 @@ public class GroupFinderImpl
 			else if (key.equals("pageCount")) {
 			}
 			else if (key.equals("rolePermissions")) {
-				List<Object> values = (List<Object>)entry.getValue();
-
-				String name = (String)values.get(0);
-				Integer scope = (Integer)values.get(1);
-				String actionId = (String)values.get(2);
-				Long roleId = (Long)values.get(3);
+				RolePermissions rolePermissions =
+					(RolePermissions)entry.getValue();
 
 				ResourceAction resourceAction =
 					ResourceActionLocalServiceUtil.getResourceAction(
-						name, actionId);
+						rolePermissions.getName(),
+						rolePermissions.getActionId());
 
-				if (ResourceBlockLocalServiceUtil.isSupported(name)) {
+				if (ResourceBlockLocalServiceUtil.isSupported(
+						rolePermissions.getName())) {
 
 					// Scope is assumed to always be group
 
-					qPos.add(name);
-					qPos.add(roleId);
+					qPos.add(rolePermissions.getName());
+					qPos.add(rolePermissions.getRoleId());
 					qPos.add(resourceAction.getBitwiseValue());
 				}
 				else {
-					qPos.add(name);
-					qPos.add(scope);
-					qPos.add(roleId);
+					qPos.add(rolePermissions.getName());
+					qPos.add(rolePermissions.getScope());
+					qPos.add(rolePermissions.getRoleId());
 					qPos.add(resourceAction.getBitwiseValue());
 				}
 			}
@@ -1294,11 +1285,12 @@ public class GroupFinderImpl
 			String key = entry.getKey();
 
 			if (key.equals("rolePermissions")) {
-				List<Object> values = (List<Object>)entry.getValue();
+				RolePermissions rolePermissions =
+					(RolePermissions)entry.getValue();
 
-				String name = (String)values.get(0);
+				if (ResourceBlockLocalServiceUtil.isSupported(
+						rolePermissions.getName())) {
 
-				if (ResourceBlockLocalServiceUtil.isSupported(name)) {
 					key = "rolePermissions_6_block";
 				}
 				else {
@@ -1358,7 +1350,7 @@ public class GroupFinderImpl
 			return _joinMap;
 		}
 
-		Map<String, String> joinMap = new HashMap<String, String>();
+		Map<String, String> joinMap = new HashMap<>();
 
 		joinMap.put("active", _removeWhere(CustomSQLUtil.get(JOIN_BY_ACTIVE)));
 		joinMap.put(
@@ -1404,7 +1396,7 @@ public class GroupFinderImpl
 			return _whereMap;
 		}
 
-		Map<String, String> whereMap = new HashMap<String, String>();
+		Map<String, String> whereMap = new HashMap<>();
 
 		whereMap.put(
 			"active", _getCondition(CustomSQLUtil.get(JOIN_BY_ACTIVE)));
@@ -1466,16 +1458,16 @@ public class GroupFinderImpl
 		return join;
 	}
 
-	private LinkedHashMap<String, Object> _emptyLinkedHashMap =
-		new LinkedHashMap<String, Object>(0);
-	private Map<String, String> _findByC_C_PG_N_DSQLCache =
-		new ConcurrentHashMap<String, String>();
-	private Map<String, String> _findByCompanyIdSQLCache =
-		new ConcurrentHashMap<String, String>();
+	private final LinkedHashMap<String, Object> _emptyLinkedHashMap =
+		new LinkedHashMap<>(0);
+	private final Map<String, String> _findByC_C_PG_N_DSQLCache =
+		new ConcurrentHashMap<>();
+	private final Map<String, String> _findByCompanyIdSQLCache =
+		new ConcurrentHashMap<>();
 	private volatile long[] _groupOrganizationClassNameIds;
 	private volatile Map<String, String> _joinMap;
-	private Map<String, String> _replaceJoinAndWhereSQLCache =
-		new ConcurrentHashMap<String, String>();
+	private final Map<String, String> _replaceJoinAndWhereSQLCache =
+		new ConcurrentHashMap<>();
 	private volatile Map<String, String> _whereMap;
 
 }

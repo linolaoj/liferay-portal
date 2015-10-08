@@ -14,23 +14,33 @@
 
 package com.liferay.asset.categories.navigation.web.lar;
 
-import com.liferay.portal.kernel.lar.DataLevel;
-import com.liferay.portal.kernel.lar.DefaultConfigurationPortletDataHandler;
-import com.liferay.portal.kernel.lar.ExportImportHelperUtil;
-import com.liferay.portal.kernel.lar.PortletDataContext;
-import com.liferay.portal.kernel.lar.PortletDataHandler;
+import com.liferay.asset.categories.navigation.web.constants.AssetCategoriesNavigationPortletKeys;
+import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.model.Company;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.service.CompanyLocalServiceUtil;
 import com.liferay.portal.service.PortletLocalServiceUtil;
 import com.liferay.portlet.asset.model.AssetVocabulary;
+import com.liferay.portlet.asset.service.AssetVocabularyLocalServiceUtil;
+import com.liferay.portlet.asset.service.persistence.AssetVocabularyUtil;
+import com.liferay.portlet.exportimport.lar.DataLevel;
+import com.liferay.portlet.exportimport.lar.DefaultConfigurationPortletDataHandler;
+import com.liferay.portlet.exportimport.lar.PortletDataContext;
+import com.liferay.portlet.exportimport.lar.PortletDataHandler;
 
 import java.util.Enumeration;
+import java.util.Map;
 
 import javax.portlet.PortletPreferences;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Julio Camarero
@@ -38,14 +48,15 @@ import org.osgi.service.component.annotations.Component;
 @Component(
 	immediate = true,
 	property = {
-		"javax.portlet.name=com_liferay_asset_categories_navigation_web_portlet_AssetCategoriesNavigationPortlet"
+		"javax.portlet.name=" + AssetCategoriesNavigationPortletKeys.ASSET_CATEGORIES_NAVIGATION
 	},
 	service = PortletDataHandler.class
 )
 public class AssetCategoriesNavigationPortletDataHandler
 	extends DefaultConfigurationPortletDataHandler {
 
-	public AssetCategoriesNavigationPortletDataHandler() {
+	@Activate
+	protected void activate() {
 		setDataLevel(DataLevel.PORTLET_INSTANCE);
 		setPublishToLiveByDefault(true);
 	}
@@ -70,6 +81,69 @@ public class AssetCategoriesNavigationPortletDataHandler
 			portletDataContext, portletId, portletPreferences);
 	}
 
+	@Override
+	protected String getExportPortletPreferencesUuid(
+			PortletDataContext portletDataContext, Portlet portlet,
+			String className, long primaryKeyLong)
+		throws Exception {
+
+		String uuid = null;
+
+		Element rootElement = portletDataContext.getExportDataRootElement();
+
+		if (className.equals(AssetVocabulary.class.getName())) {
+			AssetVocabulary assetVocabulary =
+				AssetVocabularyLocalServiceUtil.fetchAssetVocabulary(
+					primaryKeyLong);
+
+			if (assetVocabulary != null) {
+				uuid = assetVocabulary.getUuid();
+
+				portletDataContext.addReferenceElement(
+					portlet, rootElement, assetVocabulary,
+					PortletDataContext.REFERENCE_TYPE_DEPENDENCY, true);
+			}
+		}
+
+		return uuid;
+	}
+
+	@Override
+	protected Long getImportPortletPreferencesNewPrimaryKey(
+			PortletDataContext portletDataContext, Class<?> clazz,
+			long companyGroupId, Map<Long, Long> primaryKeys, String uuid)
+		throws Exception {
+
+		if (Validator.isNumber(uuid)) {
+			long oldPrimaryKey = GetterUtil.getLong(uuid);
+
+			return MapUtil.getLong(primaryKeys, oldPrimaryKey, oldPrimaryKey);
+		}
+
+		String className = clazz.getName();
+
+		if (className.equals(AssetVocabulary.class.getName())) {
+			AssetVocabulary assetVocabulary = AssetVocabularyUtil.fetchByUUID_G(
+				uuid, portletDataContext.getScopeGroupId());
+
+			if (assetVocabulary == null) {
+				assetVocabulary = AssetVocabularyUtil.fetchByUUID_G(
+					uuid, companyGroupId);
+			}
+
+			if (assetVocabulary != null) {
+				return assetVocabulary.getVocabularyId();
+			}
+		}
+
+		return null;
+	}
+
+	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
+	protected void setModuleServiceLifecycle(
+		ModuleServiceLifecycle moduleServiceLifecycle) {
+	}
+
 	protected PortletPreferences updateExportPortletPreferences(
 			PortletDataContext portletDataContext,
 			PortletPreferences portletPreferences, String portletId)
@@ -84,7 +158,7 @@ public class AssetCategoriesNavigationPortletDataHandler
 			String name = enu.nextElement();
 
 			if (name.equals("assetVocabularyIds")) {
-				ExportImportHelperUtil.updateExportPortletPreferencesClassPKs(
+				updateExportPortletPreferencesClassPKs(
 					portletDataContext, portlet, portletPreferences, name,
 					AssetVocabulary.class.getName());
 			}
@@ -109,7 +183,7 @@ public class AssetCategoriesNavigationPortletDataHandler
 			String name = enu.nextElement();
 
 			if (name.equals("assetVocabularyIds")) {
-				ExportImportHelperUtil.updateImportPortletPreferencesClassPKs(
+				updateImportPortletPreferencesClassPKs(
 					portletDataContext, portletPreferences, name,
 					AssetVocabulary.class, companyGroup.getGroupId());
 			}

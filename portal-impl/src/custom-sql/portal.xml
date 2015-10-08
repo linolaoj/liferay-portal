@@ -41,20 +41,12 @@
 	</sql>
 	<sql id="com.liferay.portal.security.permission.InlineSQLHelper.joinResourcePermission">
 		<![CDATA[
-			INNER JOIN
-				(
-					SELECT
-						scope, primKey, roleId, ownerId
-					FROM
-						ResourcePermission
-					WHERE
-						(ResourcePermission.companyId = [$COMPANY_ID$]) AND
-						(ResourcePermission.name = '[$CLASS_NAME$]') AND
-						(ResourcePermission.scope = [$RESOURCE_SCOPE_INDIVIDUAL$]) AND
-						(MOD(ResourcePermission.actionIds, 2) = 1) AND
-						[$ROLE_IDS_OR_OWNER_ID$]
-				)
-			InlineSQLResourcePermission ON
+			INNER JOIN ResourcePermission ON
+				(ResourcePermission.companyId = [$COMPANY_ID$]) AND
+				(ResourcePermission.name = '[$CLASS_NAME$]') AND
+				(ResourcePermission.scope = [$RESOURCE_SCOPE_INDIVIDUAL$]) AND
+				(ResourcePermission.viewActionId = [$TRUE$]) AND
+				[$ROLE_IDS_OR_OWNER_ID$] AND
 				[$PRIM_KEYS$]
 		]]>
 	</sql>
@@ -552,18 +544,7 @@
 					(PortletPreferences.portletId = ?) OR
 					(PortletPreferences.portletId LIKE ?)
 				) AND
-				(PortletPreferences.preferences LIKE ?)
-		]]>
-	</sql>
-	<sql id="com.liferay.portal.service.persistence.LockFinder.findByC_K">
-		<![CDATA[
-			SELECT
-				lock
-			FROM
-				Lock lock
-			WHERE
-				(lock.className = ?) AND
-				(lock.key = ?)
+				(CAST_CLOB_TEXT(PortletPreferences.preferences) LIKE ?)
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.service.persistence.OrganizationFinder.countByGroupId">
@@ -838,7 +819,7 @@
 					(PortletPreferences.portletId = ?) OR
 					(PortletPreferences.portletId LIKE ?)
 				) AND
-				(PortletPreferences.preferences != '[$PORTLET_PREFERENCES_PREFERENCES_DEFAULT$]')
+				(CAST_CLOB_TEXT(PortletPreferences.preferences) != '[$PORTLET_PREFERENCES_PREFERENCES_DEFAULT$]')
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.service.persistence.PortletPreferencesFinder.countByO_O_P_P_P">
@@ -855,7 +836,7 @@
 					(PortletPreferences.portletId LIKE ?)
 				) AND
 				(PortletPreferences.plid = ?) AND
-				(PortletPreferences.preferences != '[$PORTLET_PREFERENCES_PREFERENCES_DEFAULT$]')
+				(CAST_CLOB_TEXT(PortletPreferences.preferences) != '[$PORTLET_PREFERENCES_PREFERENCES_DEFAULT$]')
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.service.persistence.PortletPreferencesFinder.findByPortletId">
@@ -928,7 +909,7 @@
 				(ResourcePermission.scope = ?) AND
 				(ResourcePermission.primKey = ?) AND
 				(ResourcePermission.roleId = ?) AND
-				(BITAND(CAST_LONG(ResourcePermission.actionIds, ?)) = ?)
+				(BITAND(CAST_LONG(ResourcePermission.actionIds), ?) = ?)
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.service.persistence.ResourcePermissionFinder.findByResource">
@@ -1305,6 +1286,26 @@
 				(Users_Roles.userId = ?)
 		]]>
 	</sql>
+	<sql id="com.liferay.portal.service.persistence.ServiceComponentFinder.findByMaxBuildNumber">
+		<![CDATA[
+			SELECT
+				{ServiceComponent.*}
+			FROM
+				ServiceComponent
+			WHERE
+				buildNumber =
+					(
+						SELECT
+							MAX(buildNumber)
+						FROM
+							ServiceComponent tempServiceComponent
+						WHERE
+							ServiceComponent.buildNamespace = tempServiceComponent.buildNamespace
+					)
+			ORDER BY
+				buildNamespace DESC
+		]]>
+	</sql>
 	<sql id="com.liferay.portal.service.persistence.TeamFinder.countByG_N_D">
 		<![CDATA[
 			SELECT
@@ -1449,7 +1450,7 @@
 	<sql id="com.liferay.portal.service.persistence.UserFinder.findByC_FN_MN_LN_SN_EA_S">
 		<![CDATA[
 			SELECT
-				DISTINCT User_.userId AS userId, User_.firstName AS firstName, User_.middleName AS middleName, User_.lastName AS lastName
+				DISTINCT User_.userId AS userId, User_.screenName AS screenName, User_.firstName AS firstName, User_.middleName AS middleName, User_.lastName AS lastName
 			FROM
 				User_
 			[$JOIN$]

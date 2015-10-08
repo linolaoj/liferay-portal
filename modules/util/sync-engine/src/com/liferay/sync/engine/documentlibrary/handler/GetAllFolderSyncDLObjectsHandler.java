@@ -15,10 +15,10 @@
 package com.liferay.sync.engine.documentlibrary.handler;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.liferay.sync.engine.documentlibrary.event.Event;
 import com.liferay.sync.engine.model.SyncFile;
+import com.liferay.sync.engine.util.JSONUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +38,10 @@ public class GetAllFolderSyncDLObjectsHandler extends BaseJSONHandler {
 
 	@Override
 	public void processResponse(String response) throws Exception {
-		ObjectMapper objectMapper = new ObjectMapper();
-
-		_syncFiles = objectMapper.readValue(
+		_syncFiles = JSONUtil.readValue(
 			response, new TypeReference<List<SyncFile>>() {});
 	}
 
-	private List<SyncFile> _syncFiles = new ArrayList<SyncFile>();
+	private List<SyncFile> _syncFiles = new ArrayList<>();
 
 }
