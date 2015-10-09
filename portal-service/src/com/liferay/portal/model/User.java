@@ -35,6 +35,8 @@ public interface User extends UserModel, PersistedModel {
 	public void addRemotePreference(
 		com.liferay.portal.kernel.util.RemotePreference remotePreference);
 
+	public com.liferay.portal.model.Contact fetchContact();
+
 	/**
 	* Returns the user's addresses.
 	*
@@ -247,11 +249,17 @@ public interface User extends UserModel, PersistedModel {
 	@com.liferay.portal.kernel.bean.AutoEscape()
 	public java.lang.String getFullName();
 
-	public com.liferay.portal.model.Group getGroup()
-		throws com.liferay.portal.kernel.exception.PortalException;
+	/**
+	* Returns the user's full name.
+	*
+	* @return the user's full name
+	*/
+	@com.liferay.portal.kernel.bean.AutoEscape()
+	public java.lang.String getFullName(boolean usePrefix, boolean useSuffix);
 
-	public long getGroupId()
-		throws com.liferay.portal.kernel.exception.PortalException;
+	public com.liferay.portal.model.Group getGroup();
+
+	public long getGroupId();
 
 	public long[] getGroupIds();
 
@@ -276,12 +284,13 @@ public interface User extends UserModel, PersistedModel {
 		throws com.liferay.portal.kernel.exception.PortalException;
 
 	public java.util.List<com.liferay.portal.model.Group> getMySiteGroups(
-		boolean includeControlPanel, int max)
-		throws com.liferay.portal.kernel.exception.PortalException;
-
-	public java.util.List<com.liferay.portal.model.Group> getMySiteGroups(
 		int max) throws com.liferay.portal.kernel.exception.PortalException;
 
+	/**
+	* @deprecated As of 6.2.0, replaced by {@link #getMySiteGroups(String[],
+	int)}
+	*/
+	@java.lang.Deprecated()
 	public java.util.List<com.liferay.portal.model.Group> getMySiteGroups(
 		java.lang.String[] classNames, boolean includeControlPanel, int max)
 		throws com.liferay.portal.kernel.exception.PortalException;
@@ -298,8 +307,7 @@ public interface User extends UserModel, PersistedModel {
 		throws com.liferay.portal.kernel.exception.PortalException;
 
 	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getMySiteGroups(boolean,
-	int)}
+	* @deprecated As of 6.2.0, replaced by {@link User#getMySiteGroups(int)}
 	*/
 	@java.lang.Deprecated()
 	public java.util.List<com.liferay.portal.model.Group> getMySites(
@@ -315,7 +323,7 @@ public interface User extends UserModel, PersistedModel {
 
 	/**
 	* @deprecated As of 6.2.0, replaced by {@link #getMySiteGroups(String[],
-	boolean, int)}
+	int)}
 	*/
 	@java.lang.Deprecated()
 	public java.util.List<com.liferay.portal.model.Group> getMySites(
@@ -343,6 +351,8 @@ public interface User extends UserModel, PersistedModel {
 	public java.util.List<com.liferay.portal.model.Organization> getOrganizations(
 		boolean includeAdministrative)
 		throws com.liferay.portal.kernel.exception.PortalException;
+
+	public java.lang.String getOriginalEmailAddress();
 
 	public boolean getPasswordModified();
 
@@ -387,6 +397,12 @@ public interface User extends UserModel, PersistedModel {
 	public java.util.List<com.liferay.portal.model.Team> getTeams();
 
 	public java.util.TimeZone getTimeZone();
+
+	public java.util.Date getUnlockDate()
+		throws com.liferay.portal.kernel.exception.PortalException;
+
+	public java.util.Date getUnlockDate(
+		com.liferay.portal.model.PasswordPolicy passwordPolicy);
 
 	public long[] getUserGroupIds();
 

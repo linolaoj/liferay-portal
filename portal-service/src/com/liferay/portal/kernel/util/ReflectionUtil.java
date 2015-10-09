@@ -73,6 +73,32 @@ public class ReflectionUtil {
 		return method;
 	}
 
+	public static Type getGenericInterface(
+		Object object, Class<?> interfaceClass) {
+
+		Class<?> clazz = object.getClass();
+
+		Type genericInterface = _getGenericInterface(clazz, interfaceClass);
+
+		if (genericInterface != null) {
+			return genericInterface;
+		}
+
+		Class<?> superClass = clazz.getSuperclass();
+
+		while (superClass != null) {
+			genericInterface = _getGenericInterface(superClass, interfaceClass);
+
+			if (genericInterface != null) {
+				return genericInterface;
+			}
+
+			superClass = superClass.getSuperclass();
+		}
+
+		return null;
+	}
+
 	public static Class<?> getGenericSuperType(Class<?> clazz) {
 		try {
 			ParameterizedType parameterizedType =
@@ -97,7 +123,7 @@ public class ReflectionUtil {
 	public static Class<?>[] getInterfaces(
 		Object object, ClassLoader classLoader) {
 
-		Set<Class<?>> interfaceClasses = new LinkedHashSet<Class<?>>();
+		Set<Class<?>> interfaceClasses = new LinkedHashSet<>();
 
 		Class<?> clazz = object.getClass();
 
@@ -158,7 +184,7 @@ public class ReflectionUtil {
 	}
 
 	public static Set<Method> getVisibleMethods(Class<?> clazz) {
-		Set<Method> visibleMethods = new HashSet<Method>(
+		Set<Method> visibleMethods = new HashSet<>(
 			Arrays.asList(clazz.getMethods()));
 
 		visibleMethods.addAll(Arrays.asList(clazz.getDeclaredMethods()));
@@ -200,6 +226,29 @@ public class ReflectionUtil {
 		throws E {
 
 		throw (E)throwable;
+	}
+
+	private static Type _getGenericInterface(
+		Class<?> clazz, Class<?> interfaceClass) {
+
+		Type[] genericInterfaces = clazz.getGenericInterfaces();
+
+		for (Type genericInterface : genericInterfaces) {
+			if (!(genericInterface instanceof ParameterizedType)) {
+				continue;
+			}
+
+			ParameterizedType parameterizedType =
+				(ParameterizedType)genericInterface;
+
+			Type rawType = parameterizedType.getRawType();
+
+			if (rawType.equals(interfaceClass)) {
+				return parameterizedType;
+			}
+		}
+
+		return null;
 	}
 
 	private static void _getInterfaces(

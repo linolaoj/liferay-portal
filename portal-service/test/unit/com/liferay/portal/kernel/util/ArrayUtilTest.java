@@ -123,18 +123,18 @@ public class ArrayUtilTest {
 
 	@Test
 	public void testContainsByteArray() throws Exception {
-		byte[] array1 = {2, 3};
+		byte[] array = {2, 3};
 
-		Assert.assertFalse(ArrayUtil.contains(array1, (byte)1));
-		Assert.assertTrue(ArrayUtil.contains(array1, (byte)2));
+		Assert.assertFalse(ArrayUtil.contains(array, (byte)1));
+		Assert.assertTrue(ArrayUtil.contains(array, (byte)2));
 	}
 
 	@Test
 	public void testContainsCharArray() throws Exception {
-		char[] array1 = {'b', 'c'};
+		char[] array = {'a', 'b'};
 
-		Assert.assertFalse(ArrayUtil.contains(array1, 'a'));
-		Assert.assertTrue(ArrayUtil.contains(array1, 'b'));
+		Assert.assertFalse(ArrayUtil.contains(array, 'C'));
+		Assert.assertTrue(ArrayUtil.contains(array, 'a'));
 	}
 
 	@Test
@@ -178,15 +178,29 @@ public class ArrayUtilTest {
 	}
 
 	@Test
+	public void testContainsStringArray() throws Exception {
+		String[] array = {"a", "b", null};
+
+		Assert.assertFalse(ArrayUtil.contains(array, "c", true));
+		Assert.assertFalse(ArrayUtil.contains(array, "C", false));
+		Assert.assertTrue(ArrayUtil.contains(array, "a", true));
+		Assert.assertTrue(ArrayUtil.contains(array, "a", false));
+		Assert.assertTrue(ArrayUtil.contains(array, "A", true));
+		Assert.assertTrue(ArrayUtil.contains(array, null, true));
+		Assert.assertTrue(ArrayUtil.contains(array, null, false));
+	}
+
+	@Test
 	public void testContainsUserArray() throws Exception {
 		User brian = new User("brian", 20);
 		User julio = new User("julio", 20);
 		User sergio = new User("sergio", 20);
 
-		User[] array = {julio, sergio};
+		User[] array = {julio, sergio, null};
 
 		Assert.assertFalse(ArrayUtil.contains(array, brian));
 		Assert.assertTrue(ArrayUtil.contains(array, julio));
+		Assert.assertTrue(ArrayUtil.contains(array, null));
 	}
 
 	@Test
@@ -492,7 +506,7 @@ public class ArrayUtilTest {
 
 		array = ArrayUtil.remove(array, (byte)3);
 
-		Assert.assertArrayEquals(new byte[]{1, 2}, array);
+		Assert.assertArrayEquals(new byte[] {1, 2}, array);
 	}
 
 	@Test
@@ -519,7 +533,7 @@ public class ArrayUtilTest {
 
 		array = ArrayUtil.remove(array, 'c');
 
-		Assert.assertArrayEquals(new char[]{'a', 'b'}, array);
+		Assert.assertArrayEquals(new char[] {'a', 'b'}, array);
 	}
 
 	@Test
@@ -546,7 +560,7 @@ public class ArrayUtilTest {
 
 		array = ArrayUtil.remove(array, 3.0D);
 
-		Assert.assertArrayEquals(new double[]{1.0D, 2.0D}, array, 0);
+		Assert.assertArrayEquals(new double[] {1.0D, 2.0D}, array, 0);
 	}
 
 	@Test
@@ -573,7 +587,7 @@ public class ArrayUtilTest {
 
 		array = ArrayUtil.remove(array, 3.5f);
 
-		Assert.assertArrayEquals(new float[]{1.5f, 2.5f}, array, 0);
+		Assert.assertArrayEquals(new float[] {1.5f, 2.5f}, array, 0);
 	}
 
 	@Test
@@ -600,7 +614,7 @@ public class ArrayUtilTest {
 
 		array = ArrayUtil.remove(array, (byte)3);
 
-		Assert.assertArrayEquals(new int[]{1, 2}, array);
+		Assert.assertArrayEquals(new int[] {1, 2}, array);
 	}
 
 	@Test
@@ -627,7 +641,7 @@ public class ArrayUtilTest {
 
 		array = ArrayUtil.remove(array, 3L);
 
-		Assert.assertArrayEquals(new long[]{1L, 2L}, array);
+		Assert.assertArrayEquals(new long[] {1L, 2L}, array);
 	}
 
 	@Test
@@ -654,7 +668,7 @@ public class ArrayUtilTest {
 
 		array = ArrayUtil.remove(array, (short)3);
 
-		Assert.assertArrayEquals(new short[]{1, 2}, array);
+		Assert.assertArrayEquals(new short[] {1, 2}, array);
 	}
 
 	@Test
@@ -681,7 +695,7 @@ public class ArrayUtilTest {
 
 		array = ArrayUtil.remove(array, "c");
 
-		Assert.assertArrayEquals(new String[]{"a", "b"}, array);
+		Assert.assertArrayEquals(new String[] {"a", "b"}, array);
 	}
 
 	@Test
@@ -769,7 +783,7 @@ public class ArrayUtilTest {
 
 	@Test
 	public void testToDoubleArray() throws Exception {
-		List<Double> list = new ArrayList<Double>();
+		List<Double> list = new ArrayList<>();
 
 		list.add(1.0);
 		list.add(2.0);
@@ -787,7 +801,7 @@ public class ArrayUtilTest {
 
 	@Test
 	public void testToFloatArray() throws Exception {
-		List<Float> list = new ArrayList<Float>();
+		List<Float> list = new ArrayList<>();
 
 		list.add(1.0F);
 		list.add(2.0F);
@@ -805,7 +819,7 @@ public class ArrayUtilTest {
 
 	@Test
 	public void testToIntArray() throws Exception {
-		List<Integer> list = new ArrayList<Integer>();
+		List<Integer> list = new ArrayList<>();
 
 		list.add(1);
 		list.add(2);
@@ -823,7 +837,7 @@ public class ArrayUtilTest {
 
 	@Test
 	public void testToLongArray() throws Exception {
-		List<Long> list = new ArrayList<Long>();
+		List<Long> list = new ArrayList<>();
 
 		list.add(1L);
 		list.add(2L);
@@ -839,7 +853,7 @@ public class ArrayUtilTest {
 		}
 	}
 
-	private PredicateFilter<Double> _doublePredicateFilter =
+	private final PredicateFilter<Double> _doublePredicateFilter =
 		new PredicateFilter<Double>() {
 
 			@Override
@@ -849,7 +863,7 @@ public class ArrayUtilTest {
 
 		};
 
-	private PredicateFilter<Integer> _integerPredicateFilter =
+	private final PredicateFilter<Integer> _integerPredicateFilter =
 		new PredicateFilter<Integer>() {
 
 			@Override
@@ -859,7 +873,7 @@ public class ArrayUtilTest {
 
 		};
 
-	private PredicateFilter<User> _userPredicateFilter =
+	private final PredicateFilter<User> _userPredicateFilter =
 		new PredicateFilter<User>() {
 
 			@Override
@@ -884,8 +898,8 @@ public class ArrayUtilTest {
 			return _name;
 		}
 
-		private int _age;
-		private String _name;
+		private final int _age;
+		private final String _name;
 
 	}
 

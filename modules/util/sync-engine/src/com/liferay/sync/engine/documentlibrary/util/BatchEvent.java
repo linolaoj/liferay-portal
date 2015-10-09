@@ -14,8 +14,6 @@
 
 package com.liferay.sync.engine.documentlibrary.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.liferay.sync.engine.documentlibrary.event.Event;
 import com.liferay.sync.engine.documentlibrary.event.UpdateFileEntriesEvent;
 import com.liferay.sync.engine.documentlibrary.handler.Handler;
@@ -23,10 +21,9 @@ import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.service.SyncAccountService;
 import com.liferay.sync.engine.util.FileUtil;
-import com.liferay.sync.engine.util.PropsValues;
+import com.liferay.sync.engine.util.JSONUtil;
 import com.liferay.sync.engine.util.StreamUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -54,6 +51,13 @@ public class BatchEvent {
 	}
 
 	public synchronized boolean addEvent(Event event) {
+		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
+			_syncAccountId);
+
+		if (syncAccount.getBatchFileMaxSize() <= 0) {
+			return false;
+		}
+
 		try {
 			Map<String, Object> parameters = event.getParameters();
 
@@ -62,16 +66,22 @@ public class BatchEvent {
 			String zipFileId =
 				syncFile.getSyncFileId() + "_" + System.currentTimeMillis();
 
-			Path deltaFilePath = (Path)parameters.get("filePath");
+			Path deltaFilePath = (Path)parameters.get("deltaFilePath");
 			Path filePath = (Path)parameters.get("filePath");
 
 			if (deltaFilePath != null) {
-				if (!addFile(deltaFilePath, zipFileId)) {
+				if (!addFile(
+						deltaFilePath, zipFileId,
+						syncAccount.getBatchFileMaxSize())) {
+
 					return false;
 				}
 			}
 			else if (filePath != null) {
-				if (!addFile(filePath, zipFileId)) {
+				if (!addFile(
+						filePath, zipFileId,
+						syncAccount.getBatchFileMaxSize())) {
+
 					return false;
 				}
 			}
@@ -79,8 +89,9 @@ public class BatchEvent {
 			parameters.put("urlPath", event.getURLPath());
 			parameters.put("zipFileId", zipFileId);
 
-			parameters = new HashMap<String, Object>(parameters);
+			parameters = new HashMap<>(parameters);
 
+			parameters.remove("deltaFilePath");
 			parameters.remove("filePath");
 			parameters.remove("syncFile");
 
@@ -90,10 +101,8 @@ public class BatchEvent {
 
 			_handlers.put(zipFileId, event.getHandler());
 
-			if ((_eventCount >=
-					PropsValues.SYNC_BATCH_EVENTS_MAX_COUNT) ||
-				(_totalFileSize >=
-					PropsValues.SYNC_BATCH_EVENTS_MAX_TOTAL_FILE_SIZE)) {
+			if ((_eventCount >= 250) ||
+				(_totalFileSize >= syncAccount.getBatchFileMaxSize())) {
 
 				fireBatchEvent();
 			}
@@ -101,7 +110,9 @@ public class BatchEvent {
 			return true;
 		}
 		catch (IOException ioe) {
-			_logger.debug(ioe.getMessage(), ioe);
+			if (_logger.isDebugEnabled()) {
+				_logger.debug(ioe.getMessage(), ioe);
+			}
 
 			return false;
 		}
@@ -113,19 +124,15 @@ public class BatchEvent {
 				return;
 			}
 
-			ObjectMapper objectMapper = new ObjectMapper();
-
 			Path filePath = Files.createTempFile("manifest", ".json");
 
-			File file = filePath.toFile();
-
-			objectMapper.writeValue(file, _batchParameters);
+			JSONUtil.writeValue(filePath.toFile(), _batchParameters);
 
 			writeFilePathToZip(filePath, "manifest.json");
 
 			_zipOutputStream.close();
 
-			Map<String, Object> parameters = new HashMap<String, Object>();
+			Map<String, Object> parameters = new HashMap<>();
 
 			parameters.put("handlers", _handlers);
 			parameters.put("zipFilePath", _zipFilePath);
@@ -138,7 +145,9 @@ public class BatchEvent {
 			_closed = true;
 		}
 		catch (Exception e) {
-			_logger.debug(e.getMessage(), e);
+			if (_logger.isDebugEnabled()) {
+				_logger.debug(e.getMessage(), e);
+			}
 		}
 	}
 
@@ -146,12 +155,13 @@ public class BatchEvent {
 		return _closed;
 	}
 
-	protected boolean addFile(Path filePath, String zipFileId)
+	protected boolean addFile(
+			Path filePath, String zipFileId, int batchFileMaxSize)
 		throws IOException {
 
 		long fileSize = Files.size(filePath);
 
-		if (fileSize >= PropsValues.SYNC_BATCH_EVENTS_MAX_FILE_SIZE) {
+		if (fileSize >= (batchFileMaxSize / 10)) {
 			return false;
 		}
 
@@ -198,7 +208,9 @@ public class BatchEvent {
 			}
 		}
 		finally {
-			_zipOutputStream.closeEntry();
+			if (_zipOutputStream != null) {
+				_zipOutputStream.closeEntry();
+			}
 
 			StreamUtil.cleanUp(inputStream);
 		}
@@ -207,13 +219,12 @@ public class BatchEvent {
 	private static final Logger _logger = LoggerFactory.getLogger(
 		BatchEvent.class);
 
-	private List<Map<String, Object>> _batchParameters =
-		new ArrayList<Map<String, Object>>();
+	private final List<Map<String, Object>> _batchParameters =
+		new ArrayList<>();
 	private boolean _closed;
 	private int _eventCount;
-	private Map<String, Handler<Void>> _handlers =
-		new HashMap<String, Handler<Void>>();
-	private long _syncAccountId;
+	private final Map<String, Handler<Void>> _handlers = new HashMap<>();
+	private final long _syncAccountId;
 	private long _totalFileSize;
 	private Path _zipFilePath;
 	private ZipOutputStream _zipOutputStream;
