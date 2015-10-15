@@ -99,6 +99,7 @@ AUI.add(
 						label: instance.get('label'),
 						name: instance.get('name'),
 						parent: parent,
+						required: instance.get('required'),
 						portletNamespace: instance.get('portletNamespace'),
 						repeatable: instance.get('repeatable'),
 						repeatedIndex: instance.getRepeatedSiblings().length,
@@ -107,6 +108,8 @@ AUI.add(
 					}
 				).render();
 
+				parent.get('fields').push(field);
+				
 				var index = repetitions.indexOf(instance) + 1;
 
 				repetitions.splice(index, 0, field);
