@@ -14,54 +14,37 @@
 
 package com.liferay.dynamic.data.mapping.type;
 
-import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldRenderer;
-import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldType;
-import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldValueAccessor;
-import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldValueRendererAccessor;
-
-import java.util.Locale;
+import com.liferay.dynamic.data.mapping.registry.BaseDDMFormFieldType;
+import com.liferay.dynamic.data.mapping.registry.DDMFormFieldType;
+import com.liferay.dynamic.data.mapping.registry.DDMFormFieldTypeSettings;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Renato Rego
  */
-@Component(immediate = true, service = DDMFormFieldType.class)
-public class ParagraphDDMFormFieldType implements DDMFormFieldType {
+@Component(
+		immediate = true,
+		property = {
+			"ddm.form.field.type.icon=icon-quote-left",
+			"ddm.form.field.type.js.class.name=Liferay.DDM.Field.Paragraph",
+			"ddm.form.field.type.js.module=liferay-ddm-form-field-paragraph",
+			"ddm.form.field.type.name=paragraph"
+		},
+		service = DDMFormFieldType.class
+	)
+public class ParagraphDDMFormFieldType extends BaseDDMFormFieldType {
 
 	@Override
-	public DDMFormFieldRenderer getDDMFormFieldRenderer() {
-		return _ddmFormFieldRenderer;
-	}
+	public Class<? extends DDMFormFieldTypeSettings>
+		getDDMFormFieldTypeSettings() {
 
-	@Override
-	public DDMFormFieldValueAccessor<String> getDDMFormFieldValueAccessor(
-		Locale locale) {
-
-		return new ParagraphDDMFormFieldValueAccessor(locale);
-	}
-
-	@Override
-	public DDMFormFieldValueRendererAccessor
-		getDDMFormFieldValueRendererAccessor(Locale locale) {
-
-		return new ParagraphDDMFormFieldValueRendererAccessor(
-			getDDMFormFieldValueAccessor(locale));
+		return ParagraphDDMFormFieldTypeSettings.class;
 	}
 
 	@Override
 	public String getName() {
 		return "paragraph";
 	}
-
-	@Reference(service = ParagraphDDMFormFieldRenderer.class, unbind = "-")
-	protected void setDDMFormFieldRenderer(
-		DDMFormFieldRenderer ddmFormFieldRenderer) {
-
-		_ddmFormFieldRenderer = ddmFormFieldRenderer;
-	}
-
-	private DDMFormFieldRenderer _ddmFormFieldRenderer;
 
 }

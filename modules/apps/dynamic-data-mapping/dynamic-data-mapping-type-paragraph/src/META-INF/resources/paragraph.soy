@@ -4,11 +4,12 @@
  * Prints the DDM form paragraph field.
  *
  * @param dir
- * @param fieldQualifiedName
- * @param fieldValue
+ * @param name
+ * @param text
+ * @param visible
  */
 {template .paragraph}
-	<p dir="{$dir}" id="{$fieldQualifiedName}">
-		{$fieldValue}
-	</p>
+	<div class="form-group form-inline{$visible ? '' : ' hide'}" data-fieldname="{$name}">
+		<p dir="{$dir}">{$text}</p>
+	</div>
 {/template}
