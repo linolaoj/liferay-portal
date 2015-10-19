@@ -23,6 +23,7 @@ import com.liferay.dynamic.data.lists.service.base.DDLRecordLocalServiceBaseImpl
 import com.liferay.dynamic.data.lists.util.DDL;
 import com.liferay.dynamic.data.lists.util.DDLUtil;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.Field;
 import com.liferay.dynamic.data.mapping.storage.Fields;
@@ -62,6 +63,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Provides the local service for accessing, adding, deleting, and updating
@@ -97,6 +99,24 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 		record.setUserName(user.getFullName());
 		record.setVersionUserId(user.getUserId());
 		record.setVersionUserName(user.getFullName());
+
+		Set<Locale> availableLocales = ddmFormValues.getAvailableLocales();
+
+		List<ddmFormFieldValue> ddmFormFieldValues =
+			ddmFormValues.getDDMFormFieldValues();
+
+		for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
+			Set<Locale> valueLocales =
+				ddmFormFieldValue.getValue().getAvailableLocales();
+
+			for (Locale locale : valueLocales) {
+				if (!availableLocales.contains(locale)) {
+					availableLocales.add(locale);
+				}
+			}
+		}
+
+		ddmFormValues.setAvailableLocales(availableLocales);
 
 		long ddmStorageId = StorageEngineUtil.create(
 			recordSet.getCompanyId(), recordSet.getDDMStructureId(),
