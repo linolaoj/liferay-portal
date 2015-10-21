@@ -149,7 +149,7 @@ public class SessionTreeJSClickAction extends Action {
 				PortletPreferencesFactoryUtil.getPortalPreferences(request);
 
 			String json = portalPreferences.getValue(
-				SessionTreeJSClicks.class.getName(), treeId + "Plid");
+				SessionTreeJSClicks.class.getName(), treeId);
 
 			ServletResponseUtil.write(response, json);
 
@@ -192,7 +192,7 @@ public class SessionTreeJSClickAction extends Action {
 				}
 
 				portalPreferences.setValue(
-					SessionTreeJSClicks.class.getName(), treeId + "Plid",
+					SessionTreeJSClicks.class.getName(), treeId,
 					jsonArray.toString());
 
 				return;
