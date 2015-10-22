@@ -44,7 +44,7 @@ public interface ParagraphDDMFormFieldTypeSettings
 
 	@DDMFormField(
 		dataType = "string", label = "%text",
-		properties = {"setting.category=basic", "displayStyle=multi-line"},
+		properties = {"setting.category=basic", "displayStyle=multiline"},
 		required = true, type = "text"
 	)
 	public String text();
