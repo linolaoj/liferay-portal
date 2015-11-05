@@ -1,6 +1,9 @@
 package com.liferay.polls.layout.set.prototype.action;
 
 import java.util.List;
+import java.util.ResourceBundle;
+
+import javax.portlet.Portlet;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -10,20 +13,25 @@ import com.liferay.layout.set.prototype.web.constants.LayoutSetPrototypePortletK
 import com.liferay.polls.constants.PollsPortletKeys;
 import com.liferay.polls.model.PollsQuestion;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.portlet.PortletProvider;
 import com.liferay.portal.kernel.portlet.PortletProviderUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Company;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutSet;
 import com.liferay.portal.model.LayoutSetPrototype;
-import com.liferay.portal.model.Portlet;
 import com.liferay.portal.service.CompanyLocalService;
+import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.LayoutSetPrototypeLocalService;
+import com.liferay.portal.service.LayoutSetPrototypeLocalServiceUtil;
 import com.liferay.portal.service.UserLocalService;
 import com.liferay.portal.util.DefaultLayoutPrototypesUtil;
 import com.liferay.portal.util.DefaultLayoutSetPrototypesUtil;
-import com.liferay.social.user.statistics.web.constants.SocialUserStatisticsPortletKeys;
 
 @Component(immediate = true, service = AddLayoutSetPrototypeAction.class)
 public class AddLayoutSetPrototypeAction {
@@ -31,7 +39,7 @@ public class AddLayoutSetPrototypeAction {
 	@Activate
 	protected void activate() throws Exception {
 		List<Company> companies = _companyLocalService.getCompanies();
-
+		
 		for (Company company : companies) {
 			long defaultUserId = _userLocalService.getDefaultUserId(
 				company.getCompanyId());
@@ -51,35 +59,61 @@ public class AddLayoutSetPrototypeAction {
 			List<LayoutSetPrototype> layoutSetPrototypes)
 		throws Exception {
 
+		String nameKey = "layout-set-prototype-community-site-title";
+		String descriptionKey = 
+				"layout-set-prototype-community-site-description";
+
 		LayoutSet layoutSet =
 			DefaultLayoutSetPrototypesUtil.addLayoutSetPrototype(
 				companyId, defaultUserId,
-				"layout-set-prototype-community-site-title",
-				"layout-set-prototype-community-site-description",
+				nameKey, descriptionKey,
 				layoutSetPrototypes,
 				AddLayoutSetPrototypeAction.class.getClassLoader());
 
-		if (layoutSet == null) {
-			return;
+		if (Validator.isNull(layoutSet)) {
+
+			ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+					"content.Language", LocaleUtil.getDefault(),
+					AddLayoutSetPrototypeAction.class.getClassLoader());
+			
+			String nameLayout = LanguageUtil.get(resourceBundle, nameKey);
+			
+			String descriptionLayout = 
+					LanguageUtil.get(resourceBundle, descriptionKey);
+			
+			for (LayoutSetPrototype layoutSetPrototype : layoutSetPrototypes) {
+				String curName = layoutSetPrototype.getName(
+					LocaleUtil.getDefault());
+				String curDescription = layoutSetPrototype.getDescription(
+					LocaleUtil.getDefault());
+
+				if (nameLayout.equals(curName) && 
+						descriptionLayout.equals(curDescription)) {
+					
+					layoutSet = layoutSetPrototype.getLayoutSet();
+					
+					break;
+				}
+			}
+		
 		}
-
+	
 		// Home layout
-
-		Layout layout = DefaultLayoutPrototypesUtil.addLayout(
-			layoutSet, "home", "/home", "2_columns_iii");
-		String portletId = PortletProviderUtil.getPortletId(
-			PollsPortletKeys.POLLS, PortletProvider.Action.EDIT);
-
-		DefaultLayoutPrototypesUtil.addPortletId(layout, portletId, "column-1");
-
-		DefaultLayoutPrototypesUtil.addPortletId(
-			layout, SocialUserStatisticsPortletKeys.SOCIAL_USER_STATISTICS,
-			"column-2");
-
-		// Wiki layout
-
-		DefaultLayoutPrototypesUtil.addLayout(
-			layoutSet, "wiki", "/wiki", "2_columns_iii");
+		Layout layout = 
+				LayoutLocalServiceUtil.fetchLayoutByFriendlyURL(
+						layoutSet.getGroupId(), true, "/home");
+		
+		if(Validator.isNull(layout)){
+			layout = DefaultLayoutPrototypesUtil.addLayout(
+				layoutSet, "home", "/home", "2_columns_iii");
+		}
+		 
+		String layoutTypeSettings = layout.getTypeSettings();
+		if(Validator.isNull(layoutTypeSettings) || 
+				!layoutTypeSettings.contains(PollsPortletKeys.POLLS_DISPLAY)){
+			
+			DefaultLayoutPrototypesUtil.addPortletId(layout, PollsPortletKeys.POLLS_DISPLAY, "column-1");
+		}
 	}
 
 	protected void doRun(long companyId) throws Exception {
@@ -113,23 +147,9 @@ public class AddLayoutSetPrototypeAction {
 	protected void setLayoutSetPrototypePortlet(Portlet portlet) {
 	}
 
-	@Reference(
-		target = "(javax.portlet.name=" + PollsPortletKeys.POLLS_DISPLAY+ ")",
-		unbind = "-"
-	)
-	protected void setPollsPortlet(Portlet portlet) {
-	}
-
 	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
 	protected void setModuleServiceLifecycle(
 		ModuleServiceLifecycle moduleServiceLifecycle) {
-	}
-
-	@Reference(
-		target = "(javax.portlet.name=" + SocialUserStatisticsPortletKeys.SOCIAL_USER_STATISTICS + ")",
-		unbind = "-"
-	)
-	protected void setSocialUserStatisticsPortletKeys(Portlet portlet) {
 	}
 
 	@Reference(unbind = "-")
