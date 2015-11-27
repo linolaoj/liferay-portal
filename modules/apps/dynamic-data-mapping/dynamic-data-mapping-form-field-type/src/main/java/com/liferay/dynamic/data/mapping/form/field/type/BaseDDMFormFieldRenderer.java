@@ -58,7 +58,7 @@ public abstract class BaseDDMFormFieldRenderer implements DDMFormFieldRenderer {
 
 		populateOptionalContext(
 			template, ddmFormField, ddmFormFieldRenderingContext);
-
+ 
 		return render(template);
 	}
 
