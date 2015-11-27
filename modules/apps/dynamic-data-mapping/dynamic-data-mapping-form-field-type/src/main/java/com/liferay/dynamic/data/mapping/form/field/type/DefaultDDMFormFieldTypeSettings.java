@@ -70,7 +70,7 @@ public interface DefaultDDMFormFieldTypeSettings
 			"showAsSwitcher=true"
 		}
 	)
-	public boolean repeatable();
+	public boolean repeatable(); 
 
 	@DDMFormField(
 		label = "%required",
