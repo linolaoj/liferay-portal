@@ -67,7 +67,7 @@ public abstract class BaseDDMFormFieldRenderer implements DDMFormFieldRenderer {
 
 		ClassLoader classLoader = clazz.getClassLoader();
 
-		URL templateURL = classLoader.getResource(templatePath);
+		URL templateURL = classLoader.getResource(templatePath); 
 
 		return new URLTemplateResource(templateURL.getPath(), templateURL);
 	}
