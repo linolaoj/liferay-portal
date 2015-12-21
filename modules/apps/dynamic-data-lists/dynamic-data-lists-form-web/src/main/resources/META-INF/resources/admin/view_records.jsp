@@ -56,7 +56,16 @@ DDLRecordSet ddlRecordSet = ddlFormViewRecordsDisplayContext.getDDLRecordSet();
 
 			Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap = ddmFormValues.getDDMFormFieldValuesMap();
 
+			int countColumns = 0;
+
 			for (Map.Entry<String, List<DDMFormFieldValue>> entry : ddmFormFieldValuesMap.entrySet()) {
+
+				if ( countColumns >= ddlFormViewRecordsDisplayContext.getMaxColumns()) {
+					break;
+				}
+				else {
+					countColumns++;
+				}
 			%>
 
 				<liferay-ui:search-container-column-text

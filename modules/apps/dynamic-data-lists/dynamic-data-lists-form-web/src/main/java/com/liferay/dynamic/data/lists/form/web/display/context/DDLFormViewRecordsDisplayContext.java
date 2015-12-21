@@ -143,6 +143,10 @@ public class DDLFormViewRecordsDisplayContext {
 		return "list";
 	}
 
+	public int getMaxColumns() {
+		return _MAX_COLUMNS;
+	}
+
 	public RecordSearch getRecordSearchContainer() {
 		return _recordSearchContainer;
 	}
