@@ -5,6 +5,7 @@ FileTree fileTree = fileTree(rootDir) {
 	if (Boolean.getBoolean("portal.build")) {
 		exclude "portal-cache/portal-cache-memory/"
 		exclude "portal/portal-cluster/"
+		exclude "portal/portal-scheduler-cluster/"
 		exclude "portal/portal-scripting-beanshell/"
 		exclude "portal/portal-scripting-javascript/"
 		exclude "portal/portal-scripting-python/"
@@ -13,6 +14,7 @@ FileTree fileTree = fileTree(rootDir) {
 		exclude "portal/portal-taglib-aui-form-extension-sample/"
 		exclude "sdk/"
 		exclude "test/"
+		exclude "themes/product-app-theme/"
 		exclude "third-party/"
 		exclude "util/alloy-taglib/"
 		exclude "util/ant-build-logger/"
