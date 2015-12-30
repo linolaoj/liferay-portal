@@ -25,17 +25,17 @@ import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutRow;
  * @author Marcellus Tavares
  */
 @DDMForm
-@DDMFormLayout(	{
-		@DDMFormLayoutPage({
-				@DDMFormLayoutRow(
-					{
-							@DDMFormLayoutColumn(
-									size = 12,
-									value = {"url", "key", "value", "username", "password", "cacheable"}
-							)
-					}
+@DDMFormLayout( {
+	@DDMFormLayoutPage( {
+		@DDMFormLayoutRow(
+			{
+				@DDMFormLayoutColumn(
+						size = 12,
+						value = {"url", "key", "value", "username", "password", "cacheable"}
 				)
-		})
+			}
+		)
+	})
 })
 public interface DDMRESTDataProviderSettings {
 
