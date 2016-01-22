@@ -29,7 +29,6 @@ import java.util.Map;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -40,7 +39,7 @@ import org.osgi.util.tracker.BundleTrackerCustomizer;
 /**
  * @author Michael C. Han
  */
-@Component(immediate = true, service = BundleListener.class)
+@Component(immediate = true)
 public class ConfigurationIndexingExtender {
 
 	@Activate
@@ -106,9 +105,9 @@ public class ConfigurationIndexingExtender {
 		ConfigurationIndexingExtender.class);
 
 	private BundleTracker<ConfigurationModelIterator> _bundleTracker;
-	private volatile ClusterMasterExecutor _clusterMasterExecutor;
-	private volatile ConfigurationModelIndexer _configurationModelIndexer;
-	private volatile ConfigurationModelRetriever _configurationModelRetriever;
+	private ClusterMasterExecutor _clusterMasterExecutor;
+	private ConfigurationModelIndexer _configurationModelIndexer;
+	private ConfigurationModelRetriever _configurationModelRetriever;
 
 	private class ConfigurationModelsBundleTrackerCustomizer
 		implements BundleTrackerCustomizer<ConfigurationModelIterator> {

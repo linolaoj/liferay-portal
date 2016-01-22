@@ -79,7 +79,6 @@ AUI.add(
 			{
 				DEFAULTS: {
 					centered: true,
-					headerContent: '&nbsp;',
 					modal: true,
 					visible: true,
 					zIndex: Liferay.zIndex.WINDOW
@@ -88,8 +87,6 @@ AUI.add(
 				IFRAME_SUFFIX: '_iframe_',
 
 				TITLE_TEMPLATE: '<h3 class="modal-title" />',
-
-				_winResizeHandler: null,
 
 				getByChild: function(child) {
 					var instance = this;
@@ -364,7 +361,7 @@ AUI.add(
 					}
 
 					if (!Lang.isValue(config.title)) {
-						config.title = instance.DEFAULTS.headerContent;
+						config.title = '&nbsp;';
 					}
 
 					modal.titleNode.html(config.title);
@@ -392,8 +389,6 @@ AUI.add(
 					}
 
 					modalConfig.id = config.id;
-
-					delete modalConfig.headerContent;
 
 					return modalConfig;
 				},
@@ -481,7 +476,9 @@ AUI.add(
 					delete instance._map[id + instance.IFRAME_SUFFIX];
 
 					A.Array.invoke(modal._liferayHandles, 'detach');
-				}
+				},
+
+				_winResizeHandler: null
 			}
 		);
 	},

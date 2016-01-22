@@ -26,7 +26,6 @@ import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.HashMapDictionary;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PropertiesParamUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
@@ -191,8 +190,7 @@ public class PortalSettingsEditLDAPServerMVCActionCommand
 		}
 
 		List<LDAPServerConfiguration> ldapServerConfigurations =
-			_ldapServerConfigurationProvider.getConfigurations(
-				companyId, false);
+			_ldapServerConfigurationProvider.getConfigurations(companyId);
 
 		for (LDAPServerConfiguration ldapServerConfiguration :
 				ldapServerConfigurations) {
@@ -226,13 +224,12 @@ public class PortalSettingsEditLDAPServerMVCActionCommand
 
 		Object propertyValue = dictionary.get(property);
 
-		if (Validator.isNull(propertyValue)) {
+		if (propertyValue == null) {
 			return;
 		}
 
 		if (propertyValue instanceof String) {
-			String propertyValues = StringUtil.replace(
-				(String)propertyValue, StringPool.COMMA, StringPool.PIPE);
+			String[] propertyValues = StringUtil.split((String)propertyValue);
 
 			dictionary.put(property, propertyValues);
 		}
@@ -241,6 +238,6 @@ public class PortalSettingsEditLDAPServerMVCActionCommand
 	private static ConfigurationProvider<LDAPServerConfiguration>
 		_ldapServerConfigurationProvider;
 
-	private volatile CounterLocalService _counterLocalService;
+	private CounterLocalService _counterLocalService;
 
 }

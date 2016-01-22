@@ -158,12 +158,12 @@
 </tr>
 <tr>
 	<td>PAGE_TREE_PAGE_EDIT_COG</td>
-	<td>//span[a[contains(.,'${key_sitePageName}')]]//span/*[name()='svg'][contains(@class,'lexicon-icon-cog')]</td>
+	<td>//a[contains(@class,'tree-edit') and contains(@onmouseover,'${key_sitePageName}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_TREE_PAGE_LINK_2</td>
-	<td>//span[a[contains(.,'${key_sitePageName}')]]//span[contains(@class,'icon-cog')]</td>
+	<td>xpath=(//span[contains(@class,'tree-label')])[3]/a</td>
 	<td></td>
 </tr>
 <tr>
@@ -282,7 +282,7 @@
 <!--INCOMPLETE_STAGING_PAGE_VARIATION-->
 <tr>
 	<td>INCOMPLETE_STAGING_PAGE_VARIATION_INFO_MESSAGE</td>
-	<td>//form[contains(@class,'form edit-layout-form')]</td>
+	<td>//div[contains(@class,'manage-view')]</td>
 	<td></td>
 </tr>
 <tr>

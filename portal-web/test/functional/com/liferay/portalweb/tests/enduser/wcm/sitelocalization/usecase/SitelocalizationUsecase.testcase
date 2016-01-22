@@ -2,14 +2,7 @@
 	<property name="testray.main.component.name" value="Site Localization" />
 
 	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		<execute macro="TestCase#setUpPortalInstance" />
 
 		<execute macro="User#firstLoginPG" />
 	</set-up>
@@ -33,7 +26,7 @@
 	<command name="AvailableSiteLocalesSubsetOfAvailablePortalLocales" priority="5">
 		<property name="portal.acceptance" value="true" />
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Language Test Page" />
 		</execute>
 
@@ -93,7 +86,7 @@
 		<var name="pageName" value="Language Test Page" />
 		<var name="portletName" value="Language Selector" />
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -138,7 +131,7 @@
 		<var name="pageName" value="Language Test Page" />
 		<var name="portletName" value="Language Selector" />
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -183,7 +176,7 @@
 		<var name="pageName" value="Language Test Page" />
 		<var name="portletName" value="Language Selector" />
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -231,15 +224,13 @@
 			<var name="siteName" value="Site1 Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesPages">
-			<var name="page" value="Public Pages" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
-		<execute macro="SitePage#addCP">
-			<var name="page" value="Public Pages" />
+		<execute macro="Page#add">
+			<var name="pageName" value="Site Page Name" />
 			<var name="siteName" value="Site Name" />
-			<var name="sitePageName" value="Site Page Name" />
-			<var name="siteScopeSelected" value="true" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelSites">
@@ -250,15 +241,13 @@
 			<var name="siteName" value="Site2 Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesPages">
-			<var name="page" value="Public Pages" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
-		<execute macro="SitePage#addCP">
-			<var name="page" value="Public Pages" />
+		<execute macro="Page#add">
+			<var name="pageName" value="Site Page Name" />
 			<var name="siteName" value="Site Name" />
-			<var name="sitePageName" value="Site Page Name" />
-			<var name="siteScopeSelected" value="true" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoSite">
@@ -381,22 +370,20 @@
 			<var name="portlet" value="Sites" />
 		</execute>
 
-		<execute macro="SitePage#addCP">
+		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Site Page 1" />
 			<var name="siteName" value="Site Name" />
-			<var name="sitePageName" value="Site Page 1" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelSites">
 			<var name="portlet" value="Sites" />
 		</execute>
 
-		<execute macro="SitePage#addCP">
+		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Site Page 2" />
 			<var name="siteName" value="Site Name" />
-			<var name="sitePageName" value="Site Page 2" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -489,10 +476,8 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute macro="WebContent#addPGViaWCD">
+		<execute macro="WebContent#addLocalizedPGViaWCD">
 			<var name="localizedBasicWebContent" value="Contenido web básico" />
-			<var name="localizedTitle" value="true" />
-			<var name="lowercaseLanguageCode" value="es" />
 			<var name="webContentContent" value="Web Content1 Content" />
 			<var name="webContentTitle" value="Web Content1 Title" />
 		</execute>
@@ -646,10 +631,10 @@
 			<var name="portlet" value="Sites" />
 		</execute>
 
-		<execute macro="SitePage#addCP">
+		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
+			<var name="pageName" value="Site Page Name" />
 			<var name="siteName" value="Site Name" />
-			<var name="sitePageName" value="Site Page Name" />
 		</execute>
 
 		<execute macro="User#logoutPG" />
@@ -705,10 +690,10 @@
 			<var name="portlet" value="Sites" />
 		</execute>
 
-		<execute macro="SitePage#addCP">
+		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
+			<var name="pageName" value="Site Page Name" />
 			<var name="siteName" value="Site Name" />
-			<var name="sitePageName" value="Site Page Name" />
 		</execute>
 
 		<execute macro="Page#gotoPG">

@@ -20,16 +20,21 @@ import com.liferay.gradle.plugins.extensions.LiferayExtension;
 import com.liferay.gradle.plugins.extensions.LiferayOSGiExtension;
 import com.liferay.gradle.plugins.tasks.DirectDeployTask;
 import com.liferay.gradle.plugins.util.FileUtil;
+import com.liferay.gradle.plugins.util.GradleUtil;
 import com.liferay.gradle.plugins.wsdd.builder.BuildWSDDTask;
 import com.liferay.gradle.plugins.wsdd.builder.WSDDBuilderPlugin;
-import com.liferay.gradle.util.GradleUtil;
 
 import groovy.lang.Closure;
 
 import java.io.File;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -75,6 +80,7 @@ public class LiferayOSGiPlugin extends LiferayJavaPlugin {
 		super.apply(project);
 
 		configureArchivesBaseName(project);
+		configureDescription(project);
 		configureSourceSetMain(project);
 		configureVersion(project);
 
@@ -132,7 +138,7 @@ public class LiferayOSGiPlugin extends LiferayJavaPlugin {
 
 		directDeployTask.setAppServerDeployDir(
 			directDeployTask.getTemporaryDir());
-		directDeployTask.setArgAppServerType("tomcat");
+		directDeployTask.setAppServerType("tomcat");
 
 		directDeployTask.setWebAppFile(
 			new Callable<File>() {
@@ -327,6 +333,17 @@ public class LiferayOSGiPlugin extends LiferayJavaPlugin {
 
 					jarBuilder.withBase(BundleUtils.getBase(project));
 
+					SourceSet sourceSet = GradleUtil.getSourceSet(
+						project, SourceSet.MAIN_SOURCE_SET_NAME);
+
+					SourceSetOutput sourceSetOutput = sourceSet.getOutput();
+
+					jarBuilder.withClasspath(
+						new File[] {
+							sourceSetOutput.getClassesDir(),
+							sourceSetOutput.getResourcesDir()
+						});
+
 					LiferayOSGiExtension liferayOSGiExtension =
 						GradleUtil.getExtension(
 							project, LiferayOSGiExtension.class);
@@ -368,6 +385,9 @@ public class LiferayOSGiPlugin extends LiferayJavaPlugin {
 
 					jarBuilder.withProperties(properties);
 
+					jarBuilder.withName(
+						properties.get(Constants.BUNDLE_SYMBOLICNAME));
+					jarBuilder.withResources(new File[0]);
 					jarBuilder.withSourcepath(BundleUtils.getSources(project));
 					jarBuilder.withTrace(bundleExtension.isTrace());
 					jarBuilder.withVersion(BundleUtils.getVersion(project));
@@ -496,6 +516,13 @@ public class LiferayOSGiPlugin extends LiferayJavaPlugin {
 		}
 	}
 
+	protected void configureDescription(Project project) {
+		String bundleName = getBundleInstruction(
+			project, Constants.BUNDLE_NAME);
+
+		project.setDescription(bundleName);
+	}
+
 	protected void configureSourceSetMain(Project project) {
 		File docrootDir = project.file("docroot");
 
@@ -599,8 +626,7 @@ public class LiferayOSGiPlugin extends LiferayJavaPlugin {
 		BundleExtension bundleExtension = GradleUtil.getExtension(
 			project, BundleExtension.class);
 
-		bundleExtension.setJarBuilderFactory(
-			new LiferayJarBuilderFactory(project));
+		bundleExtension.setJarBuilderFactory(new LiferayJarBuilderFactory());
 	}
 
 	private static final Logger _logger = Logging.getLogger(
@@ -608,57 +634,72 @@ public class LiferayOSGiPlugin extends LiferayJavaPlugin {
 
 	private static class LiferayJarBuilder extends JarBuilder {
 
-		public void addClasspath(File file) {
-			try {
-				builder.addClasspath(file);
-			}
-			catch (Exception e) {
-				throw new GradleException(e.getMessage(), e);
-			}
-		}
-
 		@Override
 		public JarBuilder withClasspath(Object files) {
+			List<File> filesList = new ArrayList<>(
+				Arrays.asList((File[])files));
 
-			// Prevent JarBuilderFactoryDecorator from adding
-			// configurations.runtime.files.
+			Iterator<File> iterator = filesList.iterator();
 
-			return this;
+			while (iterator.hasNext()) {
+				File file = iterator.next();
+
+				if (_classpathFiles.contains(file) || !file.exists()) {
+					iterator.remove();
+
+					continue;
+				}
+
+				_classpathFiles.add(file);
+
+				if (_logger.isInfoEnabled()) {
+					_logger.info("CLASSPATH: {}", file.getAbsolutePath());
+				}
+			}
+
+			return super.withClasspath(
+				filesList.toArray(new File[filesList.size()]));
 		}
 
 		@Override
 		public JarBuilder withResources(Object files) {
+			List<File> filesList = new ArrayList<>(
+				Arrays.asList((File[])files));
 
-			// Prevent JarBuilderFactoryDecorator from adding
-			// sourceSets.main.output.classesDir/resourcesDir.
+			Iterator<File> iterator = filesList.iterator();
 
-			return this;
+			while (iterator.hasNext()) {
+				File file = iterator.next();
+
+				if (_resourceFiles.contains(file) || !file.exists()) {
+					iterator.remove();
+
+					continue;
+				}
+
+				_resourceFiles.add(file);
+
+				if (_logger.isInfoEnabled()) {
+					_logger.info("RESOURCE: {}", file.getAbsolutePath());
+				}
+			}
+
+			return super.withResources(
+				filesList.toArray(new File[filesList.size()]));
 		}
+
+		private final Set<File> _classpathFiles = new HashSet<>();
+		private final Set<File> _resourceFiles = new HashSet<>();
 
 	}
 
 	private static class LiferayJarBuilderFactory
 		implements Factory<JarBuilder> {
 
-		public LiferayJarBuilderFactory(Project project) {
-			_project = project;
-		}
-
 		@Override
 		public JarBuilder create() {
-			LiferayJarBuilder liferayJarBuilder = new LiferayJarBuilder();
-
-			SourceSet sourceSet = GradleUtil.getSourceSet(
-				_project, SourceSet.MAIN_SOURCE_SET_NAME);
-
-			SourceSetOutput sourceSetOutput = sourceSet.getOutput();
-
-			liferayJarBuilder.addClasspath(sourceSetOutput.getClassesDir());
-
-			return liferayJarBuilder;
+			return new LiferayJarBuilder();
 		}
-
-		private final Project _project;
 
 	}
 

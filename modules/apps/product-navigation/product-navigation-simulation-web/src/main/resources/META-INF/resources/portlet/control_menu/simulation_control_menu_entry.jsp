@@ -16,20 +16,21 @@
 
 <%@ include file="/portlet/init.jsp" %>
 
-<liferay-portlet:renderURL portletName="<%= ProductNavigationSimulationPortletKeys.PRODUCT_NAVIGATION_SIMULATION %>" var="simulationPanelURL" windowState="<%= LiferayWindowState.EXCLUSIVE.toString() %>">
-	<portlet:param name="mvcPath" value="/portlet/view.jsp" />
-</liferay-portlet:renderURL>
-
 <%
 Map<String, Object> data = new HashMap<String, Object>();
 
+PortletURL simulationPanelURL = PortletURLFactoryUtil.create(request, ProductNavigationSimulationPortletKeys.PRODUCT_NAVIGATION_SIMULATION, plid, PortletRequest.RENDER_PHASE);
+
+simulationPanelURL.setWindowState(LiferayWindowState.EXCLUSIVE);
+
 data.put("panelURL", simulationPanelURL);
+
 data.put("qa-id", "simulation");
 %>
 
-<li class="hidden-xs simulation-menu-toggle">
+<div class="toolbar-group-content">
 	<liferay-ui:icon
-		cssClass="control-menu-icon"
+		cssClass="hidden-xs"
 		data="<%= data %>"
 		icon="simulation-menu-closed"
 		id="simulationPanel"
@@ -39,7 +40,7 @@ data.put("qa-id", "simulation");
 		message="simulation"
 		url="javascript:;"
 	/>
-</li>
+</div>
 
 <aui:script position="auto" use="liferay-control-menu">
 	var ControlMenu = Liferay.ControlMenu;
@@ -51,7 +52,7 @@ data.put("qa-id", "simulation");
 			layoutControl: '.page-preview-controls > a',
 			node: null,
 			showFn: A.bind('showPanel', ControlMenu),
-			tpl: '<div class="lfr-admin-panel lfr-simulation-panel product-menu" id="{0}" />',
+			tpl: '<div class="lfr-admin-panel lfr-simulation-panel product-menu sidebar-inverse" id="{0}" />',
 			trigger: A.one('#<portlet:namespace />simulationPanel')
 		}
 	);

@@ -4,14 +4,7 @@
 	<var name="siteName" value="Test Site Name" />
 
 	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		<execute macro="TestCase#setUpPortalInstance" />
 
 		<execute macro="User#firstLoginPG" />
 
@@ -27,10 +20,11 @@
 			<var name="portlet" value="Sites" />
 		</execute>
 
-		<execute macro="SitePage#addCP">
+		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
+			<var name="pageName" value="ADT Test Page" />
 			<var name="siteName" value="${siteName}" />
-			<var name="sitePageName" value="ADT Test Page" />
+			<var name="siteURL" value="true" />
 		</execute>
 	</set-up>
 
@@ -175,7 +169,7 @@
 		</execute>
 
 		<execute macro="ProductMenu#gotoSitesPublishingTools">
-			<var name="portlet" value="Staging Processes" />
+			<var name="portlet" value="Staging" />
 		</execute>
 
 		<execute macro="Staging#activateStagingCP">
@@ -336,7 +330,7 @@
 		</execute>
 
 		<execute macro="ProductMenu#gotoSitesPublishingTools">
-			<var name="portlet" value="Staging Processes" />
+			<var name="portlet" value="Staging" />
 		</execute>
 
 		<execute macro="Staging#activateStagingCP">
@@ -419,7 +413,7 @@
 		</execute>
 
 		<execute macro="ProductMenu#gotoSitesPublishingTools">
-			<var name="portlet" value="Staging Processes" />
+			<var name="portlet" value="Staging" />
 		</execute>
 
 		<execute macro="Staging#activateStagingCP">
@@ -550,7 +544,7 @@
 		</execute>
 
 		<execute macro="ProductMenu#gotoSitesPublishingTools">
-			<var name="portlet" value="Staging Processes" />
+			<var name="portlet" value="Staging" />
 		</execute>
 
 		<execute macro="Staging#activateStagingCP">
@@ -578,7 +572,7 @@
 			<var name="page" value="Public Pages" />
 		</execute>
 
-		<execute macro="SitePage#addChildCP">
+		<execute macro="Page#addChild">
 			<var name="page" value="Public Pages" />
 			<var name="siteChildPageName" value="ADT Child Page Name" />
 			<var name="siteName" value="${siteName}" />
@@ -586,20 +580,24 @@
 			<var name="siteScopeSelected" value="true" />
 		</execute>
 
-		<execute macro="Page#addPG">
-			<var name="pageName" value="ADT Test Page 2" />
-			<var name="pageStaging" value="true" />
-			<var name="siteName" value="${siteName}" />
-			<var name="siteScopeName" value="${siteName}" />
-			<var name="siteURL" value="true" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
+			<var name="pageName" value="ADT Test Page 2" />
+			<var name="pageStaging" value="true" />
+			<var name="siteName" value="Test Site Name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
+		</execute>
+
+		<execute macro="Page#add">
 			<var name="pageName" value="ADT Test Page 3" />
 			<var name="pageStaging" value="true" />
-			<var name="siteName" value="${siteName}" />
-			<var name="siteScopeName" value="${siteName}" />
-			<var name="siteURL" value="true" />
+			<var name="siteName" value="Test Site Name" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -671,7 +669,7 @@
 		</execute>
 
 		<execute macro="ProductMenu#gotoSitesPublishingTools">
-			<var name="portlet" value="Staging Processes" />
+			<var name="portlet" value="Staging" />
 		</execute>
 
 		<execute macro="Staging#activateStagingCP">
@@ -696,11 +694,8 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Blogs Test Page" />
-			<var name="pageStaging" value="true" />
-			<var name="siteName" value="${siteName}" />
-			<var name="siteURL" value="true" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -836,7 +831,7 @@
 		</execute>
 
 		<execute macro="ProductMenu#gotoSitesPublishingTools">
-			<var name="portlet" value="Staging Processes" />
+			<var name="portlet" value="Staging" />
 		</execute>
 
 		<execute macro="Staging#activateStagingCP">

@@ -3,14 +3,7 @@
 	<property name="testray.main.component.name" value="Clustering" />
 
 	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		<execute macro="TestCase#setUpPortalInstance" />
 
 		<execute macro="User#firstLoginPG" />
 	</set-up>
@@ -38,7 +31,7 @@
 			<var name="nodePort" value="8080" />
 		</execute>
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Test Page1" />
 		</execute>
 
@@ -89,8 +82,11 @@
 			<var name="entryTitle" value="Blogs Entry1 Title" />
 		</execute>
 
-		<execute macro="Page#addPG">
+		<execute macro="Navigator#openNodePort">
 			<var name="nodePort" value="9080" />
+		</execute>
+
+		<execute macro="Page#add">
 			<var name="pageName" value="Test Page2" />
 		</execute>
 
@@ -197,7 +193,7 @@
 			<var name="nodePort" value="8080" />
 		</execute>
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
@@ -271,7 +267,7 @@
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesPublishingTools">
-			<var name="portlet" value="Staging Processes" />
+			<var name="portlet" value="Staging" />
 		</execute>
 
 		<execute macro="Staging#activateStagingCP">
@@ -284,7 +280,7 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="New Page Name" />
 			<var name="pageStaging" value="true" />
 			<var name="siteURL" value="true" />

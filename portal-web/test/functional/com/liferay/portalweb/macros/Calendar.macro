@@ -74,7 +74,9 @@
 	</command>
 
 	<command name="_viewPermissionsIframe">
-		<execute function="AssertTextEquals" locator1="CalendarPermissions#HEADER_TITLE" value1="${calendarName}" />
+		<var name="key_assetTitle" value="${calendarName}" />
+
+		<execute function="AssertTextEquals" locator1="Permissions#ASSET_TITLE" value1="${calendarName}" />
 
 		<execute function="SelectFrameTop" value1="relative=top" />
 	</command>
@@ -575,9 +577,15 @@
 		<var method="StringUtil#lowerCase('${key_roleName}')" name="key_roleName" />
 
 		<execute function="SelectFrame" locator1="Permissions#PERMISSIONS_IFRAME" />
-		<execute function="AssertTextEquals" locator1="Permissions#HEADER_TITLE" value1="${calendarName}" />
+
+		<var name="key_assetTitle" value="${calendarName}" />
+
+		<execute function="AssertTextEquals" locator1="Permissions#ASSET_TITLE" value1="${calendarName}" />
+
 		<execute function="Check" locator1="Permissions#EVENT_PERMISSIONS_VIEW_EVENT_DETAILS_CHECKBOX" value1="${roleName}" />
+
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+
 		<execute function="SelectFrame" value1="relative=top" />
 	</command>
 
@@ -593,6 +601,18 @@
 		<execute function="Pause" locator1="5000" />
 
 		<execute function="AssertConsoleTextNotPresent" value1="ClassNotFoundException" />
+	</command>
+
+	<command name="hideCurrentSiteCalendar">
+		<execute function="Click" locator1="Calendar#CURRENT_SITE_CALENDARS_CALENDAR_PRIMARY_COLOR_DEFAULT" />
+
+		<execute function="AssertElementPresent" locator1="Calendar#CURRENT_SITE_CALENDARS_CALENDAR_PRIMARY_COLOR_HIDDEN" />
+	</command>
+
+	<command name="hideMyCalendarsCalendar">
+		<execute function="Click" locator1="Calendar#MY_CALENDARS_CALENDAR_PRIMARY_COLOR_DEFAULT" />
+
+		<execute function="AssertElementPresent" locator1="Calendar#MY_CALENDARS_CALENDAR_PRIMARY_COLOR_HIDDEN" />
 	</command>
 
 	<command name="importCalendarFile">
@@ -655,9 +675,15 @@
 		<var method="StringUtil#lowerCase('${key_roleName}')" name="key_roleName" />
 
 		<execute function="SelectFrame" locator1="Permissions#PERMISSIONS_IFRAME" />
-		<execute function="AssertTextEquals" locator1="Permissions#HEADER_TITLE" value1="${calendarName}" />
+
+		<var name="key_assetTitle" value="${calendarName}" />
+
+		<execute function="AssertTextEquals" locator1="Permissions#ASSET_TITLE" value1="${calendarName}" />
+
 		<execute function="Uncheck" locator1="Permissions#EVENT_PERMISSIONS_VIEW_CHECKBOX" value1="${roleName}" />
+
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+
 		<execute function="SelectFrame" value1="relative=top" />
 	</command>
 
@@ -669,6 +695,18 @@
 
 	<command name="searchOtherCalendars">
 		<execute function="Type" locator1="Calendar#OTHER_CALENDARS_SEARCH" value1="${searchValue}" />
+	</command>
+
+	<command name="showCurrentSiteCalendar">
+		<execute function="Click" locator1="Calendar#CURRENT_SITE_CALENDARS_CALENDAR_PRIMARY_COLOR_HIDDEN" />
+
+		<execute function="AssertElementPresent" locator1="Calendar#CURRENT_SITE_CALENDARS_CALENDAR_PRIMARY_COLOR_DEFAULT" />
+	</command>
+
+	<command name="showMyCalendarsCalendar">
+		<execute function="Click" locator1="Calendar#MY_CALENDARS_CALENDAR_PRIMARY_COLOR_HIDDEN" />
+
+		<execute function="AssertElementPresent" locator1="Calendar#MY_CALENDARS_CALENDAR_PRIMARY_COLOR_DEFAULT" />
 	</command>
 
 	<command name="tearDown">
@@ -883,7 +921,7 @@
 			<var name="menuListOption" value="Add Event" />
 		</execute>
 
-		<execute macro="CalendarEvent#_selectEventIframe" />
+		<execute macro="CalendarEvent#selectEventIframe" />
 
 		<execute macro="CalendarEvent#_viewNewEventIframe" />
 

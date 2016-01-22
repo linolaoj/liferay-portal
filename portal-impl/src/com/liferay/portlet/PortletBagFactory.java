@@ -186,7 +186,7 @@ public class PortletBagFactory {
 			newPreferencesValidatorInstances(portlet, filter, properties);
 
 		ResourceBundleTracker resourceBundleTracker = new ResourceBundleTracker(
-			_classLoader, portlet);
+			portlet.getPortletId());
 
 		PortletBag portletBag = new PortletBagImpl(
 			portlet.getPortletId(), _servletContext, portletInstance,
@@ -745,7 +745,8 @@ public class PortletBagFactory {
 			stagedModelDataHandlerInstances =
 				ServiceTrackerCollections.openList(
 					(Class<StagedModelDataHandler<?>>)(Class<?>)
-					StagedModelDataHandler.class, filter, properties);
+						StagedModelDataHandler.class,
+					filter, properties);
 
 		List<String> stagedModelDataHandlerClasses =
 			portlet.getStagedModelDataHandlerClasses();

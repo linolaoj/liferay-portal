@@ -6,18 +6,11 @@
 	<var name="portletName" value="Documents and Media" />
 
 	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		<execute macro="TestCase#setUpPortalInstance" />
 
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -224,10 +217,6 @@
 
 		<execute macro="DMNavigator#gotoFolderPG">
 			<var name="dmFolderName" value="DM Folder Name" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoEditDocument">
-			<var name="dmDocumentTitle" value="DM Document Title" />
 		</execute>
 
 		<execute macro="DMDocument#editPG">

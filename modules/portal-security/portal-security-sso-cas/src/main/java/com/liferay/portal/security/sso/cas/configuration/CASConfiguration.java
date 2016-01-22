@@ -16,7 +16,7 @@ package com.liferay.portal.security.sso.cas.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * Defines the configuration property keys and sensible default values.
@@ -29,7 +29,9 @@ import com.liferay.configuration.admin.ConfigurationAdmin;
  *
  * @author Michael C. Han
  */
-@ConfigurationAdmin(category = "platform")
+@ExtendedObjectClassDefinition(
+	category = "platform", scope = ExtendedObjectClassDefinition.Scope.COMPANY
+)
 @Meta.OCD(
 	id = "com.liferay.portal.security.sso.cas.configuration.CASConfiguration",
 	localization = "content/Language", name ="%cas.configuration.name"

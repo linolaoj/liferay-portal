@@ -16,12 +16,12 @@ package com.liferay.portal.security.sso.facebook.connect.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Michael C. Han
  */
-@ConfigurationAdmin(category = "platform")
+@ExtendedObjectClassDefinition(category = "platform")
 @Meta.OCD(
 	id = "com.liferay.portal.security.sso.facebook.connect.configuration.FacebookConnectConfiguration",
 	localization = "content/Language",
@@ -47,7 +47,7 @@ public interface FacebookConnectConfiguration {
 	public String oauthAuthURL();
 
 	@Meta.AD(
-		deflt = "http://localhost:8080/c/facebook_connect/facebook_connect_oauth",
+		deflt = "http://localhost:8080/c/portal/facebook_connect_oauth",
 		required = false
 	)
 	public String oauthRedirectURL();

@@ -104,7 +104,7 @@
 	<command name="addDMMarketingBannerCP">
 		<var name="key_dmDocumentTitle" value="${dmDocumentTitle}" />
 
-		<execute function="Click#makeVisibleClickAt" locator1="Portlet#ICON_PLUS_SIGN" />
+		<execute function="Click" locator1="Button#PLUS" />
 		<execute function="AssertClick" locator1="MenuItem#MARKETING_BANNER" value1="Marketing Banner" />
 
 		<execute function="UploadCommonFile" locator1="TextInput#FILE" value1="${dmDocumentFile}" />
@@ -186,7 +186,7 @@
 	<command name="addDocumentTypePG">
 		<var name="key_dmDocumentTypeName" value="${dmDocumentTypeName}" />
 
-		<execute function="Click#makeVisibleClickAt" locator1="Portlet#ICON_PLUS_SIGN" />
+		<execute function="Click" locator1="Button#PLUS" />
 
 		<execute function="AssertClick" locator1="MenuItem#DOCUMENT_TYPE" value1="${dmDocumentTypeName}" />
 
@@ -331,17 +331,14 @@
 			<then>
 				<var name="key_categoryName" value="${categoryName}" />
 
-				<if>
-					<condition function="IsElementNotPresent#isNotVisible" locator1="AssetCategorization#TAGS_FIELD" />
-					<then>
-						<execute function="AssertClick" locator1="AssetCategorization#CATEGORIZATION_PANEL_COLLAPSED" value1="Categorization" />
-					</then>
-				</if>
+				<execute macro="Panel#expandPanel">
+					<var name="panelHeading" value="Categorization" />
+				</execute>
 
 				<execute function="AssertClick" locator1="Button#SELECT" value1="Select" />
 
 				<execute function="AssertClick" locator1="AssetCategorization#CATEGORIES_CATEGORY" value1="${categoryName}" />
-				<execute function="AssertClick" locator1="Button#CLOSE_IFRAME" value1="×" />
+				<execute function="Click" locator1="Icon#CLOSE" />
 
 				<execute function="AssertTextEquals" locator1="AssetCategorization#CATEGORY" value1="${categoryName}" />
 			</then>
@@ -485,13 +482,9 @@
 	</command>
 
 	<command name="addRelatedAssetPG">
-		<if>
-			<condition function="IsElementNotPresent" locator1="PGDocumentsandmediaAdddocument#RELATED_ASSETS_SELECT" />
-			<then>
-				<execute function="Click" locator1="AssetRelatedAssets#HEADER_COLLAPSED" />
-				<execute function="AssertElementPresent" locator1="AssetRelatedAssets#HEADER_EXPANDED" />
-			</then>
-		</if>
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Related Assets" />
+		</execute>
 
 		<var name="key_assetType" value="${assetType}" />
 
@@ -834,23 +827,6 @@
 	<command name="editCmd">
 		<if>
 			<not>
-				<contains string="${checkedOut}" substring="{checkedOut}" />
-			</not>
-			<then>
-				<if>
-					<equals arg1="${dmRepositoryName}" arg2="true" />
-					<then>
-						<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="You now have an indefinite lock on this document. No one else can edit this document until you unlock it. This lock will never expire." />
-					</then>
-					<else>
-						<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="You now have a lock on this document. No one else can edit this document until you unlock it. This lock will automatically expire in 1 day." />
-					</else>
-				</if>
-			</then>
-		</if>
-
-		<if>
-			<not>
 				<contains string="${dmDocumentFileEdit}" substring="{dmDocumentFileEdit}" />
 			</not>
 			<then>
@@ -975,22 +951,12 @@
 		</execute>
 
 		<execute macro="DMDocument#editCmd">
-			<var name="checkedOut" value="${checkedOut}" />
 			<var name="dmDocumentDescriptionEdit" value="${dmDocumentDescriptionEdit}" />
 			<var name="dmDocumentFileEdit" value="${dmDocumentFileEdit}" />
 			<var name="dmDocumentTitleEdit" value="${dmDocumentTitleEdit}" />
-			<var name="sharepointRepository" value="${sharepointRepository}" />
 		</execute>
 
-		<if>
-			<equals arg1="${checkedOut}" arg2="true" />
-			<then>
-				<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-			</then>
-			<else>
-				<execute function="AssertClick" locator1="Button#PUBLISH" value1="Publish" />
-			</else>
-		</if>
+		<execute function="Click" locator1="Button#PUBLISH" />
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 	</command>
@@ -1008,12 +974,16 @@
 	</command>
 
 	<command name="editPG">
+		<var name="key_dmDocumentTitle" value="${dmDocumentTitle}" />
+
+		<execute function="AssertClick" locator1="DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_TITLE" value1="${dmDocumentTitle}" />
+
+		<execute function="Click" locator1="Button#EDIT" />
+
 		<execute macro="DMDocument#editCmd">
-			<var name="checkedOut" value="${checkedOut}" />
 			<var name="dmDocumentDescriptionEdit" value="${dmDocumentDescriptionEdit}" />
 			<var name="dmDocumentFileEdit" value="${dmDocumentFileEdit}" />
 			<var name="dmDocumentTitleEdit" value="${dmDocumentTitleEdit}" />
-			<var name="sharepointRepository" value="${sharepointRepository}" />
 		</execute>
 
 		<execute function="AssertClick" locator1="Button#PUBLISH" value1="Publish" />
@@ -1508,10 +1478,17 @@
 		<execute function="AssertClick" locator1="MenuItem#PERMISSIONS" value1="Permissions" />
 
 		<execute function="SelectFrame" locator1="Permissions#PERMISSIONS_IFRAME" />
-		<execute function="AssertTextEquals" locator1="Permissions#HEADER_TITLE" value1="${dmDocumentTitle}" />
+
+		<var name="key_assetTitle" value="${dmDocumentTitle}" />
+
+		<execute function="AssertTextEquals" locator1="Permissions#ASSET_TITLE" value1="${dmDocumentTitle}" />
+
 		<execute function="Uncheck" locator1="Permissions#CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX" />
+
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+
 		<execute function="AssertTextEquals#assertPartialText" locator1="Permissions#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+
 		<execute function="SelectFrame" value1="relative=top" />
 	</command>
 
@@ -2009,7 +1986,10 @@
 		<execute function="AssertClick" locator1="MenuItem#PERMISSIONS" value1="Permissions" />
 
 		<execute function="SelectFrame" locator1="Permissions#PERMISSIONS_IFRAME" />
-		<execute function="AssertTextEquals" locator1="Permissions#HEADER_TITLE" value1="${dmDocumentTitle}" />
+
+		<var name="key_assetTitle" value="${dmDocumentTitle}" />
+
+		<execute function="AssertTextEquals" locator1="Permissions#ASSET_TITLE" value1="${dmDocumentTitle}" />
 
 		<if>
 			<equals arg1="${viewPermissionValue}" arg2="checked" />
@@ -2088,7 +2068,10 @@
 		<execute function="AssertClick" locator1="MenuItem#PERMISSIONS" value1="Permissions" />
 
 		<execute function="SelectFrame" locator1="Permissions#PERMISSIONS_IFRAME" />
-		<execute function="AssertTextEquals" locator1="Permissions#HEADER_TITLE" value1="${dmDocumentTitle}" />
+
+		<var name="key_assetTitle" value="${dmDocumentTitle}" />
+
+		<execute function="AssertTextEquals" locator1="Permissions#ASSET_TITLE" value1="${dmDocumentTitle}" />
 
 		<if>
 			<equals arg1="${viewPermissionValue}" arg2="checked" />
@@ -2159,7 +2142,7 @@
 	</command>
 
 	<command name="viewPG">
-		<execute function="AssertElementPresent" locator1="Icon#DISPLAY_STYLE_DESCRIPTIVE" />
+		<execute function="Click" locator1="Icon#DISPLAY_STYLE_DESCRIPTIVE" />
 
 		<var name="key_dmDocumentTitle" value="${dmDocumentTitle}" />
 

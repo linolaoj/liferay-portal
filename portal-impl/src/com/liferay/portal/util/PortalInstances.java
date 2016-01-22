@@ -35,8 +35,6 @@ import com.liferay.portal.model.User;
 import com.liferay.portal.model.VirtualHost;
 import com.liferay.portal.security.auth.CompanyThreadLocal;
 import com.liferay.portal.security.auth.PrincipalThreadLocal;
-import com.liferay.portal.security.exportimport.UserImporterUtil;
-import com.liferay.portal.security.ldap.LDAPSettingsUtil;
 import com.liferay.portal.service.CompanyLocalServiceUtil;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.LayoutSetLocalServiceUtil;
@@ -438,17 +436,6 @@ public class PortalInstances {
 				_log.error(e, e);
 			}
 
-			// LDAP import
-
-			try {
-				if (LDAPSettingsUtil.isImportOnStartup(companyId)) {
-					UserImporterUtil.importUsers(companyId);
-				}
-			}
-			catch (Exception e) {
-				_log.error(e, e);
-			}
-
 			// Process application startup events
 
 			if (_log.isDebugEnabled()) {
@@ -528,6 +515,16 @@ public class PortalInstances {
 	}
 
 	private void _removeCompanyId(long companyId) {
+		try {
+			EventsProcessorUtil.process(
+				PropsKeys.APPLICATION_SHUTDOWN_EVENTS,
+				PropsValues.APPLICATION_SHUTDOWN_EVENTS,
+				new String[] {String.valueOf(companyId)});
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+		}
+
 		_companyIds = ArrayUtil.remove(_companyIds, companyId);
 		_webIds = null;
 
