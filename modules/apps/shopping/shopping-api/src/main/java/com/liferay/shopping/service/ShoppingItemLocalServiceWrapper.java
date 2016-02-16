@@ -16,7 +16,7 @@ package com.liferay.shopping.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.service.ServiceWrapper;
+import com.liferay.portal.kernel.service.ServiceWrapper;
 
 /**
  * Provides a wrapper for {@link ShoppingItemLocalService}.
@@ -46,7 +46,7 @@ public class ShoppingItemLocalServiceWrapper implements ShoppingItemLocalService
 		java.lang.String largeImageURL, java.io.File largeImageFile,
 		java.util.List<com.liferay.shopping.model.ShoppingItemField> itemFields,
 		java.util.List<com.liferay.shopping.model.ShoppingItemPrice> itemPrices,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _shoppingItemLocalService.addItem(userId, groupId, categoryId,
 			sku, name, description, properties, fieldsQuantities,
@@ -66,7 +66,7 @@ public class ShoppingItemLocalServiceWrapper implements ShoppingItemLocalService
 
 	@Override
 	public void addItemResources(com.liferay.shopping.model.ShoppingItem item,
-		com.liferay.portal.service.permission.ModelPermissions modelPermissions)
+		com.liferay.portal.kernel.service.permission.ModelPermissions modelPermissions)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_shoppingItemLocalService.addItemResources(item, modelPermissions);
 	}
@@ -81,7 +81,7 @@ public class ShoppingItemLocalServiceWrapper implements ShoppingItemLocalService
 
 	@Override
 	public void addItemResources(long itemId,
-		com.liferay.portal.service.permission.ModelPermissions modelPermissions)
+		com.liferay.portal.kernel.service.permission.ModelPermissions modelPermissions)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_shoppingItemLocalService.addItemResources(itemId, modelPermissions);
 	}
@@ -132,8 +132,8 @@ public class ShoppingItemLocalServiceWrapper implements ShoppingItemLocalService
 	* @throws PortalException
 	*/
 	@Override
-	public com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
+	public com.liferay.portal.kernel.model.PersistedModel deletePersistedModel(
+		com.liferay.portal.kernel.model.PersistedModel persistedModel)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _shoppingItemLocalService.deletePersistedModel(persistedModel);
 	}
@@ -350,7 +350,7 @@ public class ShoppingItemLocalServiceWrapper implements ShoppingItemLocalService
 	}
 
 	@Override
-	public com.liferay.portal.model.PersistedModel getPersistedModel(
+	public com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
 		java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _shoppingItemLocalService.getPersistedModel(primaryKeyObj);
@@ -448,7 +448,7 @@ public class ShoppingItemLocalServiceWrapper implements ShoppingItemLocalService
 		java.lang.String largeImageURL, java.io.File largeImageFile,
 		java.util.List<com.liferay.shopping.model.ShoppingItemField> itemFields,
 		java.util.List<com.liferay.shopping.model.ShoppingItemPrice> itemPrices,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _shoppingItemLocalService.updateItem(userId, itemId, groupId,
 			categoryId, sku, name, description, properties, fieldsQuantities,

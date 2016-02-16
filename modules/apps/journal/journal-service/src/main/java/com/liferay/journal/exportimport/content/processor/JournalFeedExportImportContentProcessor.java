@@ -16,19 +16,19 @@ package com.liferay.journal.exportimport.content.processor;
 
 import com.liferay.exportimport.content.processor.ExportImportContentProcessor;
 import com.liferay.exportimport.content.processor.base.BaseTextExportImportContentProcessor;
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.journal.model.JournalFeed;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.StagedModel;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.StagedModel;
-import com.liferay.portal.service.GroupLocalService;
-import com.liferay.portal.service.LayoutLocalService;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.exportimport.lar.PortletDataContext;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

@@ -14,20 +14,20 @@
 
 package com.liferay.comment.web.notifications;
 
+import com.liferay.asset.kernel.model.AssetRenderer;
 import com.liferay.comment.web.constants.CommentPortletKeys;
+import com.liferay.message.boards.kernel.model.MBDiscussion;
+import com.liferay.message.boards.kernel.service.MBDiscussionLocalService;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.notifications.BaseModelUserNotificationHandler;
 import com.liferay.portal.kernel.notifications.UserNotificationDefinition;
 import com.liferay.portal.kernel.notifications.UserNotificationHandler;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.asset.model.AssetRenderer;
-import com.liferay.portlet.messageboards.model.MBDiscussion;
-import com.liferay.portlet.messageboards.service.MBDiscussionLocalService;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

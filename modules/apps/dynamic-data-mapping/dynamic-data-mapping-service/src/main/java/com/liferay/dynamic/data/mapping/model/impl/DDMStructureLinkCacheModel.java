@@ -18,9 +18,9 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.dynamic.data.mapping.model.DDMStructureLink;
 
+import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.model.CacheModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -98,9 +98,13 @@ public class DDMStructureLinkCacheModel implements CacheModel<DDMStructureLink>,
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		structureLinkId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		classNameId = objectInput.readLong();
+
 		classPK = objectInput.readLong();
+
 		structureId = objectInput.readLong();
 	}
 
@@ -108,9 +112,13 @@ public class DDMStructureLinkCacheModel implements CacheModel<DDMStructureLink>,
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(structureLinkId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(classNameId);
+
 		objectOutput.writeLong(classPK);
+
 		objectOutput.writeLong(structureId);
 	}
 

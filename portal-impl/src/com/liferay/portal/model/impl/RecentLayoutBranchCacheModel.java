@@ -16,11 +16,11 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.MVCCModel;
+import com.liferay.portal.kernel.model.RecentLayoutBranch;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
-import com.liferay.portal.model.RecentLayoutBranch;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -120,12 +120,19 @@ public class RecentLayoutBranchCacheModel implements CacheModel<RecentLayoutBran
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		mvccVersion = objectInput.readLong();
+
 		recentLayoutBranchId = objectInput.readLong();
+
 		groupId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userId = objectInput.readLong();
+
 		layoutBranchId = objectInput.readLong();
+
 		layoutSetBranchId = objectInput.readLong();
+
 		plid = objectInput.readLong();
 	}
 
@@ -133,12 +140,19 @@ public class RecentLayoutBranchCacheModel implements CacheModel<RecentLayoutBran
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(mvccVersion);
+
 		objectOutput.writeLong(recentLayoutBranchId);
+
 		objectOutput.writeLong(groupId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userId);
+
 		objectOutput.writeLong(layoutBranchId);
+
 		objectOutput.writeLong(layoutSetBranchId);
+
 		objectOutput.writeLong(plid);
 	}
 

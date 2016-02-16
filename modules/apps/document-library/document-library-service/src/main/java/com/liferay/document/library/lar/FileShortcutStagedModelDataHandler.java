@@ -14,6 +14,16 @@
 
 package com.liferay.document.library.lar;
 
+import com.liferay.document.library.kernel.model.DLFileShortcut;
+import com.liferay.document.library.kernel.model.DLFileShortcutConstants;
+import com.liferay.document.library.kernel.model.DLFolderConstants;
+import com.liferay.document.library.kernel.service.DLAppLocalService;
+import com.liferay.document.library.kernel.service.DLFileShortcutLocalService;
+import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandler;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
+import com.liferay.exportimport.kernel.lar.StagedModelModifiedDateComparator;
 import com.liferay.exportimport.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -22,23 +32,12 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileShortcut;
 import com.liferay.portal.kernel.repository.model.Folder;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.repository.liferayrepository.model.LiferayFileShortcut;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.documentlibrary.lar.FileEntryUtil;
-import com.liferay.portlet.documentlibrary.model.DLFileShortcut;
-import com.liferay.portlet.documentlibrary.model.DLFileShortcutConstants;
-import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
-import com.liferay.portlet.documentlibrary.service.DLAppLocalService;
-import com.liferay.portlet.documentlibrary.service.DLFileShortcutLocalService;
-import com.liferay.portlet.exportimport.lar.ExportImportPathUtil;
-import com.liferay.portlet.exportimport.lar.PortletDataContext;
-import com.liferay.portlet.exportimport.lar.StagedModelDataHandler;
-import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
-import com.liferay.portlet.exportimport.lar.StagedModelModifiedDateComparator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -151,9 +150,6 @@ public class FileShortcutStagedModelDataHandler
 		Element fileShortcutElement = portletDataContext.getExportDataElement(
 			fileShortcut);
 
-		fileShortcutElement.addAttribute(
-			"file-entry-uuid", fileEntry.getUuid());
-
 		portletDataContext.addClassedModel(
 			fileShortcutElement,
 			ExportImportPathUtil.getModelPath(fileShortcut), fileShortcut);
@@ -181,20 +177,22 @@ public class FileShortcutStagedModelDataHandler
 			groupId = folder.getRepositoryId();
 		}
 
-		Element fileShortcutElement =
-			portletDataContext.getImportDataStagedModelElement(fileShortcut);
+		Map<Long, Long> fileEntryIds =
+			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
+				FileEntry.class);
 
-		String fileEntryUuid = fileShortcutElement.attributeValue(
-			"file-entry-uuid");
+		long fileEntryId = MapUtil.getLong(
+			fileEntryIds, fileShortcut.getToFileEntryId(),
+			fileShortcut.getToFileEntryId());
 
-		FileEntry importedFileEntry = FileEntryUtil.fetchByUUID_R(
-			fileEntryUuid, groupId);
+		FileEntry importedFileEntry = null;
 
-		if (importedFileEntry == null) {
+		try {
+			importedFileEntry = _dlAppLocalService.getFileEntry(fileEntryId);
+		}
+		catch (PortalException pe) {
 			if (_log.isWarnEnabled()) {
-				_log.warn(
-					"Unable to fetch file entry {uuid=" + fileEntryUuid +
-						", groupId=" + groupId + "}");
+				_log.warn("Unable to fetch file entry " + fileEntryId);
 			}
 
 			return;

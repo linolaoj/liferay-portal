@@ -25,7 +25,7 @@ if (row != null) {
 	folder = (JournalFolder)row.getObject();
 }
 else {
-	folder = (JournalFolder)request.getAttribute("view_entries.jsp-folder");
+	folder = (JournalFolder)request.getAttribute("info_panel.jsp-folder");
 }
 
 boolean folderSelected = GetterUtil.getBoolean(request.getAttribute("view_entries.jsp-folderSelected"));
@@ -80,6 +80,7 @@ else {
 				url="<%= moveURL %>"
 			/>
 		</c:if>
+
 		<c:if test="<%= JournalFolderPermission.contains(permissionChecker, folder, ActionKeys.ADD_FOLDER) %>">
 			<portlet:renderURL var="addFolderURL">
 				<portlet:param name="mvcPath" value="/edit_folder.jsp" />
@@ -119,6 +120,7 @@ else {
 					url="<%= editURL %>"
 				/>
 			</c:if>
+
 			<c:if test="<%= JournalPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_FOLDER) %>">
 				<portlet:renderURL var="addFolderURL">
 					<portlet:param name="mvcPath" value="/edit_folder.jsp" />

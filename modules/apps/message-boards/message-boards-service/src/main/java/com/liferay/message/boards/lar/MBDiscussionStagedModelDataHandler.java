@@ -14,26 +14,26 @@
 
 package com.liferay.message.boards.lar;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
+import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandler;
+import com.liferay.exportimport.kernel.lar.StagedModelModifiedDateComparator;
 import com.liferay.exportimport.lar.BaseStagedModelDataHandler;
+import com.liferay.message.boards.kernel.exception.NoSuchDiscussionException;
+import com.liferay.message.boards.kernel.model.MBDiscussion;
+import com.liferay.message.boards.kernel.model.MBMessage;
+import com.liferay.message.boards.kernel.model.MBThread;
+import com.liferay.message.boards.kernel.service.MBDiscussionLocalService;
+import com.liferay.message.boards.kernel.service.MBMessageLocalService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.model.Layout;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.asset.model.AssetEntry;
-import com.liferay.portlet.asset.service.AssetEntryLocalService;
-import com.liferay.portlet.exportimport.lar.ExportImportPathUtil;
-import com.liferay.portlet.exportimport.lar.PortletDataContext;
-import com.liferay.portlet.exportimport.lar.StagedModelDataHandler;
-import com.liferay.portlet.exportimport.lar.StagedModelModifiedDateComparator;
-import com.liferay.portlet.messageboards.exception.NoSuchDiscussionException;
-import com.liferay.portlet.messageboards.model.MBDiscussion;
-import com.liferay.portlet.messageboards.model.MBMessage;
-import com.liferay.portlet.messageboards.model.MBThread;
-import com.liferay.portlet.messageboards.service.MBDiscussionLocalService;
-import com.liferay.portlet.messageboards.service.MBMessageLocalService;
 
 import java.util.List;
 import java.util.Map;

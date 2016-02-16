@@ -14,21 +14,29 @@
 
 package com.liferay.recent.documents.web.messaging;
 
+import aQute.bnd.annotation.metatype.Configurable;
+
+import com.liferay.document.library.kernel.service.DLFileRankLocalService;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
-import com.liferay.portal.kernel.messaging.MessageListener;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
 import com.liferay.portal.kernel.scheduler.TimeUnit;
 import com.liferay.portal.kernel.scheduler.TriggerFactory;
 import com.liferay.portal.kernel.scheduler.TriggerFactoryUtil;
-import com.liferay.portlet.documentlibrary.service.DLFileRankLocalService;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.Props;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.recent.documents.web.configuration.RecentDocumentsConfiguration;
 
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
@@ -37,19 +45,35 @@ import org.osgi.service.component.annotations.Reference;
  * @author Peter Fellwock
  */
 @Component(
-	immediate = true,
-	property = {"destination.name=" + DestinationNames.SCHEDULER_DISPATCH},
-	service = MessageListener.class
+	configurationPid = "com.liferay.recent.documents.web.configuration.RecentDocumentsConfiguration",
+	configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
+	service = RecentDocumentsMessageListener.class
 )
 public class RecentDocumentsMessageListener
 	extends BaseSchedulerEntryMessageListener {
 
 	@Activate
-	@Modified
 	protected void activate(Map<String, Object> properties) {
+		if (!GetterUtil.getBoolean(
+				_props.get(PropsKeys.DL_FILE_RANK_ENABLED))) {
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Skipping because the portal property " +
+						"\"dl.file.rank.enabled being\" is set to false");
+			}
+
+			return;
+		}
+
+		RecentDocumentsConfiguration recentDocumentsConfiguration =
+			Configurable.createConfigurable(
+				RecentDocumentsConfiguration.class, properties);
+
 		schedulerEntryImpl.setTrigger(
 			TriggerFactoryUtil.createTrigger(
-				getEventListenerClass(), getEventListenerClass(), 1,
+				getEventListenerClass(), getEventListenerClass(),
+				recentDocumentsConfiguration.checkFileRanksInterval(),
 				TimeUnit.MINUTE));
 
 		_schedulerEngineHelper.register(
@@ -66,11 +90,11 @@ public class RecentDocumentsMessageListener
 		_dLFileRankLocalService.checkFileRanks();
 	}
 
-	@Reference(unbind = "-")
-	protected void setDLFileRankLocalService(
-		DLFileRankLocalService dLFileRankLocalService) {
+	@Modified
+	protected void modified(Map<String, Object> properties) {
+		deactivate();
 
-		_dLFileRankLocalService = dLFileRankLocalService;
+		activate(properties);
 	}
 
 	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
@@ -79,17 +103,19 @@ public class RecentDocumentsMessageListener
 	}
 
 	@Reference(unbind = "-")
-	protected void setSchedulerEngineHelper(
-		SchedulerEngineHelper schedulerEngineHelper) {
-
-		_schedulerEngineHelper = schedulerEngineHelper;
-	}
-
-	@Reference(unbind = "-")
 	protected void setTriggerFactory(TriggerFactory triggerFactory) {
 	}
 
+	private static final Log _log = LogFactoryUtil.getLog(
+		RecentDocumentsMessageListener.class);
+
+	@Reference
 	private DLFileRankLocalService _dLFileRankLocalService;
+
+	@Reference
+	private Props _props;
+
+	@Reference
 	private SchedulerEngineHelper _schedulerEngineHelper;
 
 }

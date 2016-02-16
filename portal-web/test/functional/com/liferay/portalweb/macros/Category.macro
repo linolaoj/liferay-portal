@@ -221,7 +221,7 @@
 
 		<execute macro="Alert#viewRequestFailedToComplete" />
 
-		<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="You do not have the required permissions." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="You do not have the required permissions." />
 	</command>
 
 	<command name="editCategoryPropertyCP">
@@ -406,11 +406,15 @@
 
 		<execute function="Click" locator1="Categories#CATEGORY_ENTRY_LINK" />
 
-		<execute function="AssertTextEquals" locator1="Home#SITE_ADMINISTRATION_PORTLET_TITLE" value1="${categoryName}" />
+		<execute macro="SiteAdmin#viewPortletTitle">
+			<var name="portletTitle" value="${categoryName}" />
+		</execute>
 
 		<execute function="Click" locator1="Icon#BACK" />
 
-		<execute function="AssertTextEquals" locator1="Home#SITE_ADMINISTRATION_PORTLET_TITLE" value1="${vocabularyName}" />
+		<execute macro="SiteAdmin#viewPortletTitle">
+			<var name="portletTitle" value="${vocabularyName}" />
+		</execute>
 	</command>
 
 	<command name="viewRemoveFilterViaCategoriesNavigationPG">

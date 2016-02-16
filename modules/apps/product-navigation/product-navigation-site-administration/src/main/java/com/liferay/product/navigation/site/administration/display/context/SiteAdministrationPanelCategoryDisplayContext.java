@@ -14,34 +14,36 @@
 
 package com.liferay.product.navigation.site.administration.display.context;
 
+import com.liferay.application.list.GroupProvider;
 import com.liferay.application.list.PanelCategory;
 import com.liferay.application.list.constants.ApplicationListWebKeys;
 import com.liferay.application.list.constants.PanelCategoryKeys;
 import com.liferay.application.list.display.context.logic.PanelCategoryHelper;
-import com.liferay.application.list.util.LatentGroupManagerUtil;
+import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.portlet.PortletProvider;
-import com.liferay.portal.kernel.portlet.PortletProviderUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.Organization;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.Organization;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.UserLocalServiceUtil;
-import com.liferay.portal.service.permission.GroupPermissionUtil;
-import com.liferay.portal.service.permission.PortletPermissionUtil;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.exportimport.staging.StagingUtil;
 import com.liferay.product.navigation.product.menu.web.display.context.ProductMenuDisplayContext;
 import com.liferay.product.navigation.site.administration.application.list.SiteAdministrationPanelCategory;
+import com.liferay.product.navigation.site.administration.constants.SiteAdministrationWebKeys;
+import com.liferay.site.util.GroupURLProvider;
+import com.liferay.site.util.RecentGroupManager;
 
 import java.util.List;
 import java.util.ResourceBundle;
@@ -51,7 +53,6 @@ import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 /**
  * @author Julio Camarero
@@ -70,11 +71,17 @@ public class SiteAdministrationPanelCategoryDisplayContext {
 			_group = group;
 		}
 
+		_groupProvider = (GroupProvider)portletRequest.getAttribute(
+			ApplicationListWebKeys.GROUP_PROVIDER);
+		_groupURLProvider = (GroupURLProvider)portletRequest.getAttribute(
+			SiteAdministrationWebKeys.GROUP_URL_PROVIDER);
 		_panelCategory = (PanelCategory)_portletRequest.getAttribute(
 			ApplicationListWebKeys.PANEL_CATEGORY);
 		_panelCategoryHelper =
 			(PanelCategoryHelper)_portletRequest.getAttribute(
 				ApplicationListWebKeys.PANEL_CATEGORY_HELPER);
+		_recentGroupManager = (RecentGroupManager)portletRequest.getAttribute(
+			SiteAdministrationWebKeys.RECENT_GROUP_MANAGER);
 		_themeDisplay = (ThemeDisplay)_portletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 	}
@@ -84,17 +91,12 @@ public class SiteAdministrationPanelCategoryDisplayContext {
 			return _group;
 		}
 
-		_group = _themeDisplay.getScopeGroup();
+		_group = _groupProvider.getGroup(
+			PortalUtil.getHttpServletRequest(_portletRequest));
 
-		if (!_group.isControlPanel()) {
+		if (_group != null) {
 			updateLatentGroup(_group.getGroupId());
-
-			return _group;
 		}
-
-		HttpSession session = getSession();
-
-		_group = LatentGroupManagerUtil.getLatentGroup(session);
 
 		return _group;
 	}
@@ -141,19 +143,24 @@ public class SiteAdministrationPanelCategoryDisplayContext {
 
 		Group group = getGroup();
 
-		return getGroupURL(group);
+		return _groupURLProvider.getGroupURL(group, _portletRequest);
 	}
 
 	public String getGroupURL(boolean privateLayout) {
-		if (_groupURL != null) {
-			return _groupURL;
-		}
-
-		_groupURL = StringPool.BLANK;
-
 		Group group = getGroup();
 
-		return getGroupURL(group, privateLayout);
+		return _groupURLProvider.getGroupLayoutsURL(
+			group, privateLayout, _portletRequest);
+	}
+
+	public String getLiveGroupLabel() {
+		Group group = getGroup();
+
+		if (group.isStagedRemotely()) {
+			return "remote-live";
+		}
+
+		return "live";
 	}
 
 	public String getLiveGroupURL() {
@@ -165,20 +172,23 @@ public class SiteAdministrationPanelCategoryDisplayContext {
 
 		Group group = getGroup();
 
-		if (group.isStagingGroup()) {
-			if (group.isStagedRemotely()) {
-				_liveGroupURL = StagingUtil.buildRemoteURL(
-					group.getTypeSettingsProperties());
+		if (group.isStagedRemotely()) {
+			Layout layout = _themeDisplay.getLayout();
+
+			try {
+				_liveGroupURL = StagingUtil.getRemoteSiteURL(
+					group, layout.isPrivateLayout());
 			}
-			else {
-				Group liveGroup = StagingUtil.getLiveGroup(group.getGroupId());
+			catch (PortalException pe) {
+				_log.error(pe);
+			}
+		}
+		else if (group.isStagingGroup()) {
+			Group liveGroup = StagingUtil.getLiveGroup(group.getGroupId());
 
-				if (liveGroup != null) {
-					Layout layout = _themeDisplay.getLayout();
-
-					_liveGroupURL = getGroupURL(
-						liveGroup, layout.isPrivateLayout());
-				}
+			if (liveGroup != null) {
+				_liveGroupURL = _groupURLProvider.getGroupURL(
+					liveGroup, _portletRequest);
 			}
 		}
 
@@ -201,31 +211,6 @@ public class SiteAdministrationPanelCategoryDisplayContext {
 		_logoURL = group.getLogoURL(_themeDisplay, false);
 
 		return _logoURL;
-	}
-
-	public String getManageSitesURL() throws PortalException {
-		if (_manageSitesURL != null) {
-			return _manageSitesURL;
-		}
-
-		_manageSitesURL = StringPool.BLANK;
-
-		String portletId = PortletProviderUtil.getPortletId(
-			Group.class.getName(), PortletProvider.Action.MANAGE);
-
-		if (Validator.isNotNull(portletId) &&
-			PortletPermissionUtil.hasControlPanelAccessPermission(
-				_themeDisplay.getPermissionChecker(),
-				_themeDisplay.getScopeGroupId(), portletId)) {
-
-			PortletURL portletURL = PortletProviderUtil.getPortletURL(
-				_portletRequest, Group.class.getName(),
-				PortletProvider.Action.MANAGE);
-
-			_manageSitesURL = portletURL.toString();
-		}
-
-		return _manageSitesURL;
 	}
 
 	public List<Group> getMySites() throws PortalException {
@@ -288,10 +273,8 @@ public class SiteAdministrationPanelCategoryDisplayContext {
 				group.getGroupId());
 
 			if (stagingGroup != null) {
-				Layout layout = _themeDisplay.getLayout();
-
-				_stagingGroupURL = getGroupURL(
-					stagingGroup, layout.isPrivateLayout());
+				_stagingGroupURL = _groupURLProvider.getGroupURL(
+					stagingGroup, _portletRequest);
 			}
 		}
 
@@ -342,37 +325,6 @@ public class SiteAdministrationPanelCategoryDisplayContext {
 		}
 
 		return false;
-	}
-
-	public boolean isSelectedSite() {
-		if (_selectedSite != null) {
-			return _selectedSite.booleanValue();
-		}
-
-		_selectedSite = false;
-
-		Group group = getGroup();
-
-		if (group == null) {
-			return false;
-		}
-
-		Layout layout = _themeDisplay.getLayout();
-
-		if (layout != null) {
-			if (layout.getGroupId() == group.getGroupId()) {
-				_selectedSite = true;
-			}
-			else if (group.hasStagingGroup()) {
-				Group stagingGroup = group.getStagingGroup();
-
-				if (layout.getGroupId() == stagingGroup.getGroupId()) {
-					_selectedSite = true;
-				}
-			}
-		}
-
-		return _selectedSite;
 	}
 
 	public boolean isShowSiteAdministration() throws PortalException {
@@ -452,43 +404,9 @@ public class SiteAdministrationPanelCategoryDisplayContext {
 		return null;
 	}
 
-	protected String getGroupURL(Group group) {
-		String groupDisplayURL = group.getDisplayURL(_themeDisplay, false);
-
-		if (Validator.isNotNull(groupDisplayURL)) {
-			return groupDisplayURL;
-		}
-
-		groupDisplayURL = group.getDisplayURL(_themeDisplay, true);
-
-		if (Validator.isNotNull(groupDisplayURL)) {
-			return groupDisplayURL;
-		}
-
-		return getGroupAdministrationURL(group);
-	}
-
-	protected String getGroupURL(Group group, boolean privateLayout) {
-		String groupDisplayURL = group.getDisplayURL(
-			_themeDisplay, privateLayout);
-
-		if (Validator.isNotNull(groupDisplayURL)) {
-			return groupDisplayURL;
-		}
-
-		return getGroupAdministrationURL(group);
-	}
-
 	protected ResourceBundle getResourceBundle() {
 		return ResourceBundleUtil.getBundle(
 			"content.Language", _themeDisplay.getLocale(), getClass());
-	}
-
-	protected HttpSession getSession() {
-		HttpServletRequest request = PortalUtil.getOriginalServletRequest(
-			PortalUtil.getHttpServletRequest(_portletRequest));
-
-		return request.getSession();
 	}
 
 	protected boolean hasStagingPermission() throws PortalException {
@@ -521,29 +439,32 @@ public class SiteAdministrationPanelCategoryDisplayContext {
 			return;
 		}
 
-		HttpSession session = getSession();
+		HttpServletRequest request = PortalUtil.getHttpServletRequest(
+			_portletRequest);
 
-		Group latentGroup = LatentGroupManagerUtil.getLatentGroup(session);
+		_recentGroupManager.addRecentGroup(request, groupId);
 
-		if ((latentGroup == null) || (groupId != latentGroup.getGroupId())) {
-			LatentGroupManagerUtil.setLatentGroup(session, _group);
-		}
+		_groupProvider.setGroup(request, _group);
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		SiteAdministrationPanelCategoryDisplayContext.class);
 
 	private Boolean _collapsedPanel;
 	private Group _group;
 	private String _groupName;
+	private final GroupProvider _groupProvider;
 	private String _groupURL;
+	private final GroupURLProvider _groupURLProvider;
 	private String _liveGroupURL;
 	private String _logoURL;
-	private String _manageSitesURL;
 	private List<Group> _mySites;
 	private Integer _notificationsCount;
 	private final PanelCategory _panelCategory;
 	private final PanelCategoryHelper _panelCategoryHelper;
 	private final PortletRequest _portletRequest;
 	private final PortletResponse _portletResponse;
-	private Boolean _selectedSite;
+	private final RecentGroupManager _recentGroupManager;
 	private Boolean _showStagingInfo = null;
 	private String _stagingGroupURL;
 	private String _stagingLabel;

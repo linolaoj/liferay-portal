@@ -14,13 +14,21 @@
 
 package com.liferay.document.library.repository.cmis.internal.model;
 
+import com.liferay.document.library.kernel.exception.NoSuchFileEntryException;
+import com.liferay.document.library.kernel.exception.NoSuchFileVersionException;
+import com.liferay.document.library.kernel.model.DLFileEntryConstants;
+import com.liferay.document.library.kernel.service.DLAppHelperLocalServiceUtil;
+import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.document.library.repository.cmis.internal.CMISRepository;
+import com.liferay.exportimport.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lock.Lock;
 import com.liferay.portal.kernel.lock.LockManager;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.RepositoryEntry;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.Repository;
 import com.liferay.portal.kernel.repository.RepositoryException;
 import com.liferay.portal.kernel.repository.RepositoryProviderUtil;
@@ -32,21 +40,13 @@ import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.repository.model.RepositoryModelOperation;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.RepositoryEntryLocalServiceUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.RepositoryEntry;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.RepositoryEntryLocalServiceUtil;
-import com.liferay.portlet.documentlibrary.exception.NoSuchFileEntryException;
-import com.liferay.portlet.documentlibrary.exception.NoSuchFileVersionException;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryConstants;
-import com.liferay.portlet.documentlibrary.service.DLAppHelperLocalServiceUtil;
-import com.liferay.portlet.documentlibrary.util.DLUtil;
-import com.liferay.portlet.exportimport.lar.StagedModelType;
 
 import java.io.InputStream;
 import java.io.Serializable;

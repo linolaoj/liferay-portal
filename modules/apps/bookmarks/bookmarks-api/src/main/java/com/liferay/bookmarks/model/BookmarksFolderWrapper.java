@@ -16,10 +16,15 @@ package com.liferay.bookmarks.model;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+import com.liferay.expando.kernel.model.ExpandoBridge;
 
-import com.liferay.portlet.exportimport.lar.StagedModelType;
+import com.liferay.exportimport.kernel.lar.StagedModelType;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.Validator;
+
+import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -268,7 +273,7 @@ public class BookmarksFolderWrapper implements BookmarksFolder,
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _bookmarksFolder.getExpandoBridge();
 	}
 
@@ -359,7 +364,7 @@ public class BookmarksFolderWrapper implements BookmarksFolder,
 	}
 
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
+	public Serializable getPrimaryKeyObj() {
 		return _bookmarksFolder.getPrimaryKeyObj();
 	}
 
@@ -429,7 +434,7 @@ public class BookmarksFolderWrapper implements BookmarksFolder,
 	* @return the trash entry created when this bookmarks folder was moved to the Recycle Bin
 	*/
 	@Override
-	public com.liferay.portlet.trash.model.TrashEntry getTrashEntry()
+	public com.liferay.trash.kernel.model.TrashEntry getTrashEntry()
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _bookmarksFolder.getTrashEntry();
 	}
@@ -691,19 +696,17 @@ public class BookmarksFolderWrapper implements BookmarksFolder,
 
 	@Override
 	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
 		_bookmarksFolder.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_bookmarksFolder.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_bookmarksFolder.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -793,7 +796,7 @@ public class BookmarksFolderWrapper implements BookmarksFolder,
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_bookmarksFolder.setPrimaryKeyObj(primaryKeyObj);
 	}
 
@@ -908,7 +911,7 @@ public class BookmarksFolderWrapper implements BookmarksFolder,
 	}
 
 	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.bookmarks.model.BookmarksFolder> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.bookmarks.model.BookmarksFolder> toCacheModel() {
 		return _bookmarksFolder.toCacheModel();
 	}
 

@@ -14,22 +14,22 @@
 
 package com.liferay.exportimport.portlet.preferences.processor.capability;
 
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.kernel.lar.PortletDataException;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.portlet.preferences.processor.Capability;
-import com.liferay.portal.exception.NoSuchLayoutException;
+import com.liferay.portal.kernel.exception.NoSuchLayoutException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.service.GroupLocalService;
-import com.liferay.portal.service.LayoutLocalService;
-import com.liferay.portlet.exportimport.lar.PortletDataContext;
-import com.liferay.portlet.exportimport.lar.PortletDataException;
-import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
 
 import java.util.List;
 
@@ -94,7 +94,7 @@ public class ReferencedStagedModelImporterCapability implements Capability {
 						if (_log.isInfoEnabled()) {
 							StringBundler sb = new StringBundler(9);
 
-							sb.append("Uanble to export the layout scoped ");
+							sb.append("Unable to export the layout scoped ");
 							sb.append("element with class name ");
 							sb.append(className);
 							sb.append(" and class primary key ");

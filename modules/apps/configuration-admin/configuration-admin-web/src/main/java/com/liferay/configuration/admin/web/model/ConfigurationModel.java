@@ -14,31 +14,39 @@
 
 package com.liferay.configuration.admin.web.model;
 
+import static com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition.XML_NAMESPACE;
+
+import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition.Scope;
+import com.liferay.portal.configuration.metatype.definitions.ExtendedAttributeDefinition;
+import com.liferay.portal.configuration.metatype.definitions.ExtendedObjectClassDefinition;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
-import com.liferay.portal.metatype.definitions.ExtendedAttributeDefinition;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.osgi.service.cm.Configuration;
+import org.osgi.service.metatype.ObjectClassDefinition;
 
 /**
  * @author Raymond Augé
  */
-public class ConfigurationModel
-	implements
-		com.liferay.portal.metatype.definitions.ExtendedObjectClassDefinition {
+public class ConfigurationModel implements ExtendedObjectClassDefinition {
+
+	public static final String PROPERTY_KEY_COMPANY_ID = "companyId";
+
+	public static final String PROPERTY_VALUE_COMPANY_ID_DEFAULT = "0";
 
 	public ConfigurationModel(
-		com.liferay.portal.metatype.definitions.ExtendedObjectClassDefinition
-			extendedObjectClassDefinition,
+		ExtendedObjectClassDefinition extendedObjectClassDefinition,
 		Configuration configuration, String bundleLocation, boolean factory) {
 
 		_extendedObjectClassDefinition = extendedObjectClassDefinition;
@@ -49,7 +57,11 @@ public class ConfigurationModel
 
 	@Override
 	public ExtendedAttributeDefinition[] getAttributeDefinitions(int filter) {
-		return _extendedObjectClassDefinition.getAttributeDefinitions(filter);
+		ExtendedAttributeDefinition[] extendedAttributeDefinitions =
+			_extendedObjectClassDefinition.getAttributeDefinitions(filter);
+
+		return removeFactoryInstanceLabelAttribute(
+			extendedAttributeDefinitions);
 	}
 
 	public String getBundleLocation() {
@@ -59,7 +71,7 @@ public class ConfigurationModel
 	public String getCategory() {
 		Map<String, String> extensionAttributes =
 			_extendedObjectClassDefinition.getExtensionAttributes(
-				ExtendedObjectClassDefinition.XML_NAMESPACE);
+				XML_NAMESPACE);
 
 		return GetterUtil.get(extensionAttributes.get("category"), "other");
 	}
@@ -73,9 +85,25 @@ public class ConfigurationModel
 		return _extendedObjectClassDefinition.getDescription();
 	}
 
-	public com.liferay.portal.metatype.definitions.ExtendedObjectClassDefinition
-		getExtendedObjectClassDefinition() {
+	public ExtendedAttributeDefinition getExtendedAttributeDefinition(
+		String id) {
 
+		ExtendedAttributeDefinition[] extendedAttributeDefinitions =
+			_extendedObjectClassDefinition.getAttributeDefinitions(
+				ObjectClassDefinition.ALL);
+
+		for (ExtendedAttributeDefinition extendedAttributeDefinition :
+				extendedAttributeDefinitions) {
+
+			if (id.equals(extendedAttributeDefinition.getID())) {
+				return extendedAttributeDefinition;
+			}
+		}
+
+		return null;
+	}
+
+	public ExtendedObjectClassDefinition getExtendedObjectClassDefinition() {
 		return _extendedObjectClassDefinition;
 	}
 
@@ -113,27 +141,19 @@ public class ConfigurationModel
 	}
 
 	public String getLabel() {
-		String factoryInstanceLabelAttribute = getLabelAttribute();
-
-		if (Validator.isNull(factoryInstanceLabelAttribute)) {
-			return getName();
-		}
-
-		Dictionary<String, Object> properties = _configuration.getProperties();
-
-		Object value = properties.get(factoryInstanceLabelAttribute);
+		String value = getLabelAttributeValue();
 
 		if (value == null) {
 			return getName();
 		}
 
-		return String.valueOf(value);
+		return value;
 	}
 
 	public String getLabelAttribute() {
 		Map<String, String> extensionAttributes =
 			_extendedObjectClassDefinition.getExtensionAttributes(
-				ExtendedObjectClassDefinition.XML_NAMESPACE);
+				XML_NAMESPACE);
 
 		return GetterUtil.get(
 			extensionAttributes.get("factoryInstanceLabelAttribute"),
@@ -148,20 +168,89 @@ public class ConfigurationModel
 	public String getScope() {
 		Map<String, String> extensionAttributes =
 			_extendedObjectClassDefinition.getExtensionAttributes(
-				ExtendedObjectClassDefinition.XML_NAMESPACE);
+				XML_NAMESPACE);
 
 		return extensionAttributes.get("scope");
+	}
+
+	public boolean hasConfiguration() {
+		if (getConfiguration() == null) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public boolean isCompanyFactory() {
+		if (!isFactory()) {
+			return false;
+		}
+
+		if (Validator.equals(getScope(), Scope.COMPANY.toString()) &&
+			Validator.equals(getLabelAttribute(), PROPERTY_KEY_COMPANY_ID)) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	public boolean isFactory() {
 		return _factory;
 	}
 
+	protected String getLabelAttributeValue() {
+		String factoryInstanceLabelAttribute = getLabelAttribute();
+
+		String value = null;
+
+		if (Validator.isNotNull(factoryInstanceLabelAttribute)) {
+			Dictionary<String, Object> properties =
+				_configuration.getProperties();
+
+			Object valueObj = properties.get(factoryInstanceLabelAttribute);
+
+			if (valueObj instanceof Object[]) {
+				value = StringUtil.merge(
+					(Object[])valueObj, StringPool.COMMA_AND_SPACE);
+			}
+			else {
+				value = String.valueOf(valueObj);
+			}
+		}
+
+		return value;
+	}
+
+	protected ExtendedAttributeDefinition[] removeFactoryInstanceLabelAttribute(
+		ExtendedAttributeDefinition[] extendedAttributeDefinitions) {
+
+		if (!isCompanyFactory()) {
+			return extendedAttributeDefinitions;
+		}
+
+		List<ExtendedAttributeDefinition>
+			filteredExtendedAttributeDefinitionsList = new ArrayList<>();
+
+		for (ExtendedAttributeDefinition extendedAttributeDefinition :
+				extendedAttributeDefinitions) {
+
+			String attributeId = extendedAttributeDefinition.getID();
+
+			if (!attributeId.equals(getLabelAttribute())) {
+				filteredExtendedAttributeDefinitionsList.add(
+					extendedAttributeDefinition);
+			}
+		}
+
+		return filteredExtendedAttributeDefinitionsList.toArray(
+			new ExtendedAttributeDefinition[
+				filteredExtendedAttributeDefinitionsList.size()]);
+	}
+
 	private final String _bundleLocation;
 	private final Configuration _configuration;
-	private final
-		com.liferay.portal.metatype.definitions.ExtendedObjectClassDefinition
-			_extendedObjectClassDefinition;
+	private final ExtendedObjectClassDefinition _extendedObjectClassDefinition;
 	private final boolean _factory;
 
 }

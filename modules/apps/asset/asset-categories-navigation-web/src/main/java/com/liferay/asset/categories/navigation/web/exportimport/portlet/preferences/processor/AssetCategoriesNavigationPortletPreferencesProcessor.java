@@ -15,26 +15,28 @@
 package com.liferay.asset.categories.navigation.web.exportimport.portlet.preferences.processor;
 
 import com.liferay.asset.categories.navigation.web.constants.AssetCategoriesNavigationPortletKeys;
+import com.liferay.asset.kernel.model.AssetVocabulary;
+import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
+import com.liferay.asset.kernel.service.persistence.AssetVocabularyUtil;
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.kernel.lar.PortletDataException;
 import com.liferay.exportimport.portlet.preferences.processor.Capability;
 import com.liferay.exportimport.portlet.preferences.processor.ExportImportPortletPreferencesProcessor;
 import com.liferay.exportimport.portlet.preferences.processor.base.BaseExportImportPortletPreferencesProcessor;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Portlet;
+import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.PortletLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Portlet;
-import com.liferay.portal.service.CompanyLocalService;
-import com.liferay.portal.service.PortletLocalService;
-import com.liferay.portlet.asset.model.AssetVocabulary;
-import com.liferay.portlet.asset.service.AssetVocabularyLocalService;
-import com.liferay.portlet.asset.service.persistence.AssetVocabularyUtil;
 import com.liferay.portlet.display.template.exportimport.portlet.preferences.processor.PortletDisplayTemplateExportCapability;
 import com.liferay.portlet.display.template.exportimport.portlet.preferences.processor.PortletDisplayTemplateImportCapability;
-import com.liferay.portlet.exportimport.lar.PortletDataContext;
-import com.liferay.portlet.exportimport.lar.PortletDataException;
 
 import java.util.Enumeration;
 import java.util.List;
@@ -104,12 +106,13 @@ public class AssetCategoriesNavigationPortletPreferencesProcessor
 	}
 
 	@Override
-	protected String getExportPortletPreferencesUuid(
+	protected String getExportPortletPreferencesValue(
 			PortletDataContext portletDataContext, Portlet portlet,
 			String className, long primaryKeyLong)
 		throws Exception {
 
 		String uuid = null;
+		long groupId = 0;
 
 		Element rootElement = portletDataContext.getExportDataRootElement();
 
@@ -120,6 +123,7 @@ public class AssetCategoriesNavigationPortletPreferencesProcessor
 
 			if (assetVocabulary != null) {
 				uuid = assetVocabulary.getUuid();
+				groupId = assetVocabulary.getGroupId();
 
 				portletDataContext.addReferenceElement(
 					portlet, rootElement, assetVocabulary,
@@ -127,31 +131,46 @@ public class AssetCategoriesNavigationPortletPreferencesProcessor
 			}
 		}
 
-		return uuid;
+		if (Validator.isNull(uuid)) {
+			return null;
+		}
+
+		return StringUtil.merge(new Object[] {uuid, groupId}, StringPool.POUND);
 	}
 
 	@Override
-	protected Long getImportPortletPreferencesNewPrimaryKey(
+	protected Long getImportPortletPreferencesNewValue(
 			PortletDataContext portletDataContext, Class<?> clazz,
-			long companyGroupId, Map<Long, Long> primaryKeys, String uuid)
+			long companyGroupId, Map<Long, Long> primaryKeys,
+			String portletPreferencesOldValue)
 		throws Exception {
 
-		if (Validator.isNumber(uuid)) {
-			long oldPrimaryKey = GetterUtil.getLong(uuid);
+		if (Validator.isNumber(portletPreferencesOldValue)) {
+			long oldPrimaryKey = GetterUtil.getLong(portletPreferencesOldValue);
 
 			return MapUtil.getLong(primaryKeys, oldPrimaryKey, oldPrimaryKey);
 		}
 
 		String className = clazz.getName();
 
+		String[] oldValues = StringUtil.split(
+			portletPreferencesOldValue, StringPool.POUND);
+
+		String uuid = oldValues[0];
+		long groupId = portletDataContext.getScopeGroupId();
+
+		if (oldValues.length > 1) {
+			Map<Long, Long> groupIds =
+				(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
+					Group.class);
+
+			groupId = MapUtil.getLong(
+				groupIds, GetterUtil.getLong(oldValues[1]));
+		}
+
 		if (className.equals(AssetVocabulary.class.getName())) {
 			AssetVocabulary assetVocabulary = AssetVocabularyUtil.fetchByUUID_G(
-				uuid, portletDataContext.getScopeGroupId());
-
-			if (assetVocabulary == null) {
-				assetVocabulary = AssetVocabularyUtil.fetchByUUID_G(
-					uuid, companyGroupId);
-			}
+				uuid, groupId);
 
 			if (assetVocabulary != null) {
 				return assetVocabulary.getVocabularyId();

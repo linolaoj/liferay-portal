@@ -15,16 +15,14 @@
 package com.liferay.document.library.web.portlet.configuration.icon;
 
 import com.liferay.document.library.web.constants.DLPortletKeys;
-import com.liferay.portal.kernel.portlet.configuration.icon.BaseJSPPortletConfigurationIconFactory;
+import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIconFactory;
 import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIcon;
 import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIconFactory;
 
 import javax.portlet.PortletRequest;
-
-import javax.servlet.ServletContext;
+import javax.portlet.PortletResponse;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Sergio González
@@ -35,31 +33,18 @@ import org.osgi.service.component.annotations.Reference;
 	service = PortletConfigurationIconFactory.class
 )
 public class DocumentTypesPortletConfigurationIconFactory
-	extends BaseJSPPortletConfigurationIconFactory {
+	extends BasePortletConfigurationIconFactory {
 
 	@Override
-	public PortletConfigurationIcon create(PortletRequest portletRequest) {
-		return new DocumentTypesPortletConfigurationIcon(
-			getServletContext(), getJspPath(), portletRequest);
-	}
+	public PortletConfigurationIcon create(
+		PortletRequest portletRequest, PortletResponse portletResponse) {
 
-	@Override
-	public String getJspPath() {
-		return "/document_library/configuration/icon/document_types.jsp";
+		return new DocumentTypesPortletConfigurationIcon(portletRequest);
 	}
 
 	@Override
 	public double getWeight() {
 		return 101;
-	}
-
-	@Override
-	@Reference(
-		target = "(osgi.web.symbolicname=com.liferay.document.library.web)",
-		unbind = "-"
-	)
-	public void setServletContext(ServletContext servletContext) {
-		super.setServletContext(servletContext);
 	}
 
 }

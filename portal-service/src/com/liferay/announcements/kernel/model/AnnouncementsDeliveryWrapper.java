@@ -16,8 +16,13 @@ package com.liferay.announcements.kernel.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+
+import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -151,7 +156,7 @@ public class AnnouncementsDeliveryWrapper implements AnnouncementsDelivery,
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _announcementsDelivery.getExpandoBridge();
 	}
 
@@ -166,7 +171,7 @@ public class AnnouncementsDeliveryWrapper implements AnnouncementsDelivery,
 	}
 
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
+	public Serializable getPrimaryKeyObj() {
 		return _announcementsDelivery.getPrimaryKeyObj();
 	}
 
@@ -312,19 +317,17 @@ public class AnnouncementsDeliveryWrapper implements AnnouncementsDelivery,
 
 	@Override
 	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
 		_announcementsDelivery.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_announcementsDelivery.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_announcementsDelivery.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -344,7 +347,7 @@ public class AnnouncementsDeliveryWrapper implements AnnouncementsDelivery,
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_announcementsDelivery.setPrimaryKeyObj(primaryKeyObj);
 	}
 
@@ -399,7 +402,7 @@ public class AnnouncementsDeliveryWrapper implements AnnouncementsDelivery,
 	}
 
 	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.announcements.kernel.model.AnnouncementsDelivery> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.announcements.kernel.model.AnnouncementsDelivery> toCacheModel() {
 		return _announcementsDelivery.toCacheModel();
 	}
 

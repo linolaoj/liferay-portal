@@ -38,7 +38,7 @@ AUI.add(
 
 		var STR_DEVICES = 'devices';
 
-		var STR_ICON_ROTATE_90 = 'icon-rotate-90';
+		var STR_HIDE = 'hide';
 
 		var STR_INPUT = 'input';
 
@@ -89,8 +89,6 @@ AUI.add(
 						instance._eventHandles = [];
 
 						instance._dialogId = A.guid();
-
-						instance._closePanelButton = instance.byId('closeSimulationPanel');
 
 						instance._simulationDeviceNode = A.Node.create(Lang.sub(TPL_SIMULATION_DEVICE));
 
@@ -145,7 +143,6 @@ AUI.add(
 						);
 
 						eventHandles.push(
-							instance._closePanelButton.on(STR_CLICK, instance._closePanel, instance),
 							instance._simulationDeviceContainer.delegate(STR_CLICK, instance._onDeviceClick, SELECTOR_DEVICE_ITEM, instance),
 							resizeHandle
 						);
@@ -170,7 +167,9 @@ AUI.add(
 					_closePanel: function() {
 						var instance = this;
 
-						Liferay.ControlMenu.togglePanel('simulationPanel');
+						var simulationToggle = AUI.$('#simulationToggleId');
+
+						simulationToggle.sideNavigation('hide');
 					},
 
 					_normalizeDialogAttrs: function(device, rotation) {
@@ -244,7 +243,13 @@ AUI.add(
 								var icon = deviceItem.one('.icon');
 
 								if (icon) {
-									icon.toggleClass(STR_ICON_ROTATE_90);
+									icon.toggleClass(STR_HIDE);
+								}
+
+								var iconRotate = deviceItem.one('.icon-rotate');
+
+								if (iconRotate) {
+									iconRotate.toggleClass(STR_HIDE);
 								}
 							}
 
@@ -476,6 +481,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-dialog-iframe-deprecated', 'aui-event-input', 'aui-modal', 'liferay-control-menu', 'liferay-portlet-base', 'liferay-util-window', 'liferay-widget-size-animation-plugin']
+		requires: ['aui-dialog-iframe-deprecated', 'aui-event-input', 'aui-modal', 'liferay-portlet-base', 'liferay-product-navigation-control-menu', 'liferay-util-window', 'liferay-widget-size-animation-plugin']
 	}
 );

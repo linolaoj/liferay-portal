@@ -14,17 +14,14 @@
 
 package com.liferay.taglib.util;
 
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.portlet.PortletProvider;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.Portlet;
-import com.liferay.taglib.aui.ColumnTag;
-import com.liferay.taglib.aui.LayoutTag;
 import com.liferay.taglib.ui.AssetCategoriesSummaryTag;
 import com.liferay.taglib.ui.AssetLinksTag;
 import com.liferay.taglib.ui.AssetTagsSummaryTag;
 import com.liferay.taglib.ui.BreadcrumbTag;
 import com.liferay.taglib.ui.DiscussionTag;
-import com.liferay.taglib.ui.FlagsTag;
 import com.liferay.taglib.ui.IconTag;
 import com.liferay.taglib.ui.JournalArticleTag;
 import com.liferay.taglib.ui.MySitesTag;
@@ -120,11 +117,6 @@ public interface VelocityTaglib {
 
 	public void doAsURL(long doAsUserId) throws Exception;
 
-	public void flags(
-			String className, long classPK, String contentTitle, boolean label,
-			String message, long reportedUserId)
-		throws Exception;
-
 	public AssetCategoriesSummaryTag<?> getAssetCategoriesSummaryTag()
 		throws Exception;
 
@@ -134,17 +126,11 @@ public interface VelocityTaglib {
 
 	public BreadcrumbTag getBreadcrumbTag() throws Exception;
 
-	public ColumnTag getColumnTag() throws Exception;
-
 	public DiscussionTag getDiscussionTag() throws Exception;
-
-	public FlagsTag getFlagsTag() throws Exception;
 
 	public IconTag getIconTag() throws Exception;
 
 	public JournalArticleTag getJournalArticleTag() throws Exception;
-
-	public LayoutTag getLayoutTag() throws Exception;
 
 	public MySitesTag getMySitesTag() throws Exception;
 

@@ -19,41 +19,41 @@
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
 taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
 <%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
+page import="com.liferay.portal.kernel.model.ColorScheme" %><%@
+page import="com.liferay.portal.kernel.model.Plugin" %><%@
+page import="com.liferay.portal.kernel.model.PluginSetting" %><%@
+page import="com.liferay.portal.kernel.model.Portlet" %><%@
+page import="com.liferay.portal.kernel.model.ResourceConstants" %><%@
+page import="com.liferay.portal.kernel.model.Role" %><%@
+page import="com.liferay.portal.kernel.model.RoleConstants" %><%@
 page import="com.liferay.portal.kernel.plugin.PluginPackage" %><%@
 page import="com.liferay.portal.kernel.portlet.PortletProvider" %><%@
 page import="com.liferay.portal.kernel.portlet.PortletProviderUtil" %><%@
 page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.kernel.security.permission.ResourceActionsUtil" %><%@
+page import="com.liferay.portal.kernel.service.LayoutTemplateLocalServiceUtil" %><%@
+page import="com.liferay.portal.kernel.service.PluginSettingLocalServiceUtil" %><%@
+page import="com.liferay.portal.kernel.service.PortletLocalServiceUtil" %><%@
+page import="com.liferay.portal.kernel.service.ResourcePermissionLocalServiceUtil" %><%@
+page import="com.liferay.portal.kernel.service.RoleLocalServiceUtil" %><%@
+page import="com.liferay.portal.kernel.service.ThemeLocalServiceUtil" %><%@
 page import="com.liferay.portal.kernel.util.Constants" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.ListUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
+page import="com.liferay.portal.kernel.util.PortalUtil" %><%@
 page import="com.liferay.portal.kernel.util.StringPool" %><%@
 page import="com.liferay.portal.kernel.util.StringUtil" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
-page import="com.liferay.portal.model.ColorScheme" %><%@
-page import="com.liferay.portal.model.Plugin" %><%@
-page import="com.liferay.portal.model.PluginSetting" %><%@
-page import="com.liferay.portal.model.Portlet" %><%@
-page import="com.liferay.portal.model.ResourceConstants" %><%@
-page import="com.liferay.portal.model.Role" %><%@
-page import="com.liferay.portal.model.RoleConstants" %><%@
-page import="com.liferay.portal.service.LayoutTemplateLocalServiceUtil" %><%@
-page import="com.liferay.portal.service.PluginSettingLocalServiceUtil" %><%@
-page import="com.liferay.portal.service.PortletLocalServiceUtil" %><%@
-page import="com.liferay.portal.service.ResourcePermissionLocalServiceUtil" %><%@
-page import="com.liferay.portal.service.RoleLocalServiceUtil" %><%@
-page import="com.liferay.portal.service.ThemeLocalServiceUtil" %><%@
-page import="com.liferay.portal.util.PortalUtil" %><%@
-page import="com.liferay.portal.util.comparator.PortletTitleComparator" %><%@
-page import="com.liferay.portal.util.comparator.RoleRoleIdComparator" %><%@
-page import="com.liferay.portlet.PortletURLUtil" %><%@
+page import="com.liferay.portal.kernel.util.comparator.PortletTitleComparator" %><%@
+page import="com.liferay.portal.kernel.util.comparator.RoleRoleIdComparator" %><%@
 page import="com.liferay.roles.admin.kernel.util.RolesAdminUtil" %>
 
 <%@ page import="java.util.ArrayList" %><%@
@@ -61,14 +61,10 @@ page import="java.util.List" %>
 
 <%@ page import="javax.portlet.PortletURL" %>
 
+<liferay-frontend:defineObjects />
+
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />
-
-<%
-PortletURL currentURLObj = PortletURLUtil.getCurrent(liferayPortletRequest, liferayPortletResponse);
-
-String currentURL = currentURLObj.toString();
-%>
 
 <%@ include file="/init-ext.jsp" %>

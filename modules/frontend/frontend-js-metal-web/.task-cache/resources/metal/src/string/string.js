@@ -1,6 +1,6 @@
-'use strict';
-
 define("frontend-js-metal-web@1.0.0/metal/src/string/string", ['exports'], function (exports) {
+	'use strict';
+
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
@@ -11,7 +11,7 @@ define("frontend-js-metal-web@1.0.0/metal/src/string/string", ['exports'], funct
 		}
 	}
 
-	var string = (function () {
+	var string = function () {
 		function string() {
 			_classCallCheck(this, string);
 		}
@@ -36,7 +36,7 @@ define("frontend-js-metal-web@1.0.0/metal/src/string/string", ['exports'], funct
 		};
 
 		return string;
-	})();
+	}();
 
 	exports.default = string;
 });

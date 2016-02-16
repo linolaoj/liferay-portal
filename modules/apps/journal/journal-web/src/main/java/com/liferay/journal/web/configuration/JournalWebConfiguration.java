@@ -16,7 +16,7 @@ package com.liferay.journal.web.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
+import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Jürgen Kappler
@@ -27,6 +27,13 @@ import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 	localization = "content/Language", name = "%journal.web.configuration.name"
 )
 public interface JournalWebConfiguration {
+
+	@Meta.AD(
+		deflt = "false",
+		description = "%changeable.default.language.description",
+		name = "%changeable.default.language", required = false
+	)
+	public boolean changeableDefaultLanguage();
 
 	@Meta.AD(deflt = "15", required = false)
 	public int checkInterval();

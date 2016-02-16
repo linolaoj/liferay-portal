@@ -14,10 +14,10 @@
 
 package com.liferay.portal.kernel.security.auth;
 
+import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.model.Portlet;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
 import com.liferay.registry.ServiceReference;
@@ -198,7 +198,7 @@ public abstract class BaseAuthTokenWhitelist implements AuthTokenWhitelist {
 	protected final List<ServiceTracker<Object, Object>> serviceTrackers =
 		new ArrayList<>();
 
-	private class TokenWhitelistTrackerCustomizer
+	private static class TokenWhitelistTrackerCustomizer
 		implements ServiceTrackerCustomizer<Object, Object> {
 
 		public TokenWhitelistTrackerCustomizer(

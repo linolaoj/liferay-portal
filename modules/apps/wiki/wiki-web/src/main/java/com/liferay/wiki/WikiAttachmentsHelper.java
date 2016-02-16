@@ -14,20 +14,20 @@
 
 package com.liferay.wiki;
 
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.portal.kernel.model.TrashedModel;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.model.TrashedModel;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.documentlibrary.model.DLFileEntry;
-import com.liferay.portlet.trash.service.TrashEntryService;
-import com.liferay.portlet.trash.util.TrashUtil;
+import com.liferay.trash.kernel.service.TrashEntryService;
+import com.liferay.trash.kernel.util.TrashUtil;
 import com.liferay.wiki.service.WikiPageService;
 
 import java.io.InputStream;

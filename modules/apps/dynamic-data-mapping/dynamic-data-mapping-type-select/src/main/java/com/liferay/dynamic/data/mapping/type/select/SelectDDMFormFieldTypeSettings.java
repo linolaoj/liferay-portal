@@ -22,6 +22,7 @@ import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutPage;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.form.field.type.DefaultDDMFormFieldTypeSettings;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
 
 /**
  * @author Marcellus Tavares
@@ -78,7 +79,7 @@ public interface SelectDDMFormFieldTypeSettings
 
 	@DDMFormField(
 		label = "%choose-a-data-provider", type = "select",
-		visibilityExpression = "dataSourceType.equals(\"data-provider\")"
+		visibilityExpression = "equals(dataSourceType, \"data-provider\")"
 	)
 	public long ddmDataProviderInstanceId();
 
@@ -88,8 +89,12 @@ public interface SelectDDMFormFieldTypeSettings
 	@DDMFormField(
 		dataType = "ddm-options", label = "%options",
 		properties = {"showLabel=false"}, required = true, type = "options",
-		visibilityExpression = "dataSourceType.equals(\"manual\")"
+		visibilityExpression = "equals(dataSourceType, \"manual\")"
 	)
 	public DDMFormFieldOptions options();
+
+	@DDMFormField(visibilityExpression = "FALSE")
+	@Override
+	public DDMFormFieldValidation validation();
 
 }

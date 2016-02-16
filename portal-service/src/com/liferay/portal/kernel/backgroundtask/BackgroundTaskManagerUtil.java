@@ -15,9 +15,9 @@
 package com.liferay.portal.kernel.backgroundtask;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ProxyFactory;
-import com.liferay.portal.service.ServiceContext;
 
 import java.io.File;
 import java.io.Serializable;
@@ -107,6 +107,14 @@ public class BackgroundTaskManagerUtil {
 		_backgroundTaskManager.deleteGroupBackgroundTasks(groupId);
 	}
 
+	public static void deleteGroupBackgroundTasks(
+			long groupId, String name, String taskExecutorClassName)
+		throws PortalException {
+
+		_backgroundTaskManager.deleteGroupBackgroundTasks(
+			groupId, name, taskExecutorClassName);
+	}
+
 	public static BackgroundTask fetchBackgroundTask(long backgroundTaskId) {
 		return _backgroundTaskManager.fetchBackgroundTask(backgroundTaskId);
 	}
@@ -154,6 +162,16 @@ public class BackgroundTaskManagerUtil {
 	}
 
 	public static List<BackgroundTask> getBackgroundTasks(
+		long groupId, String taskExecutorClassName, boolean completed,
+		int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return _backgroundTaskManager.getBackgroundTasks(
+			groupId, taskExecutorClassName, completed, start, end,
+			orderByComparator);
+	}
+
+	public static List<BackgroundTask> getBackgroundTasks(
 		long groupId, String taskExecutorClassName, int status) {
 
 		return _backgroundTaskManager.getBackgroundTasks(
@@ -197,6 +215,24 @@ public class BackgroundTaskManagerUtil {
 
 		return _backgroundTaskManager.getBackgroundTasks(
 			groupId, taskExecutorClassNames, start, end, orderByComparator);
+	}
+
+	public static List<BackgroundTask> getBackgroundTasks(
+		long[] groupIds, String taskExecutorClassName, boolean completed,
+		int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return _backgroundTaskManager.getBackgroundTasks(
+			groupIds, taskExecutorClassName, completed, start, end,
+			orderByComparator);
+	}
+
+	public static List<BackgroundTask> getBackgroundTasks(
+		long[] groupIds, String taskExecutorClassName, int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return _backgroundTaskManager.getBackgroundTasks(
+			groupIds, taskExecutorClassName, start, end, orderByComparator);
 	}
 
 	public static List<BackgroundTask> getBackgroundTasks(
@@ -279,6 +315,20 @@ public class BackgroundTaskManagerUtil {
 
 		return _backgroundTaskManager.getBackgroundTasksCount(
 			groupId, taskExecutorClassNames, completed);
+	}
+
+	public static int getBackgroundTasksCount(
+		long[] groupIds, String taskExecutorClassName) {
+
+		return _backgroundTaskManager.getBackgroundTasksCount(
+			groupIds, taskExecutorClassName);
+	}
+
+	public static int getBackgroundTasksCount(
+		long[] groupIds, String taskExecutorClassName, boolean completed) {
+
+		return _backgroundTaskManager.getBackgroundTasksCount(
+			groupIds, taskExecutorClassName, completed);
 	}
 
 	public static int getBackgroundTasksCount(

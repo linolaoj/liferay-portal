@@ -21,11 +21,12 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.service.ServiceContext;
 
 import org.osgi.util.tracker.ServiceTracker;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,28 +50,28 @@ public class JournalArticleUtil {
 	 */
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#clearCache()
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
 		getPersistence().clearCache();
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#clearCache(com.liferay.portal.model.BaseModel)
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache(com.liferay.portal.kernel.model.BaseModel)
 	 */
 	public static void clearCache(JournalArticle journalArticle) {
 		getPersistence().clearCache(journalArticle);
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
 	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<JournalArticle> findWithDynamicQuery(
 		DynamicQuery dynamicQuery) {
@@ -78,7 +79,7 @@ public class JournalArticleUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<JournalArticle> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end) {
@@ -86,7 +87,7 @@ public class JournalArticleUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int, OrderByComparator)
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int, OrderByComparator)
 	 */
 	public static List<JournalArticle> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
@@ -97,14 +98,14 @@ public class JournalArticleUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#update(com.liferay.portal.kernel.model.BaseModel)
 	 */
 	public static JournalArticle update(JournalArticle journalArticle) {
 		return getPersistence().update(journalArticle);
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#update(com.liferay.portal.kernel.model.BaseModel, ServiceContext)
 	 */
 	public static JournalArticle update(JournalArticle journalArticle,
 		ServiceContext serviceContext) {
@@ -5228,8 +5229,7 @@ public class JournalArticleUtil {
 	* @param status the status
 	* @return the matching journal articles
 	*/
-	public static List<JournalArticle> findByLtD_S(java.util.Date displayDate,
-		int status) {
+	public static List<JournalArticle> findByLtD_S(Date displayDate, int status) {
 		return getPersistence().findByLtD_S(displayDate, status);
 	}
 
@@ -5246,7 +5246,7 @@ public class JournalArticleUtil {
 	* @param end the upper bound of the range of journal articles (not inclusive)
 	* @return the range of matching journal articles
 	*/
-	public static List<JournalArticle> findByLtD_S(java.util.Date displayDate,
+	public static List<JournalArticle> findByLtD_S(Date displayDate,
 		int status, int start, int end) {
 		return getPersistence().findByLtD_S(displayDate, status, start, end);
 	}
@@ -5265,7 +5265,7 @@ public class JournalArticleUtil {
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching journal articles
 	*/
-	public static List<JournalArticle> findByLtD_S(java.util.Date displayDate,
+	public static List<JournalArticle> findByLtD_S(Date displayDate,
 		int status, int start, int end,
 		OrderByComparator<JournalArticle> orderByComparator) {
 		return getPersistence()
@@ -5288,7 +5288,7 @@ public class JournalArticleUtil {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching journal articles
 	*/
-	public static List<JournalArticle> findByLtD_S(java.util.Date displayDate,
+	public static List<JournalArticle> findByLtD_S(Date displayDate,
 		int status, int start, int end,
 		OrderByComparator<JournalArticle> orderByComparator,
 		boolean retrieveFromCache) {
@@ -5306,7 +5306,7 @@ public class JournalArticleUtil {
 	* @return the first matching journal article
 	* @throws NoSuchArticleException if a matching journal article could not be found
 	*/
-	public static JournalArticle findByLtD_S_First(java.util.Date displayDate,
+	public static JournalArticle findByLtD_S_First(Date displayDate,
 		int status, OrderByComparator<JournalArticle> orderByComparator)
 		throws com.liferay.journal.exception.NoSuchArticleException {
 		return getPersistence()
@@ -5321,9 +5321,8 @@ public class JournalArticleUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching journal article, or <code>null</code> if a matching journal article could not be found
 	*/
-	public static JournalArticle fetchByLtD_S_First(
-		java.util.Date displayDate, int status,
-		OrderByComparator<JournalArticle> orderByComparator) {
+	public static JournalArticle fetchByLtD_S_First(Date displayDate,
+		int status, OrderByComparator<JournalArticle> orderByComparator) {
 		return getPersistence()
 				   .fetchByLtD_S_First(displayDate, status, orderByComparator);
 	}
@@ -5337,8 +5336,8 @@ public class JournalArticleUtil {
 	* @return the last matching journal article
 	* @throws NoSuchArticleException if a matching journal article could not be found
 	*/
-	public static JournalArticle findByLtD_S_Last(java.util.Date displayDate,
-		int status, OrderByComparator<JournalArticle> orderByComparator)
+	public static JournalArticle findByLtD_S_Last(Date displayDate, int status,
+		OrderByComparator<JournalArticle> orderByComparator)
 		throws com.liferay.journal.exception.NoSuchArticleException {
 		return getPersistence()
 				   .findByLtD_S_Last(displayDate, status, orderByComparator);
@@ -5352,7 +5351,7 @@ public class JournalArticleUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching journal article, or <code>null</code> if a matching journal article could not be found
 	*/
-	public static JournalArticle fetchByLtD_S_Last(java.util.Date displayDate,
+	public static JournalArticle fetchByLtD_S_Last(Date displayDate,
 		int status, OrderByComparator<JournalArticle> orderByComparator) {
 		return getPersistence()
 				   .fetchByLtD_S_Last(displayDate, status, orderByComparator);
@@ -5369,7 +5368,7 @@ public class JournalArticleUtil {
 	* @throws NoSuchArticleException if a journal article with the primary key could not be found
 	*/
 	public static JournalArticle[] findByLtD_S_PrevAndNext(long id,
-		java.util.Date displayDate, int status,
+		Date displayDate, int status,
 		OrderByComparator<JournalArticle> orderByComparator)
 		throws com.liferay.journal.exception.NoSuchArticleException {
 		return getPersistence()
@@ -5383,7 +5382,7 @@ public class JournalArticleUtil {
 	* @param displayDate the display date
 	* @param status the status
 	*/
-	public static void removeByLtD_S(java.util.Date displayDate, int status) {
+	public static void removeByLtD_S(Date displayDate, int status) {
 		getPersistence().removeByLtD_S(displayDate, status);
 	}
 
@@ -5394,7 +5393,7 @@ public class JournalArticleUtil {
 	* @param status the status
 	* @return the number of matching journal articles
 	*/
-	public static int countByLtD_S(java.util.Date displayDate, int status) {
+	public static int countByLtD_S(Date displayDate, int status) {
 		return getPersistence().countByLtD_S(displayDate, status);
 	}
 

@@ -255,7 +255,7 @@ if (portletTitleBasedNavigation) {
 									}
 									%>
 
-									<aui:input helpMessage="<%= webDavHelpMessage %>" name="webDavURL"  type="resource" value="<%= webDavURL %>" />
+									<aui:input helpMessage="<%= webDavHelpMessage %>" name="webDavURL" type="resource" value="<%= webDavURL %>" />
 								</div>
 							</c:if>
 						</c:if>
@@ -283,7 +283,7 @@ if (portletTitleBasedNavigation) {
 								}
 						%>
 
-								<liferay-ui:panel collapsible="<%= true %>" cssClass="metadata" extended="<%= true %>" id="documentLibraryMetadataPanel" persistState="<%= true %>" title="<%= HtmlUtil.escape(ddmStructure.getName(locale)) %>">
+								<liferay-ui:panel collapsible="<%= true %>" cssClass="metadata" extended="<%= true %>" id="documentLibraryMetadataPanel" markupView="lexicon" persistState="<%= true %>" title="<%= HtmlUtil.escape(ddmStructure.getName(locale)) %>">
 
 									<liferay-ddm:html
 										classNameId="<%= PortalUtil.getClassNameId(com.liferay.dynamic.data.mapping.model.DDMStructure.class) %>"
@@ -339,7 +339,7 @@ if (portletTitleBasedNavigation) {
 								String name = "metadata." + ddmStructure.getName(locale, true);
 					%>
 
-								<liferay-ui:panel collapsible="<%= true %>" cssClass="lfr-asset-metadata" id="documentLibraryAssetMetadataPanel" persistState="<%= true %>" title="<%= name %>">
+								<liferay-ui:panel collapsible="<%= true %>" cssClass="lfr-asset-metadata" id="documentLibraryAssetMetadataPanel" markupView="lexicon" persistState="<%= true %>" title="<%= name %>">
 
 									<liferay-ddm:html
 										classNameId="<%= PortalUtil.getClassNameId(com.liferay.dynamic.data.mapping.model.DDMStructure.class) %>"
@@ -426,17 +426,11 @@ if (portletTitleBasedNavigation) {
 
 					<%
 					String thumbnailSrc = DLUtil.getThumbnailSrc(fileEntry, fileVersion, themeDisplay);
-
-					if (layoutAssetEntry != null) {
-						AssetEntry incrementAssetEntry = AssetEntryServiceUtil.incrementViewCounter(layoutAssetEntry.getClassName(), fileEntry.getFileEntryId());
-
-						if (incrementAssetEntry != null) {
-							layoutAssetEntry = incrementAssetEntry;
-						}
-					}
 					%>
 
-					<img alt="<liferay-ui:message escapeAttribute="<%= true %>" key="thumbnail" />" class="thumbnail" src="<%= thumbnailSrc %>" style="<%= DLUtil.getThumbnailStyle(true, 0, 128, 128) %>" />
+					<c:if test="<%= Validator.isNotNull(thumbnailSrc) %>">
+						<img alt="<liferay-ui:message escapeAttribute="<%= true %>" key="thumbnail" />" class="thumbnail" src="<%= thumbnailSrc %>" style="<%= DLUtil.getThumbnailStyle(true, 0, 128, 128) %>" />
+					</c:if>
 				</span>
 
 				<span class="user-date">
@@ -462,6 +456,16 @@ if (portletTitleBasedNavigation) {
 						/>
 					</span>
 				</c:if>
+
+				<%
+				if (layoutAssetEntry != null) {
+					AssetEntry incrementAssetEntry = AssetEntryServiceUtil.incrementViewCounter(layoutAssetEntry.getClassName(), fileEntry.getFileEntryId());
+
+					if (incrementAssetEntry != null) {
+						layoutAssetEntry = incrementAssetEntry;
+					}
+				}
+				%>
 
 				<c:if test="<%= (layoutAssetEntry != null) && dlPortletInstanceSettings.isEnableRelatedAssets() && fileEntry.isSupportsSocial() %>">
 					<div class="entry-links">
@@ -511,16 +515,7 @@ if (portletTitleBasedNavigation) {
 			</c:if>
 
 			<c:if test="<%= PropsValues.DL_FILE_ENTRY_COMMENTS_ENABLED && showComments %>">
-				<liferay-ui:panel collapsible="<%= true %>" cssClass="lfr-document-library-comments" extended="<%= true %>" persistState="<%= true %>" title="comments">
-					<liferay-ui:discussion
-						className="<%= DLFileEntryConstants.getClassName() %>"
-						classPK="<%= fileEntryId %>"
-						formName="fm2"
-						ratingsEnabled="<%= dlPortletInstanceSettings.isEnableCommentRatings() %>"
-						redirect="<%= currentURL %>"
-						userId="<%= fileEntry.getUserId() %>"
-					/>
-				</liferay-ui:panel>
+				<liferay-util:include page="/document_library/file_entry_discussion.jsp" servletContext="<%= application %>" />
 			</c:if>
 		</div>
 	</div>

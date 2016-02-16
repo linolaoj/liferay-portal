@@ -18,10 +18,10 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.microblogs.model.MicroblogsEntry;
 
+import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -148,16 +148,23 @@ public class MicroblogsEntryCacheModel implements CacheModel<MicroblogsEntry>,
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		microblogsEntryId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userId = objectInput.readLong();
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
+
 		creatorClassNameId = objectInput.readLong();
+
 		creatorClassPK = objectInput.readLong();
 		content = objectInput.readUTF();
+
 		type = objectInput.readInt();
+
 		parentMicroblogsEntryId = objectInput.readLong();
+
 		socialRelationType = objectInput.readInt();
 	}
 
@@ -165,7 +172,9 @@ public class MicroblogsEntryCacheModel implements CacheModel<MicroblogsEntry>,
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(microblogsEntryId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
@@ -177,7 +186,9 @@ public class MicroblogsEntryCacheModel implements CacheModel<MicroblogsEntry>,
 
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
+
 		objectOutput.writeLong(creatorClassNameId);
+
 		objectOutput.writeLong(creatorClassPK);
 
 		if (content == null) {
@@ -188,7 +199,9 @@ public class MicroblogsEntryCacheModel implements CacheModel<MicroblogsEntry>,
 		}
 
 		objectOutput.writeInt(type);
+
 		objectOutput.writeLong(parentMicroblogsEntryId);
+
 		objectOutput.writeInt(socialRelationType);
 	}
 

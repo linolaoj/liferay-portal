@@ -16,12 +16,12 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.MVCCModel;
+import com.liferay.portal.kernel.model.OrgGroupRole;
+import com.liferay.portal.kernel.service.persistence.OrgGroupRolePK;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
-import com.liferay.portal.model.OrgGroupRole;
-import com.liferay.portal.service.persistence.OrgGroupRolePK;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -112,9 +112,13 @@ public class OrgGroupRoleCacheModel implements CacheModel<OrgGroupRole>,
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		mvccVersion = objectInput.readLong();
+
 		organizationId = objectInput.readLong();
+
 		groupId = objectInput.readLong();
+
 		roleId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
 
 		orgGroupRolePK = new OrgGroupRolePK(organizationId, groupId, roleId);
@@ -124,9 +128,13 @@ public class OrgGroupRoleCacheModel implements CacheModel<OrgGroupRole>,
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(mvccVersion);
+
 		objectOutput.writeLong(organizationId);
+
 		objectOutput.writeLong(groupId);
+
 		objectOutput.writeLong(roleId);
+
 		objectOutput.writeLong(companyId);
 	}
 

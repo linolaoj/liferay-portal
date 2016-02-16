@@ -37,8 +37,10 @@ teamSearchContainer.setTotal(teamsCount);
 %>
 
 <aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
+	<portlet:renderURL var="mainURL" />
+
 	<aui:nav cssClass="navbar-nav">
-		<aui:nav-item label="teams" selected="<%= true %>" />
+		<aui:nav-item href="<%= mainURL.toString() %>" label="teams" selected="<%= true %>" />
 	</aui:nav>
 
 	<c:if test="<%= (teamsCount > 0) || searchTerms.isSearch() %>">
@@ -112,7 +114,7 @@ teamSearchContainer.setTotal(teamsCount);
 		/>
 
 		<liferay-ui:search-container-row
-			className="com.liferay.portal.model.Team"
+			className="com.liferay.portal.kernel.model.Team"
 			cssClass="selectable"
 			escapedModel="<%= true %>"
 			keyProperty="teamId"

@@ -16,10 +16,10 @@ package com.liferay.service.access.policy.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import com.liferay.service.access.policy.model.SAPEntry;
 
@@ -164,14 +164,19 @@ public class SAPEntryCacheModel implements CacheModel<SAPEntry>, Externalizable 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		uuid = objectInput.readUTF();
+
 		sapEntryId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userId = objectInput.readLong();
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
 		allowedServiceSignatures = objectInput.readUTF();
+
 		defaultSAPEntry = objectInput.readBoolean();
+
 		enabled = objectInput.readBoolean();
 		name = objectInput.readUTF();
 		title = objectInput.readUTF();
@@ -188,7 +193,9 @@ public class SAPEntryCacheModel implements CacheModel<SAPEntry>, Externalizable 
 		}
 
 		objectOutput.writeLong(sapEntryId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
@@ -209,6 +216,7 @@ public class SAPEntryCacheModel implements CacheModel<SAPEntry>, Externalizable 
 		}
 
 		objectOutput.writeBoolean(defaultSAPEntry);
+
 		objectOutput.writeBoolean(enabled);
 
 		if (name == null) {

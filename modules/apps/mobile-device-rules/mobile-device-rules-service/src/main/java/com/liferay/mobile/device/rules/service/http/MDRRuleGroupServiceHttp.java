@@ -21,9 +21,9 @@ import com.liferay.mobile.device.rules.service.MDRRuleGroupServiceUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.HttpPrincipal;
+import com.liferay.portal.kernel.service.http.TunnelUtil;
 import com.liferay.portal.kernel.util.MethodHandler;
 import com.liferay.portal.kernel.util.MethodKey;
-import com.liferay.portal.service.http.TunnelUtil;
 
 /**
  * Provides the HTTP utility for the
@@ -59,7 +59,7 @@ public class MDRRuleGroupServiceHttp {
 		HttpPrincipal httpPrincipal, long groupId,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(MDRRuleGroupServiceUtil.class,
@@ -92,7 +92,7 @@ public class MDRRuleGroupServiceHttp {
 
 	public static com.liferay.mobile.device.rules.model.MDRRuleGroup copyRuleGroup(
 		HttpPrincipal httpPrincipal, long ruleGroupId, long groupId,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(MDRRuleGroupServiceUtil.class,
@@ -272,7 +272,7 @@ public class MDRRuleGroupServiceHttp {
 		HttpPrincipal httpPrincipal, long ruleGroupId,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(MDRRuleGroupServiceUtil.class,
@@ -306,11 +306,11 @@ public class MDRRuleGroupServiceHttp {
 	private static Log _log = LogFactoryUtil.getLog(MDRRuleGroupServiceHttp.class);
 	private static final Class<?>[] _addRuleGroupParameterTypes0 = new Class[] {
 			long.class, java.util.Map.class, java.util.Map.class,
-			com.liferay.portal.service.ServiceContext.class
+			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _copyRuleGroupParameterTypes1 = new Class[] {
 			long.class, long.class,
-			com.liferay.portal.service.ServiceContext.class
+			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _deleteRuleGroupParameterTypes2 = new Class[] {
 			long.class
@@ -329,6 +329,6 @@ public class MDRRuleGroupServiceHttp {
 		};
 	private static final Class<?>[] _updateRuleGroupParameterTypes7 = new Class[] {
 			long.class, java.util.Map.class, java.util.Map.class,
-			com.liferay.portal.service.ServiceContext.class
+			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 }

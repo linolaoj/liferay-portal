@@ -14,6 +14,19 @@
 
 package com.liferay.exportimport.resources.importer.util;
 
+import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetTag;
+import com.liferay.asset.kernel.service.AssetTagLocalServiceUtil;
+import com.liferay.blogs.kernel.model.BlogsEntry;
+import com.liferay.document.library.kernel.exception.DuplicateFileException;
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.model.DLFolder;
+import com.liferay.document.library.kernel.model.DLFolderConstants;
+import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil;
+import com.liferay.document.library.kernel.service.DLFolderLocalServiceUtil;
+import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.mapping.io.DDMFormXSDDeserializerUtil;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
@@ -39,11 +52,30 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.LayoutPrototype;
+import com.liferay.portal.kernel.model.LayoutSet;
+import com.liferay.portal.kernel.model.LayoutSetPrototype;
+import com.liferay.portal.kernel.model.LayoutTypePortlet;
+import com.liferay.portal.kernel.model.LayoutTypePortletConstants;
+import com.liferay.portal.kernel.model.PortletConstants;
+import com.liferay.portal.kernel.model.Theme;
+import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.SearchException;
+import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.service.LayoutPrototypeLocalServiceUtil;
+import com.liferay.portal.kernel.service.LayoutSetLocalServiceUtil;
+import com.liferay.portal.kernel.service.LayoutSetPrototypeLocalServiceUtil;
+import com.liferay.portal.kernel.service.RepositoryLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.service.ThemeLocalServiceUtil;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FileUtil;
@@ -51,6 +83,8 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -60,40 +94,6 @@ import com.liferay.portal.kernel.xml.Attribute;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.LayoutConstants;
-import com.liferay.portal.model.LayoutPrototype;
-import com.liferay.portal.model.LayoutSet;
-import com.liferay.portal.model.LayoutSetPrototype;
-import com.liferay.portal.model.LayoutTypePortlet;
-import com.liferay.portal.model.LayoutTypePortletConstants;
-import com.liferay.portal.model.PortletConstants;
-import com.liferay.portal.model.Theme;
-import com.liferay.portal.service.LayoutLocalServiceUtil;
-import com.liferay.portal.service.LayoutPrototypeLocalServiceUtil;
-import com.liferay.portal.service.LayoutSetLocalServiceUtil;
-import com.liferay.portal.service.LayoutSetPrototypeLocalServiceUtil;
-import com.liferay.portal.service.RepositoryLocalServiceUtil;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceContextThreadLocal;
-import com.liferay.portal.service.ThemeLocalServiceUtil;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portal.util.PortletKeys;
-import com.liferay.portlet.PortletPreferencesFactoryUtil;
-import com.liferay.portlet.asset.model.AssetCategory;
-import com.liferay.portlet.asset.model.AssetEntry;
-import com.liferay.portlet.asset.model.AssetTag;
-import com.liferay.portlet.asset.service.AssetTagLocalServiceUtil;
-import com.liferay.portlet.blogs.model.BlogsEntry;
-import com.liferay.portlet.documentlibrary.exception.DuplicateFileException;
-import com.liferay.portlet.documentlibrary.model.DLFileEntry;
-import com.liferay.portlet.documentlibrary.model.DLFolder;
-import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
-import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
-import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
-import com.liferay.portlet.documentlibrary.service.DLFolderLocalServiceUtil;
-import com.liferay.portlet.documentlibrary.util.DLUtil;
 import com.liferay.wiki.model.WikiPage;
 
 import java.io.BufferedInputStream;
@@ -483,12 +483,12 @@ public class FileSystemImporter extends BaseImporter {
 					getMap(name), null, ddmForm, ddmFormLayout, serviceContext);
 			}
 		}
-		catch (PortalException e) {
+		catch (PortalException pe) {
 			if (_log.isWarnEnabled()) {
-				_log.warn("Unable to import DDM structure " + fileName, e);
+				_log.warn("Unable to import DDM structure " + fileName, pe);
 			}
 
-			throw e;
+			throw pe;
 		}
 
 		_ddmStructures.add(ddmStructure.getStructureKey());
@@ -554,12 +554,12 @@ public class FileSystemImporter extends BaseImporter {
 					language, script, false, false, null, null, serviceContext);
 			}
 		}
-		catch (PortalException e) {
+		catch (PortalException pe) {
 			if (_log.isWarnEnabled()) {
-				_log.warn("Unable to import DDM template " + fileName, e);
+				_log.warn("Unable to import DDM template " + fileName, pe);
 			}
 
-			throw e;
+			throw pe;
 		}
 	}
 
@@ -650,12 +650,12 @@ public class FileSystemImporter extends BaseImporter {
 					null, serviceContext);
 			}
 		}
-		catch (PortalException e) {
+		catch (PortalException pe) {
 			if (_log.isWarnEnabled()) {
-				_log.warn("Unable to import DDM template " + fileName, e);
+				_log.warn("Unable to import DDM template " + fileName, pe);
 			}
 
-			throw e;
+			throw pe;
 		}
 
 		addJournalArticles(
@@ -741,12 +741,12 @@ public class FileSystemImporter extends BaseImporter {
 					previousVersion);
 			}
 		}
-		catch (PortalException e) {
+		catch (PortalException pe) {
 			if (_log.isWarnEnabled()) {
-				_log.warn("Unable to import DL file entry " + fileName, e);
+				_log.warn("Unable to import DL file entry " + fileName, pe);
 			}
 
-			throw e;
+			throw pe;
 		}
 
 		addPrimaryKey(DLFileEntry.class.getName(), fileEntry.getPrimaryKey());
@@ -912,12 +912,12 @@ public class FileSystemImporter extends BaseImporter {
 				StringPool.BLANK, new HashMap<String, Serializable>(),
 				serviceContext);
 		}
-		catch (PortalException e) {
+		catch (PortalException pe) {
 			if (_log.isWarnEnabled()) {
-				_log.warn("Unable to import journal article " + fileName, e);
+				_log.warn("Unable to import journal article " + fileName, pe);
 			}
 
-			throw e;
+			throw pe;
 		}
 
 		addPrimaryKey(
@@ -1106,6 +1106,10 @@ public class FileSystemImporter extends BaseImporter {
 
 		String portletId = layoutTypePortlet.addPortletId(
 			userId, rootPortletId, columnId, -1, false);
+
+		if (portletId == null) {
+			return;
+		}
 
 		JSONObject portletPreferencesJSONObject =
 			portletJSONObject.getJSONObject("portletPreferences");
@@ -1506,12 +1510,12 @@ public class FileSystemImporter extends BaseImporter {
 				try {
 					indexer.reindex(className, primaryKey);
 				}
-				catch (SearchException e) {
+				catch (SearchException se) {
 					if (_log.isWarnEnabled()) {
 						_log.warn(
 							"Cannot index entry: className=" + className +
 								", primaryKey=" + primaryKey,
-							e);
+							se);
 					}
 				}
 			}
@@ -1545,14 +1549,14 @@ public class FileSystemImporter extends BaseImporter {
 						JournalArticle.class.getName(),
 						journalArticle.getPrimaryKey());
 				}
-				catch (SearchException e) {
+				catch (SearchException se) {
 					if (_log.isWarnEnabled()) {
 						_log.warn(
 							"Cannot index entry: className=" +
 								JournalArticle.class.getName() +
 								", primaryKey=" +
 								journalArticle.getPrimaryKey(),
-							e);
+							se);
 					}
 				}
 			}
@@ -1787,7 +1791,7 @@ public class FileSystemImporter extends BaseImporter {
 
 		if (Validator.isNotNull(themeId)) {
 			LayoutSetLocalServiceUtil.updateLookAndFeel(
-				groupId, themeId, null, null, false);
+				groupId, themeId, null, null);
 		}
 	}
 

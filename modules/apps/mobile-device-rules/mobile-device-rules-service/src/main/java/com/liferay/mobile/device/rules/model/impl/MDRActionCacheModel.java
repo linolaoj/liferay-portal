@@ -18,10 +18,10 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.mobile.device.rules.model.MDRAction;
 
+import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -189,15 +189,22 @@ public class MDRActionCacheModel implements CacheModel<MDRAction>,
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		uuid = objectInput.readUTF();
+
 		actionId = objectInput.readLong();
+
 		groupId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userId = objectInput.readLong();
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
+
 		classNameId = objectInput.readLong();
+
 		classPK = objectInput.readLong();
+
 		ruleGroupInstanceId = objectInput.readLong();
 		name = objectInput.readUTF();
 		description = objectInput.readUTF();
@@ -217,8 +224,11 @@ public class MDRActionCacheModel implements CacheModel<MDRAction>,
 		}
 
 		objectOutput.writeLong(actionId);
+
 		objectOutput.writeLong(groupId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
@@ -230,8 +240,11 @@ public class MDRActionCacheModel implements CacheModel<MDRAction>,
 
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
+
 		objectOutput.writeLong(classNameId);
+
 		objectOutput.writeLong(classPK);
+
 		objectOutput.writeLong(ruleGroupInstanceId);
 
 		if (name == null) {

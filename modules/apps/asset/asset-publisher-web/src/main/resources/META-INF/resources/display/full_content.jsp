@@ -61,7 +61,7 @@ request.setAttribute("view.jsp-showIconLabel", true);
 	/>
 </c:if>
 
-<div class="asset-full-content <%= assetPublisherDisplayContext.isDefaultAssetPublisher() ? "default-asset-publisher" : StringPool.BLANK %> <%= assetPublisherDisplayContext.isShowAssetTitle() ? "show-asset-title" : "no-title" %>">
+<div class="asset-full-content clearfix <%= assetPublisherDisplayContext.isDefaultAssetPublisher() ? "default-asset-publisher" : StringPool.BLANK %> <%= assetPublisherDisplayContext.isShowAssetTitle() ? "show-asset-title" : "no-title" %>">
 	<c:if test="<%= !print %>">
 		<liferay-util:include page="/asset_actions.jsp" servletContext="<%= application %>" />
 	</c:if>
@@ -79,6 +79,7 @@ request.setAttribute("view.jsp-showIconLabel", true);
 					<%@ include file="/asset_export.jspf" %>
 				</div>
 			</c:if>
+
 			<c:if test="<%= assetPublisherDisplayContext.isShowAvailableLocales() && assetRenderer.isLocalizable() && !print %>">
 
 				<%
@@ -149,7 +150,7 @@ request.setAttribute("view.jsp-showIconLabel", true);
 
 		<c:if test="<%= assetPublisherDisplayContext.isEnableFlags() %>">
 			<div class="asset-flag">
-				<liferay-ui:flags
+				<liferay-flags:flags
 					className="<%= assetEntry.getClassName() %>"
 					classPK="<%= assetEntry.getClassPK() %>"
 					contentTitle="<%= title %>"
@@ -180,14 +181,16 @@ request.setAttribute("view.jsp-showIconLabel", true);
 		</c:if>
 
 		<c:if test="<%= assetPublisherDisplayContext.isEnableComments() && assetRenderer.isCommentable() %>">
-			<liferay-ui:discussion
-				className="<%= assetEntry.getClassName() %>"
-				classPK="<%= assetEntry.getClassPK() %>"
-				formName='<%= "fm" + assetEntry.getClassPK() %>'
-				ratingsEnabled="<%= assetPublisherDisplayContext.isEnableCommentRatings() %>"
-				redirect="<%= currentURL %>"
-				userId="<%= assetRenderer.getUserId() %>"
-			/>
+			<div class="col-md-12">
+				<liferay-ui:discussion
+					className="<%= assetEntry.getClassName() %>"
+					classPK="<%= assetEntry.getClassPK() %>"
+					formName='<%= "fm" + assetEntry.getClassPK() %>'
+					ratingsEnabled="<%= assetPublisherDisplayContext.isEnableCommentRatings() %>"
+					redirect="<%= currentURL %>"
+					userId="<%= assetRenderer.getUserId() %>"
+				/>
+			</div>
 		</c:if>
 	</div>
 

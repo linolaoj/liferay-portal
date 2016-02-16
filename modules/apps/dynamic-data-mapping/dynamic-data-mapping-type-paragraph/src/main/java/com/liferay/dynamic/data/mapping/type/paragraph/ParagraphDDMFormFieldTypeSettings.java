@@ -67,46 +67,42 @@ public interface ParagraphDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
 
 	@DDMFormField(
-		label = "%title",
-		properties = {
-			"placeholder=%enter-title", "setting.category=basic",
-			"setting.weight=4"
-		},
-		required = true, tip = "%enter-title", type = "key-value"
+		label = "%title", properties = {"placeholder=%enter-a-title"},
+		required = true, type = "key-value"
 	)
 	@Override
 	public LocalizedValue label();
 
-	@DDMFormField(visibilityExpression = "false")
+	@DDMFormField(visibilityExpression = "FALSE")
 	@Override
 	public LocalizedValue predefinedValue();
 
-	@DDMFormField(visibilityExpression = "false")
+	@DDMFormField(visibilityExpression = "FALSE")
 	@Override
 	public boolean repeatable();
 
-	@DDMFormField(visibilityExpression = "false")
+	@DDMFormField(visibilityExpression = "FALSE")
 	@Override
 	public boolean required();
 
-	@DDMFormField(visibilityExpression = "false")
+	@DDMFormField(visibilityExpression = "FALSE")
 	@Override
 	public boolean showLabel();
 
 	@DDMFormField(
 		dataType = "string", label = "%body-text",
-		properties = {"setting.category=basic", "displayStyle=multiline"},
-		required = true, tip = "%enter-body-text", type = "text"
+		properties = {"displayStyle=multiline", "placeholder=%enter-body-text"},
+		required = true, type = "text"
 	)
 	public String text();
 
-	@DDMFormField(visibilityExpression = "false")
+	@DDMFormField(visibilityExpression = "FALSE")
 	@Override
 	public LocalizedValue tip();
 
 	@DDMFormField(
 		dataType = "ddm-validation", type = "validation",
-		visibilityExpression = "false"
+		visibilityExpression = "FALSE"
 	)
 	@Override
 	public DDMFormFieldValidation validation();

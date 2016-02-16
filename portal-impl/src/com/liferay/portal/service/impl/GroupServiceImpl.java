@@ -14,43 +14,43 @@
 
 package com.liferay.portal.service.impl;
 
-import com.liferay.portal.exception.NoSuchGroupException;
+import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetTag;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.NoSuchGroupException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.Organization;
+import com.liferay.portal.kernel.model.Portlet;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserGroup;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.membershippolicy.SiteMembershipPolicyUtil;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.UserBag;
 import com.liferay.portal.kernel.security.permission.UserBagFactoryUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
+import com.liferay.portal.kernel.service.permission.PortalPermissionUtil;
+import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
+import com.liferay.portal.kernel.service.permission.RolePermissionUtil;
+import com.liferay.portal.kernel.service.permission.UserPermissionUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.UnicodeProperties;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.GroupConstants;
-import com.liferay.portal.model.Organization;
-import com.liferay.portal.model.Portlet;
-import com.liferay.portal.model.User;
-import com.liferay.portal.model.UserGroup;
-import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.base.GroupServiceBaseImpl;
-import com.liferay.portal.service.permission.GroupPermissionUtil;
-import com.liferay.portal.service.permission.PortalPermissionUtil;
-import com.liferay.portal.service.permission.PortletPermissionUtil;
-import com.liferay.portal.service.permission.RolePermissionUtil;
-import com.liferay.portal.service.permission.UserPermissionUtil;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.asset.model.AssetCategory;
-import com.liferay.portlet.asset.model.AssetTag;
-import com.liferay.portlet.expando.model.ExpandoBridge;
-import com.liferay.portlet.exportimport.staging.StagingUtil;
-import com.liferay.portlet.ratings.transformer.RatingsDataTransformerUtil;
+import com.liferay.ratings.kernel.transformer.RatingsDataTransformerUtil;
 
 import java.io.Serializable;
 
@@ -744,7 +744,7 @@ public class GroupServiceImpl extends GroupServiceBaseImpl {
 	 *         search, add entries having &quot;usersGroups&quot; and
 	 *         &quot;inherit&quot; as keys mapped to the the user's ID. For more
 	 *         information see {@link
-	 *         com.liferay.portal.service.persistence.GroupFinder}.
+	 *         com.liferay.portal.kernel.service.persistence.GroupFinder}.
 	 * @param  start the lower bound of the range of groups to return
 	 * @param  end the upper bound of the range of groups to return (not
 	 *         inclusive)
@@ -784,7 +784,7 @@ public class GroupServiceImpl extends GroupServiceBaseImpl {
 	 *         search, add entries having &quot;usersGroups&quot; and
 	 *         &quot;inherit&quot; as keys mapped to the the user's ID. For more
 	 *         information see {@link
-	 *         com.liferay.portal.service.persistence.GroupFinder}.
+	 *         com.liferay.portal.kernel.service.persistence.GroupFinder}.
 	 * @return the number of matching groups
 	 */
 	@Override

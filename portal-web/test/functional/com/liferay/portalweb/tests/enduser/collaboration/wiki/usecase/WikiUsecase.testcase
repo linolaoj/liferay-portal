@@ -13,18 +13,20 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="${pageName}" />
+		</execute>
+
+		<execute macro="Page#editPageLayoutColumn">
+			<var name="columnName" value="1_column" />
+		</execute>
+
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
 			<var name="portletName" value="${portletName}" />
-		</execute>
-
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
-			<var name="portletName" value="Wiki" />
 		</execute>
 	</set-up>
 
@@ -66,6 +68,14 @@
 			<var name="siteName" value="Site Name" />
 		</execute>
 
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="Staging Test Page" />
+		</execute>
+
+		<execute macro="Page#editPageLayoutColumn">
+			<var name="columnName" value="1_column" />
+		</execute>
+
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Staging Test Page" />
 			<var name="siteName" value="Site Name" />
@@ -73,12 +83,6 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Wiki" />
-		</execute>
-
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
 			<var name="portletName" value="Wiki" />
 		</execute>
 
@@ -101,7 +105,6 @@
 
 		<execute macro="WikiPage#addAttachmentViaPageEdit">
 			<var name="attachmentFileName" value="Document_1.jpg" />
-			<var name="panelHeading" value="Attachments" />
 			<var name="wikiPageTitle" value="Wiki Page Title" />
 		</execute>
 
@@ -146,63 +149,6 @@
 		<execute macro="WikiPage#viewAttachmentPG">
 			<var name="attachmentFileName" value="Document_1.jpg" />
 			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-	</command>
-
-	<command name="AddPageWithCustomContentHeading" priority="4">
-		<execute macro="WikiNavigator#gotoAllPagesPG" />
-
-		<execute function="Click#makeVisibleClickAt" locator1="Portlet#ICON_PLUS_SIGN" />
-
-		<execute macro="WikiEntry#addPageTitle">
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="WikiEntry#selectPageFormat">
-			<var name="pageFormat" value="Creole" />
-		</execute>
-
-		<execute macro="CKEditor#selectHeading">
-			<var name="format" value="Heading 1" />
-		</execute>
-
-		<execute macro="WikiEntry#addPageContent">
-			<var name="wikiPageContent" value="Page Content Body Header" />
-		</execute>
-
-		<execute macro="CKEditor#typeEnterKey" />
-
-		<execute macro="CKEditor#selectHeading">
-			<var name="format" value="Normal" />
-		</execute>
-
-		<execute macro="WikiEntry#addPageContent">
-			<var name="wikiPageContent" value="Page Content Body" />
-		</execute>
-
-		<execute macro="WikiEntry#publish" />
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoAllPagesPG" />
-
-		<execute macro="WikiTable#viewEntry">
-			<var name="draftStatus" value="Approved" />
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoEntryViaPGTable">
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="WikiPage#viewPageContentBodyHeader">
-			<var name="wikiPageContent" value="Page Content Body Header" />
-		</execute>
-
-		<execute macro="WikiPage#viewPageContentBody">
-			<var name="wikiPageContent" value="Page Content Body" />
 		</execute>
 	</command>
 

@@ -130,7 +130,7 @@
 </tr>
 <tr>
 	<td>ERROR_MESSAGE_ALERT_ERROR</td>
-	<td>//div[@class='portlet-content']/h3[contains(@class, 'alert-danger')]</td>
+	<td>//section[@id='content']/h3[contains(@class, 'alert-danger')] | //div[@class='portlet-content']/h3[contains(@class, 'alert-danger')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -592,7 +592,7 @@
 </tr>
 <tr>
 	<td>SITE_ADMINISTRATION_PORTLET_TITLE</td>
-	<td>//*[@data-qa-id='headerTitle']</td>
+	<td>//*[@data-qa-id='headerTitle' and contains(.,'${key_portletTitle}')]</td>
 	<td></td>
 </tr>
 <tr>

@@ -16,6 +16,10 @@ package com.liferay.portal.kernel.portlet;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.asset.kernel.model.AssetRendererFactory;
+import com.liferay.expando.kernel.model.CustomAttributesDisplay;
+import com.liferay.exportimport.kernel.lar.PortletDataHandler;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandler;
 import com.liferay.portal.kernel.atom.AtomCollectionAdapter;
 import com.liferay.portal.kernel.notifications.UserNotificationDefinition;
 import com.liferay.portal.kernel.notifications.UserNotificationHandler;
@@ -31,13 +35,8 @@ import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.webdav.WebDAVStorage;
 import com.liferay.portal.kernel.workflow.WorkflowHandler;
 import com.liferay.portal.kernel.xmlrpc.Method;
-import com.liferay.portlet.ControlPanelEntry;
-import com.liferay.portlet.asset.model.AssetRendererFactory;
-import com.liferay.portlet.expando.model.CustomAttributesDisplay;
-import com.liferay.portlet.exportimport.lar.PortletDataHandler;
-import com.liferay.portlet.exportimport.lar.StagedModelDataHandler;
-import com.liferay.portlet.social.model.SocialActivityInterpreter;
-import com.liferay.portlet.social.model.SocialRequestInterpreter;
+import com.liferay.social.kernel.model.SocialActivityInterpreter;
+import com.liferay.social.kernel.model.SocialRequestInterpreter;
 
 import java.util.List;
 import java.util.Locale;

@@ -15,6 +15,7 @@
 package com.liferay.wiki.social.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.document.library.kernel.model.DLFileEntryConstants;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.Sync;
@@ -22,13 +23,12 @@ import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryConstants;
-import com.liferay.portlet.social.model.SocialActivityConstants;
-import com.liferay.portlet.social.model.SocialActivityInterpreter;
 import com.liferay.portlet.social.test.BaseSocialActivityInterpreterTestCase;
-import com.liferay.portlet.trash.model.TrashEntry;
-import com.liferay.portlet.trash.service.TrashEntryLocalServiceUtil;
-import com.liferay.portlet.trash.util.TrashUtil;
+import com.liferay.social.kernel.model.SocialActivityConstants;
+import com.liferay.social.kernel.model.SocialActivityInterpreter;
+import com.liferay.trash.kernel.model.TrashEntry;
+import com.liferay.trash.kernel.service.TrashEntryLocalServiceUtil;
+import com.liferay.trash.kernel.util.TrashUtil;
 import com.liferay.wiki.constants.WikiPortletKeys;
 import com.liferay.wiki.model.WikiNode;
 import com.liferay.wiki.model.WikiPage;

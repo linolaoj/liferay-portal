@@ -14,12 +14,34 @@
 
 package com.liferay.portlet.configuration.web.portlet;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutTypePortlet;
+import com.liferay.portal.kernel.model.Portlet;
+import com.liferay.portal.kernel.model.PortletConstants;
+import com.liferay.portal.kernel.model.PortletPreferencesIds;
+import com.liferay.portal.kernel.model.PublicRenderParameter;
+import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
+import com.liferay.portal.kernel.portlet.PortletConfigFactoryUtil;
+import com.liferay.portal.kernel.portlet.PortletConfigurationLayoutUtil;
 import com.liferay.portal.kernel.portlet.PortletLayoutListener;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionPropagator;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.PermissionService;
+import com.liferay.portal.kernel.service.PortletLocalService;
+import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
+import com.liferay.portal.kernel.service.ResourceBlockLocalService;
+import com.liferay.portal.kernel.service.ResourceBlockService;
+import com.liferay.portal.kernel.service.ResourcePermissionService;
+import com.liferay.portal.kernel.service.permission.PortletPermission;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.settings.ArchivedSettings;
@@ -27,39 +49,23 @@ import com.liferay.portal.kernel.settings.ModifiableSettings;
 import com.liferay.portal.kernel.settings.PortletInstanceSettingsLocator;
 import com.liferay.portal.kernel.settings.Settings;
 import com.liferay.portal.kernel.settings.SettingsFactoryUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.AggregateResourceBundle;
 import com.liferay.portal.kernel.util.AutoResetThreadLocal;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Tuple;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.model.GroupConstants;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.LayoutTypePortlet;
-import com.liferay.portal.model.Portlet;
-import com.liferay.portal.model.PortletConstants;
-import com.liferay.portal.model.PortletPreferencesIds;
-import com.liferay.portal.model.PublicRenderParameter;
-import com.liferay.portal.service.GroupLocalService;
-import com.liferay.portal.service.LayoutLocalService;
-import com.liferay.portal.service.PortletLocalService;
-import com.liferay.portal.service.PortletPreferencesLocalService;
-import com.liferay.portal.service.ResourceBlockLocalService;
-import com.liferay.portal.service.ResourceBlockService;
-import com.liferay.portal.service.ResourcePermissionService;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.PortletConfigFactoryUtil;
 import com.liferay.portlet.PortletConfigImpl;
 import com.liferay.portlet.configuration.kernel.util.PortletConfigurationUtil;
-import com.liferay.portlet.configuration.web.upgrade.PortletConfigurationWebUpgrade;
 import com.liferay.portlet.portletconfiguration.action.ActionUtil;
 import com.liferay.portlet.portletconfiguration.util.PublicRenderParameterConfiguration;
 
@@ -101,7 +107,6 @@ import org.osgi.service.component.annotations.Reference;
 	property = {
 		"com.liferay.portlet.add-default-resource=true",
 		"com.liferay.portlet.css-class-wrapper=portlet-configuration",
-		"com.liferay.portlet.header-portlet-css=/css/main.css",
 		"com.liferay.portlet.private-request-attributes=false",
 		"com.liferay.portlet.private-session-attributes=false",
 		"com.liferay.portlet.render-weight=50",
@@ -118,7 +123,7 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class PortletConfigurationPortlet extends MVCPortlet {
 
-	public void deleteArchivedSetup(
+	public void deleteArchivedSetups(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
@@ -127,14 +132,25 @@ public class PortletConfigurationPortlet extends MVCPortlet {
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
+		String[] names = null;
+
 		String name = ParamUtil.getString(actionRequest, "name");
 
-		ArchivedSettings archivedSettings =
-			SettingsFactoryUtil.getPortletInstanceArchivedSettings(
-				themeDisplay.getSiteGroupId(), portlet.getRootPortletId(),
-				name);
+		if (Validator.isNotNull(name)) {
+			names = new String[] {name};
+		}
+		else {
+			names = ParamUtil.getStringValues(actionRequest, "rowIds");
+		}
 
-		archivedSettings.delete();
+		for (String curName : names) {
+			ArchivedSettings archivedSettings =
+				SettingsFactoryUtil.getPortletInstanceArchivedSettings(
+					themeDisplay.getSiteGroupId(), portlet.getRootPortletId(),
+					curName);
+
+			archivedSettings.delete();
+		}
 	}
 
 	public void editConfiguration(
@@ -537,14 +553,51 @@ public class PortletConfigurationPortlet extends MVCPortlet {
 			}
 		}
 
-		// Force update of layout modified date. See LPS-59246.
+		if (Validator.isNotNull(modelResource)) {
 
-		Portlet portlet = ActionUtil.getPortlet(actionRequest);
+			// Force update of layout modified date. See LPS-59246.
 
-		PortletPreferences portletPreferences =
-			ActionUtil.getLayoutPortletSetup(actionRequest, portlet);
+			Portlet portlet = ActionUtil.getPortlet(actionRequest);
 
-		portletPreferences.store();
+			PortletPreferences portletPreferences =
+				ActionUtil.getLayoutPortletSetup(actionRequest, portlet);
+
+			portletPreferences.store();
+		}
+	}
+
+	protected void checkEditPermissionsJSP(PortletRequest request)
+		throws PortalException {
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		String modelResource = ParamUtil.getString(request, "modelResource");
+
+		long resourceGroupId = ParamUtil.getLong(
+			request, "resourceGroupId", themeDisplay.getScopeGroupId());
+
+		if (Validator.isNotNull(modelResource)) {
+			String resourcePrimKey = ParamUtil.getString(
+				request, "resourcePrimKey");
+
+			_permissionService.checkPermission(
+				resourceGroupId, modelResource, resourcePrimKey);
+
+			return;
+		}
+
+		String portletResource = ParamUtil.getString(
+			request, "portletResource");
+
+		PermissionChecker permissionChecker =
+			themeDisplay.getPermissionChecker();
+
+		Layout layout = PortletConfigurationLayoutUtil.getLayout(themeDisplay);
+
+		_portletPermission.check(
+			permissionChecker, resourceGroupId, layout, portletResource,
+			ActionKeys.PERMISSIONS);
 	}
 
 	@Override
@@ -554,6 +607,14 @@ public class PortletConfigurationPortlet extends MVCPortlet {
 
 		try {
 			String mvcPath = renderRequest.getParameter("mvcPath");
+
+			if (mvcPath.equals("/edit_permissions.jsp")) {
+				checkEditPermissionsJSP(renderRequest);
+
+				super.doDispatch(renderRequest, renderResponse);
+
+				return;
+			}
 
 			Portlet portlet = ActionUtil.getPortlet(renderRequest);
 
@@ -843,8 +904,8 @@ public class PortletConfigurationPortlet extends MVCPortlet {
 	}
 
 	@Reference(unbind = "-")
-	protected void setPortletConfigurationWebUpgrade(
-		PortletConfigurationWebUpgrade portletConfigurationWebUpgrade) {
+	protected void setPermissionService(PermissionService permissionService) {
+		_permissionService = permissionService;
 	}
 
 	@Reference(unbind = "-")
@@ -855,10 +916,22 @@ public class PortletConfigurationPortlet extends MVCPortlet {
 	}
 
 	@Reference(unbind = "-")
+	protected void setPortletPermission(PortletPermission portletPermission) {
+		_portletPermission = portletPermission;
+	}
+
+	@Reference(unbind = "-")
 	protected void setPortletPreferencesLocalService(
 		PortletPreferencesLocalService portletPreferencesLocalService) {
 
 		_portletPreferencesLocalService = portletPreferencesLocalService;
+	}
+
+	@Reference(
+		target = "(&(release.bundle.symbolic.name=com.liferay.portlet.configuration.web)(release.schema.version=1.0.0))",
+		unbind = "-"
+	)
+	protected void setRelease(Release release) {
 	}
 
 	@Reference(unbind = "-")
@@ -987,7 +1060,9 @@ public class PortletConfigurationPortlet extends MVCPortlet {
 
 	private GroupLocalService _groupLocalService;
 	private LayoutLocalService _layoutLocalService;
+	private PermissionService _permissionService;
 	private PortletLocalService _portletLocalService;
+	private PortletPermission _portletPermission;
 	private PortletPreferencesLocalService _portletPreferencesLocalService;
 	private final ThreadLocal<PortletRequest> _portletRequestThreadLocal =
 		new AutoResetThreadLocal<>("_portletRequestThreadLocal");

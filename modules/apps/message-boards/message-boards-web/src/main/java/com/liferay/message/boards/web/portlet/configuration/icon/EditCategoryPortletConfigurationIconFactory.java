@@ -14,14 +14,15 @@
 
 package com.liferay.message.boards.web.portlet.configuration.icon;
 
+import com.liferay.message.boards.kernel.model.MBCategory;
 import com.liferay.message.boards.web.constants.MBPortletKeys;
 import com.liferay.message.boards.web.portlet.action.ActionUtil;
 import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIconFactory;
 import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIcon;
 import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIconFactory;
-import com.liferay.portlet.messageboards.model.MBCategory;
 
 import javax.portlet.PortletRequest;
+import javax.portlet.PortletResponse;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -40,7 +41,9 @@ public class EditCategoryPortletConfigurationIconFactory
 	extends BasePortletConfigurationIconFactory {
 
 	@Override
-	public PortletConfigurationIcon create(PortletRequest portletRequest) {
+	public PortletConfigurationIcon create(
+		PortletRequest portletRequest, PortletResponse portletResponse) {
+
 		try {
 			MBCategory category = ActionUtil.getCategory(portletRequest);
 

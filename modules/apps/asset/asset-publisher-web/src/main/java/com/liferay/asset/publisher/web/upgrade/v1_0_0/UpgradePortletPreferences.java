@@ -15,24 +15,24 @@
 package com.liferay.asset.publisher.web.upgrade.v1_0_0;
 
 import com.liferay.asset.publisher.web.constants.AssetPublisherPortletKeys;
+import com.liferay.document.library.kernel.model.DLFileEntryType;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.upgrade.BaseUpgradePortletPreferences;
 import com.liferay.portal.kernel.upgrade.UpgradeException;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.PortletPreferencesFactoryUtil;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -50,6 +50,15 @@ import javax.portlet.PortletPreferences;
  */
 public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 
+	public UpgradePortletPreferences(
+		DateFormatFactoryUtil dateFormatFactoryUtil) {
+
+		_newDateFormat = dateFormatFactoryUtil.getSimpleDateFormat(
+			"yyyy-MM-dd");
+		_oldDateFormat = dateFormatFactoryUtil.getSimpleDateFormat(
+			"yyyyMMddHHmmss");
+	}
+
 	protected JSONObject getDDMStructureJSONObject(long structureId)
 		throws Exception {
 
@@ -65,7 +74,7 @@ public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 
 		try {
 			ps = connection.prepareStatement(
-				"select definition from DDMStructure where structureId = ?" );
+				"select definition from DDMStructure where structureId = ?");
 
 			ps.setLong(1, structureId);
 
@@ -219,7 +228,7 @@ public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 
 				ps = connection.prepareStatement(
 					"select structureId from DDMStructureLink where " +
-						"classNameId = ? and classPK = ?" );
+						"classNameId = ? and classPK = ?");
 
 				ps.setLong(1, fileEntryTypeClassNameId);
 				ps.setLong(2, fileEntryTypeId);
@@ -362,9 +371,7 @@ public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 	private static final Map<Long, JSONObject> _ddmSructureJSONObjects =
 		new HashMap<>();
 
-	private final DateFormat _newDateFormat =
-		DateFormatFactoryUtil.getSimpleDateFormat("yyyy-MM-dd");
-	private final DateFormat _oldDateFormat =
-		DateFormatFactoryUtil.getSimpleDateFormat("yyyyMMddHHmmss");
+	private final DateFormat _newDateFormat;
+	private final DateFormat _oldDateFormat;
 
 }

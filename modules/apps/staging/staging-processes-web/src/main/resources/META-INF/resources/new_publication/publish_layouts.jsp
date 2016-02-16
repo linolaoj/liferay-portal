@@ -278,7 +278,7 @@ renderResponse.setTitle(!configuredPublish ? LanguageUtil.get(request, "new-publ
 
 				<liferay-staging:deletions cmd="<%= Constants.PUBLISH %>" disableInputs="<%= configuredPublish %>" />
 
-				<liferay-staging:permissions disableInputs="<%= configuredPublish %>" global="<%= group.isCompany() %>" parameterMap="<%= parameterMap %>" />
+				<liferay-staging:permissions action="publish" descriptionCSSClass="permissions-description" disableInputs="<%= configuredPublish %>" global="<%= group.isCompany() %>" labelCSSClass="permissions-label" parameterMap="<%= parameterMap %>" />
 
 				<c:if test="<%= !localPublishing %>">
 					<aui:fieldset collapsible="<%= true %>" cssClass="options-group" label="remote-live-connection-settings">
@@ -293,7 +293,7 @@ renderResponse.setTitle(!configuredPublish ? LanguageUtil.get(request, "new-publ
 
 			<aui:button cssClass="btn-lg" id="publishButton" type="submit" value="<%= LanguageUtil.get(request, publishMessageKey) %>" />
 
-			<aui:button cssClass="btn-lg" href="<%= basePortletURL %>" type="reset" value="cancel" />
+			<aui:button cssClass="btn-lg" href="<%= basePortletURL %>" type="cancel" />
 		</aui:button-row>
 	</div>
 </aui:form>
@@ -320,17 +320,6 @@ renderResponse.setTitle(!configuredPublish ? LanguageUtil.get(request, "new-publ
 </aui:script>
 
 <aui:script use="liferay-export-import">
-	<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" id="publishLayouts" var="publishProcessesURL">
-		<portlet:param name="<%= SearchContainer.DEFAULT_CUR_PARAM %>" value="<%= ParamUtil.getString(request, SearchContainer.DEFAULT_CUR_PARAM) %>" />
-		<portlet:param name="<%= SearchContainer.DEFAULT_DELTA_PARAM %>" value="<%= ParamUtil.getString(request, SearchContainer.DEFAULT_DELTA_PARAM) %>" />
-		<portlet:param name="groupId" value="<%= String.valueOf(stagingGroupId) %>" />
-		<portlet:param name="layoutSetBranchId" value="<%= String.valueOf(layoutSetBranchId) %>" />
-		<portlet:param name="layoutSetBranchName" value="<%= layoutSetBranchName %>" />
-		<portlet:param name="liveGroupId" value="<%= String.valueOf(liveGroupId) %>" />
-		<portlet:param name="localPublishing" value="<%= String.valueOf(localPublishing) %>" />
-		<portlet:param name="privateLayout" value="<%= String.valueOf(privateLayout) %>" />
-	</liferay-portlet:resourceURL>
-
 	new Liferay.ExportImport(
 		{
 			commentsNode: '#<%= PortletDataHandlerKeys.COMMENTS %>',
@@ -341,7 +330,6 @@ renderResponse.setTitle(!configuredPublish ? LanguageUtil.get(request, "new-publ
 			namespace: '<portlet:namespace />',
 			pageTreeId: '<%= treeId %>',
 			processesNode: '#publishProcesses',
-			processesResourceURL: '<%= publishProcessesURL.toString() %>',
 			rangeAllNode: '#rangeAll',
 			rangeDateRangeNode: '#rangeDateRange',
 			rangeLastNode: '#rangeLast',

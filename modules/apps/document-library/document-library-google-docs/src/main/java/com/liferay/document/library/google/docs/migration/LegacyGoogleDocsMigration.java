@@ -17,19 +17,19 @@ package com.liferay.document.library.google.docs.migration;
 import com.liferay.document.library.google.docs.util.GoogleDocsConstants;
 import com.liferay.document.library.google.docs.util.GoogleDocsDLFileEntryTypeHelper;
 import com.liferay.document.library.google.docs.util.GoogleDocsMetadataHelper;
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.model.DLFileEntryType;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
+import com.liferay.document.library.kernel.service.DLFileEntryMetadataLocalService;
+import com.liferay.document.library.kernel.service.DLFileEntryTypeLocalService;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.model.Company;
-import com.liferay.portlet.documentlibrary.model.DLFileEntry;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
-import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalService;
-import com.liferay.portlet.documentlibrary.service.DLFileEntryMetadataLocalService;
-import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalService;
 
 /**
  * @author Iván Zaera

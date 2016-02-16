@@ -17,20 +17,20 @@ package com.liferay.configuration.admin.web.search;
 import com.liferay.configuration.admin.web.constants.ConfigurationAdminPortletKeys;
 import com.liferay.configuration.admin.web.model.ConfigurationModel;
 import com.liferay.configuration.admin.web.util.ConfigurationModelRetriever;
+import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.search.BaseIndexer;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
-import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
+import com.liferay.portal.kernel.search.IndexWriterHelper;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
-import com.liferay.portal.model.CompanyConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -166,7 +166,7 @@ public class ConfigurationModelIndexer extends BaseIndexer<ConfigurationModel> {
 			ConfigurationAdminPortletKeys.SYSTEM_SETTINGS,
 			configurationModel.getFactoryPid());
 
-		IndexWriterHelperUtil.deleteDocument(
+		_indexWriterHelper.deleteDocument(
 			getSearchEngineId(), CompanyConstants.SYSTEM,
 			document.get(Field.UID), isCommitImmediately());
 	}
@@ -242,7 +242,7 @@ public class ConfigurationModelIndexer extends BaseIndexer<ConfigurationModel> {
 
 		Document document = getDocument(configurationModel);
 
-		IndexWriterHelperUtil.updateDocument(
+		_indexWriterHelper.updateDocument(
 			getSearchEngineId(), CompanyConstants.SYSTEM, document,
 			isCommitImmediately());
 	}
@@ -263,13 +263,10 @@ public class ConfigurationModelIndexer extends BaseIndexer<ConfigurationModel> {
 		}
 	}
 
-	@Reference(unbind = "-")
-	protected void setConfigurationModelRetriever(
-		ConfigurationModelRetriever configurationModelRetriever) {
-
-		_configurationModelRetriever = configurationModelRetriever;
-	}
-
+	@Reference
 	private ConfigurationModelRetriever _configurationModelRetriever;
+
+	@Reference
+	private IndexWriterHelper _indexWriterHelper;
 
 }

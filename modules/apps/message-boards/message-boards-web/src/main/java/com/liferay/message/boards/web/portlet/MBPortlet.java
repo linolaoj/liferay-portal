@@ -15,8 +15,8 @@
 package com.liferay.message.boards.web.portlet;
 
 import com.liferay.message.boards.web.constants.MBPortletKeys;
+import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.model.Release;
 
 import javax.portlet.Portlet;
 
@@ -48,9 +48,9 @@ import org.osgi.service.component.annotations.Reference;
 		"com.liferay.portlet.use-default-template=true",
 		"javax.portlet.display-name=Message Boards",
 		"javax.portlet.expiration-cache=0",
+		"javax.portlet.init-param.always-display-default-configuration-icons=true",
 		"javax.portlet.init-param.portlet-title-based-navigation=false",
 		"javax.portlet.init-param.template-path=/",
-		"javax.portlet.init-param.view-template=/message_boards/view",
 		"javax.portlet.name=" + MBPortletKeys.MESSAGE_BOARDS,
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=power-user,user",

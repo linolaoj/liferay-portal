@@ -14,10 +14,15 @@
 
 package com.liferay.image.uploader.web.portlet.action;
 
+import com.liferay.document.library.kernel.antivirus.AntivirusScannerException;
+import com.liferay.document.library.kernel.exception.FileExtensionException;
+import com.liferay.document.library.kernel.exception.FileSizeException;
+import com.liferay.document.library.kernel.exception.NoSuchFileEntryException;
+import com.liferay.document.library.kernel.exception.NoSuchFileException;
 import com.liferay.image.uploader.web.constants.ImageUploaderPortletKeys;
 import com.liferay.image.uploader.web.util.UploadImageUtil;
-import com.liferay.portal.exception.ImageTypeException;
-import com.liferay.portal.exception.NoSuchRepositoryException;
+import com.liferay.portal.kernel.exception.ImageTypeException;
+import com.liferay.portal.kernel.exception.NoSuchRepositoryException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.image.ImageBag;
 import com.liferay.portal.kernel.image.ImageToolUtil;
@@ -32,6 +37,7 @@ import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.upload.UploadException;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.upload.UploadRequestSizeException;
@@ -40,6 +46,7 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -48,15 +55,8 @@ import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.documentlibrary.antivirus.AntivirusScannerException;
-import com.liferay.portlet.documentlibrary.exception.FileExtensionException;
-import com.liferay.portlet.documentlibrary.exception.FileSizeException;
-import com.liferay.portlet.documentlibrary.exception.NoSuchFileEntryException;
-import com.liferay.portlet.documentlibrary.exception.NoSuchFileException;
 
 import java.awt.image.RenderedImage;
 
@@ -200,7 +200,7 @@ public class UploadImageMVCActionCommand extends BaseMVCActionCommand {
 		if (e instanceof PrincipalException) {
 			SessionErrors.add(actionRequest, e.getClass());
 
-			actionResponse.setRenderParameter("mvcPath", "/error.jsp" );
+			actionResponse.setRenderParameter("mvcPath", "/error.jsp");
 		}
 		else if (e instanceof AntivirusScannerException ||
 				 e instanceof FileExtensionException ||

@@ -27,7 +27,13 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 >
 	<liferay-frontend:management-bar-buttons>
 		<c:if test="<%= journalDisplayContext.isShowInfoPanel() %>">
-			<liferay-frontend:management-bar-button cssClass="infoPanelToggler" disabled="<%= false %>" href="javascript:;" icon="info-circle" label="info" />
+			<liferay-frontend:management-bar-sidenav-toggler-button
+				disabled="<%= false %>"
+				href="javascript:;"
+				icon="info-circle"
+				label="info"
+				sidenavId='<%= liferayPortletResponse.getNamespace() + "infoPanelId" %>'
+			/>
 		</c:if>
 
 		<liferay-frontend:management-bar-display-buttons
@@ -41,7 +47,7 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 	String label = null;
 
 	if (journalDisplayContext.isNavigationStructure()) {
-		label = LanguageUtil.get(request, "structure") + StringPool.COLON + StringPool.SPACE + journalDisplayContext.getDdmStructureName();
+		label = LanguageUtil.get(request, "structure") + StringPool.COLON + StringPool.SPACE + journalDisplayContext.getDDMStructureName();
 	}
 	%>
 
@@ -91,7 +97,13 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 
 	<liferay-frontend:management-bar-action-buttons>
 		<c:if test="<%= journalDisplayContext.isShowInfoPanel() %>">
-			<liferay-frontend:management-bar-button cssClass="infoPanelToggler" disabled="<%= false %>" href="javascript:;" icon="info-circle" label="info" />
+			<liferay-frontend:management-bar-sidenav-toggler-button
+				disabled="<%= false %>"
+				href="javascript:;"
+				icon="info-circle"
+				label="info"
+				sidenavId='<%= liferayPortletResponse.getNamespace() + "infoPanelId" %>'
+			/>
 		</c:if>
 
 		<%

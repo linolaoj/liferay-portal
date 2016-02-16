@@ -14,15 +14,44 @@
 
 package com.liferay.exportimport.staging;
 
-import com.liferay.portal.LocaleException;
-import com.liferay.portal.RemoteOptionsException;
-import com.liferay.portal.exception.LayoutPrototypeException;
-import com.liferay.portal.exception.NoSuchGroupException;
-import com.liferay.portal.exception.NoSuchLayoutBranchException;
-import com.liferay.portal.exception.NoSuchLayoutRevisionException;
-import com.liferay.portal.exception.PortletIdException;
+import com.liferay.document.library.kernel.exception.DuplicateFileEntryException;
+import com.liferay.document.library.kernel.exception.FileExtensionException;
+import com.liferay.document.library.kernel.exception.FileNameException;
+import com.liferay.document.library.kernel.exception.FileSizeException;
+import com.liferay.exportimport.kernel.background.task.BackgroundTaskExecutorNames;
+import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationConstants;
+import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationParameterMapFactory;
+import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationSettingsMapFactory;
+import com.liferay.exportimport.kernel.exception.LARFileException;
+import com.liferay.exportimport.kernel.exception.LARFileSizeException;
+import com.liferay.exportimport.kernel.exception.LARTypeException;
+import com.liferay.exportimport.kernel.exception.MissingReferenceException;
+import com.liferay.exportimport.kernel.exception.RemoteExportException;
+import com.liferay.exportimport.kernel.lar.ExportImportDateUtil;
+import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
+import com.liferay.exportimport.kernel.lar.MissingReference;
+import com.liferay.exportimport.kernel.lar.MissingReferences;
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.kernel.lar.PortletDataException;
+import com.liferay.exportimport.kernel.lar.PortletDataHandlerKeys;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
+import com.liferay.exportimport.kernel.lar.StagedModelType;
+import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
+import com.liferay.exportimport.kernel.service.ExportImportConfigurationLocalService;
+import com.liferay.exportimport.kernel.service.StagingLocalService;
+import com.liferay.exportimport.kernel.staging.LayoutStagingUtil;
+import com.liferay.exportimport.kernel.staging.Staging;
+import com.liferay.exportimport.kernel.staging.StagingConstants;
+import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
+import com.liferay.portal.kernel.exception.LayoutPrototypeException;
+import com.liferay.portal.kernel.exception.LocaleException;
+import com.liferay.portal.kernel.exception.NoSuchGroupException;
+import com.liferay.portal.kernel.exception.NoSuchLayoutBranchException;
+import com.liferay.portal.kernel.exception.NoSuchLayoutRevisionException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.PortletIdException;
+import com.liferay.portal.kernel.exception.RemoteOptionsException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -34,6 +63,22 @@ import com.liferay.portal.kernel.lock.LockManager;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.DestinationNames;
+import com.liferay.portal.kernel.model.ClassName;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutBranch;
+import com.liferay.portal.kernel.model.LayoutRevision;
+import com.liferay.portal.kernel.model.LayoutSetBranch;
+import com.liferay.portal.kernel.model.Portlet;
+import com.liferay.portal.kernel.model.RecentLayoutBranch;
+import com.liferay.portal.kernel.model.RecentLayoutRevision;
+import com.liferay.portal.kernel.model.RecentLayoutSetBranch;
+import com.liferay.portal.kernel.model.StagedModel;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.WorkflowInstanceLink;
+import com.liferay.portal.kernel.model.adapter.StagedTheme;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelperUtil;
 import com.liferay.portal.kernel.security.auth.HttpPrincipal;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
@@ -43,12 +88,29 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.LayoutBranchLocalService;
+import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.LayoutRevisionLocalService;
+import com.liferay.portal.kernel.service.LayoutService;
+import com.liferay.portal.kernel.service.LayoutSetBranchLocalService;
+import com.liferay.portal.kernel.service.RecentLayoutBranchLocalService;
+import com.liferay.portal.kernel.service.RecentLayoutRevisionLocalService;
+import com.liferay.portal.kernel.service.RecentLayoutSetBranchLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.service.WorkflowInstanceLinkLocalService;
+import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.servlet.ServletResponseConstants;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -62,72 +124,11 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowTask;
 import com.liferay.portal.kernel.workflow.WorkflowTaskManagerUtil;
 import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.model.ClassName;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.GroupConstants;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.LayoutBranch;
-import com.liferay.portal.model.LayoutRevision;
-import com.liferay.portal.model.LayoutSetBranch;
-import com.liferay.portal.model.Portlet;
-import com.liferay.portal.model.RecentLayoutBranch;
-import com.liferay.portal.model.RecentLayoutRevision;
-import com.liferay.portal.model.RecentLayoutSetBranch;
-import com.liferay.portal.model.StagedModel;
-import com.liferay.portal.model.User;
-import com.liferay.portal.model.WorkflowInstanceLink;
-import com.liferay.portal.model.adapter.StagedTheme;
-import com.liferay.portal.service.GroupLocalService;
-import com.liferay.portal.service.LayoutBranchLocalService;
-import com.liferay.portal.service.LayoutLocalService;
-import com.liferay.portal.service.LayoutRevisionLocalService;
-import com.liferay.portal.service.LayoutService;
-import com.liferay.portal.service.LayoutSetBranchLocalService;
-import com.liferay.portal.service.RecentLayoutBranchLocalService;
-import com.liferay.portal.service.RecentLayoutRevisionLocalService;
-import com.liferay.portal.service.RecentLayoutSetBranchLocalService;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceContextThreadLocal;
-import com.liferay.portal.service.UserLocalService;
-import com.liferay.portal.service.WorkflowInstanceLinkLocalService;
 import com.liferay.portal.service.http.ClassNameServiceHttp;
 import com.liferay.portal.service.http.GroupServiceHttp;
-import com.liferay.portal.service.permission.GroupPermissionUtil;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.documentlibrary.exception.DuplicateFileEntryException;
-import com.liferay.portlet.documentlibrary.exception.FileExtensionException;
-import com.liferay.portlet.documentlibrary.exception.FileNameException;
-import com.liferay.portlet.documentlibrary.exception.FileSizeException;
-import com.liferay.portlet.exportimport.background.task.BackgroundTaskExecutorNames;
-import com.liferay.portlet.exportimport.configuration.ExportImportConfigurationConstants;
-import com.liferay.portlet.exportimport.configuration.ExportImportConfigurationParameterMapFactory;
-import com.liferay.portlet.exportimport.configuration.ExportImportConfigurationSettingsMapFactory;
-import com.liferay.portlet.exportimport.exception.LARFileException;
-import com.liferay.portlet.exportimport.exception.LARFileSizeException;
-import com.liferay.portlet.exportimport.exception.LARTypeException;
-import com.liferay.portlet.exportimport.exception.MissingReferenceException;
-import com.liferay.portlet.exportimport.exception.RemoteExportException;
-import com.liferay.portlet.exportimport.lar.ExportImportDateUtil;
-import com.liferay.portlet.exportimport.lar.ExportImportHelperUtil;
-import com.liferay.portlet.exportimport.lar.MissingReference;
-import com.liferay.portlet.exportimport.lar.MissingReferences;
-import com.liferay.portlet.exportimport.lar.PortletDataContext;
-import com.liferay.portlet.exportimport.lar.PortletDataException;
-import com.liferay.portlet.exportimport.lar.PortletDataHandlerKeys;
-import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
-import com.liferay.portlet.exportimport.lar.StagedModelType;
-import com.liferay.portlet.exportimport.model.ExportImportConfiguration;
-import com.liferay.portlet.exportimport.service.ExportImportConfigurationLocalService;
-import com.liferay.portlet.exportimport.service.StagingLocalService;
-import com.liferay.portlet.exportimport.staging.LayoutStagingUtil;
 import com.liferay.portlet.exportimport.staging.ProxiedLayoutsThreadLocal;
-import com.liferay.portlet.exportimport.staging.Staging;
-import com.liferay.portlet.exportimport.staging.StagingConstants;
-import com.liferay.portlet.exportimport.staging.StagingUtil;
 
 import java.io.Serializable;
 
@@ -2042,6 +2043,21 @@ public class StagingImpl implements Staging {
 			GetterUtil.getLong(group.getTypeSettingsProperty(param)));
 	}
 
+	protected boolean getPrivateLayout(PortletRequest portletRequest) {
+		String tabs1 = ParamUtil.getString(portletRequest, "tabs1");
+
+		if (Validator.isNotNull(tabs1)) {
+			if (tabs1.equals("public-pages")) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+
+		return ParamUtil.getBoolean(portletRequest, "privateLayout", true);
+	}
+
 	protected long getRecentLayoutBranchId(
 			long userId, long layoutSetBranchId, long plid)
 		throws PortalException {
@@ -2163,13 +2179,7 @@ public class StagingImpl implements Staging {
 		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		String tabs1 = ParamUtil.getString(portletRequest, "tabs1");
-
-		boolean privateLayout = true;
-
-		if (tabs1.equals("public-pages")) {
-			privateLayout = false;
-		}
+		boolean privateLayout = getPrivateLayout(portletRequest);
 
 		long[] layoutIds = ExportImportHelperUtil.getLayoutIds(
 			portletRequest, targetGroupId);
@@ -2216,15 +2226,9 @@ public class StagingImpl implements Staging {
 			PortletRequest portletRequest, boolean schedule)
 		throws PortalException {
 
-		String tabs1 = ParamUtil.getString(portletRequest, "tabs1");
-
 		long groupId = ParamUtil.getLong(portletRequest, "groupId");
 
-		boolean privateLayout = true;
-
-		if (tabs1.equals("public-pages")) {
-			privateLayout = false;
-		}
+		boolean privateLayout = getPrivateLayout(portletRequest);
 
 		Map<Long, Boolean> layoutIdMap = ExportImportHelperUtil.getLayoutIdMap(
 			portletRequest);
@@ -2541,20 +2545,25 @@ public class StagingImpl implements Staging {
 			throw roe;
 		}
 
+		Thread currentThread = Thread.currentThread();
+
+		ClassLoader contextClassLoader = currentThread.getContextClassLoader();
+
 		PermissionChecker permissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
 
 		User user = permissionChecker.getUser();
 
 		String remoteURL = buildRemoteURL(
-			remoteAddress, remotePort, remotePathContext, secureConnection,
-			GroupConstants.DEFAULT_LIVE_GROUP_ID, false);
+			remoteAddress, remotePort, remotePathContext, secureConnection);
 
 		HttpPrincipal httpPrincipal = new HttpPrincipal(
 			remoteURL, user.getLogin(), user.getPassword(),
 			user.getPasswordEncrypted());
 
 		try {
+			currentThread.setContextClassLoader(
+				PortalClassLoaderUtil.getClassLoader());
 
 			// Ping the remote host and verify that the remote group exists in
 			// the same company as the remote user
@@ -2610,6 +2619,9 @@ public class StagingImpl implements Staging {
 			ree.setURL(remoteURL);
 
 			throw ree;
+		}
+		finally {
+			currentThread.setContextClassLoader(contextClassLoader);
 		}
 	}
 

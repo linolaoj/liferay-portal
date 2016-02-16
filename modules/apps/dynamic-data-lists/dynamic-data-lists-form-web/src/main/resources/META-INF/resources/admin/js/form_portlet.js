@@ -4,7 +4,7 @@ AUI.add(
 		var DefinitionSerializer = Liferay.DDL.DefinitionSerializer;
 		var LayoutSerializer = Liferay.DDL.LayoutSerializer;
 
-		var TPL_BUTTON_SPINNER = '<span><span class="icon-spinner"></span></span>';
+		var TPL_BUTTON_SPINNER = '<span aria-hidden="true"><span class="icon-spinner icon-spin"></span></span>';
 
 		var DDLPortlet = A.Component.create(
 			{
@@ -160,9 +160,17 @@ AUI.add(
 
 						instance.one('#name').val(name);
 
-						var settingsInput = instance.one('#serializedSettingsDDMFormValues');
+						var publishCheckbox = instance.one('#publishCheckbox');
 
-						var settings = Liferay.component('settingsDDMForm').toJSON();
+						var settingsDDMForm = Liferay.component('settingsDDMForm');
+
+						var publishedField = settingsDDMForm.getField('published');
+
+						publishedField.setValue(publishCheckbox.attr('checked'));
+
+						var settings = settingsDDMForm.toJSON();
+
+						var settingsInput = instance.one('#serializedSettingsDDMFormValues');
 
 						settingsInput.val(JSON.stringify(settings));
 					},

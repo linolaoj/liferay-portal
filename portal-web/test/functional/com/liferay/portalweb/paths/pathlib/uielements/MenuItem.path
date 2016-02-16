@@ -30,7 +30,7 @@
 </tr>
 <tr>
 	<td>ANY_MENU_ITEM</td>
-	<td>//li[contains(.,'${key_menuItem}')]</td>
+	<td>//li[contains(.,'${key_menuItem}')]/a</td>
 	<td></td>
 </tr>
 <tr>
@@ -76,6 +76,11 @@
 <tr>
 	<td>ADD_LOCATION</td>
 	<td>//a[@role='menuitem' and contains(.,'Add Location')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ADD_PAGE</td>
+	<td>//a[@role='menuitem' and contains(.,'Add Page')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -161,6 +166,11 @@
 <tr>
 	<td>ASSIGN_USERS</td>
 	<td>//a[@role='menuitem' and contains(.,'Assign Users')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ASSIGNEES</td>
+	<td>//a[@role='menuitem' and contains(.,'Assignees')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -299,6 +309,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>DM_DOCUMENT_TYPE</td>
+	<td>//a[contains(.,'Document Type')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>DOCUMENT_TYPE</td>
 	<td>//div[contains(@class,'open')]//a[contains(.,'${key_dmDocumentTypeName}')]</td>
 	<td></td>
@@ -330,7 +345,7 @@
 </tr>
 <tr>
 	<td>EXPORT</td>
-	<td>//div[contains(@class,'dropdown  open')]//a[@role='menuitem' and contains(.,'Export')]</td>
+	<td>//div[contains(@class,'open') and contains(@class,'dropdown')]//a[@role='menuitem' and contains(.,'Export') and not(contains(.,'Import'))]</td>
 	<td></td>
 </tr>
 <tr>
@@ -351,6 +366,11 @@
 <tr>
 	<td>FOLDER</td>
 	<td>//li[contains(@class,'open')]//a[contains(.,'Folder')] | //div[contains(@class,'open')]//a[contains(.,'Folder')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>GENERIC_MENU_ITEM</td>
+	<td>//*[contains(@class,'dropdown') and contains(@class,'open')]//a[contains(.,'${key_menuItem}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -489,6 +509,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>MEMBERSHIP_REQUESTED</td>
+	<td>//ul[contains(.,'Membership Requested')]//span</td>
+	<td></td>
+</tr>
+<tr>
 	<td>METADATA</td>
 	<td>//ul[contains(@class,'dropdown-menu')]/li/a[contains(.,'Metadata')]</td>
 	<td></td>
@@ -530,7 +555,7 @@
 </tr>
 <tr>
 	<td>ORGANIZATION</td>
-	<td>//li[contains(@class,'open')]//a[@title='Organization']</td>
+	<td>//ul[contains(@class,'dropdown-menu')]//a[contains(@id,'menuItem') and contains(.,'Organization')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -591,11 +616,6 @@
 <tr>
 	<td>PUBLISH_TO_REMOTE_LIVE</td>
 	<td>//a[@role='menuitem' and contains(.,'Publish to Remote Live')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>REGULAR_ORGANIZATION</td>
-	<td>//ul[contains(@class,'dropdown-menu')]/li/a[text()='Regular Organization']</td>
 	<td></td>
 </tr>
 <tr>

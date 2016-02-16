@@ -16,10 +16,15 @@ package com.liferay.journal.model;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+import com.liferay.expando.kernel.model.ExpandoBridge;
 
-import com.liferay.portlet.exportimport.lar.StagedModelType;
+import com.liferay.exportimport.kernel.lar.StagedModelType;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.Validator;
+
+import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -267,7 +272,7 @@ public class JournalFolderWrapper implements JournalFolder,
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _journalFolder.getExpandoBridge();
 	}
 
@@ -358,7 +363,7 @@ public class JournalFolderWrapper implements JournalFolder,
 	}
 
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
+	public Serializable getPrimaryKeyObj() {
 		return _journalFolder.getPrimaryKeyObj();
 	}
 
@@ -428,7 +433,7 @@ public class JournalFolderWrapper implements JournalFolder,
 	* @return the trash entry created when this journal folder was moved to the Recycle Bin
 	*/
 	@Override
-	public com.liferay.portlet.trash.model.TrashEntry getTrashEntry()
+	public com.liferay.trash.kernel.model.TrashEntry getTrashEntry()
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _journalFolder.getTrashEntry();
 	}
@@ -690,19 +695,17 @@ public class JournalFolderWrapper implements JournalFolder,
 
 	@Override
 	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
 		_journalFolder.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_journalFolder.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_journalFolder.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -792,7 +795,7 @@ public class JournalFolderWrapper implements JournalFolder,
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_journalFolder.setPrimaryKeyObj(primaryKeyObj);
 	}
 
@@ -907,7 +910,7 @@ public class JournalFolderWrapper implements JournalFolder,
 	}
 
 	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.journal.model.JournalFolder> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.journal.model.JournalFolder> toCacheModel() {
 		return _journalFolder.toCacheModel();
 	}
 

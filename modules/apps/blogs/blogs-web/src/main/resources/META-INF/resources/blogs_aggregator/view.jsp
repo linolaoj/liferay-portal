@@ -17,6 +17,19 @@
 <%@ include file="/blogs_aggregator/init.jsp" %>
 
 <%
+boolean blogsPortletFound = ParamUtil.getBoolean(request, "blogsPortletFound", true);
+%>
+
+<c:if test="<%= !blogsPortletFound %>">
+	<liferay-ui:alert
+		icon="exclamation-full"
+		message='<%= LanguageUtil.get(resourceBundle, "no-suitable-application-found-to-display-the-blogs-entry") %>'
+		timeout="0"
+		type="danger"
+	/>
+</c:if>
+
+<%
 PortletURL portletURL = renderResponse.createRenderURL();
 
 portletURL.setParameter("mvcRenderCommandName", "/blogs_aggregator/view");

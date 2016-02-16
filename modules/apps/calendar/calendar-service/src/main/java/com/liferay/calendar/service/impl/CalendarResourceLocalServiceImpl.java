@@ -18,12 +18,16 @@ import com.liferay.calendar.exception.CalendarResourceCodeException;
 import com.liferay.calendar.exception.CalendarResourceNameException;
 import com.liferay.calendar.exception.DuplicateCalendarResourceException;
 import com.liferay.calendar.model.Calendar;
-import com.liferay.calendar.model.CalendarBooking;
 import com.liferay.calendar.model.CalendarResource;
 import com.liferay.calendar.service.base.CalendarResourceLocalServiceBaseImpl;
 import com.liferay.calendar.service.configuration.CalendarServiceConfigurationValues;
 import com.liferay.calendar.util.comparator.CalendarResourceCodeComparator;
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.SystemEventConstants;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.ContentTypes;
@@ -31,11 +35,6 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ResourceConstants;
-import com.liferay.portal.model.SystemEventConstants;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.exportimport.lar.ExportImportThreadLocal;
 
 import java.util.Date;
 import java.util.List;
@@ -161,23 +160,9 @@ public class CalendarResourceLocalServiceImpl
 			calendarResource.getCalendarResourceId());
 
 		for (Calendar calendar : calendars) {
-			calendarPersistence.remove(calendar);
+			calendar.setDefaultCalendar(false);
 
-			resourceLocalService.deleteResource(
-				calendar, ResourceConstants.SCOPE_INDIVIDUAL);
-
-			calendarNotificationTemplateLocalService.
-				deleteCalendarNotificationTemplates(calendar.getCalendarId());
-		}
-
-		// Calendar bookings
-
-		List<CalendarBooking> calendarBookings =
-			calendarBookingPersistence.findByCalendarResourceId(
-				calendarResource.getCalendarResourceId());
-
-		for (CalendarBooking calendarBooking : calendarBookings) {
-			calendarBookingLocalService.deleteCalendarBooking(calendarBooking);
+			calendarLocalService.deleteCalendar(calendar);
 		}
 
 		return calendarResource;

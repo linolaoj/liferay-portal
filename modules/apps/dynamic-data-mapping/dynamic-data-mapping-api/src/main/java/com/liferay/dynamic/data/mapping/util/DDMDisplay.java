@@ -20,7 +20,7 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
-import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 
 import java.util.Locale;
 import java.util.Set;
@@ -80,6 +80,8 @@ public interface DDMDisplay {
 	public String getTemplateType();
 
 	public String getTemplateType(DDMTemplate template, Locale locale);
+
+	public String getTitle(Locale locale);
 
 	public String getViewTemplatesBackURL(
 			LiferayPortletRequest liferayPortletRequest,

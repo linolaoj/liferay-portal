@@ -14,9 +14,22 @@
 
 package com.liferay.document.library.trash;
 
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.model.DLFileEntryConstants;
+import com.liferay.document.library.kernel.model.DLFileVersion;
+import com.liferay.document.library.kernel.model.DLFolder;
+import com.liferay.document.library.kernel.service.DLAppLocalService;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
+import com.liferay.document.library.kernel.service.DLFileVersionLocalService;
+import com.liferay.document.library.kernel.service.DLFolderLocalService;
+import com.liferay.document.library.kernel.service.DLTrashLocalService;
+import com.liferay.document.library.kernel.util.DLUtil;
+import com.liferay.document.library.kernel.util.DLValidatorUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.ContainerModel;
+import com.liferay.portal.kernel.model.TrashedModel;
 import com.liferay.portal.kernel.repository.DocumentRepository;
 import com.liferay.portal.kernel.repository.LocalRepository;
 import com.liferay.portal.kernel.repository.Repository;
@@ -30,29 +43,16 @@ import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.trash.TrashActionKeys;
 import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ContainerModel;
-import com.liferay.portal.model.TrashedModel;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.documentlibrary.model.DLFileEntry;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryConstants;
-import com.liferay.portlet.documentlibrary.model.DLFileVersion;
-import com.liferay.portlet.documentlibrary.model.DLFolder;
-import com.liferay.portlet.documentlibrary.service.DLAppLocalService;
-import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalService;
-import com.liferay.portlet.documentlibrary.service.DLFileVersionLocalService;
-import com.liferay.portlet.documentlibrary.service.DLFolderLocalService;
-import com.liferay.portlet.documentlibrary.service.DLTrashLocalService;
 import com.liferay.portlet.documentlibrary.service.permission.DLFileEntryPermission;
 import com.liferay.portlet.documentlibrary.service.permission.DLFolderPermission;
-import com.liferay.portlet.documentlibrary.util.DLUtil;
-import com.liferay.portlet.documentlibrary.util.DLValidatorUtil;
-import com.liferay.portlet.trash.exception.RestoreEntryException;
-import com.liferay.portlet.trash.model.TrashEntry;
-import com.liferay.portlet.trash.model.TrashEntryConstants;
+import com.liferay.trash.kernel.exception.RestoreEntryException;
+import com.liferay.trash.kernel.model.TrashEntry;
+import com.liferay.trash.kernel.model.TrashEntryConstants;
 
 import javax.portlet.PortletRequest;
 
@@ -68,7 +68,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	property = {
-		"model.class.name=com.liferay.portlet.documentlibrary.model.DLFileEntry"
+		"model.class.name=com.liferay.document.library.kernel.model.DLFileEntry"
 	},
 	service = TrashHandler.class
 )

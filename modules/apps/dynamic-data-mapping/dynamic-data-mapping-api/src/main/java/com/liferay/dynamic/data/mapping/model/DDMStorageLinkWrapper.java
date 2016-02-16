@@ -16,8 +16,13 @@ package com.liferay.dynamic.data.mapping.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+
+import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -153,7 +158,7 @@ public class DDMStorageLinkWrapper implements DDMStorageLink,
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _ddmStorageLink.getExpandoBridge();
 	}
 
@@ -168,7 +173,7 @@ public class DDMStorageLinkWrapper implements DDMStorageLink,
 	}
 
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
+	public Serializable getPrimaryKeyObj() {
 		return _ddmStorageLink.getPrimaryKeyObj();
 	}
 
@@ -281,19 +286,17 @@ public class DDMStorageLinkWrapper implements DDMStorageLink,
 
 	@Override
 	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
 		_ddmStorageLink.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_ddmStorageLink.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_ddmStorageLink.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -313,7 +316,7 @@ public class DDMStorageLinkWrapper implements DDMStorageLink,
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_ddmStorageLink.setPrimaryKeyObj(primaryKeyObj);
 	}
 
@@ -348,7 +351,7 @@ public class DDMStorageLinkWrapper implements DDMStorageLink,
 	}
 
 	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.dynamic.data.mapping.model.DDMStorageLink> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.dynamic.data.mapping.model.DDMStorageLink> toCacheModel() {
 		return _ddmStorageLink.toCacheModel();
 	}
 

@@ -16,10 +16,10 @@ package com.liferay.wiki.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import com.liferay.wiki.model.WikiPageResource;
 
@@ -114,9 +114,13 @@ public class WikiPageResourceCacheModel implements CacheModel<WikiPageResource>,
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		uuid = objectInput.readUTF();
+
 		resourcePrimKey = objectInput.readLong();
+
 		groupId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		nodeId = objectInput.readLong();
 		title = objectInput.readUTF();
 	}
@@ -132,8 +136,11 @@ public class WikiPageResourceCacheModel implements CacheModel<WikiPageResource>,
 		}
 
 		objectOutput.writeLong(resourcePrimKey);
+
 		objectOutput.writeLong(groupId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(nodeId);
 
 		if (title == null) {

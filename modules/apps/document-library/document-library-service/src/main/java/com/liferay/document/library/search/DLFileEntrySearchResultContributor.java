@@ -14,7 +14,11 @@
 
 package com.liferay.document.library.search;
 
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.model.DLFileEntryConstants;
+import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.ClassName;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
@@ -22,13 +26,9 @@ import com.liferay.portal.kernel.search.SearchResult;
 import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.search.SummaryFactory;
 import com.liferay.portal.kernel.search.result.SearchResultContributor;
+import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ClassName;
-import com.liferay.portal.service.ClassNameLocalService;
-import com.liferay.portlet.documentlibrary.model.DLFileEntry;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryConstants;
-import com.liferay.portlet.documentlibrary.service.DLAppLocalService;
 
 import java.util.Locale;
 

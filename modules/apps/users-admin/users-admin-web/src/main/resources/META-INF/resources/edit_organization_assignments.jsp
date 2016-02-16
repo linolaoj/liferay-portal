@@ -88,7 +88,7 @@ renderResponse.setTitle(organization.getName());
 		<liferay-ui:user-search-container-results userParams="<%= userParams %>" />
 
 		<liferay-ui:search-container-row
-			className="com.liferay.portal.model.User"
+			className="com.liferay.portal.kernel.model.User"
 			escapedModel="<%= true %>"
 			keyProperty="userId"
 			modelVar="user2"
@@ -121,7 +121,6 @@ renderResponse.setTitle(organization.getName());
 	function <portlet:namespace />updateOrganizationUsers(assignmentsRedirect) {
 		var form = AUI.$(document.<portlet:namespace />fm);
 
-		form.fm('<%= Constants.CMD %>').val('organization_users');
 		form.fm('assignmentsRedirect').val(assignmentsRedirect);
 		form.fm('addUserIds').val(Liferay.Util.listCheckedExcept(form, '<portlet:namespace />allRowIds'));
 		form.fm('removeUserIds').val(Liferay.Util.listUncheckedExcept(form, '<portlet:namespace />allRowIds'));

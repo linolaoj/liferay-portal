@@ -31,10 +31,16 @@ List<AddMenuItem> addMenuItems = (List<AddMenuItem>)request.getAttribute("lifera
 		if (Validator.isNull(id)) {
 			id = "menuItem";
 		}
+
+		String title = addMenuItem.getLabel();
+
+		if (Validator.isNull(title)) {
+			title = LanguageUtil.get(request, "new-item");
+		}
 		%>
 
-		<a <%= AUIUtil.buildData(addMenuItem.getAnchorData()) %> class="btn btn-action btn-bottom-right btn-primary" data-placement="left" data-qa-id="addButton" data-toggle="tooltip" href="<%= HtmlUtil.escapeAttribute(addMenuItem.getUrl()) %>" id="<%= namespace + id %>" title="<%= LanguageUtil.get(request, "new-item") %>">
-			<span class="icon-plus"></span>
+		<a <%= AUIUtil.buildData(addMenuItem.getAnchorData()) %> class="btn btn-action btn-bottom-right btn-primary" data-placement="left" data-qa-id="addButton" data-toggle="tooltip" href="<%= HtmlUtil.escapeAttribute(addMenuItem.getUrl()) %>" id="<%= namespace + id %>" title="<%= title %>">
+			<aui:icon image="plus" markupView="lexicon" />
 		</a>
 
 		<aui:script sandbox="<%= true %>">
@@ -48,7 +54,7 @@ List<AddMenuItem> addMenuItems = (List<AddMenuItem>)request.getAttribute("lifera
 	<c:otherwise>
 		<div class="btn-action-secondary btn-bottom-right dropdown">
 			<button aria-expanded="false" class="btn btn-primary" data-qa-id="addButton" data-toggle="dropdown" type="button">
-				<span class="icon-plus"></span>
+				<aui:icon image="plus" markupView="lexicon" />
 			</button>
 
 			<ul class="dropdown-menu dropdown-menu-left-side-bottom">

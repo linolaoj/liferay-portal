@@ -17,8 +17,8 @@ package com.liferay.dynamic.data.mapping.model;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.annotation.ImplementationClassName;
+import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.util.Accessor;
-import com.liferay.portal.model.PersistedModel;
 
 /**
  * The extended model interface for the DDMTemplate service. Represents a row in the &quot;DDMTemplate&quot; database table, with each column mapped to a property of this class.
@@ -61,7 +61,7 @@ public interface DDMTemplate extends DDMTemplateModel, PersistedModel {
 		throws com.liferay.portal.kernel.exception.PortalException;
 
 	public java.lang.String getTemplateImageURL(
-		com.liferay.portal.theme.ThemeDisplay themeDisplay);
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay);
 
 	public com.liferay.dynamic.data.mapping.model.DDMTemplateVersion getTemplateVersion()
 		throws com.liferay.portal.kernel.exception.PortalException;
@@ -76,7 +76,7 @@ public interface DDMTemplate extends DDMTemplateModel, PersistedModel {
 	* @return the WebDAV URL
 	*/
 	public java.lang.String getWebDavURL(
-		com.liferay.portal.theme.ThemeDisplay themeDisplay,
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay,
 		java.lang.String webDAVToken);
 
 	public void setSmallImageType(java.lang.String smallImageType);

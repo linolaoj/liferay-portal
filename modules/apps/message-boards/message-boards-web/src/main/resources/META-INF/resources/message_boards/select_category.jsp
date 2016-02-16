@@ -62,7 +62,7 @@ else {
 		/>
 
 		<liferay-ui:search-container-row
-			className="com.liferay.portlet.messageboards.model.MBCategory"
+			className="com.liferay.message.boards.kernel.model.MBCategory"
 			escapedModel="<%= true %>"
 			keyProperty="categoryId"
 			modelVar="curCategory"
@@ -126,7 +126,7 @@ else {
 			data.put("name", categoryName);
 			%>
 
-			<aui:button cssClass="selector-button"  data="<%= data %>" value="choose-this-category" />
+			<aui:button cssClass="selector-button" data="<%= data %>" value="choose-this-category" />
 		</aui:button-row>
 
 		<liferay-ui:search-iterator />

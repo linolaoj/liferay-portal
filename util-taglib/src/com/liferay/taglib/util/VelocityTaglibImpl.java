@@ -15,20 +15,18 @@
 package com.liferay.taglib.util;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.portlet.PortletProvider;
 import com.liferay.portal.kernel.servlet.DirectRequestDispatcherFactoryUtil;
 import com.liferay.portal.kernel.servlet.JSPSupportServlet;
 import com.liferay.portal.kernel.template.TemplateConstants;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.LayoutConstants;
-import com.liferay.portal.model.Portlet;
-import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.taglib.TagSupport;
-import com.liferay.taglib.aui.ColumnTag;
-import com.liferay.taglib.aui.LayoutTag;
 import com.liferay.taglib.portlet.ActionURLTag;
 import com.liferay.taglib.portletext.IconBackTag;
 import com.liferay.taglib.portletext.IconOptionsTag;
@@ -45,7 +43,6 @@ import com.liferay.taglib.ui.AssetLinksTag;
 import com.liferay.taglib.ui.AssetTagsSummaryTag;
 import com.liferay.taglib.ui.BreadcrumbTag;
 import com.liferay.taglib.ui.DiscussionTag;
-import com.liferay.taglib.ui.FlagsTag;
 import com.liferay.taglib.ui.IconTag;
 import com.liferay.taglib.ui.JournalArticleTag;
 import com.liferay.taglib.ui.JournalContentSearchTag;
@@ -326,26 +323,6 @@ public class VelocityTaglibImpl implements VelocityTaglib {
 	}
 
 	@Override
-	public void flags(
-			String className, long classPK, String contentTitle, boolean label,
-			String message, long reportedUserId)
-		throws Exception {
-
-		FlagsTag flagsTag = new FlagsTag();
-
-		setUp(flagsTag);
-
-		flagsTag.setClassName(className);
-		flagsTag.setClassPK(classPK);
-		flagsTag.setContentTitle(contentTitle);
-		flagsTag.setLabel(label);
-		flagsTag.setMessage(message);
-		flagsTag.setReportedUserId(reportedUserId);
-
-		flagsTag.runTag();
-	}
-
-	@Override
 	public AssetCategoriesSummaryTag<?> getAssetCategoriesSummaryTag()
 		throws Exception {
 
@@ -386,30 +363,12 @@ public class VelocityTaglibImpl implements VelocityTaglib {
 	}
 
 	@Override
-	public ColumnTag getColumnTag() throws Exception {
-		ColumnTag columnTag = new ColumnTag();
-
-		setUp(columnTag);
-
-		return columnTag;
-	}
-
-	@Override
 	public DiscussionTag getDiscussionTag() throws Exception {
 		DiscussionTag discussionTag = new DiscussionTag();
 
 		setUp(discussionTag);
 
 		return discussionTag;
-	}
-
-	@Override
-	public FlagsTag getFlagsTag() throws Exception {
-		FlagsTag flagsTag = new FlagsTag();
-
-		setUp(flagsTag);
-
-		return flagsTag;
 	}
 
 	@Override
@@ -428,15 +387,6 @@ public class VelocityTaglibImpl implements VelocityTaglib {
 		setUp(journalArticleTag);
 
 		return journalArticleTag;
-	}
-
-	@Override
-	public LayoutTag getLayoutTag() throws Exception {
-		LayoutTag layoutTag = new LayoutTag();
-
-		setUp(layoutTag);
-
-		return layoutTag;
 	}
 
 	@Override
@@ -727,6 +677,10 @@ public class VelocityTaglibImpl implements VelocityTaglib {
 			resourcePrimKey, windowState, roleTypes);
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	@Override
 	public void portletIconBack() throws Exception {
 		IconBackTag iconBackTag = new IconBackTag();

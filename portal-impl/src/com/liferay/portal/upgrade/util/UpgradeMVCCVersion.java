@@ -41,10 +41,12 @@ public class UpgradeMVCCVersion extends UpgradeProcess {
 		throws Exception {
 
 		for (String excludeTableName : getExcludedTableNames()) {
-			if (excludeTableName.equals(tableName)) {
+			if (StringUtil.equalsIgnoreCase(excludeTableName, tableName)) {
 				return;
 			}
 		}
+
+		tableName = normalizeName(tableName, databaseMetaData);
 
 		ResultSet tableResultSet = databaseMetaData.getTables(
 			null, null, tableName, null);
@@ -67,7 +69,7 @@ public class UpgradeMVCCVersion extends UpgradeProcess {
 
 				runSQL(
 					"alter table " + tableName +
-						" add mvccVersion LONG default 0");
+						" add mvccVersion LONG default 0 not null");
 
 				if (_log.isDebugEnabled()) {
 					_log.debug(

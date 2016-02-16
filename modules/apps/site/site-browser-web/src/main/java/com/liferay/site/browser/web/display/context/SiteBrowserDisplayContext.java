@@ -15,22 +15,23 @@
 package com.liferay.site.browser.web.display.context;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.Organization;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.GroupConstants;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.GroupLocalServiceUtil;
-import com.liferay.portal.service.LayoutLocalServiceUtil;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.usersadmin.search.GroupSearch;
 import com.liferay.portlet.usersadmin.search.GroupSearchTerms;
 import com.liferay.sites.kernel.util.SitesUtil;
@@ -203,15 +204,14 @@ public class SiteBrowserDisplayContext {
 		}
 		else if (groupSearchTerms.isAdvancedSearch()) {
 			total = GroupLocalServiceUtil.searchCount(
-				themeDisplay.getCompanyId(), null, groupSearchTerms.getName(),
-				groupSearchTerms.getDescription(), getGroupParams(),
-				groupSearchTerms.isAndOperator());
+				themeDisplay.getCompanyId(), _CLASS_NAME_IDS,
+				groupSearchTerms.getName(), groupSearchTerms.getDescription(),
+				getGroupParams(), groupSearchTerms.isAndOperator());
 		}
 		else {
 			total = GroupLocalServiceUtil.searchCount(
-				themeDisplay.getCompanyId(), null,
-				groupSearchTerms.getKeywords(), getGroupParams(),
-				groupSearchTerms.isAndOperator());
+				themeDisplay.getCompanyId(), _CLASS_NAME_IDS,
+				groupSearchTerms.getKeywords(), getGroupParams());
 		}
 
 		total += additionalSites;
@@ -254,15 +254,15 @@ public class SiteBrowserDisplayContext {
 		}
 		else if (groupSearchTerms.isAdvancedSearch()) {
 			groups = GroupLocalServiceUtil.search(
-				company.getCompanyId(), null, groupSearchTerms.getName(),
-				groupSearchTerms.getDescription(), getGroupParams(),
-				groupSearchTerms.isAndOperator(), start, end,
+				company.getCompanyId(), _CLASS_NAME_IDS,
+				groupSearchTerms.getName(), groupSearchTerms.getDescription(),
+				getGroupParams(), groupSearchTerms.isAndOperator(), start, end,
 				groupSearch.getOrderByComparator());
 		}
 		else {
 			groups = GroupLocalServiceUtil.search(
-				company.getCompanyId(), null, groupSearchTerms.getKeywords(),
-				getGroupParams(), start, end,
+				company.getCompanyId(), _CLASS_NAME_IDS,
+				groupSearchTerms.getKeywords(), getGroupParams(), start, end,
 				groupSearch.getOrderByComparator());
 		}
 
@@ -408,6 +408,12 @@ public class SiteBrowserDisplayContext {
 
 		return filteredGroups;
 	}
+
+	private static final long[] _CLASS_NAME_IDS = new long[] {
+		PortalUtil.getClassNameId(Company.class),
+		PortalUtil.getClassNameId(Group.class),
+		PortalUtil.getClassNameId(Organization.class)
+	};
 
 	private String _displayStyle;
 	private String _filter;

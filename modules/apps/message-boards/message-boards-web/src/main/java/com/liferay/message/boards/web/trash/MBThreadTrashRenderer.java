@@ -14,19 +14,18 @@
 
 package com.liferay.message.boards.web.trash;
 
+import com.liferay.message.boards.kernel.model.MBMessage;
+import com.liferay.message.boards.kernel.model.MBMessageDisplay;
+import com.liferay.message.boards.kernel.model.MBThread;
+import com.liferay.message.boards.kernel.model.MBTreeWalker;
+import com.liferay.message.boards.kernel.service.MBMessageLocalServiceUtil;
+import com.liferay.message.boards.kernel.service.MBMessageServiceUtil;
 import com.liferay.message.boards.web.constants.MBPortletKeys;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.trash.BaseJSPTrashRenderer;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portlet.messageboards.model.MBMessage;
-import com.liferay.portlet.messageboards.model.MBMessageDisplay;
-import com.liferay.portlet.messageboards.model.MBThread;
-import com.liferay.portlet.messageboards.model.MBThreadConstants;
-import com.liferay.portlet.messageboards.model.MBTreeWalker;
-import com.liferay.portlet.messageboards.service.MBMessageLocalServiceUtil;
-import com.liferay.portlet.messageboards.service.MBMessageServiceUtil;
 
 import java.util.Locale;
 
@@ -100,8 +99,7 @@ public class MBThreadTrashRenderer extends BaseJSPTrashRenderer {
 
 		MBMessageDisplay messageDisplay =
 			MBMessageServiceUtil.getMessageDisplay(
-				_rootMessage.getMessageId(), WorkflowConstants.STATUS_ANY,
-				MBThreadConstants.THREAD_VIEW_TREE, false);
+				_rootMessage.getMessageId(), WorkflowConstants.STATUS_ANY);
 
 		request.setAttribute(
 			WebKeys.MESSAGE_BOARDS_MESSAGE_DISPLAY, messageDisplay);

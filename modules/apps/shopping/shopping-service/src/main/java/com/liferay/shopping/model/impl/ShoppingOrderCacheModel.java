@@ -16,10 +16,10 @@ package com.liferay.shopping.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import com.liferay.shopping.model.ShoppingOrder;
 
@@ -456,20 +456,29 @@ public class ShoppingOrderCacheModel implements CacheModel<ShoppingOrder>,
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		orderId = objectInput.readLong();
+
 		groupId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userId = objectInput.readLong();
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
 		number = objectInput.readUTF();
+
 		tax = objectInput.readDouble();
+
 		shipping = objectInput.readDouble();
 		altShipping = objectInput.readUTF();
+
 		requiresShipping = objectInput.readBoolean();
+
 		insure = objectInput.readBoolean();
+
 		insurance = objectInput.readDouble();
 		couponCodes = objectInput.readUTF();
+
 		couponDiscount = objectInput.readDouble();
 		billingFirstName = objectInput.readUTF();
 		billingLastName = objectInput.readUTF();
@@ -481,6 +490,7 @@ public class ShoppingOrderCacheModel implements CacheModel<ShoppingOrder>,
 		billingZip = objectInput.readUTF();
 		billingCountry = objectInput.readUTF();
 		billingPhone = objectInput.readUTF();
+
 		shipToBilling = objectInput.readBoolean();
 		shippingFirstName = objectInput.readUTF();
 		shippingLastName = objectInput.readUTF();
@@ -495,16 +505,21 @@ public class ShoppingOrderCacheModel implements CacheModel<ShoppingOrder>,
 		ccName = objectInput.readUTF();
 		ccType = objectInput.readUTF();
 		ccNumber = objectInput.readUTF();
+
 		ccExpMonth = objectInput.readInt();
+
 		ccExpYear = objectInput.readInt();
 		ccVerNumber = objectInput.readUTF();
 		comments = objectInput.readUTF();
 		ppTxnId = objectInput.readUTF();
 		ppPaymentStatus = objectInput.readUTF();
+
 		ppPaymentGross = objectInput.readDouble();
 		ppReceiverEmail = objectInput.readUTF();
 		ppPayerEmail = objectInput.readUTF();
+
 		sendOrderEmail = objectInput.readBoolean();
+
 		sendShippingEmail = objectInput.readBoolean();
 	}
 
@@ -512,8 +527,11 @@ public class ShoppingOrderCacheModel implements CacheModel<ShoppingOrder>,
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(orderId);
+
 		objectOutput.writeLong(groupId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
@@ -534,6 +552,7 @@ public class ShoppingOrderCacheModel implements CacheModel<ShoppingOrder>,
 		}
 
 		objectOutput.writeDouble(tax);
+
 		objectOutput.writeDouble(shipping);
 
 		if (altShipping == null) {
@@ -544,7 +563,9 @@ public class ShoppingOrderCacheModel implements CacheModel<ShoppingOrder>,
 		}
 
 		objectOutput.writeBoolean(requiresShipping);
+
 		objectOutput.writeBoolean(insure);
+
 		objectOutput.writeDouble(insurance);
 
 		if (couponCodes == null) {
@@ -720,6 +741,7 @@ public class ShoppingOrderCacheModel implements CacheModel<ShoppingOrder>,
 		}
 
 		objectOutput.writeInt(ccExpMonth);
+
 		objectOutput.writeInt(ccExpYear);
 
 		if (ccVerNumber == null) {
@@ -767,6 +789,7 @@ public class ShoppingOrderCacheModel implements CacheModel<ShoppingOrder>,
 		}
 
 		objectOutput.writeBoolean(sendOrderEmail);
+
 		objectOutput.writeBoolean(sendShippingEmail);
 	}
 

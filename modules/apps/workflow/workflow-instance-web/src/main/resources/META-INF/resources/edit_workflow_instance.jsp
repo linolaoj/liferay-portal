@@ -52,6 +52,7 @@ renderResponse.setTitle(workflowInstanceEditDisplayContext.getHeaderTitle());
 						</aui:fieldset>
 					</aui:field-wrapper>
 				</aui:col>
+
 				<aui:col width="<%= 33 %>">
 					<aui:field-wrapper label="end-date">
 						<aui:fieldset>
@@ -60,7 +61,8 @@ renderResponse.setTitle(workflowInstanceEditDisplayContext.getHeaderTitle());
 					</aui:field-wrapper>
 				</aui:col>
 			</aui:fieldset>
-			<liferay-ui:panel-container cssClass="task-panel-container" extended="<%= true %>" id="preview">
+
+			<liferay-ui:panel-container cssClass="task-panel-container" extended="<%= false %>" id="preview">
 
 				<%
 				AssetRenderer<?> assetRenderer = workflowInstanceEditDisplayContext.getAssetRenderer();
@@ -69,7 +71,7 @@ renderResponse.setTitle(workflowInstanceEditDisplayContext.getHeaderTitle());
 				%>
 
 				<c:if test="<%= assetRenderer != null %>">
-					<liferay-ui:panel extended="<%= false %>" markupView="lexicon" title="<%= workflowInstanceEditDisplayContext.getPanelTitle() %>">
+					<liferay-ui:panel extended="<%= true %>" markupView="lexicon" title="<%= workflowInstanceEditDisplayContext.getPanelTitle() %>">
 						<div class="task-content-actions">
 							<liferay-ui:icon-list>
 								<c:if test="<%= assetRenderer.hasViewPermission(permissionChecker) %>">
@@ -159,6 +161,7 @@ renderResponse.setTitle(workflowInstanceEditDisplayContext.getHeaderTitle());
 									value="<%= workflowInstanceEditDisplayContext.getTaskCompleted(workflowTask) %>"
 								/>
 							</liferay-ui:search-container-row>
+
 							<liferay-ui:search-iterator displayStyle="list" markupView="lexicon" />
 						</liferay-ui:search-container>
 					</liferay-ui:panel>

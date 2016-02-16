@@ -16,6 +16,12 @@ package com.liferay.service.access.policy.service.base;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
+import com.liferay.exportimport.kernel.lar.ManifestSummary;
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
+import com.liferay.exportimport.kernel.lar.StagedModelType;
+
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
@@ -30,25 +36,19 @@ import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiService;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
+import com.liferay.portal.kernel.service.BaseLocalServiceImpl;
+import com.liferay.portal.kernel.service.PersistedModelLocalServiceRegistry;
+import com.liferay.portal.kernel.service.persistence.ClassNamePersistence;
+import com.liferay.portal.kernel.service.persistence.ResourcePermissionPersistence;
+import com.liferay.portal.kernel.service.persistence.RolePersistence;
+import com.liferay.portal.kernel.service.persistence.UserPersistence;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.model.PersistedModel;
-import com.liferay.portal.service.BaseLocalServiceImpl;
-import com.liferay.portal.service.PersistedModelLocalServiceRegistry;
-import com.liferay.portal.service.persistence.ClassNamePersistence;
-import com.liferay.portal.service.persistence.ResourcePermissionPersistence;
-import com.liferay.portal.service.persistence.RolePersistence;
-import com.liferay.portal.service.persistence.UserPersistence;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
-import com.liferay.portal.util.PortalUtil;
-
-import com.liferay.portlet.exportimport.lar.ExportImportHelperUtil;
-import com.liferay.portlet.exportimport.lar.ManifestSummary;
-import com.liferay.portlet.exportimport.lar.PortletDataContext;
-import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
-import com.liferay.portlet.exportimport.lar.StagedModelType;
 
 import com.liferay.service.access.policy.model.SAPEntry;
 import com.liferay.service.access.policy.service.SAPEntryLocalService;
@@ -438,7 +438,7 @@ public abstract class SAPEntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @return the counter local service
 	 */
-	public com.liferay.counter.service.CounterLocalService getCounterLocalService() {
+	public com.liferay.counter.kernel.service.CounterLocalService getCounterLocalService() {
 		return counterLocalService;
 	}
 
@@ -448,7 +448,7 @@ public abstract class SAPEntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param counterLocalService the counter local service
 	 */
 	public void setCounterLocalService(
-		com.liferay.counter.service.CounterLocalService counterLocalService) {
+		com.liferay.counter.kernel.service.CounterLocalService counterLocalService) {
 		this.counterLocalService = counterLocalService;
 	}
 
@@ -457,7 +457,7 @@ public abstract class SAPEntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @return the class name local service
 	 */
-	public com.liferay.portal.service.ClassNameLocalService getClassNameLocalService() {
+	public com.liferay.portal.kernel.service.ClassNameLocalService getClassNameLocalService() {
 		return classNameLocalService;
 	}
 
@@ -467,7 +467,7 @@ public abstract class SAPEntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param classNameLocalService the class name local service
 	 */
 	public void setClassNameLocalService(
-		com.liferay.portal.service.ClassNameLocalService classNameLocalService) {
+		com.liferay.portal.kernel.service.ClassNameLocalService classNameLocalService) {
 		this.classNameLocalService = classNameLocalService;
 	}
 
@@ -495,7 +495,7 @@ public abstract class SAPEntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @return the resource local service
 	 */
-	public com.liferay.portal.service.ResourceLocalService getResourceLocalService() {
+	public com.liferay.portal.kernel.service.ResourceLocalService getResourceLocalService() {
 		return resourceLocalService;
 	}
 
@@ -505,7 +505,7 @@ public abstract class SAPEntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param resourceLocalService the resource local service
 	 */
 	public void setResourceLocalService(
-		com.liferay.portal.service.ResourceLocalService resourceLocalService) {
+		com.liferay.portal.kernel.service.ResourceLocalService resourceLocalService) {
 		this.resourceLocalService = resourceLocalService;
 	}
 
@@ -514,7 +514,7 @@ public abstract class SAPEntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @return the resource permission local service
 	 */
-	public com.liferay.portal.service.ResourcePermissionLocalService getResourcePermissionLocalService() {
+	public com.liferay.portal.kernel.service.ResourcePermissionLocalService getResourcePermissionLocalService() {
 		return resourcePermissionLocalService;
 	}
 
@@ -524,7 +524,7 @@ public abstract class SAPEntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param resourcePermissionLocalService the resource permission local service
 	 */
 	public void setResourcePermissionLocalService(
-		com.liferay.portal.service.ResourcePermissionLocalService resourcePermissionLocalService) {
+		com.liferay.portal.kernel.service.ResourcePermissionLocalService resourcePermissionLocalService) {
 		this.resourcePermissionLocalService = resourcePermissionLocalService;
 	}
 
@@ -552,7 +552,7 @@ public abstract class SAPEntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @return the role local service
 	 */
-	public com.liferay.portal.service.RoleLocalService getRoleLocalService() {
+	public com.liferay.portal.kernel.service.RoleLocalService getRoleLocalService() {
 		return roleLocalService;
 	}
 
@@ -562,7 +562,7 @@ public abstract class SAPEntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param roleLocalService the role local service
 	 */
 	public void setRoleLocalService(
-		com.liferay.portal.service.RoleLocalService roleLocalService) {
+		com.liferay.portal.kernel.service.RoleLocalService roleLocalService) {
 		this.roleLocalService = roleLocalService;
 	}
 
@@ -589,7 +589,7 @@ public abstract class SAPEntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @return the user local service
 	 */
-	public com.liferay.portal.service.UserLocalService getUserLocalService() {
+	public com.liferay.portal.kernel.service.UserLocalService getUserLocalService() {
 		return userLocalService;
 	}
 
@@ -599,7 +599,7 @@ public abstract class SAPEntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param userLocalService the user local service
 	 */
 	public void setUserLocalService(
-		com.liferay.portal.service.UserLocalService userLocalService) {
+		com.liferay.portal.kernel.service.UserLocalService userLocalService) {
 		this.userLocalService = userLocalService;
 	}
 
@@ -677,24 +677,24 @@ public abstract class SAPEntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	protected SAPEntryLocalService sapEntryLocalService;
 	@BeanReference(type = SAPEntryPersistence.class)
 	protected SAPEntryPersistence sapEntryPersistence;
-	@ServiceReference(type = com.liferay.counter.service.CounterLocalService.class)
-	protected com.liferay.counter.service.CounterLocalService counterLocalService;
-	@ServiceReference(type = com.liferay.portal.service.ClassNameLocalService.class)
-	protected com.liferay.portal.service.ClassNameLocalService classNameLocalService;
+	@ServiceReference(type = com.liferay.counter.kernel.service.CounterLocalService.class)
+	protected com.liferay.counter.kernel.service.CounterLocalService counterLocalService;
+	@ServiceReference(type = com.liferay.portal.kernel.service.ClassNameLocalService.class)
+	protected com.liferay.portal.kernel.service.ClassNameLocalService classNameLocalService;
 	@ServiceReference(type = ClassNamePersistence.class)
 	protected ClassNamePersistence classNamePersistence;
-	@ServiceReference(type = com.liferay.portal.service.ResourceLocalService.class)
-	protected com.liferay.portal.service.ResourceLocalService resourceLocalService;
-	@ServiceReference(type = com.liferay.portal.service.ResourcePermissionLocalService.class)
-	protected com.liferay.portal.service.ResourcePermissionLocalService resourcePermissionLocalService;
+	@ServiceReference(type = com.liferay.portal.kernel.service.ResourceLocalService.class)
+	protected com.liferay.portal.kernel.service.ResourceLocalService resourceLocalService;
+	@ServiceReference(type = com.liferay.portal.kernel.service.ResourcePermissionLocalService.class)
+	protected com.liferay.portal.kernel.service.ResourcePermissionLocalService resourcePermissionLocalService;
 	@ServiceReference(type = ResourcePermissionPersistence.class)
 	protected ResourcePermissionPersistence resourcePermissionPersistence;
-	@ServiceReference(type = com.liferay.portal.service.RoleLocalService.class)
-	protected com.liferay.portal.service.RoleLocalService roleLocalService;
+	@ServiceReference(type = com.liferay.portal.kernel.service.RoleLocalService.class)
+	protected com.liferay.portal.kernel.service.RoleLocalService roleLocalService;
 	@ServiceReference(type = RolePersistence.class)
 	protected RolePersistence rolePersistence;
-	@ServiceReference(type = com.liferay.portal.service.UserLocalService.class)
-	protected com.liferay.portal.service.UserLocalService userLocalService;
+	@ServiceReference(type = com.liferay.portal.kernel.service.UserLocalService.class)
+	protected com.liferay.portal.kernel.service.UserLocalService userLocalService;
 	@ServiceReference(type = UserPersistence.class)
 	protected UserPersistence userPersistence;
 	@ServiceReference(type = PersistedModelLocalServiceRegistry.class)

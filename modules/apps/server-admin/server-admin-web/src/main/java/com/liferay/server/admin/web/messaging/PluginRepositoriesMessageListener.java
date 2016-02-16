@@ -17,15 +17,14 @@ package com.liferay.server.admin.web.messaging;
 import aQute.bnd.annotation.metatype.Configurable;
 
 import com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener;
-import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
+import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
 import com.liferay.portal.kernel.scheduler.TriggerFactory;
 import com.liferay.portal.kernel.scheduler.TriggerFactoryUtil;
 import com.liferay.portal.kernel.search.SearchEngineHelperUtil;
-import com.liferay.portal.model.CompanyConstants;
 import com.liferay.portal.plugin.PluginPackageUtil;
 import com.liferay.server.admin.web.configuration.PluginRepositoriesConfiguration;
 
@@ -76,13 +75,6 @@ public class PluginRepositoriesMessageListener
 		SearchEngineHelperUtil.initialize(CompanyConstants.SYSTEM);
 
 		PluginPackageUtil.reloadRepositories();
-	}
-
-	@Reference(
-		target = "(destination.name=" + DestinationNames.SCHEDULER_DISPATCH + ")",
-		unbind = "-"
-	)
-	protected void setDestination(Destination destination) {
 	}
 
 	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")

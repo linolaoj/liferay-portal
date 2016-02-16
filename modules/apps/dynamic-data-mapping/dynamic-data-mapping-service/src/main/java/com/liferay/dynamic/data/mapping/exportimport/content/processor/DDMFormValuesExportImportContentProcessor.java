@@ -14,6 +14,8 @@
 
 package com.liferay.dynamic.data.mapping.exportimport.content.processor;
 
+import com.liferay.document.library.kernel.exception.NoSuchFileEntryException;
+import com.liferay.document.library.kernel.service.DLAppService;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
@@ -21,23 +23,21 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.util.DDMFormFieldValueTransformer;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesTransformer;
 import com.liferay.exportimport.content.processor.ExportImportContentProcessor;
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.StagedModel;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.StagedModel;
-import com.liferay.portal.service.LayoutLocalService;
-import com.liferay.portlet.documentlibrary.exception.NoSuchFileEntryException;
-import com.liferay.portlet.documentlibrary.service.DLAppService;
-import com.liferay.portlet.exportimport.lar.PortletDataContext;
-import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
 
 import java.util.Locale;
 import java.util.Map;
@@ -121,6 +121,77 @@ public class DDMFormValuesExportImportContentProcessor
 
 	private DLAppService _dlAppService;
 	private LayoutLocalService _layoutLocalService;
+
+	private static class LayoutImportDDMFormFieldValueTransformer
+		implements DDMFormFieldValueTransformer {
+
+		public LayoutImportDDMFormFieldValueTransformer(
+			PortletDataContext portletDataContext) {
+
+			_portletDataContext = portletDataContext;
+		}
+
+		@Override
+		public String getFieldType() {
+			return DDMFormFieldType.LINK_TO_PAGE;
+		}
+
+		@Override
+		public void transform(DDMFormFieldValue ddmFormFieldValue)
+			throws PortalException {
+
+			Value value = ddmFormFieldValue.getValue();
+
+			for (Locale locale : value.getAvailableLocales()) {
+				String valueString = value.getString(locale);
+
+				JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+					valueString);
+
+				Layout importedLayout = fetchImportedLayout(
+					_portletDataContext, jsonObject);
+
+				if (importedLayout == null) {
+					continue;
+				}
+
+				value.addString(locale, toJSON(importedLayout));
+			}
+		}
+
+		protected Layout fetchImportedLayout(
+			PortletDataContext portletDataContext, JSONObject jsonObject) {
+
+			Map<Long, Layout> layouts =
+				(Map<Long, Layout>)portletDataContext.getNewPrimaryKeysMap(
+					Layout.class + ".layout");
+
+			long layoutId = jsonObject.getLong("layoutId");
+
+			Layout layout = layouts.get(layoutId);
+
+			if (layout == null) {
+				if (_log.isWarnEnabled()) {
+					_log.warn("Unable to find layout with ID " + layoutId);
+				}
+			}
+
+			return layout;
+		}
+
+		protected String toJSON(Layout layout) {
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+			jsonObject.put("groupId", layout.getGroupId());
+			jsonObject.put("layoutId", layout.getLayoutId());
+			jsonObject.put("privateLayout", layout.isPrivateLayout());
+
+			return jsonObject.toString();
+		}
+
+		private final PortletDataContext _portletDataContext;
+
+	}
 
 	private class FileEntryExportDDMFormFieldValueTransformer
 		implements DDMFormFieldValueTransformer {
@@ -307,77 +378,6 @@ public class DDMFormValuesExportImportContentProcessor
 
 		private final PortletDataContext _portletDataContext;
 		private final StagedModel _stagedModel;
-
-	}
-
-	private class LayoutImportDDMFormFieldValueTransformer
-		implements DDMFormFieldValueTransformer {
-
-		public LayoutImportDDMFormFieldValueTransformer(
-			PortletDataContext portletDataContext) {
-
-			_portletDataContext = portletDataContext;
-		}
-
-		@Override
-		public String getFieldType() {
-			return DDMFormFieldType.LINK_TO_PAGE;
-		}
-
-		@Override
-		public void transform(DDMFormFieldValue ddmFormFieldValue)
-			throws PortalException {
-
-			Value value = ddmFormFieldValue.getValue();
-
-			for (Locale locale : value.getAvailableLocales()) {
-				String valueString = value.getString(locale);
-
-				JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
-					valueString);
-
-				Layout importedLayout = fetchImportedLayout(
-					_portletDataContext, jsonObject);
-
-				if (importedLayout == null) {
-					continue;
-				}
-
-				value.addString(locale, toJSON(importedLayout));
-			}
-		}
-
-		protected Layout fetchImportedLayout(
-			PortletDataContext portletDataContext, JSONObject jsonObject) {
-
-			Map<Long, Layout> layouts =
-				(Map<Long, Layout>)portletDataContext.getNewPrimaryKeysMap(
-					Layout.class + ".layout");
-
-			long layoutId = jsonObject.getLong("layoutId");
-
-			Layout layout = layouts.get(layoutId);
-
-			if (layout == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn("Unable to find layout with ID " + layoutId);
-				}
-			}
-
-			return layout;
-		}
-
-		protected String toJSON(Layout layout) {
-			JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
-
-			jsonObject.put("groupId", layout.getGroupId());
-			jsonObject.put("layoutId", layout.getLayoutId());
-			jsonObject.put("privateLayout", layout.isPrivateLayout());
-
-			return jsonObject.toString();
-		}
-
-		private final PortletDataContext _portletDataContext;
 
 	}
 

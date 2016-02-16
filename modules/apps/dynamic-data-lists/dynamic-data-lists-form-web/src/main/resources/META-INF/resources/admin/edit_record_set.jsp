@@ -30,7 +30,7 @@ String description = BeanParamUtil.getString(recordSet, request, "description");
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(redirect);
 
-renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-form") : recordSet.getName(locale));
+renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-form") : LanguageUtil.get(request, "edit-form"));
 %>
 
 <portlet:actionURL name="addRecordSet" var="addRecordSetURL">
@@ -104,7 +104,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 				<aui:input name="name" type="hidden" />
 
 				<h2>
-					<liferay-ui:input-editor contents="<%= HtmlUtil.escape(LocalizationUtil.getLocalization(description, themeDisplay.getLanguageId())) %>" cssClass="ddl-form-description" editorName="alloyeditor" name="descriptionEditor" placeholder="add-a-short-description-for-this-page" showSource="<%= false %>" />
+					<liferay-ui:input-editor contents="<%= HtmlUtil.escape(LocalizationUtil.getLocalization(description, themeDisplay.getLanguageId())) %>" cssClass="ddl-form-description" editorName="alloyeditor" name="descriptionEditor" placeholder="add-a-short-description-for-this-form" showSource="<%= false %>" />
 				</h2>
 
 				<aui:input name="description" type="hidden" />
@@ -236,6 +236,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 			Liferay.Util.openWindow(
 				{
 					dialog: {
+						cssClass: 'ddl-form-settings-modal',
 						height: 620,
 						resizable: false,
 						'toolbars.footer': [

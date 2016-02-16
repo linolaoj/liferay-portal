@@ -14,6 +14,7 @@
 
 package com.liferay.journal.web.portlet.action;
 
+import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureServiceUtil;
 import com.liferay.dynamic.data.mapping.storage.Field;
@@ -41,11 +42,15 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.PortletRequestModel;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -57,14 +62,10 @@ import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.Node;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.kernel.xml.XPath;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceContextFactory;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 
 import java.io.Serializable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -76,6 +77,7 @@ import javax.portlet.ActionRequest;
 import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.portlet.ResourceRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -340,6 +342,26 @@ public class ActionUtil {
 		return article;
 	}
 
+	public static List<JournalArticle> getArticles(ResourceRequest request)
+		throws Exception {
+
+		long groupId = ParamUtil.getLong(request, "groupId");
+
+		String[] articleIds = ParamUtil.getStringValues(
+			request, "rowIdsJournalArticle");
+
+		List<JournalArticle> articles = new ArrayList<>();
+
+		for (String articleId : articleIds) {
+			JournalArticle article = JournalArticleServiceUtil.getArticle(
+				groupId, articleId);
+
+			articles.add(article);
+		}
+
+		return articles;
+	}
+
 	public static JournalFeed getFeed(HttpServletRequest request)
 		throws Exception {
 
@@ -397,6 +419,23 @@ public class ActionUtil {
 		return getFolder(request);
 	}
 
+	public static List<JournalFolder> getFolders(ResourceRequest request)
+		throws Exception {
+
+		long[] folderIds = ParamUtil.getLongValues(
+			request, "rowIdsJournalFolder");
+
+		List<JournalFolder> folders = new ArrayList<>();
+
+		for (long folderId : folderIds) {
+			JournalFolder folder = JournalFolderServiceUtil.getFolder(folderId);
+
+			folders.add(folder);
+		}
+
+		return folders;
+	}
+
 	public static Map<String, byte[]> getImages(String content, Fields fields)
 		throws Exception {
 
@@ -434,8 +473,6 @@ public class ActionUtil {
 							getElementInstanceId(content, field.getName(), i));
 						sb.append(StringPool.UNDERLINE);
 						sb.append(field.getName());
-						sb.append(StringPool.UNDERLINE);
-						sb.append(i);
 						sb.append(StringPool.UNDERLINE);
 						sb.append(LanguageUtil.getLanguageId(locale));
 

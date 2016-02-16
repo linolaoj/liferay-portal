@@ -19,6 +19,7 @@
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/layout" prefix="liferay-layout" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
@@ -30,27 +31,22 @@ page import="com.liferay.layout.item.selector.criterion.LayoutItemSelectorCriter
 page import="com.liferay.layout.item.selector.web.LayoutItemSelectorView" %><%@
 page import="com.liferay.layout.item.selector.web.display.context.LayoutItemSelectorViewDisplayContext" %><%@
 page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil" %><%@
+page import="com.liferay.portal.kernel.model.Group" %><%@
+page import="com.liferay.portal.kernel.model.Layout" %><%@
+page import="com.liferay.portal.kernel.model.LayoutConstants" %><%@
 page import="com.liferay.portal.kernel.portlet.PortletProvider" %><%@
 page import="com.liferay.portal.kernel.portlet.PortletProviderUtil" %><%@
+page import="com.liferay.portal.kernel.service.GroupLocalServiceUtil" %><%@
 page import="com.liferay.portal.kernel.util.ClassUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
 page import="com.liferay.portal.kernel.util.StringPool" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
-page import="com.liferay.portal.kernel.util.WebKeys" %><%@
-page import="com.liferay.portal.model.Group" %><%@
-page import="com.liferay.portal.model.Layout" %><%@
-page import="com.liferay.portal.model.LayoutConstants" %><%@
-page import="com.liferay.portal.service.GroupLocalServiceUtil" %><%@
-page import="com.liferay.portlet.PortletURLUtil" %>
+page import="com.liferay.portal.kernel.util.WebKeys" %>
 
 <%@ page import="javax.portlet.PortletURL" %>
+
+<liferay-frontend:defineObjects />
 
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />
-
-<%
-PortletURL currentURLObj = PortletURLUtil.getCurrent(liferayPortletRequest, liferayPortletResponse);
-
-String currentURL = currentURLObj.toString();
-%>

@@ -502,6 +502,8 @@ AUI.add(
 
 						var labelNode = instance.getLabelNode();
 
+						var tipNode = labelNode.one('.taglib-icon-help');
+
 						if (Lang.isValue(label) && Lang.isNode(labelNode)) {
 							labelNode.html(A.Escape.html(label));
 						}
@@ -512,21 +514,7 @@ AUI.add(
 							labelNode.append(TPL_REQUIRED_MARK);
 						}
 
-						var tipNode = labelNode.one('.taglib-icon-help');
-
-						if (tipNode) {
-							var defaultLocale = instance.getDefaulLocale();
-
-							var tipsMap = fieldDefinition.tip;
-
-							if (Lang.isObject(tipsMap)) {
-								var tip = tipsMap[instance.get('displayLocale')] || tipsMap[defaultLocale];
-
-								tipNode.one('.tooltip-text').html(A.Escape.html(tip));
-							}
-
-							labelNode.append(tipNode);
-						}
+						instance._addTip(labelNode, tipNode);
 					},
 
 					setValue: function(value) {
@@ -689,6 +677,33 @@ AUI.add(
 						);
 					},
 
+					_addTip: function(labelNode, tipNode) {
+						if (tipNode) {
+							var instance = this;
+
+							var defaultLocale = instance.getDefaulLocale();
+							var fieldDefinition = instance.getFieldDefinition();
+
+							var tipsMap = fieldDefinition.tip;
+
+							if (Lang.isObject(tipsMap)) {
+								var tip = tipsMap[instance.get('displayLocale')] || tipsMap[defaultLocale];
+
+								var text = A.Escape.html(tip);
+
+								tipNode.attr('onmouseover', '');
+
+								tipNode.one('.taglib-text').html(text);
+
+								tipNode.purge(true);
+
+								tipNode.on('mouseover', A.bind(Liferay.Portal.ToolTip.show, Liferay, tipNode, text));
+							}
+
+							labelNode.append(tipNode);
+						}
+					},
+
 					_afterDeleteAvailableLocale: function(event) {
 						var instance = this;
 
@@ -812,6 +827,8 @@ AUI.add(
 
 						var labelNode = instance.getLabelNode();
 
+						var tipNode = labelNode.one('.taglib-icon-help');
+
 						var inputNode = instance.getInputNode();
 
 						if (Lang.isValue(label) && Lang.isNode(labelNode)) {
@@ -819,6 +836,8 @@ AUI.add(
 
 							labelNode.prepend(inputNode);
 						}
+
+						instance._addTip(labelNode, tipNode);
 					},
 
 					setValue: function(value) {

@@ -14,9 +14,12 @@
 
 package com.liferay.exportimport.web.portlet.action;
 
+import com.liferay.exportimport.kernel.exception.RemoteExportException;
+import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
+import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.exportimport.web.constants.ExportImportPortletKeys;
-import com.liferay.portal.RemoteOptionsException;
-import com.liferay.portal.exception.LayoutPrototypeException;
+import com.liferay.portal.kernel.exception.LayoutPrototypeException;
+import com.liferay.portal.kernel.exception.RemoteOptionsException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lock.DuplicateLockException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
@@ -28,13 +31,14 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.exportimport.exception.RemoteExportException;
-import com.liferay.portlet.exportimport.staging.StagingUtil;
+import com.liferay.taglib.ui.util.SessionTreeJSClicks;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -71,25 +75,37 @@ public class PublishLayoutsMVCActionCommand extends BaseMVCActionCommand {
 
 		try {
 			if (cmd.equals("copy_from_live")) {
+				setLayoutIdMap(actionRequest);
+
 				StagingUtil.copyFromLive(actionRequest);
 			}
 			else if (cmd.equals(Constants.PUBLISH_TO_LIVE)) {
 				hideDefaultSuccessMessage(actionRequest);
+
+				setLayoutIdMap(actionRequest);
 
 				StagingUtil.publishToLive(actionRequest);
 			}
 			else if (cmd.equals(Constants.PUBLISH_TO_REMOTE)) {
 				hideDefaultSuccessMessage(actionRequest);
 
+				setLayoutIdMap(actionRequest);
+
 				StagingUtil.publishToRemote(actionRequest);
 			}
 			else if (cmd.equals("schedule_copy_from_live")) {
+				setLayoutIdMap(actionRequest);
+
 				StagingUtil.scheduleCopyFromLive(actionRequest);
 			}
 			else if (cmd.equals("schedule_publish_to_live")) {
+				setLayoutIdMap(actionRequest);
+
 				StagingUtil.schedulePublishToLive(actionRequest);
 			}
 			else if (cmd.equals("schedule_publish_to_remote")) {
+				setLayoutIdMap(actionRequest);
+
 				StagingUtil.schedulePublishToRemote(actionRequest);
 			}
 			else if (cmd.equals("unschedule_copy_from_live")) {
@@ -131,6 +147,26 @@ public class PublishLayoutsMVCActionCommand extends BaseMVCActionCommand {
 				throw e;
 			}
 		}
+	}
+
+	protected void setLayoutIdMap(ActionRequest actionRequest) {
+		HttpServletRequest portletRequest = PortalUtil.getHttpServletRequest(
+			actionRequest);
+
+		long groupId = ParamUtil.getLong(actionRequest, "groupId");
+		boolean privateLayout = ParamUtil.getBoolean(
+			actionRequest, "privateLayout");
+
+		String treeId = ParamUtil.getString(actionRequest, "treeId");
+
+		String openNodes = SessionTreeJSClicks.getOpenNodes(
+			portletRequest, treeId + "SelectedNode");
+
+		String selectedLayoutsJSON =
+			ExportImportHelperUtil.getSelectedLayoutsJSON(
+				groupId, privateLayout, openNodes);
+
+		actionRequest.setAttribute("layoutIdMap", selectedLayoutsJSON);
 	}
 
 }

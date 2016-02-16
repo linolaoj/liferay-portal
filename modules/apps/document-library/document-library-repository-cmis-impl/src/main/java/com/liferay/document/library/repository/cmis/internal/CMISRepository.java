@@ -14,6 +14,18 @@
 
 package com.liferay.document.library.repository.cmis.internal;
 
+import com.liferay.document.library.kernel.exception.DuplicateFileEntryException;
+import com.liferay.document.library.kernel.exception.DuplicateFolderNameException;
+import com.liferay.document.library.kernel.exception.FileNameException;
+import com.liferay.document.library.kernel.exception.NoSuchFileEntryException;
+import com.liferay.document.library.kernel.exception.NoSuchFileVersionException;
+import com.liferay.document.library.kernel.exception.NoSuchFolderException;
+import com.liferay.document.library.kernel.model.DLFileEntryConstants;
+import com.liferay.document.library.kernel.model.DLFolder;
+import com.liferay.document.library.kernel.util.comparator.RepositoryModelCreateDateComparator;
+import com.liferay.document.library.kernel.util.comparator.RepositoryModelModifiedDateComparator;
+import com.liferay.document.library.kernel.util.comparator.RepositoryModelSizeComparator;
+import com.liferay.document.library.kernel.util.comparator.RepositoryModelTitleComparator;
 import com.liferay.document.library.repository.cmis.BaseCmisRepository;
 import com.liferay.document.library.repository.cmis.CMISRepositoryHandler;
 import com.liferay.document.library.repository.cmis.configuration.CMISRepositoryConfiguration;
@@ -21,8 +33,8 @@ import com.liferay.document.library.repository.cmis.internal.model.CMISFileEntry
 import com.liferay.document.library.repository.cmis.internal.model.CMISFileVersion;
 import com.liferay.document.library.repository.cmis.internal.model.CMISFolder;
 import com.liferay.document.library.repository.cmis.search.CMISSearchQueryBuilder;
-import com.liferay.portal.exception.NoSuchRepositoryEntryException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.NoSuchRepositoryEntryException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -30,6 +42,7 @@ import com.liferay.portal.kernel.lock.Lock;
 import com.liferay.portal.kernel.lock.LockManager;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.RepositoryEntry;
 import com.liferay.portal.kernel.repository.RepositoryException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileShortcut;
@@ -46,6 +59,8 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.service.RepositoryEntryLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.servlet.PortalSessionThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.AutoResetThreadLocal;
@@ -57,21 +72,6 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.TransientValue;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.RepositoryEntry;
-import com.liferay.portal.service.RepositoryEntryLocalServiceUtil;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.documentlibrary.exception.DuplicateFileEntryException;
-import com.liferay.portlet.documentlibrary.exception.DuplicateFolderNameException;
-import com.liferay.portlet.documentlibrary.exception.FileNameException;
-import com.liferay.portlet.documentlibrary.exception.NoSuchFileEntryException;
-import com.liferay.portlet.documentlibrary.exception.NoSuchFileVersionException;
-import com.liferay.portlet.documentlibrary.exception.NoSuchFolderException;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryConstants;
-import com.liferay.portlet.documentlibrary.model.DLFolder;
-import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelCreateDateComparator;
-import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelModifiedDateComparator;
-import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelSizeComparator;
-import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelTitleComparator;
 
 import java.io.InputStream;
 

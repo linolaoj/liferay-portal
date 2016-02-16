@@ -16,8 +16,13 @@ package com.liferay.shopping.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+
+import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -365,7 +370,7 @@ public class ShoppingItemWrapper implements ShoppingItem,
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _shoppingItem.getExpandoBridge();
 	}
 
@@ -551,7 +556,7 @@ public class ShoppingItemWrapper implements ShoppingItem,
 	}
 
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
+	public Serializable getPrimaryKeyObj() {
 		return _shoppingItem.getPrimaryKeyObj();
 	}
 
@@ -597,7 +602,7 @@ public class ShoppingItemWrapper implements ShoppingItem,
 
 	@Override
 	public java.lang.String getShoppingItemImageURL(
-		com.liferay.portal.theme.ThemeDisplay themeDisplay) {
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay) {
 		return _shoppingItem.getShoppingItemImageURL(themeDisplay);
 	}
 
@@ -878,19 +883,17 @@ public class ShoppingItemWrapper implements ShoppingItem,
 
 	@Override
 	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
 		_shoppingItem.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_shoppingItem.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_shoppingItem.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -1076,7 +1079,7 @@ public class ShoppingItemWrapper implements ShoppingItem,
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_shoppingItem.setPrimaryKeyObj(primaryKeyObj);
 	}
 
@@ -1221,7 +1224,7 @@ public class ShoppingItemWrapper implements ShoppingItem,
 	}
 
 	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.shopping.model.ShoppingItem> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.shopping.model.ShoppingItem> toCacheModel() {
 		return _shoppingItem.toCacheModel();
 	}
 

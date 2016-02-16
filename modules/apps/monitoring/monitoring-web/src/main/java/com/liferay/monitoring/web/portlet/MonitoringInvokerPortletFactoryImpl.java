@@ -15,10 +15,10 @@
 package com.liferay.monitoring.web.portlet;
 
 import com.liferay.portal.kernel.monitoring.PortletMonitoringControl;
-import com.liferay.portal.util.PortletKeys;
-import com.liferay.portlet.InvokerFilterContainer;
-import com.liferay.portlet.InvokerPortlet;
-import com.liferay.portlet.InvokerPortletFactory;
+import com.liferay.portal.kernel.portlet.InvokerFilterContainer;
+import com.liferay.portal.kernel.portlet.InvokerPortlet;
+import com.liferay.portal.kernel.portlet.InvokerPortletFactory;
+import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portlet.InvokerPortletFactoryImpl;
 
 import javax.portlet.Portlet;
@@ -43,8 +43,9 @@ public class MonitoringInvokerPortletFactoryImpl
 
 	@Override
 	public InvokerPortlet create(
-			com.liferay.portal.model.Portlet portletModel, Portlet portlet,
-			PortletConfig portletConfig, PortletContext portletContext,
+			com.liferay.portal.kernel.model.Portlet portletModel,
+			Portlet portlet, PortletConfig portletConfig,
+			PortletContext portletContext,
 			InvokerFilterContainer invokerFilterContainer,
 			boolean checkAuthToken, boolean facesPortlet, boolean strutsPortlet,
 			boolean strutsBridgePortlet)
@@ -61,8 +62,8 @@ public class MonitoringInvokerPortletFactoryImpl
 
 	@Override
 	public InvokerPortlet create(
-			com.liferay.portal.model.Portlet portletModel, Portlet portlet,
-			PortletContext portletContext,
+			com.liferay.portal.kernel.model.Portlet portletModel,
+			Portlet portlet, PortletContext portletContext,
 			InvokerFilterContainer invokerFilterContainer)
 		throws PortletException {
 

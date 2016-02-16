@@ -43,7 +43,7 @@ public class WallEntryLocalServiceUtil {
 	 */
 	public static com.liferay.social.networking.model.WallEntry addWallEntry(
 		long groupId, long userId, java.lang.String comments,
-		com.liferay.portal.theme.ThemeDisplay themeDisplay)
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().addWallEntry(groupId, userId, comments, themeDisplay);
 	}
@@ -73,8 +73,8 @@ public class WallEntryLocalServiceUtil {
 	/**
 	* @throws PortalException
 	*/
-	public static com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
+	public static com.liferay.portal.kernel.model.PersistedModel deletePersistedModel(
+		com.liferay.portal.kernel.model.PersistedModel persistedModel)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().deletePersistedModel(persistedModel);
 	}
@@ -210,7 +210,7 @@ public class WallEntryLocalServiceUtil {
 		return getService().getOSGiServiceIdentifier();
 	}
 
-	public static com.liferay.portal.model.PersistedModel getPersistedModel(
+	public static com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
 		java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getPersistedModel(primaryKeyObj);

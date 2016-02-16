@@ -171,7 +171,7 @@ if (Validator.isNotNull(keywords)) {
 			searchContainer="<%= entrySearch %>"
 		>
 			<liferay-ui:search-container-row
-				className="com.liferay.portlet.trash.model.TrashEntry"
+				className="com.liferay.trash.kernel.model.TrashEntry"
 				keyProperty="entryId"
 				modelVar="entry"
 			>
@@ -297,8 +297,6 @@ if (Validator.isNotNull(keywords)) {
 					<c:otherwise>
 
 						<%
-						request.removeAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
-
 						request.setAttribute(WebKeys.TRASH_RENDERER, trashRenderer);
 						%>
 

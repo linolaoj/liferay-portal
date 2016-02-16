@@ -115,8 +115,10 @@ AssetCategoryUtil.addPortletBreadcrumbEntry(vocabulary, category, request, rende
 %>
 
 <aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
+	<portlet:renderURL var="mainURL" />
+
 	<aui:nav cssClass="navbar-nav">
-		<aui:nav-item label="categories" selected="<%= true %>" />
+		<aui:nav-item href="<%= mainURL.toString() %>" label="categories" selected="<%= true %>" />
 	</aui:nav>
 
 	<c:if test="<%= Validator.isNotNull(keywords) || (categoriesCount > 0) %>">
@@ -186,7 +188,7 @@ AssetCategoryUtil.addPortletBreadcrumbEntry(vocabulary, category, request, rende
 	>
 
 		<liferay-ui:search-container-row
-			className="com.liferay.portlet.asset.model.AssetCategory"
+			className="com.liferay.asset.kernel.model.AssetCategory"
 			keyProperty="categoryId"
 			modelVar="curCategory"
 		>

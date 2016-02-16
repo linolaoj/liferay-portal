@@ -27,7 +27,7 @@ long ruleGroupId = BeanParamUtil.getLong(ruleGroup, request, "ruleGroupId");
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(redirect);
 
-renderResponse.setTitle(((ruleGroup == null) ? LanguageUtil.get(request, "new-device-family") : ruleGroup.getName(locale)));
+renderResponse.setTitle(((ruleGroup == null) ? LanguageUtil.get(resourceBundle, "new-device-family") : ruleGroup.getName(locale)));
 %>
 
 <portlet:actionURL name="/mobile_device_rules/edit_rule_group" var="editRuleGroupURL">
@@ -53,9 +53,9 @@ renderResponse.setTitle(((ruleGroup == null) ? LanguageUtil.get(request, "new-de
 
 	<aui:fieldset-group markupView="lexicon">
 		<aui:fieldset>
-			<aui:input autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) || windowState.equals(LiferayWindowState.POP_UP) %>" name="name" />
+			<aui:input autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) || windowState.equals(LiferayWindowState.POP_UP) %>" name="name" placeholder="name" />
 
-			<aui:input name="description" />
+			<aui:input name="description" placeholder="description" />
 		</aui:fieldset>
 	</aui:fieldset-group>
 

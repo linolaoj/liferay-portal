@@ -16,11 +16,11 @@ package com.liferay.portlet.asset.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.asset.kernel.model.AssetTagStats;
+
+import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.model.CacheModel;
-
-import com.liferay.portlet.asset.model.AssetTagStats;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -98,9 +98,13 @@ public class AssetTagStatsCacheModel implements CacheModel<AssetTagStats>,
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		tagStatsId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		tagId = objectInput.readLong();
+
 		classNameId = objectInput.readLong();
+
 		assetCount = objectInput.readInt();
 	}
 
@@ -108,9 +112,13 @@ public class AssetTagStatsCacheModel implements CacheModel<AssetTagStats>,
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(tagStatsId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(tagId);
+
 		objectOutput.writeLong(classNameId);
+
 		objectOutput.writeInt(assetCount);
 	}
 

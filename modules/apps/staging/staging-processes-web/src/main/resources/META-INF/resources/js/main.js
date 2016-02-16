@@ -635,6 +635,14 @@ AUI.add(
 						instance._setRemoteLabels();
 					},
 
+					_isBackgroundTaskInProgress: function() {
+						var instance = this;
+
+						var processesNode = instance.get('processesNode');
+
+						return !!processesNode.one('.background-task-status-in-progress');
+					},
+
 					_isChecked: function(nodeName) {
 						var instance = this;
 
@@ -647,19 +655,17 @@ AUI.add(
 						var instance = this;
 
 						if (instance._isChecked('deletionsNode')) {
-							var deletionsNode = instance.get('deletionsNode');
-
 							instance.all('.deletions').each(
-									function(item, index, collection) {
-										item.show();
-									}
+								function(item, index, collection) {
+									item.show();
+								}
 							);
 						}
 						else {
 							instance.all('.deletions').each(
-									function(item, index, collection) {
-										item.hide();
-									}
+								function(item, index, collection) {
+									item.hide();
+								}
 							);
 						}
 					},
@@ -668,10 +674,9 @@ AUI.add(
 						var instance = this;
 
 						var cmdNode = instance.byId('cmd');
+						var redirectNode = instance.byId('redirect');
 
 						if ((cmdNode.val() === 'add') || (cmdNode.val() === 'update')) {
-							var redirectNode = instance.byId('redirect');
-
 							var portletURL = Liferay.PortletURL.createURL(redirectNode.val());
 
 							portletURL.setParameter('cmd', cmdNode.val());
@@ -716,7 +721,6 @@ AUI.add(
 
 						if (cmdNode) {
 							var currentURL = instance.byId('currentURL');
-							var redirectNode = instance.byId('redirect');
 
 							cmdNode.val(STR_EMPTY);
 							redirectNode.val(currentURL);
@@ -727,6 +731,14 @@ AUI.add(
 
 					_renderProcesses: function() {
 						var instance = this;
+
+						var checkedCheckboxes = A.all('input[name="' + instance.ns('rowIds') + '"]:checked');
+
+						if (checkedCheckboxes && checkedCheckboxes.size() > 0) {
+							instance._scheduleRenderProcess();
+
+							return;
+						}
 
 						var processesNode = instance.get('processesNode');
 
@@ -784,22 +796,26 @@ AUI.add(
 
 											processesNode.setContent(this.get('responseData'));
 
-											var renderInterval = RENDER_INTERVAL_IDLE;
+											instance._updateincompleteProcessMessage(instance._isBackgroundTaskInProgress(), processesNode.one('.incomplete-process-message'));
 
-											var inProgress = !!processesNode.one('.background-task-status-in-progress');
-
-											if (inProgress) {
-												renderInterval = RENDER_INTERVAL_IN_PROGRESS;
-											}
-
-											instance._updateincompleteProcessMessage(inProgress, processesNode.one('.incomplete-process-message'));
-
-											A.later(renderInterval, instance, instance._renderProcesses);
+											instance._scheduleRenderProcess();
 										}
 									}
 								}
 							);
 						}
+					},
+
+					_scheduleRenderProcess: function() {
+						var instance = this;
+
+						var renderInterval = RENDER_INTERVAL_IDLE;
+
+						if (instance._isBackgroundTaskInProgress()) {
+							renderInterval = RENDER_INTERVAL_IN_PROGRESS;
+						}
+
+						A.later(renderInterval, instance, instance._renderProcesses);
 					},
 
 					_setConfigurationLabels: function(portletId) {
@@ -992,8 +1008,8 @@ AUI.add(
 
 						var rangeDialog = instance._rangeDialog;
 
-						var endsLater = true;
 						var endsInPast = true;
+						var endsLater = true;
 						var startsInPast = true;
 
 						if (instance._isChecked('rangeDateRangeNode')) {
@@ -1024,7 +1040,14 @@ AUI.add(
 							var localeString = instance.get('locale');
 							var timeZoneString = instance.get('timeZone');
 
-							var today = new Date(new Date().toLocaleString(localeString, {timeZone: timeZoneString}));
+							var today = new Date(
+								new Date().toLocaleString(
+									localeString,
+									{
+										timeZone: timeZoneString
+									}
+								)
+							);
 
 							endsInPast = ADate.isGreaterOrEqual(today, endDate);
 							startsInPast = ADate.isGreaterOrEqual(today, startDate);

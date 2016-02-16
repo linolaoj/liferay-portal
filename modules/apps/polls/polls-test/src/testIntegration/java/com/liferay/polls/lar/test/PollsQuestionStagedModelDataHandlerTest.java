@@ -18,17 +18,20 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.polls.model.PollsQuestion;
 import com.liferay.polls.service.PollsQuestionLocalServiceUtil;
 import com.liferay.polls.util.test.PollsTestUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.StagedModel;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.test.rule.Sync;
+import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
 import com.liferay.portal.kernel.test.rule.TransactionalTestRule;
 import com.liferay.portal.lar.test.BaseStagedModelDataHandlerTestCase;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.StagedModel;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
 
@@ -36,12 +39,17 @@ import org.junit.runner.RunWith;
  * @author Shinn Lok
  */
 @RunWith(Arquillian.class)
+@Sync
 public class PollsQuestionStagedModelDataHandlerTest
 	extends BaseStagedModelDataHandlerTestCase {
 
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(
-		new LiferayIntegrationTestRule(), TransactionalTestRule.INSTANCE);
+	public static final AggregateTestRule aggregateTestRule =
+		new AggregateTestRule(
+			new LiferayIntegrationTestRule(),
+			SynchronousDestinationTestRule.INSTANCE,
+			TransactionalTestRule.INSTANCE);
 
 	@Override
 	protected StagedModel addStagedModel(

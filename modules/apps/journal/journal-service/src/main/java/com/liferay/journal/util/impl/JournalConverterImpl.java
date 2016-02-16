@@ -14,6 +14,7 @@
 
 package com.liferay.journal.util.impl;
 
+import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.storage.Field;
 import com.liferay.dynamic.data.mapping.storage.FieldConstants;
@@ -24,11 +25,14 @@ import com.liferay.dynamic.data.mapping.util.impl.DDMImpl;
 import com.liferay.journal.util.JournalConverter;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -45,9 +49,6 @@ import com.liferay.portal.kernel.xml.DocumentException;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.kernel.xml.XPath;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.service.GroupLocalService;
-import com.liferay.portlet.documentlibrary.service.DLAppLocalService;
 import com.liferay.util.xml.XMLUtil;
 
 import java.io.Serializable;
@@ -478,6 +479,8 @@ public class JournalConverterImpl implements JournalConverter {
 				"name", dynamicContentElement.attributeValue("name"));
 			jsonObject.put(
 				"title", dynamicContentElement.attributeValue("title"));
+			jsonObject.put(
+				"type", dynamicContentElement.attributeValue("type"));
 
 			serializable = jsonObject.toString();
 		}
@@ -630,8 +633,6 @@ public class JournalConverterImpl implements JournalConverter {
 					dynamicElementElement.addElement("dynamic-element");
 
 				childDynamicElementElement.addAttribute("name", childFieldName);
-				childDynamicElementElement.addAttribute(
-					"index", String.valueOf(i));
 
 				String instanceId = getFieldInstanceId(
 					ddmFields, fieldName, (count + i));
@@ -673,8 +674,6 @@ public class JournalConverterImpl implements JournalConverter {
 		dynamicElementElement.addAttribute("index-type", indexType);
 
 		int count = ddmFieldsCounter.get(fieldName);
-
-		dynamicElementElement.addAttribute("index", String.valueOf(count));
 
 		String instanceId = getFieldInstanceId(ddmFields, fieldName, count);
 
@@ -870,7 +869,14 @@ public class JournalConverterImpl implements JournalConverter {
 		else if (DDMImpl.TYPE_SELECT.equals(fieldType) &&
 				 Validator.isNotNull(fieldValue)) {
 
-			JSONArray jsonArray = JSONFactoryUtil.createJSONArray(fieldValue);
+			JSONArray jsonArray = null;
+
+			try {
+				jsonArray = JSONFactoryUtil.createJSONArray(fieldValue);
+			}
+			catch (JSONException jsone) {
+				return;
+			}
 
 			if (multiple) {
 				for (int i = 0; i < jsonArray.length(); i++) {

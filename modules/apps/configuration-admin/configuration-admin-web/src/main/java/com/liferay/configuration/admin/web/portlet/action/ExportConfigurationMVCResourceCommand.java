@@ -18,8 +18,10 @@ import com.liferay.configuration.admin.web.constants.ConfigurationAdminPortletKe
 import com.liferay.configuration.admin.web.model.ConfigurationModel;
 import com.liferay.configuration.admin.web.util.AttributeDefinitionUtil;
 import com.liferay.configuration.admin.web.util.ConfigurationModelRetriever;
+import com.liferay.portal.configuration.metatype.definitions.ExtendedAttributeDefinition;
 import com.liferay.portal.kernel.portlet.PortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PropertiesUtil;
@@ -30,8 +32,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.zip.ZipWriter;
 import com.liferay.portal.kernel.zip.ZipWriterFactoryUtil;
-import com.liferay.portal.metatype.definitions.ExtendedAttributeDefinition;
-import com.liferay.portal.theme.ThemeDisplay;
 
 import java.io.FileInputStream;
 
@@ -132,7 +132,7 @@ public class ExportConfigurationMVCResourceCommand
 							languageId, curFactoryPid, curPid));
 				}
 			}
-			else if (configurationModel.getConfiguration() != null) {
+			else if (configurationModel.hasConfiguration()) {
 				String curPid = configurationModel.getID();
 				String curFileName = getFileName(null, curPid);
 
@@ -299,13 +299,7 @@ public class ExportConfigurationMVCResourceCommand
 		return propertiesString.getBytes();
 	}
 
-	@Reference(unbind = "-")
-	protected void setConfigurationModelRetriever(
-		ConfigurationModelRetriever configurationModelRetriever) {
-
-		_configurationModelRetriever = configurationModelRetriever;
-	}
-
+	@Reference
 	private ConfigurationModelRetriever _configurationModelRetriever;
 
 }

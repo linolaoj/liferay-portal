@@ -14,21 +14,21 @@
 
 package com.liferay.mentions.service;
 
+import com.liferay.blogs.kernel.model.BlogsEntry;
+import com.liferay.blogs.kernel.service.BlogsEntryLocalService;
+import com.liferay.blogs.kernel.service.BlogsEntryLocalServiceWrapper;
 import com.liferay.mentions.configuration.MentionsGroupServiceConfiguration;
 import com.liferay.mentions.constants.MentionsConstants;
 import com.liferay.mentions.util.MentionsNotifier;
 import com.liferay.mentions.util.MentionsUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationFactory;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceWrapper;
 import com.liferay.portal.kernel.settings.CompanyServiceSettingsLocator;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceWrapper;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.blogs.model.BlogsEntry;
-import com.liferay.portlet.blogs.service.BlogsEntryLocalService;
-import com.liferay.portlet.blogs.service.BlogsEntryLocalServiceWrapper;
 
 import java.io.Serializable;
 
@@ -88,7 +88,7 @@ public class MentionsBlogsEntryServiceWrapper
 		}
 
 		MentionsGroupServiceConfiguration mentionsGroupServiceConfiguration =
-			_configurationFactory.getConfiguration(
+			_configurationProvider.getConfiguration(
 				MentionsGroupServiceConfiguration.class,
 				new CompanyServiceSettingsLocator(
 					entry.getCompanyId(), MentionsConstants.SERVICE_NAME));
@@ -111,10 +111,10 @@ public class MentionsBlogsEntryServiceWrapper
 	}
 
 	@Reference(unbind = "-")
-	protected void setConfigurationFactory(
-		ConfigurationFactory configurationFactory) {
+	protected void setConfigurationProvider(
+		ConfigurationProvider configurationProvider) {
 
-		_configurationFactory = configurationFactory;
+		_configurationProvider = configurationProvider;
 	}
 
 	@Reference(unbind = "-")
@@ -123,7 +123,7 @@ public class MentionsBlogsEntryServiceWrapper
 	}
 
 	private BlogsEntryLocalService _blogsEntryLocalService;
-	private ConfigurationFactory _configurationFactory;
+	private ConfigurationProvider _configurationProvider;
 	private MentionsNotifier _mentionsNotifier;
 
 }

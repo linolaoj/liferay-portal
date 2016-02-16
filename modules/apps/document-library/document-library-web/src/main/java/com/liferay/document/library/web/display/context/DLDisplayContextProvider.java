@@ -15,6 +15,10 @@
 package com.liferay.document.library.web.display.context;
 
 import com.liferay.document.library.display.context.DLMimeTypeDisplayContext;
+import com.liferay.document.library.kernel.display.context.DLDisplayContextFactory;
+import com.liferay.document.library.kernel.display.context.DLEditFileEntryDisplayContext;
+import com.liferay.document.library.kernel.display.context.DLViewFileVersionDisplayContext;
+import com.liferay.document.library.kernel.model.DLFileEntryType;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -22,10 +26,7 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileShortcut;
 import com.liferay.portal.kernel.repository.model.FileVersion;
-import com.liferay.portlet.documentlibrary.display.context.DLDisplayContextFactory;
-import com.liferay.portlet.documentlibrary.display.context.DLEditFileEntryDisplayContext;
-import com.liferay.portlet.documentlibrary.display.context.DLViewFileVersionDisplayContext;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
+import com.liferay.portal.kernel.util.ResourceBundleLoader;
 
 import java.util.Map;
 
@@ -33,11 +34,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * @author Iván Zaera
@@ -93,7 +96,8 @@ public class DLDisplayContextProvider {
 		try {
 			DLViewFileVersionDisplayContext dlViewFileVersionDisplayContext =
 				new DefaultDLViewFileVersionDisplayContext(
-					request, response, fileShortcut, _dlMimeTypeDisplayContext);
+					request, response, fileShortcut, _dlMimeTypeDisplayContext,
+					_resourceBundleLoader);
 
 			if (fileShortcut == null) {
 				return dlViewFileVersionDisplayContext;
@@ -122,7 +126,8 @@ public class DLDisplayContextProvider {
 
 		DLViewFileVersionDisplayContext dlViewFileVersionDisplayContext =
 			new DefaultDLViewFileVersionDisplayContext(
-				request, response, fileVersion, _dlMimeTypeDisplayContext);
+				request, response, fileVersion, _dlMimeTypeDisplayContext,
+				_resourceBundleLoader);
 
 		if (fileVersion == null) {
 			return dlViewFileVersionDisplayContext;
@@ -140,24 +145,49 @@ public class DLDisplayContextProvider {
 		return dlViewFileVersionDisplayContext;
 	}
 
-	@Reference(cardinality = ReferenceCardinality.OPTIONAL, unbind = "-")
+	@Reference(
+		cardinality = ReferenceCardinality.OPTIONAL,
+		policy = ReferencePolicy.DYNAMIC,
+		policyOption = ReferencePolicyOption.GREEDY
+	)
 	public void setDLMimeTypeDisplayContext(
 		DLMimeTypeDisplayContext dlMimeTypeDisplayContext) {
 
 		_dlMimeTypeDisplayContext = dlMimeTypeDisplayContext;
 	}
 
+	public void unsetDLMimeTypeDisplayContext(
+		DLMimeTypeDisplayContext dlMimeTypeDisplayContext) {
+
+		_dlMimeTypeDisplayContext = null;
+	}
+
 	@Activate
 	protected void activate(
-			BundleContext bundleContext, Map<String, Object> properties)
-		throws InvalidSyntaxException {
+		BundleContext bundleContext, Map<String, Object> properties) {
 
 		_dlDisplayContextFactories = ServiceTrackerListFactory.open(
 			bundleContext, DLDisplayContextFactory.class);
 	}
 
+	@Deactivate
+	protected void deactivate() {
+		_dlDisplayContextFactories.close();
+	}
+
+	@Reference(
+		target = "(bundle.symbolic.name=com.liferay.document.library.web)",
+		unbind = "-"
+	)
+	protected void setResourceBundleLoader(
+		ResourceBundleLoader resourceBundleLoader) {
+
+		_resourceBundleLoader = resourceBundleLoader;
+	}
+
 	private ServiceTrackerList<DLDisplayContextFactory, DLDisplayContextFactory>
 		_dlDisplayContextFactories;
 	private DLMimeTypeDisplayContext _dlMimeTypeDisplayContext;
+	private ResourceBundleLoader _resourceBundleLoader;
 
 }

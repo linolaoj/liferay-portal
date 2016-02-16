@@ -14,18 +14,18 @@
 
 package com.liferay.message.boards.comment;
 
+import com.liferay.message.boards.kernel.model.MBMessage;
+import com.liferay.message.boards.kernel.model.MBMessageDisplay;
+import com.liferay.message.boards.kernel.model.MBThread;
+import com.liferay.message.boards.kernel.service.MBMessageLocalService;
 import com.liferay.portal.kernel.comment.DuplicateCommentException;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.Function;
+import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.util.Portal;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.messageboards.model.MBMessage;
-import com.liferay.portlet.messageboards.model.MBMessageDisplay;
-import com.liferay.portlet.messageboards.model.MBThread;
-import com.liferay.portlet.messageboards.service.MBMessageLocalService;
 
 import java.util.Collections;
 import java.util.List;

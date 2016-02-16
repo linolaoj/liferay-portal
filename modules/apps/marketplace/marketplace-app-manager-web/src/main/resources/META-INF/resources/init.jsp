@@ -29,15 +29,17 @@ taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 page import="com.liferay.marketplace.app.manager.web.constants.BundleStateConstants" %><%@
 page import="com.liferay.marketplace.app.manager.web.dao.search.MarketplaceAppManagerResultRowSplitter" %><%@
 page import="com.liferay.marketplace.app.manager.web.util.AppDisplay" %><%@
-page import="com.liferay.marketplace.app.manager.web.util.AppDisplayComparator" %><%@
 page import="com.liferay.marketplace.app.manager.web.util.AppDisplayFactoryUtil" %><%@
-page import="com.liferay.marketplace.app.manager.web.util.BundleComparator" %><%@
 page import="com.liferay.marketplace.app.manager.web.util.BundleUtil" %><%@
+page import="com.liferay.marketplace.app.manager.web.util.MarketplaceAppManagerSearchUtil" %><%@
 page import="com.liferay.marketplace.app.manager.web.util.MarketplaceAppManagerUtil" %><%@
 page import="com.liferay.marketplace.app.manager.web.util.ModuleGroupDisplay" %><%@
-page import="com.liferay.marketplace.app.manager.web.util.ModuleGroupDisplayComparator" %><%@
 page import="com.liferay.marketplace.app.manager.web.util.ModuleGroupDisplayFactoryUtil" %><%@
-page import="com.liferay.marketplace.app.manager.web.util.ModuleServiceReferenceComparator" %><%@
+page import="com.liferay.marketplace.app.manager.web.util.comparator.AppDisplayComparator" %><%@
+page import="com.liferay.marketplace.app.manager.web.util.comparator.BundleComparator" %><%@
+page import="com.liferay.marketplace.app.manager.web.util.comparator.MarketplaceAppManagerComparator" %><%@
+page import="com.liferay.marketplace.app.manager.web.util.comparator.ModuleGroupDisplayComparator" %><%@
+page import="com.liferay.marketplace.app.manager.web.util.comparator.ModuleServiceReferenceComparator" %><%@
 page import="com.liferay.marketplace.bundle.BundleManagerUtil" %><%@
 page import="com.liferay.marketplace.exception.FileExtensionException" %><%@
 page import="com.liferay.marketplace.model.App" %><%@
@@ -46,18 +48,18 @@ page import="com.liferay.portal.kernel.dao.orm.QueryUtil" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
 page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil" %><%@
 page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
+page import="com.liferay.portal.kernel.portlet.PortletURLUtil" %><%@
+page import="com.liferay.portal.kernel.service.CompanyLocalServiceUtil" %><%@
 page import="com.liferay.portal.kernel.upload.UploadException" %><%@
 page import="com.liferay.portal.kernel.util.GetterUtil" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.ListUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
+page import="com.liferay.portal.kernel.util.PortalUtil" %><%@
 page import="com.liferay.portal.kernel.util.StringPool" %><%@
 page import="com.liferay.portal.kernel.util.StringUtil" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
-page import="com.liferay.portal.service.CompanyLocalServiceUtil" %><%@
-page import="com.liferay.portal.util.PortalUtil" %><%@
-page import="com.liferay.portlet.PortletURLUtil" %><%@
 page import="com.liferay.taglib.search.ResultRow" %>
 
 <%@ page import="java.util.ArrayList" %><%@
@@ -73,12 +75,8 @@ page import="javax.portlet.PortletURL" %>
 page import="org.osgi.framework.BundleContext" %><%@
 page import="org.osgi.framework.ServiceReference" %>
 
+<liferay-frontend:defineObjects />
+
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />
-
-<%
-PortletURL currentURLObj = PortletURLUtil.getCurrent(liferayPortletRequest, liferayPortletResponse);
-
-String currentURL = currentURLObj.toString();
-%>

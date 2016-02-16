@@ -16,10 +16,10 @@ package com.liferay.social.networking.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import com.liferay.social.networking.model.MeetupsRegistration;
 
@@ -138,12 +138,16 @@ public class MeetupsRegistrationCacheModel implements CacheModel<MeetupsRegistra
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		meetupsRegistrationId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userId = objectInput.readLong();
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
+
 		meetupsEntryId = objectInput.readLong();
+
 		status = objectInput.readInt();
 		comments = objectInput.readUTF();
 	}
@@ -152,7 +156,9 @@ public class MeetupsRegistrationCacheModel implements CacheModel<MeetupsRegistra
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(meetupsRegistrationId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
@@ -164,7 +170,9 @@ public class MeetupsRegistrationCacheModel implements CacheModel<MeetupsRegistra
 
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
+
 		objectOutput.writeLong(meetupsEntryId);
+
 		objectOutput.writeInt(status);
 
 		if (comments == null) {

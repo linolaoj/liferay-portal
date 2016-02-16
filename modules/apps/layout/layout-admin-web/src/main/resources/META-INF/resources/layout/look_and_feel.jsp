@@ -18,53 +18,18 @@
 
 <%
 Group group = layoutsAdminDisplayContext.getGroup();
-long groupId = layoutsAdminDisplayContext.getGroupId();
-long liveGroupId = layoutsAdminDisplayContext.getLiveGroupId();
-boolean privateLayout = layoutsAdminDisplayContext.isPrivateLayout();
 Layout selLayout = layoutsAdminDisplayContext.getSelLayout();
 
 String rootNodeName = layoutsAdminDisplayContext.getRootNodeName();
 
 PortletURL redirectURL = layoutsAdminDisplayContext.getRedirectURL();
-
-Theme selTheme = null;
-ColorScheme selColorScheme = null;
-
-Theme selWapTheme = null;
-ColorScheme selWapColorScheme = null;
-
-LayoutSet layoutSet = LayoutSetLocalServiceUtil.getLayoutSet(groupId, privateLayout);
-
-if (selLayout != null) {
-	selTheme = selLayout.getTheme();
-	selColorScheme = selLayout.getColorScheme();
-
-	selWapTheme = selLayout.getWapTheme();
-	selWapColorScheme = selLayout.getWapColorScheme();
-}
-else {
-	selTheme = layoutSet.getTheme();
-	selColorScheme = layoutSet.getColorScheme();
-
-	selWapTheme = layoutSet.getWapTheme();
-	selWapColorScheme = layoutSet.getWapColorScheme();
-}
-
-String cssText = null;
-
-if ((selLayout != null) && !selLayout.isInheritLookAndFeel()) {
-	cssText = selLayout.getCssText();
-}
-else {
-	cssText = layoutSet.getCss();
-}
 %>
 
 <liferay-ui:error-marker key="<%= WebKeys.ERROR_SECTION %>" value="look-and-feel" />
 
 <aui:model-context bean="<%= selLayout %>" model="<%= Layout.class %>" />
 
-<aui:input name="devices" type="hidden" value='<%= PropsValues.MOBILE_DEVICE_STYLING_WAP_ENABLED ? "regular,wap" : "regular" %>' />
+<aui:input name="devices" type="hidden" value="regular" />
 
 <liferay-util:buffer var="rootNodeNameLink">
 	<c:choose>
@@ -88,29 +53,23 @@ else {
 }
 %>
 
-<c:choose>
-	<c:when test="<%= PropsValues.MOBILE_DEVICE_STYLING_WAP_ENABLED %>">
-		<liferay-ui:tabs
-			names="regular-browsers,mobile-devices"
-			refresh="<%= false %>"
-		>
-			<liferay-ui:section>
-				<%@ include file="/layout/look_and_feel_regular_browser.jspf" %>
-			</liferay-ui:section>
+<aui:input checked="<%= selLayout.isInheritLookAndFeel() %>" id="regularInheritLookAndFeel" label="<%= taglibLabel %>" name="regularInheritLookAndFeel" type="radio" value="<%= true %>" />
 
-			<liferay-ui:section>
-				<%@ include file="/layout/look_and_feel_wap_browser.jspf" %>
-			</liferay-ui:section>
-		</liferay-ui:tabs>
-	</c:when>
-	<c:otherwise>
-		<%@ include file="/layout/look_and_feel_regular_browser.jspf" %>
-	</c:otherwise>
-</c:choose>
+<aui:input checked="<%= !selLayout.isInheritLookAndFeel() %>" id="regularUniqueLookAndFeel" label="define-a-specific-look-and-feel-for-this-page" name="regularInheritLookAndFeel" type="radio" value="<%= false %>" />
+
+<c:if test="<%= !group.isLayoutPrototype() %>">
+	<div class="lfr-inherit-theme-options" id="<portlet:namespace />inheritThemeOptions">
+		<liferay-util:include page="/look_and_feel_themes.jsp" servletContext="<%= application %>">
+			<liferay-util:param name="editable" value="<%= Boolean.FALSE.toString() %>" />
+		</liferay-util:include>
+	</div>
+</c:if>
+
+<div class="lfr-theme-options" id="<portlet:namespace />themeOptions">
+	<liferay-util:include page="/look_and_feel_themes.jsp" servletContext="<%= application %>" />
+</div>
 
 <aui:script>
 	Liferay.Util.toggleRadio('<portlet:namespace />regularInheritLookAndFeel', '<portlet:namespace />inheritThemeOptions', '<portlet:namespace />themeOptions');
 	Liferay.Util.toggleRadio('<portlet:namespace />regularUniqueLookAndFeel', '<portlet:namespace />themeOptions', '<portlet:namespace />inheritThemeOptions');
-	Liferay.Util.toggleRadio('<portlet:namespace />wapInheritLookAndFeel', '<portlet:namespace />inheritWapThemeOptions', '<portlet:namespace />wapThemeOptions');
-	Liferay.Util.toggleRadio('<portlet:namespace />wapUniqueLookAndFeel', '<portlet:namespace />wapThemeOptions', '<portlet:namespace />inheritWapThemeOptions');
 </aui:script>

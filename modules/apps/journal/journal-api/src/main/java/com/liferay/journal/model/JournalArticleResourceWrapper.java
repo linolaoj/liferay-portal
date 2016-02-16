@@ -16,8 +16,13 @@ package com.liferay.journal.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+
+import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -127,7 +132,7 @@ public class JournalArticleResourceWrapper implements JournalArticleResource,
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _journalArticleResource.getExpandoBridge();
 	}
 
@@ -152,7 +157,7 @@ public class JournalArticleResourceWrapper implements JournalArticleResource,
 	}
 
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
+	public Serializable getPrimaryKeyObj() {
 		return _journalArticleResource.getPrimaryKeyObj();
 	}
 
@@ -228,19 +233,17 @@ public class JournalArticleResourceWrapper implements JournalArticleResource,
 
 	@Override
 	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
 		_journalArticleResource.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_journalArticleResource.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_journalArticleResource.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -270,7 +273,7 @@ public class JournalArticleResourceWrapper implements JournalArticleResource,
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_journalArticleResource.setPrimaryKeyObj(primaryKeyObj);
 	}
 
@@ -295,7 +298,7 @@ public class JournalArticleResourceWrapper implements JournalArticleResource,
 	}
 
 	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.journal.model.JournalArticleResource> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.journal.model.JournalArticleResource> toCacheModel() {
 		return _journalArticleResource.toCacheModel();
 	}
 

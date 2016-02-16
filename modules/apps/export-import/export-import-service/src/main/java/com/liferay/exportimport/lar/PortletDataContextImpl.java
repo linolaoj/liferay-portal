@@ -14,13 +14,32 @@
 
 package com.liferay.exportimport.lar;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetLink;
+import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
+import com.liferay.asset.kernel.service.AssetLinkLocalServiceUtil;
+import com.liferay.asset.kernel.service.AssetTagLocalServiceUtil;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoColumn;
+import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
+import com.liferay.exportimport.kernel.lar.ExportImportClassedModelUtil;
+import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
+import com.liferay.exportimport.kernel.lar.ManifestSummary;
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.kernel.lar.PortletDataHandlerControl;
+import com.liferay.exportimport.kernel.lar.PortletDataHandlerKeys;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
+import com.liferay.exportimport.kernel.lar.StagedModelType;
+import com.liferay.exportimport.kernel.lar.UserIdStrategy;
+import com.liferay.exportimport.kernel.xstream.XStreamAlias;
+import com.liferay.exportimport.kernel.xstream.XStreamConverter;
+import com.liferay.exportimport.kernel.xstream.XStreamType;
 import com.liferay.exportimport.xstream.ConverterAdapter;
 import com.liferay.exportimport.xstream.XStreamStagedModelTypeHierarchyPermission;
 import com.liferay.exportimport.xstream.configurator.XStreamConfigurator;
 import com.liferay.exportimport.xstream.configurator.XStreamConfiguratorRegistryUtil;
-import com.liferay.portal.exception.NoSuchLayoutException;
-import com.liferay.portal.exception.NoSuchRoleException;
-import com.liferay.portal.exception.NoSuchTeamException;
+import com.liferay.message.boards.kernel.model.MBMessage;
 import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.dao.orm.Conjunction;
 import com.liferay.portal.kernel.dao.orm.Criterion;
@@ -28,13 +47,41 @@ import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.exception.NoSuchLayoutException;
+import com.liferay.portal.kernel.exception.NoSuchRoleException;
+import com.liferay.portal.kernel.exception.NoSuchTeamException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lock.Lock;
 import com.liferay.portal.kernel.lock.LockManager;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.AttachedModel;
+import com.liferay.portal.kernel.model.AuditedModel;
+import com.liferay.portal.kernel.model.ClassedModel;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.Portlet;
+import com.liferay.portal.kernel.model.PortletConstants;
+import com.liferay.portal.kernel.model.PortletModel;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.ResourcedModel;
+import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.RoleConstants;
+import com.liferay.portal.kernel.model.StagedGroupedModel;
+import com.liferay.portal.kernel.model.StagedModel;
+import com.liferay.portal.kernel.model.Team;
+import com.liferay.portal.kernel.model.WorkflowedModel;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.service.ResourceBlockLocalServiceUtil;
+import com.liferay.portal.kernel.service.ResourceBlockPermissionLocalServiceUtil;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalServiceUtil;
+import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.TeamLocalServiceUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.DateRange;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -42,6 +89,7 @@ import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -55,55 +103,7 @@ import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.kernel.xml.XPath;
 import com.liferay.portal.kernel.zip.ZipReader;
 import com.liferay.portal.kernel.zip.ZipWriter;
-import com.liferay.portal.model.AttachedModel;
-import com.liferay.portal.model.AuditedModel;
-import com.liferay.portal.model.ClassedModel;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.GroupConstants;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.Portlet;
-import com.liferay.portal.model.PortletConstants;
-import com.liferay.portal.model.PortletModel;
-import com.liferay.portal.model.ResourceConstants;
-import com.liferay.portal.model.ResourcedModel;
-import com.liferay.portal.model.Role;
-import com.liferay.portal.model.RoleConstants;
-import com.liferay.portal.model.StagedGroupedModel;
-import com.liferay.portal.model.StagedModel;
-import com.liferay.portal.model.Team;
-import com.liferay.portal.model.WorkflowedModel;
-import com.liferay.portal.service.GroupLocalServiceUtil;
-import com.liferay.portal.service.LayoutLocalServiceUtil;
-import com.liferay.portal.service.ResourceBlockLocalServiceUtil;
-import com.liferay.portal.service.ResourceBlockPermissionLocalServiceUtil;
-import com.liferay.portal.service.ResourcePermissionLocalServiceUtil;
-import com.liferay.portal.service.RoleLocalServiceUtil;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.TeamLocalServiceUtil;
-import com.liferay.portal.util.PortletKeys;
-import com.liferay.portlet.asset.model.AssetEntry;
-import com.liferay.portlet.asset.model.AssetLink;
-import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
-import com.liferay.portlet.asset.service.AssetLinkLocalServiceUtil;
-import com.liferay.portlet.asset.service.AssetTagLocalServiceUtil;
-import com.liferay.portlet.expando.model.ExpandoBridge;
-import com.liferay.portlet.expando.model.ExpandoColumn;
-import com.liferay.portlet.expando.service.ExpandoColumnLocalServiceUtil;
-import com.liferay.portlet.exportimport.lar.ExportImportClassedModelUtil;
-import com.liferay.portlet.exportimport.lar.ExportImportPathUtil;
-import com.liferay.portlet.exportimport.lar.ExportImportThreadLocal;
-import com.liferay.portlet.exportimport.lar.ManifestSummary;
-import com.liferay.portlet.exportimport.lar.PortletDataContext;
-import com.liferay.portlet.exportimport.lar.PortletDataHandlerControl;
-import com.liferay.portlet.exportimport.lar.PortletDataHandlerKeys;
-import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
-import com.liferay.portlet.exportimport.lar.StagedModelType;
-import com.liferay.portlet.exportimport.lar.UserIdStrategy;
-import com.liferay.portlet.exportimport.xstream.XStreamAlias;
-import com.liferay.portlet.exportimport.xstream.XStreamConverter;
-import com.liferay.portlet.exportimport.xstream.XStreamType;
-import com.liferay.portlet.messageboards.model.MBMessage;
-import com.liferay.portlet.ratings.model.RatingsEntry;
+import com.liferay.ratings.kernel.model.RatingsEntry;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.core.ClassLoaderReference;
@@ -150,7 +150,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 	/**
 	 * @deprecated As of 7.0.0, replaced by {@link
-	 *             com.liferay.portlet.exportimport.lar.BaseStagedModelDataHandler#exportAssetCategories(
+	 *             om.liferay.exportimport.kernel.lar.BaseStagedModelDataHandler#exportAssetCategories(
 	 *             PortletDataContext, StagedModel)}
 	 */
 	@Deprecated
@@ -249,7 +249,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 	/**
 	 * @deprecated As of 7.0.0, replaced by {@link
-	 *             com.liferay.portlet.exportimport.lar.BaseStagedModelDataHandler#exportComments(
+	 *             om.liferay.exportimport.kernel.lar.BaseStagedModelDataHandler#exportComments(
 	 *             PortletDataContext, StagedModel)}
 	 */
 	@Deprecated
@@ -259,7 +259,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 	/**
 	 * @deprecated As of 7.0.0, replaced by {@link
-	 *             com.liferay.portlet.exportimport.lar.BaseStagedModelDataHandler#exportComments(
+	 *             om.liferay.exportimport.kernel.lar.BaseStagedModelDataHandler#exportComments(
 	 *             PortletDataContext, StagedModel)}
 	 */
 	@Deprecated
@@ -425,7 +425,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 	/**
 	 * @deprecated As of 7.0.0, replaced by {@link
-	 *             com.liferay.portlet.exportimport.lar.BaseStagedModelDataHandler#exportRatings(
+	 *             om.liferay.exportimport.kernel.lar.BaseStagedModelDataHandler#exportRatings(
 	 *             PortletDataContext, StagedModel)}
 	 */
 	@Deprecated
@@ -435,7 +435,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 	/**
 	 * @deprecated As of 7.0.0, replaced by {@link
-	 *             com.liferay.portlet.exportimport.lar.BaseStagedModelDataHandler#exportRatings(
+	 *             om.liferay.exportimport.kernel.lar.BaseStagedModelDataHandler#exportRatings(
 	 *             PortletDataContext, StagedModel)}
 	 */
 	@Deprecated
@@ -1403,7 +1403,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 	/**
 	 * @deprecated As of 7.0.0, replaced by {@link
-	 *             com.liferay.portlet.exportimport.lar.BaseStagedModelDataHandler#importComments(
+	 *             om.liferay.exportimport.kernel.lar.BaseStagedModelDataHandler#importComments(
 	 *             PortletDataContext, StagedModel)}
 	 */
 	@Deprecated
@@ -1547,7 +1547,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 	/**
 	 * @deprecated As of 7.0.0, replaced by {@link
-	 *             com.liferay.portlet.exportimport.lar.BaseStagedModelDataHandler#importRatings(
+	 *             om.liferay.exportimport.kernel.lar.BaseStagedModelDataHandler#importRatings(
 	 *             PortletDataContext, StagedModel)}
 	 */
 	@Deprecated
@@ -1802,7 +1802,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 	@Deprecated
 	@Override
 	public void setPortetDataContextListener(
-		com.liferay.portlet.exportimport.lar.PortletDataContextListener
+		com.liferay.exportimport.kernel.lar.PortletDataContextListener
 			portletDataContextListener) {
 	}
 

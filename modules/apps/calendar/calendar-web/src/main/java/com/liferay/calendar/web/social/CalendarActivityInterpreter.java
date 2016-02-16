@@ -19,16 +19,18 @@ import com.liferay.calendar.model.CalendarBooking;
 import com.liferay.calendar.service.CalendarBookingLocalService;
 import com.liferay.calendar.service.permission.CalendarPermission;
 import com.liferay.calendar.social.CalendarActivityKeys;
+import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.ClassResourceBundleLoader;
+import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.PortletURLFactoryUtil;
-import com.liferay.portlet.social.model.BaseSocialActivityInterpreter;
-import com.liferay.portlet.social.model.SocialActivity;
-import com.liferay.portlet.social.model.SocialActivityConstants;
-import com.liferay.portlet.social.model.SocialActivityInterpreter;
+import com.liferay.social.kernel.model.BaseSocialActivityInterpreter;
+import com.liferay.social.kernel.model.SocialActivity;
+import com.liferay.social.kernel.model.SocialActivityConstants;
+import com.liferay.social.kernel.model.SocialActivityInterpreter;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
@@ -68,6 +70,11 @@ public class CalendarActivityInterpreter extends BaseSocialActivityInterpreter {
 			"calendarBookingId", String.valueOf(activity.getClassPK()));
 
 		return portletURL.toString();
+	}
+
+	@Override
+	protected ResourceBundleLoader getResourceBundleLoader() {
+		return _resourceBundleLoader;
 	}
 
 	@Override
@@ -139,5 +146,8 @@ public class CalendarActivityInterpreter extends BaseSocialActivityInterpreter {
 		{CalendarBooking.class.getName()};
 
 	private CalendarBookingLocalService _calendarBookingLocalService;
+	private final ResourceBundleLoader _resourceBundleLoader =
+		new ClassResourceBundleLoader(
+			"content.Language", CalendarActivityInterpreter.class);
 
 }

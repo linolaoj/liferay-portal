@@ -18,30 +18,59 @@ import com.liferay.application.list.PanelAppRegistry;
 import com.liferay.application.list.PanelCategoryRegistry;
 import com.liferay.application.list.constants.ApplicationListWebKeys;
 import com.liferay.application.list.display.context.logic.PanelCategoryHelper;
-import com.liferay.portal.LocaleException;
-import com.liferay.portal.RemoteOptionsException;
-import com.liferay.portal.exception.DuplicateGroupException;
-import com.liferay.portal.exception.GroupFriendlyURLException;
-import com.liferay.portal.exception.GroupInheritContentException;
-import com.liferay.portal.exception.GroupKeyException;
-import com.liferay.portal.exception.GroupParentException;
-import com.liferay.portal.exception.LayoutSetVirtualHostException;
-import com.liferay.portal.exception.NoSuchBackgroundTaskException;
-import com.liferay.portal.exception.NoSuchGroupException;
-import com.liferay.portal.exception.NoSuchLayoutException;
-import com.liferay.portal.exception.PendingBackgroundTaskException;
-import com.liferay.portal.exception.RequiredGroupException;
+import com.liferay.asset.kernel.exception.AssetCategoryException;
+import com.liferay.asset.kernel.exception.AssetTagException;
+import com.liferay.exportimport.kernel.exception.RemoteExportException;
+import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskConstants;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.DuplicateGroupException;
+import com.liferay.portal.kernel.exception.GroupFriendlyURLException;
+import com.liferay.portal.kernel.exception.GroupInheritContentException;
+import com.liferay.portal.kernel.exception.GroupKeyException;
+import com.liferay.portal.kernel.exception.GroupParentException;
+import com.liferay.portal.kernel.exception.LayoutSetVirtualHostException;
+import com.liferay.portal.kernel.exception.LocaleException;
+import com.liferay.portal.kernel.exception.NoSuchBackgroundTaskException;
+import com.liferay.portal.kernel.exception.NoSuchGroupException;
+import com.liferay.portal.kernel.exception.NoSuchLayoutException;
+import com.liferay.portal.kernel.exception.PendingBackgroundTaskException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.RemoteOptionsException;
+import com.liferay.portal.kernel.exception.RequiredGroupException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutSet;
+import com.liferay.portal.kernel.model.LayoutSetPrototype;
+import com.liferay.portal.kernel.model.MembershipRequest;
+import com.liferay.portal.kernel.model.MembershipRequestConstants;
+import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.Team;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.security.auth.AuthException;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.auth.RemoteAuthException;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.GroupService;
+import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.LayoutSetLocalService;
+import com.liferay.portal.kernel.service.LayoutSetPrototypeService;
+import com.liferay.portal.kernel.service.LayoutSetService;
+import com.liferay.portal.kernel.service.MembershipRequestLocalService;
+import com.liferay.portal.kernel.service.MembershipRequestService;
+import com.liferay.portal.kernel.service.RoleLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.service.TeamLocalService;
+import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.service.UserService;
 import com.liferay.portal.kernel.servlet.MultiSessionMessages;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.TransactionAttribute;
 import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
@@ -51,6 +80,7 @@ import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropertiesParamUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -59,37 +89,9 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.liveusers.LiveUsers;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.GroupConstants;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.LayoutSet;
-import com.liferay.portal.model.LayoutSetPrototype;
-import com.liferay.portal.model.MembershipRequest;
-import com.liferay.portal.model.MembershipRequestConstants;
-import com.liferay.portal.model.Role;
-import com.liferay.portal.model.Team;
-import com.liferay.portal.service.GroupLocalService;
-import com.liferay.portal.service.GroupService;
-import com.liferay.portal.service.LayoutLocalService;
-import com.liferay.portal.service.LayoutSetLocalService;
-import com.liferay.portal.service.LayoutSetPrototypeService;
-import com.liferay.portal.service.LayoutSetService;
-import com.liferay.portal.service.MembershipRequestLocalService;
-import com.liferay.portal.service.MembershipRequestService;
-import com.liferay.portal.service.RoleLocalService;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceContextFactory;
-import com.liferay.portal.service.ServiceContextThreadLocal;
-import com.liferay.portal.service.TeamLocalService;
-import com.liferay.portal.service.UserLocalService;
-import com.liferay.portal.service.UserService;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.asset.exception.AssetCategoryException;
-import com.liferay.portlet.asset.exception.AssetTagException;
-import com.liferay.portlet.exportimport.exception.RemoteExportException;
-import com.liferay.portlet.exportimport.staging.StagingUtil;
 import com.liferay.site.admin.web.constants.SiteAdminPortletKeys;
+import com.liferay.site.constants.SiteWebKeys;
+import com.liferay.site.util.GroupSearchProvider;
 import com.liferay.sites.kernel.util.Sites;
 import com.liferay.sites.kernel.util.SitesUtil;
 
@@ -124,7 +126,6 @@ import org.osgi.service.component.annotations.Reference;
 		"com.liferay.portlet.add-default-resource=true",
 		"com.liferay.portlet.css-class-wrapper=portlet-site-admin",
 		"com.liferay.portlet.display-category=category.hidden",
-		"com.liferay.portlet.header-portlet-css=/css/main.css",
 		"com.liferay.portlet.icon=/icons/site_admin.png",
 		"com.liferay.portlet.preferences-owned-by-group=true",
 		"com.liferay.portlet.private-request-attributes=false",
@@ -303,6 +304,9 @@ public class SiteAdminPortlet extends MVCPortlet {
 			RenderRequest renderRequest, RenderResponse renderResponse)
 		throws IOException, PortletException {
 
+		renderRequest.setAttribute(
+			SiteWebKeys.GROUP_SEARCH_PROVIDER, groupSearchProvider);
+
 		PanelCategoryHelper panelCategoryHelper = new PanelCategoryHelper(
 			panelAppRegistry, panelCategoryRegistry);
 
@@ -449,6 +453,13 @@ public class SiteAdminPortlet extends MVCPortlet {
 	@Reference(unbind = "-")
 	protected void setGroupLocalService(GroupLocalService groupLocalService) {
 		this.groupLocalService = groupLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setGroupSearchProvider(
+		GroupSearchProvider groupSearchProvider) {
+
+		this.groupSearchProvider = groupSearchProvider;
 	}
 
 	@Reference(unbind = "-")
@@ -887,6 +898,7 @@ public class SiteAdminPortlet extends MVCPortlet {
 	}
 
 	protected GroupLocalService groupLocalService;
+	protected GroupSearchProvider groupSearchProvider;
 	protected GroupService groupService;
 	protected LayoutLocalService layoutLocalService;
 	protected LayoutSetLocalService layoutSetLocalService;

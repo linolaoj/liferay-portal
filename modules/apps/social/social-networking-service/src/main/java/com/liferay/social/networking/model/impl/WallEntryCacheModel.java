@@ -16,10 +16,10 @@ package com.liferay.social.networking.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import com.liferay.social.networking.model.WallEntry;
 
@@ -134,8 +134,11 @@ public class WallEntryCacheModel implements CacheModel<WallEntry>,
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		wallEntryId = objectInput.readLong();
+
 		groupId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userId = objectInput.readLong();
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
@@ -147,8 +150,11 @@ public class WallEntryCacheModel implements CacheModel<WallEntry>,
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(wallEntryId);
+
 		objectOutput.writeLong(groupId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {

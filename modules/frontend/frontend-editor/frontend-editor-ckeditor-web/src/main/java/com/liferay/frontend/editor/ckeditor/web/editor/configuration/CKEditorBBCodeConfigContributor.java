@@ -14,16 +14,16 @@
 
 package com.liferay.frontend.editor.ckeditor.web.editor.configuration;
 
+import com.liferay.message.boards.kernel.model.MBThreadConstants;
 import com.liferay.portal.kernel.editor.configuration.EditorConfigContributor;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.parsers.bbcode.BBCodeTranslatorUtil;
+import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HtmlUtil;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portlet.RequestBackedPortletURLFactory;
-import com.liferay.portlet.messageboards.model.MBThreadConstants;
 
 import java.util.Map;
 

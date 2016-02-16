@@ -21,9 +21,9 @@ import com.liferay.calendar.service.CalendarBookingServiceUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.HttpPrincipal;
+import com.liferay.portal.kernel.service.http.TunnelUtil;
 import com.liferay.portal.kernel.util.MethodHandler;
 import com.liferay.portal.kernel.util.MethodKey;
-import com.liferay.portal.service.http.TunnelUtil;
 
 /**
  * Provides the HTTP utility for the
@@ -67,7 +67,7 @@ public class CalendarBookingServiceHttp {
 		java.lang.String recurrence, long firstReminder,
 		java.lang.String firstReminderType, long secondReminder,
 		java.lang.String secondReminderType,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(CalendarBookingServiceUtil.class,
@@ -113,7 +113,7 @@ public class CalendarBookingServiceHttp {
 		boolean allDay, java.lang.String recurrence, long firstReminder,
 		java.lang.String firstReminderType, long secondReminder,
 		java.lang.String secondReminderType,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(CalendarBookingServiceUtil.class,
@@ -505,7 +505,7 @@ public class CalendarBookingServiceHttp {
 		HttpPrincipal httpPrincipal, long calendarId, long startTime,
 		long endTime, int max, java.lang.String type, double version,
 		java.lang.String displayStyle,
-		com.liferay.portal.theme.ThemeDisplay themeDisplay)
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(CalendarBookingServiceUtil.class,
@@ -668,7 +668,7 @@ public class CalendarBookingServiceHttp {
 
 	public static void invokeTransition(HttpPrincipal httpPrincipal,
 		long calendarBookingId, int status,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(CalendarBookingServiceUtil.class,
@@ -924,7 +924,7 @@ public class CalendarBookingServiceHttp {
 		boolean allDay, java.lang.String recurrence, long firstReminder,
 		java.lang.String firstReminderType, long secondReminder,
 		java.lang.String secondReminderType,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(CalendarBookingServiceUtil.class,
@@ -967,7 +967,7 @@ public class CalendarBookingServiceHttp {
 		boolean allDay, java.lang.String recurrence, long firstReminder,
 		java.lang.String firstReminderType, long secondReminder,
 		java.lang.String secondReminderType,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(CalendarBookingServiceUtil.class,
@@ -1011,7 +1011,7 @@ public class CalendarBookingServiceHttp {
 		boolean allDay, java.lang.String recurrence, boolean allFollowing,
 		long firstReminder, java.lang.String firstReminderType,
 		long secondReminder, java.lang.String secondReminderType,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(CalendarBookingServiceUtil.class,
@@ -1059,7 +1059,7 @@ public class CalendarBookingServiceHttp {
 		java.lang.String recurrence, boolean allFollowing, long firstReminder,
 		java.lang.String firstReminderType, long secondReminder,
 		java.lang.String secondReminderType,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(CalendarBookingServiceUtil.class,
@@ -1106,7 +1106,7 @@ public class CalendarBookingServiceHttp {
 		boolean allDay, java.lang.String recurrence, boolean allFollowing,
 		long firstReminder, java.lang.String firstReminderType,
 		long secondReminder, java.lang.String secondReminderType,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(CalendarBookingServiceUtil.class,
@@ -1150,7 +1150,7 @@ public class CalendarBookingServiceHttp {
 		java.lang.String recurrence, long firstReminder,
 		java.lang.String firstReminderType, long secondReminder,
 		java.lang.String secondReminderType,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(CalendarBookingServiceUtil.class,
@@ -1193,7 +1193,7 @@ public class CalendarBookingServiceHttp {
 		java.lang.String recurrence, long firstReminder,
 		java.lang.String firstReminderType, long secondReminder,
 		java.lang.String secondReminderType,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(CalendarBookingServiceUtil.class,
@@ -1236,14 +1236,14 @@ public class CalendarBookingServiceHttp {
 			int.class, int.class, java.lang.String.class, boolean.class,
 			java.lang.String.class, long.class, java.lang.String.class,
 			long.class, java.lang.String.class,
-			com.liferay.portal.service.ServiceContext.class
+			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _addCalendarBookingParameterTypes1 = new Class[] {
 			long.class, long[].class, long.class, java.util.Map.class,
 			java.util.Map.class, java.lang.String.class, long.class, long.class,
 			boolean.class, java.lang.String.class, long.class,
 			java.lang.String.class, long.class, java.lang.String.class,
-			com.liferay.portal.service.ServiceContext.class
+			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _deleteCalendarBookingParameterTypes2 = new Class[] {
 			long.class
@@ -1279,7 +1279,7 @@ public class CalendarBookingServiceHttp {
 	private static final Class<?>[] _getCalendarBookingsRSSParameterTypes13 = new Class[] {
 			long.class, long.class, long.class, int.class,
 			java.lang.String.class, double.class, java.lang.String.class,
-			com.liferay.portal.theme.ThemeDisplay.class
+			com.liferay.portal.kernel.theme.ThemeDisplay.class
 		};
 	private static final Class<?>[] _getChildCalendarBookingsParameterTypes14 = new Class[] {
 			long.class
@@ -1294,7 +1294,7 @@ public class CalendarBookingServiceHttp {
 		};
 	private static final Class<?>[] _invokeTransitionParameterTypes18 = new Class[] {
 			long.class, int.class,
-			com.liferay.portal.service.ServiceContext.class
+			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _moveCalendarBookingToTrashParameterTypes19 = new Class[] {
 			long.class
@@ -1330,14 +1330,14 @@ public class CalendarBookingServiceHttp {
 			java.util.Map.class, java.lang.String.class, long.class, long.class,
 			boolean.class, java.lang.String.class, long.class,
 			java.lang.String.class, long.class, java.lang.String.class,
-			com.liferay.portal.service.ServiceContext.class
+			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _updateCalendarBookingParameterTypes26 = new Class[] {
 			long.class, long.class, java.util.Map.class, java.util.Map.class,
 			java.lang.String.class, long.class, long.class, boolean.class,
 			java.lang.String.class, long.class, java.lang.String.class,
 			long.class, java.lang.String.class,
-			com.liferay.portal.service.ServiceContext.class
+			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _updateCalendarBookingInstanceParameterTypes27 =
 		new Class[] {
@@ -1345,7 +1345,7 @@ public class CalendarBookingServiceHttp {
 			java.util.Map.class, java.lang.String.class, long.class, long.class,
 			boolean.class, java.lang.String.class, boolean.class, long.class,
 			java.lang.String.class, long.class, java.lang.String.class,
-			com.liferay.portal.service.ServiceContext.class
+			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _updateCalendarBookingInstanceParameterTypes28 =
 		new Class[] {
@@ -1355,7 +1355,7 @@ public class CalendarBookingServiceHttp {
 			int.class, int.class, java.lang.String.class, boolean.class,
 			java.lang.String.class, boolean.class, long.class,
 			java.lang.String.class, long.class, java.lang.String.class,
-			com.liferay.portal.service.ServiceContext.class
+			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _updateCalendarBookingInstanceParameterTypes29 =
 		new Class[] {
@@ -1363,20 +1363,20 @@ public class CalendarBookingServiceHttp {
 			java.util.Map.class, java.lang.String.class, long.class, long.class,
 			boolean.class, java.lang.String.class, boolean.class, long.class,
 			java.lang.String.class, long.class, java.lang.String.class,
-			com.liferay.portal.service.ServiceContext.class
+			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _updateOffsetAndDurationParameterTypes30 = new Class[] {
 			long.class, long.class, long[].class, java.util.Map.class,
 			java.util.Map.class, java.lang.String.class, long.class, long.class,
 			boolean.class, java.lang.String.class, long.class,
 			java.lang.String.class, long.class, java.lang.String.class,
-			com.liferay.portal.service.ServiceContext.class
+			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _updateOffsetAndDurationParameterTypes31 = new Class[] {
 			long.class, long.class, java.util.Map.class, java.util.Map.class,
 			java.lang.String.class, long.class, long.class, boolean.class,
 			java.lang.String.class, long.class, java.lang.String.class,
 			long.class, java.lang.String.class,
-			com.liferay.portal.service.ServiceContext.class
+			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 }

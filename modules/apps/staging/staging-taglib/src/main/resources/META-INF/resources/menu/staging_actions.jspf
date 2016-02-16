@@ -65,6 +65,8 @@
 				<portlet:param name="<%= Constants.CMD %>" value="<%= (localPublishing) ? Constants.PUBLISH_TO_LIVE : Constants.PUBLISH_TO_REMOTE %>" />
 				<portlet:param name="redirect" value="<%= publishRedirectURL %>" />
 				<portlet:param name="backURL" value="<%= currentURL %>" />
+				<portlet:param name="lastImportUserName" value="<%= user.getFullName() %>" />
+				<portlet:param name="lastImportUserUuid" value="<%= String.valueOf(user.getUserUuid()) %>" />
 				<portlet:param name="localPublishing" value="<%= String.valueOf(localPublishing) %>" />
 				<portlet:param name="privateLayout" value="<%= String.valueOf(privateLayout) %>" />
 				<portlet:param name="quickPublish" value="<%= Boolean.TRUE.toString() %>" />
@@ -130,7 +132,7 @@
 
 			<liferay-util:buffer var="publishOnLayoutLink">
 				<li class="control-menu-nav-item">
-					<div class="btn-group dropdown publish-btn-group">
+					<div class="dropdown publish-btn-group">
 						<button class="btn btn-primary btn-sm" href="<%= simplePublishLayoutsURL.toString() %>" id='<%= layoutSetBranchId + "publishToLiveLink" %>' type="button">
 							<liferay-ui:message key="publish-to-live" />
 						</button>

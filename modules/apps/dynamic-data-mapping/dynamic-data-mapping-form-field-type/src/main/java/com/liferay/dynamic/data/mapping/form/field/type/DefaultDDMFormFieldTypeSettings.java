@@ -66,7 +66,7 @@ import com.liferay.portal.kernel.util.StringPool;
 public interface DefaultDDMFormFieldTypeSettings
 	extends DDMFormFieldTypeSettings {
 
-	@DDMFormField(visibilityExpression = "false")
+	@DDMFormField(visibilityExpression = "FALSE")
 	public String fieldNamespace();
 
 	@DDMFormField(
@@ -75,30 +75,34 @@ public interface DefaultDDMFormFieldTypeSettings
 			"%not-indexable", "%indexable-keyword", "%indexable-text"
 		},
 		optionValues = {StringPool.BLANK, "keyword", "text"}, type = "select",
-		visibilityExpression = "false"
+		visibilityExpression = "FALSE"
 	)
 	public String indexType();
 
 	@DDMFormField(
-		label = "%label", properties = {"placeholder=%enter-a-field-label"},
-		required = true,
-		tip = "%enter-a-descriptive-field-label-that-guides-users-to-enter-the-information-you-want",
-		type = "key-value"
+		label = "%label",
+		properties = {
+			"placeholder=%enter-a-field-label",
+			"tooltip=%enter-a-descriptive-field-label-that-guides-users-to-enter-the-information-you-want"
+		},
+		required = true, type = "key-value"
 	)
 	public LocalizedValue label();
 
-	@DDMFormField(label = "%localizable", visibilityExpression = "false")
+	@DDMFormField(label = "%localizable", visibilityExpression = "FALSE")
 	public boolean localizable();
 
 	@DDMFormField(
 		label = "%predefined-value",
-		properties = {"placeholder=%enter-a-default-value"},
-		tip = "%enter-a-default-value-that-is-submitted-if-no-other-value-is-entered",
+		properties = {
+			"placeholder=%enter-a-default-value",
+			"tooltip=%enter-a-default-value-that-is-submitted-if-no-other-value-is-entered"
+		},
 		type = "text"
 	)
 	public LocalizedValue predefinedValue();
 
-	@DDMFormField(label = "%read-only", visibilityExpression = "false")
+	@DDMFormField(label = "%read-only", visibilityExpression = "FALSE")
 	public boolean readOnly();
 
 	@DDMFormField(label = "%repeatable", properties = {"showAsSwitcher=true"})
@@ -114,8 +118,10 @@ public interface DefaultDDMFormFieldTypeSettings
 
 	@DDMFormField(
 		label = "%help-text",
-		properties = {"placeholder=%enter-text-to-help-users-understand"},
-		tip = "%type-a-short-comment-to-help-users-understand-the-question",
+		properties = {
+			"placeholder=%enter-help-text",
+			"tooltip=%add-a-comment-to-help-users-understand-the-field-label"
+		},
 		type = "text"
 	)
 	public LocalizedValue tip();
@@ -127,8 +133,10 @@ public interface DefaultDDMFormFieldTypeSettings
 
 	@DDMFormField(
 		label = "%field-visibility-expression",
-		properties = {"placeholder=%Country.equals(\"US\")"},
-		tip = "%write-a-conditional-expression-to-control-whether-this-field-is-displayed"
+		properties = {
+			"placeholder=%equals(Country, \"US\")",
+			"tooltip=%write-a-conditional-expression-to-control-whether-this-field-is-displayed"
+		}
 	)
 	public String visibilityExpression();
 

@@ -19,12 +19,19 @@ import com.liferay.dynamic.data.mapping.service.DDMTemplateLinkLocalService;
 import com.liferay.dynamic.data.mapping.util.DefaultDDMStructureHelper;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
+import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.upgrade.util.UpgradeProcessUtil;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -33,13 +40,6 @@ import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.DocumentException;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.service.CompanyLocalService;
-import com.liferay.portal.service.GroupLocalService;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalService;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.util.ContentUtil;
 import com.liferay.util.xml.XMLUtil;
 
@@ -274,8 +274,8 @@ public class UpgradeJournal extends UpgradeProcess {
 	protected void transformDateFieldValues(
 		List<Element> dynamicElementElements) {
 
-		if ( (dynamicElementElements == null) ||
-			dynamicElementElements.isEmpty() ) {
+		if ((dynamicElementElements == null) ||
+			dynamicElementElements.isEmpty()) {
 
 			return;
 		}

@@ -2,6 +2,12 @@
 	position: relative;
 
 	.management-bar {
+		padding: 0;
+
+		> .container-fluid-1280 {
+			padding-left: 0;
+		}
+
 		&.management-bar-no-collapse {
 			height: 0;
 			left: 0;
@@ -21,6 +27,17 @@
 					height: 62px;
 					min-height: 62px;
 				}
+			}
+		}
+
+		.management-bar-center {
+			left: 50%;
+			margin-top: 16px;
+			position: absolute;
+			transform: translate(-50%);
+
+			@include sm() {
+				margin-top: 20px;
 			}
 		}
 

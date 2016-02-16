@@ -17,13 +17,15 @@ package com.liferay.journal.web.social;
 import com.liferay.journal.constants.JournalPortletKeys;
 import com.liferay.journal.model.JournalFolder;
 import com.liferay.journal.service.permission.JournalFolderPermission;
+import com.liferay.journal.web.util.JournalResourceBundleLoader;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.social.model.BaseSocialActivityInterpreter;
-import com.liferay.portlet.social.model.SocialActivity;
-import com.liferay.portlet.social.model.SocialActivityConstants;
-import com.liferay.portlet.social.model.SocialActivityInterpreter;
+import com.liferay.social.kernel.model.BaseSocialActivityInterpreter;
+import com.liferay.social.kernel.model.SocialActivity;
+import com.liferay.social.kernel.model.SocialActivityConstants;
+import com.liferay.social.kernel.model.SocialActivityInterpreter;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -58,6 +60,11 @@ public class JournalFolderActivityInterpreter
 		}
 
 		return getViewEntryURL(className, classPK, serviceContext);
+	}
+
+	@Override
+	protected ResourceBundleLoader getResourceBundleLoader() {
+		return JournalResourceBundleLoader.INSTANCE;
 	}
 
 	@Override

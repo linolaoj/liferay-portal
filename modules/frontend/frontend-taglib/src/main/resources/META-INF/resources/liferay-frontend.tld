@@ -15,7 +15,7 @@
 		<tag-class>com.liferay.frontend.taglib.servlet.taglib.AddMenuTag</tag-class>
 		<body-content>JSP</body-content>
 		<attribute>
-			<description>A list of menu items</description>
+			<description>A list of menu items.</description>
 			<name>addMenuItems</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -33,19 +33,19 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>An ID for the component instance</description>
+			<description>An ID for the component instance.</description>
 			<name>id</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A title for the menu item</description>
+			<description>A title for the menu item.</description>
 			<name>title</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A URL to navigate to when the menu item is clicked</description>
+			<description>A URL to navigate to when the menu item is clicked.</description>
 			<name>url</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -58,11 +58,6 @@
 		<body-content>empty</body-content>
 		<attribute>
 			<name>overrideResourceBundle</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>resourceBundleBaseName</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
@@ -214,7 +209,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>The service context of the <![CDATA[<code>actionJsp</code>]]></description>
+			<description>The service context of the <![CDATA[<code>actionJsp</code>]]>.</description>
 			<name>actionJspServletContext</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -226,7 +221,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A CSS class for styling the checkbox input</description>
+			<description>A CSS class for styling the checkbox input.</description>
 			<name>checkboxCSSClass</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -244,25 +239,25 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>An ID for the checkbox input</description>
+			<description>An ID for the checkbox input.</description>
 			<name>checkboxId</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A name for the checkbox input</description>
+			<description>A name for the checkbox input.</description>
 			<name>checkboxName</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A value for the checkbox input</description>
+			<description>A value for the checkbox input.</description>
 			<name>checkboxValue</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A CSS class for styling the card's main container</description>
+			<description>A CSS class for styling the card's main container.</description>
 			<name>cssClass</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -280,7 +275,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>You can optionally pass in a row checker object to manage all the options related to the checkbox. All other checkbox options overwrite the row checker options. A row checker is of type <![CDATA[<code>com.liferay.portal.kernel.dao.search.RowChecker</code>]]>. </description>
+			<description>You can optionally pass in a row checker object to manage all the options related to the checkbox. All other checkbox options overwrite the row checker options. A row checker is of type <![CDATA[<code>com.liferay.portal.kernel.dao.search.RowChecker</code>]]>.</description>
 			<name>rowChecker</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -297,16 +292,26 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A URL to view the full content</description>
+			<description>A URL to view the full content.</description>
 			<name>url</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
 	<tag>
+		<name>horizontal-card-col</name>
+		<tag-class>com.liferay.frontend.taglib.servlet.taglib.HorizontalCardColTag</tag-class>
+		<body-content>JSP</body-content>
+	</tag>
+	<tag>
 		<name>horizontal-card-icon</name>
 		<tag-class>com.liferay.frontend.taglib.servlet.taglib.HorizontalCardIconTag</tag-class>
 		<body-content>JSP</body-content>
+		<attribute>
+			<name>icon</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
 	</tag>
 	<tag>
 		<description>Creates a lexicon-based card component.</description>
@@ -320,7 +325,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>The service context of the <![CDATA[<code>actionJsp</code>]]></description>
+			<description>The service context of the <![CDATA[<code>actionJsp</code>]]>.</description>
 			<name>actionJspServletContext</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -332,7 +337,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A CSS class for styling the checkbox input</description>
+			<description>A CSS class for styling the checkbox input.</description>
 			<name>checkboxCSSClass</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -350,25 +355,25 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>An ID for the checkbox input</description>
+			<description>An ID for the checkbox input.</description>
 			<name>checkboxId</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A name for the checkbox input</description>
+			<description>A name for the checkbox input.</description>
 			<name>checkboxName</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A value for the checkbox input</description>
+			<description>A value for the checkbox input.</description>
 			<name>checkboxValue</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A CSS class for styling the card's main container</description>
+			<description>A CSS class for styling the card's main container.</description>
 			<name>cssClass</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -391,7 +396,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>You can optionally pass in a row checker object to manage all the options related to the checkbox. All other checkbox options overwrite the row checker options. A row checker is of type <![CDATA[<code>com.liferay.portal.kernel.dao.search.RowChecker</code>]]>. </description>
+			<description>You can optionally pass in a row checker object to manage all the options related to the checkbox. All other checkbox options overwrite the row checker options. A row checker is of type <![CDATA[<code>com.liferay.portal.kernel.dao.search.RowChecker</code>]]>.</description>
 			<name>rowChecker</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -403,13 +408,13 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>Text to add as a subtitle in the text zone, if the card is vertical</description>
+			<description>Text to add as a subtitle in the text zone, if the card is vertical.</description>
 			<name>subtitle</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A title for the card</description>
+			<description>A title for the card.</description>
 			<name>title</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -441,6 +446,116 @@
 		</attribute>
 		<attribute>
 			<name>imageUrl</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<name>info-bar</name>
+		<tag-class>com.liferay.frontend.taglib.servlet.taglib.InfoBarTag</tag-class>
+		<body-content>JSP</body-content>
+	</tag>
+	<tag>
+		<name>info-bar-button</name>
+		<tag-class>com.liferay.frontend.taglib.servlet.taglib.InfoBarButtonTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>active</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>cssClass</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>data</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>disabled</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>href</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>icon</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>iconCssClass</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>label</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<name>info-bar-buttons</name>
+		<tag-class>com.liferay.frontend.taglib.servlet.taglib.InfoBarButtonsTag</tag-class>
+		<body-content>JSP</body-content>
+	</tag>
+	<tag>
+		<name>info-bar-sidenav-toggler-button</name>
+		<tag-class>com.liferay.frontend.taglib.servlet.taglib.InfoBarSidenavTogglerButtonTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>cssClass</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>data</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>disabled</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>href</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>icon</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>iconCssClass</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>label</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>sidenavId</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
@@ -636,6 +751,56 @@
 		</attribute>
 	</tag>
 	<tag>
+		<name>management-bar-sidenav-toggler-button</name>
+		<tag-class>com.liferay.frontend.taglib.servlet.taglib.ManagementBarSidenavTogglerButtonTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>cssClass</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>data</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>disabled</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>href</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>icon</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>iconCssClass</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>label</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>sidenavId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
 		<name>management-bar-sort</name>
 		<tag-class>com.liferay.frontend.taglib.servlet.taglib.ManagementBarSortTag</tag-class>
 		<body-content>JSP</body-content>
@@ -672,12 +837,12 @@
 		<body-content>JSP</body-content>
 		<attribute>
 			<name>searchContainerId</name>
-			<required>true</required>
+			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
 			<name>resourceURL</name>
-			<required>true</required>
+			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
@@ -693,13 +858,13 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>The service context of the <![CDATA[<code>actionJsp</code>]]></description>
+			<description>The service context of the <![CDATA[<code>actionJsp</code>]]>.</description>
 			<name>actionJspServletContext</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>Whether to display the image as a background image</description>
+			<description>Whether to display the image as a background image.</description>
 			<name>backgroundImage</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -711,7 +876,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A CSS class for styling the checkbox input</description>
+			<description>A CSS class for styling the checkbox input.</description>
 			<name>checkboxCSSClass</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -729,25 +894,25 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>An ID for the checkbox input</description>
+			<description>An ID for the checkbox input.</description>
 			<name>checkboxId</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A name for the checkbox input</description>
+			<description>A name for the checkbox input.</description>
 			<name>checkboxName</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A value for the checkbox input</description>
+			<description>A value for the checkbox input.</description>
 			<name>checkboxValue</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A CSS class for styling the card's main container</description>
+			<description>A CSS class for styling the card's main container.</description>
 			<name>cssClass</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -765,7 +930,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>You can optionally pass in a row checker object to manage all the options related to the checkbox. All other checkbox options overwrite the row checker options. A row checker is of type <![CDATA[<code>com.liferay.portal.kernel.dao.search.RowChecker</code>]]>. </description>
+			<description>You can optionally pass in a row checker object to manage all the options related to the checkbox. All other checkbox options overwrite the row checker options. A row checker is of type <![CDATA[<code>com.liferay.portal.kernel.dao.search.RowChecker</code>]]>.</description>
 			<name>rowChecker</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -777,13 +942,13 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>Text to add as a subtitle in the text zone, if the card is vertical</description>
+			<description>Text to add as a subtitle in the text zone, if the card is vertical.</description>
 			<name>subtitle</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A title for the card</description>
+			<description>A title for the card.</description>
 			<name>title</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -806,13 +971,13 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>The service context of the <![CDATA[<code>actionJsp</code>]]></description>
+			<description>The service context of the <![CDATA[<code>actionJsp</code>]]>.</description>
 			<name>actionJspServletContext</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>Whether to display the image as a background image</description>
+			<description>Whether to display the image as a background image.</description>
 			<name>backgroundImage</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -824,7 +989,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A CSS class for styling the checkbox input</description>
+			<description>A CSS class for styling the checkbox input.</description>
 			<name>checkboxCSSClass</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -842,25 +1007,25 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>An ID for the checkbox input</description>
+			<description>An ID for the checkbox input.</description>
 			<name>checkboxId</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A name for the checkbox input</description>
+			<description>A name for the checkbox input.</description>
 			<name>checkboxName</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A value for the checkbox input</description>
+			<description>A value for the checkbox input.</description>
 			<name>checkboxValue</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A CSS class for styling the card's main container</description>
+			<description>A CSS class for styling the card's main container.</description>
 			<name>cssClass</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -872,13 +1037,13 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A CSS class for styling the card image</description>
+			<description>A CSS class for styling the card image.</description>
 			<name>imageCSSClass</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A URL for the card's image</description>
+			<description>A URL for the card's image.</description>
 			<name>imageUrl</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -890,7 +1055,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>You can optionally pass in a row checker object to manage all the options related to the checkbox. All other checkbox options overwrite the row checker options. A row checker is of type <![CDATA[<code>com.liferay.portal.kernel.dao.search.RowChecker</code>]]>. </description>
+			<description>You can optionally pass in a row checker object to manage all the options related to the checkbox. All other checkbox options overwrite the row checker options. A row checker is of type <![CDATA[<code>com.liferay.portal.kernel.dao.search.RowChecker</code>]]>.</description>
 			<name>rowChecker</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -902,19 +1067,19 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>Text to add as a subtitle in the text zone, if the card is vertical</description>
+			<description>Text to add as a subtitle in the text zone, if the card is vertical.</description>
 			<name>subtitle</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A title for the card</description>
+			<description>A title for the card.</description>
 			<name>title</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A URL to view the full content</description>
+			<description>A URL to view the full content.</description>
 			<name>url</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -935,13 +1100,13 @@
 		<tag-class>com.liferay.frontend.taglib.servlet.taglib.VerticalCardSmallImageTag</tag-class>
 		<body-content>JSP</body-content>
 		<attribute>
-			<description>A CSS class for styling the small image</description>
+			<description>A CSS class for styling the small image.</description>
 			<name>cssClass</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>A URL for the card's small image, if the card is vertical</description>
+			<description>A URL for the card's small image, if the card is vertical.</description>
 			<name>src</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>

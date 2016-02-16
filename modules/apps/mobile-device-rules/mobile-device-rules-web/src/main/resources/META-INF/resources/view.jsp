@@ -44,8 +44,10 @@ ruleGroupSearch.setResults(mdrRuleGroups);
 %>
 
 <aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
+	<portlet:renderURL var="mainURL" />
+
 	<aui:nav cssClass="navbar-nav">
-		<aui:nav-item label="device-families" selected="<%= true %>" />
+		<aui:nav-item href="<%= mainURL.toString() %>" label="device-families" selected="<%= true %>" />
 	</aui:nav>
 
 	<c:if test="<%= (mdrRuleGroupsCount > 0) || searchTerms.isSearch() %>">
@@ -143,7 +145,7 @@ ruleGroupSearch.setResults(mdrRuleGroups);
 	</liferay-portlet:renderURL>
 
 	<liferay-frontend:add-menu>
-		<liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request, "add-device-family") %>' url="<%= addRuleGroupURL %>" />
+		<liferay-frontend:add-menu-item title='<%= LanguageUtil.get(resourceBundle, "add-device-family") %>' url="<%= addRuleGroupURL %>" />
 	</liferay-frontend:add-menu>
 </c:if>
 
@@ -151,7 +153,7 @@ ruleGroupSearch.setResults(mdrRuleGroups);
 	$('#<portlet:namespace />deleteSelectedDeviceFamilies').on(
 		'click',
 		function() {
-			if (confirm('<%= UnicodeLanguageUtil.get(request, "are-you-sure-you-want-to-delete-this") %>')) {
+			if (confirm('<%= UnicodeLanguageUtil.get(resourceBundle, "are-you-sure-you-want-to-delete-this") %>')) {
 				submitForm($(document.<portlet:namespace />fm));
 			}
 		}

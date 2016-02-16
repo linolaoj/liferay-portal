@@ -14,10 +14,10 @@
 
 package com.liferay.staging.security.permission;
 
+import com.liferay.exportimport.kernel.staging.StagingUtil;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.UserBag;
-import com.liferay.portal.model.User;
-import com.liferay.portlet.exportimport.staging.StagingUtil;
 
 import java.util.List;
 
@@ -138,17 +138,6 @@ public class StagingPermissionChecker implements PermissionChecker {
 
 		return _permissionChecker.hasPermission(
 			liveGroupId, name, primKey, actionId);
-	}
-
-	@Override
-	public boolean hasUserPermission(
-		long groupId, String name, String primKey, String actionId,
-		boolean checkAdmin) {
-
-		long liveGroupId = StagingUtil.getLiveGroupId(groupId);
-
-		return _permissionChecker.hasUserPermission(
-			liveGroupId, name, primKey, actionId, checkAdmin);
 	}
 
 	@Override

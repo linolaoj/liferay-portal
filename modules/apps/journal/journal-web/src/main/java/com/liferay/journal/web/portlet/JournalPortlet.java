@@ -16,6 +16,10 @@ package com.liferay.journal.web.portlet;
 
 import aQute.bnd.annotation.metatype.Configurable;
 
+import com.liferay.asset.kernel.exception.AssetCategoryException;
+import com.liferay.asset.kernel.exception.AssetTagException;
+import com.liferay.document.library.kernel.exception.DuplicateFileEntryException;
+import com.liferay.document.library.kernel.exception.FileSizeException;
 import com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
 import com.liferay.dynamic.data.mapping.exception.NoSuchTemplateException;
 import com.liferay.dynamic.data.mapping.exception.StorageFieldRequiredException;
@@ -62,17 +66,26 @@ import com.liferay.journal.util.impl.JournalUtil;
 import com.liferay.journal.web.asset.JournalArticleAssetRenderer;
 import com.liferay.journal.web.configuration.JournalWebConfiguration;
 import com.liferay.journal.web.portlet.action.ActionUtil;
-import com.liferay.portal.LocaleException;
 import com.liferay.portal.kernel.diff.CompareVersionsException;
+import com.liferay.portal.kernel.exception.LocaleException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.Release;
+import com.liferay.portal.kernel.model.TrashedModel;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
+import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletRequestModel;
+import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.upload.LiferayFileItemException;
 import com.liferay.portal.kernel.upload.UploadException;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
@@ -82,6 +95,7 @@ import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.RSSUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -89,22 +103,8 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.Release;
-import com.liferay.portal.model.TrashedModel;
-import com.liferay.portal.service.LayoutLocalService;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceContextFactory;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.PortletPreferencesFactoryUtil;
-import com.liferay.portlet.PortletURLFactoryUtil;
-import com.liferay.portlet.asset.exception.AssetCategoryException;
-import com.liferay.portlet.asset.exception.AssetTagException;
-import com.liferay.portlet.documentlibrary.exception.DuplicateFileEntryException;
-import com.liferay.portlet.documentlibrary.exception.FileSizeException;
-import com.liferay.portlet.trash.service.TrashEntryService;
-import com.liferay.portlet.trash.util.TrashUtil;
+import com.liferay.trash.kernel.service.TrashEntryService;
+import com.liferay.trash.kernel.util.TrashUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -335,9 +335,9 @@ public class JournalPortlet extends MVCPortlet {
 					themeDisplay.getScopeGroupId(),
 					HtmlUtil.unescape(articleId), newFolderId, serviceContext);
 			}
-			catch (InvalidDDMStructureException idse) {
+			catch (InvalidDDMStructureException iddmse) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(idse.getMessage());
+					_log.warn(iddmse.getMessage());
 				}
 
 				invalidArticleIds.add(articleId);

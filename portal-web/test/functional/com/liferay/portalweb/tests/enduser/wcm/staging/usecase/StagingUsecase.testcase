@@ -118,7 +118,9 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute macro="Page#deleteLivePG" />
+		<execute macro="Page#deletePG">
+			<var name="pageName" value="Delete Live Page" />
+		</execute>
 
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Staging Test Page" />
@@ -441,7 +443,9 @@
 
 		<execute macro="Navigator#gotoStagedView" />
 
-		<execute macro="Staging#gotoPublishToLive" />
+		<execute macro="ProductMenu#gotoSitesPublishingTools">
+			<var name="portlet" value="Staging" />
+		</execute>
 
 		<execute macro="Staging#viewPublishTemplate">
 			<var name="publishTemplateDescription" value="Publish Template Description" />
@@ -465,6 +469,8 @@
 		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Site Name" />
 		</execute>
+
+		<execute macro="Navigator#gotoStagedView" />
 
 		<execute macro="ProductMenu#gotoSitesContent">
 			<var name="portlet" value="Recycle Bin" />
@@ -650,6 +656,8 @@
 			<var name="siteName" value="Community Site Name" />
 		</execute>
 
+		<execute macro="Navigator#gotoStagedView" />
+
 		<execute macro="ProductMenu#gotoSitesPublishingTools">
 			<var name="portlet" value="Staging" />
 		</execute>
@@ -676,14 +684,6 @@
 
 	<command name="StagingBlogs" priority="3">
 		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesPublishingTools">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#activateStagingCP">
 			<var name="siteName" value="Site Name" />
 		</execute>
 
@@ -769,6 +769,14 @@
 		<execute macro="BlogsEntry#viewPG">
 			<var name="entryContent" value="Blogs Entry Content 1" />
 			<var name="entryTitle" value="Blogs Entry Title 1" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesPublishingTools">
+			<var name="portlet" value="Staging" />
+		</execute>
+
+		<execute macro="Staging#activateStagingCP">
+			<var name="siteName" value="Site Name" />
 		</execute>
 
 		<execute macro="Navigator#gotoSitePage">
@@ -944,6 +952,8 @@
 		</execute>
 
 		<execute function="AssertClick" locator1="NavBar#FILE_UPLOADS" value1="File Uploads" />
+		<execute function="Click" locator1="ServerAdministrationFileUploads#DOCS_AND_MEDIA_HEADER" />
+
 		<execute function="Type" locator1="ServerAdministrationFileUploads#DOCS_AND_MEDIA_MAX_FILE_SIZE_FIELD" value1="30000000" />
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
@@ -967,6 +977,10 @@
 		<execute macro="DMFolder#addPG">
 			<var name="dmFolderDescription" value="DM Folder Description" />
 			<var name="dmFolderName" value="DM Folder Name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesContent">
+			<var name="portlet" value="Documents and Media" />
 		</execute>
 
 		<execute macro="DMNavigator#gotoMetadataSets" />
@@ -1100,6 +1114,7 @@
 			<var name="permissionNavigationKey" value="SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA" />
 			<var name="permissionNavigationValue" value="Documents and Media" />
 			<var name="roleName" value="Staging Admin" />
+			<var name="roleType" value="Site" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
@@ -1174,8 +1189,11 @@
 			<var name="dmDocumentTitle" value="DM Document Title" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
+		<execute macro="Page#gotoPG">
+			<var name="pageName" value="Staging Test Page" />
+			<var name="pageStaging" value="true" />
+			<var name="siteName" value="Site Name" />
+			<var name="siteURL" value="true" />
 		</execute>
 
 		<execute macro="Staging#gotoPublishToLive" />
@@ -1986,7 +2004,7 @@
 		<execute macro="Workflow#viewDefaultMyWorkflowTasksCP" />
 
 		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Staging Test Page" />
+			<var name="pageName" value="Test Page Name 1" />
 			<var name="siteName" value="Community Site Name" />
 			<var name="siteURL" value="true" />
 		</execute>
@@ -2150,7 +2168,7 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute macro="BlogsEntry#viewNoEditLinkPG">
+		<execute macro="BlogsEntry#editNoPermissionPG">
 			<var name="entryContent" value="Blogs Entry Content" />
 			<var name="entryTitle" value="Blogs Entry Title" />
 		</execute>
@@ -2159,14 +2177,14 @@
 			<var name="siteName" value="Site Name" />
 		</execute>
 
+		<execute macro="Navigator#gotoStagedView" />
+
 		<execute macro="ProductMenu#gotoSitesPublishingTools">
 			<var name="portlet" value="Staging" />
 		</execute>
 
-		<execute macro="Staging#activateStagingCP">
-			<var name="editActivateStaging" value="true" />
+		<execute macro="Staging#editStagingConfiguration">
 			<var name="isNotEditable" value="Blogs" />
-			<var name="siteName" value="Site Name" />
 		</execute>
 	</command>
 
@@ -2620,13 +2638,15 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="Staging Test Page" />
 		</execute>
 
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
+		<execute macro="Page#editPageLayoutColumn">
+			<var name="columnName" value="1_column" />
+		</execute>
+
+		<execute macro="Portlet#addPG">
 			<var name="portletName" value="Documents and Media" />
 		</execute>
 
@@ -2908,7 +2928,7 @@
 
 		<execute macro="Organization#addCP">
 			<var name="orgName" value="Organization Name" />
-			<var name="orgType" value="Regular Organization" />
+			<var name="orgType" value="Organization" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
@@ -3065,7 +3085,9 @@
 			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute macro="Navigator#gotoStagedView" />
+		<execute macro="ProductMenu#gotoSitesContent">
+			<var name="portlet" value="Web Content" />
+		</execute>
 
 		<execute macro="Staging#viewPublishContentCountViaPortletStagingCP">
 			<var name="contentCount" value="1" />
@@ -3809,13 +3831,6 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<if>
-			<condition function="IsElementNotPresent#isNotVisible" locator1="Staging#STAGING_MENULIST_PUBLISH_TO_LIVE_NOW" />
-			<then>
-				<execute function="AssertClick#assertTextClickAtClickDockbar" locator1="Staging#STAGING_DROP_DOWN_BUTTON" value1="Staging" />
-			</then>
-		</if>
-
 		<execute function="Click" locator1="Icon#HISTORY_VERTICAL_ELLIPSIS" />
 
 		<execute function="Click" locator1="Staging#HISTORY_BUTTON" />
@@ -4332,13 +4347,6 @@
 			<var name="siteName" value="Site Name" />
 			<var name="siteURL" value="true" />
 		</execute>
-
-		<if>
-			<condition function="IsElementNotPresent#isNotVisible" locator1="Staging#STAGING_MENULIST_PUBLISH_TO_LIVE_NOW" />
-			<then>
-				<execute function="AssertClick#assertTextClickAtClickDockbar" locator1="Staging#STAGING_DROP_DOWN_BUTTON" value1="Staging" />
-			</then>
-		</if>
 
 		<execute function="Click" locator1="Icon#HISTORY_VERTICAL_ELLIPSIS" />
 

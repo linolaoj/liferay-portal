@@ -15,23 +15,23 @@
 package com.liferay.blogs.recent.bloggers.web.exportimport.portlet.preferences.processor;
 
 import com.liferay.blogs.recent.bloggers.web.constants.RecentBloggersPortletKeys;
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.kernel.lar.PortletDataException;
 import com.liferay.exportimport.portlet.preferences.processor.Capability;
 import com.liferay.exportimport.portlet.preferences.processor.ExportImportPortletPreferencesProcessor;
 import com.liferay.exportimport.portlet.preferences.processor.base.BaseExportImportPortletPreferencesProcessor;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Organization;
+import com.liferay.portal.kernel.model.Portlet;
+import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.OrganizationLocalService;
+import com.liferay.portal.kernel.service.PortletLocalService;
+import com.liferay.portal.kernel.service.persistence.OrganizationUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Organization;
-import com.liferay.portal.model.Portlet;
-import com.liferay.portal.service.CompanyLocalService;
-import com.liferay.portal.service.OrganizationLocalService;
-import com.liferay.portal.service.PortletLocalService;
-import com.liferay.portal.service.persistence.OrganizationUtil;
-import com.liferay.portlet.exportimport.lar.PortletDataContext;
-import com.liferay.portlet.exportimport.lar.PortletDataException;
 
 import java.util.List;
 import java.util.Map;
@@ -98,7 +98,7 @@ public class RecentBloggersExportImportPortletPreferencesProcessor
 	}
 
 	@Override
-	protected String getExportPortletPreferencesUuid(
+	protected String getExportPortletPreferencesValue(
 			PortletDataContext portletDataContext, Portlet portlet,
 			String className, long primaryKeyLong)
 		throws Exception {
@@ -124,13 +124,14 @@ public class RecentBloggersExportImportPortletPreferencesProcessor
 	}
 
 	@Override
-	protected Long getImportPortletPreferencesNewPrimaryKey(
+	protected Long getImportPortletPreferencesNewValue(
 			PortletDataContext portletDataContext, Class<?> clazz,
-			long companyGroupId, Map<Long, Long> primaryKeys, String uuid)
+			long companyGroupId, Map<Long, Long> primaryKeys,
+			String portletPreferencesOldValue)
 		throws Exception {
 
-		if (Validator.isNumber(uuid)) {
-			long oldPrimaryKey = GetterUtil.getLong(uuid);
+		if (Validator.isNumber(portletPreferencesOldValue)) {
+			long oldPrimaryKey = GetterUtil.getLong(portletPreferencesOldValue);
 
 			return MapUtil.getLong(primaryKeys, oldPrimaryKey, oldPrimaryKey);
 		}
@@ -139,7 +140,8 @@ public class RecentBloggersExportImportPortletPreferencesProcessor
 
 		if (className.equals(Organization.class.getName())) {
 			Organization organization = OrganizationUtil.fetchByUuid_C_First(
-				uuid, portletDataContext.getCompanyId(), null);
+				portletPreferencesOldValue, portletDataContext.getCompanyId(),
+				null);
 
 			if (organization != null) {
 				return organization.getOrganizationId();

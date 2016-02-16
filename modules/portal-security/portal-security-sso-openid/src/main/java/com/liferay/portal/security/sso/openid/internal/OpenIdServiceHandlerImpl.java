@@ -18,29 +18,29 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.servlet.SessionMessages;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PwdGenerator;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.model.User;
 import com.liferay.portal.security.sso.openid.OpenIdProvider;
 import com.liferay.portal.security.sso.openid.OpenIdProviderRegistry;
 import com.liferay.portal.security.sso.openid.OpenIdServiceException;
 import com.liferay.portal.security.sso.openid.OpenIdServiceHandler;
 import com.liferay.portal.security.sso.openid.constants.OpenIdWebKeys;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalService;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
 
 import java.io.IOException;
 
@@ -79,12 +79,14 @@ import org.openid4java.message.sreg.SRegRequest;
 import org.openid4java.message.sreg.SRegResponse;
 
 import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Michael C. Han
  */
+@Component(immediate = true, service = OpenIdServiceHandler.class)
 public class OpenIdServiceHandlerImpl implements OpenIdServiceHandler {
 
 	@Override
@@ -97,10 +99,11 @@ public class OpenIdServiceHandlerImpl implements OpenIdServiceHandler {
 
 		request = PortalUtil.getOriginalServletRequest(request);
 
-		HttpSession session = request.getSession();
-
+		String receivingURL = ParamUtil.getString(request, "openid.return_to");
 		ParameterList parameterList = new ParameterList(
 			request.getParameterMap());
+
+		HttpSession session = request.getSession();
 
 		DiscoveryInformation discoveryInformation =
 			(DiscoveryInformation)session.getAttribute(
@@ -109,8 +112,6 @@ public class OpenIdServiceHandlerImpl implements OpenIdServiceHandler {
 		if (discoveryInformation == null) {
 			return null;
 		}
-
-		String receivingURL = ParamUtil.getString(request, "openid.return_to");
 
 		AuthSuccess authSuccess = null;
 		String firstName = null;
@@ -321,8 +322,12 @@ public class OpenIdServiceHandlerImpl implements OpenIdServiceHandler {
 
 		HttpServletRequest request = PortalUtil.getHttpServletRequest(
 			actionRequest);
+
+		request = PortalUtil.getOriginalServletRequest(request);
+
 		HttpServletResponse response = PortalUtil.getHttpServletResponse(
 			actionResponse);
+
 		HttpSession session = request.getSession();
 
 		LiferayPortletResponse liferayPortletResponse =

@@ -14,19 +14,20 @@
 
 package com.liferay.portal.security.sso.google.internal.instance.lifecycle;
 
+import com.liferay.expando.kernel.model.ExpandoColumn;
+import com.liferay.expando.kernel.model.ExpandoColumnConstants;
+import com.liferay.expando.kernel.model.ExpandoTable;
+import com.liferay.expando.kernel.model.ExpandoTableConstants;
+import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
+import com.liferay.expando.kernel.service.ExpandoTableLocalService;
+import com.liferay.portal.instance.lifecycle.BasePortalInstanceLifecycleListener;
 import com.liferay.portal.instance.lifecycle.PortalInstanceLifecycleListener;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.util.UnicodeProperties;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.ClassNameLocalService;
-import com.liferay.portlet.expando.model.ExpandoColumn;
-import com.liferay.portlet.expando.model.ExpandoColumnConstants;
-import com.liferay.portlet.expando.model.ExpandoTable;
-import com.liferay.portlet.expando.model.ExpandoTableConstants;
-import com.liferay.portlet.expando.service.ExpandoColumnLocalService;
-import com.liferay.portlet.expando.service.ExpandoTableLocalService;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -34,9 +35,9 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Sergio González
  */
-@Component(immediate = true)
+@Component(immediate = true, service = PortalInstanceLifecycleListener.class)
 public class AddGoogleExpandoColumnsPortalInstanceLifecycleListener
-	implements PortalInstanceLifecycleListener {
+	extends BasePortalInstanceLifecycleListener {
 
 	@Override
 	public void portalInstanceRegistered(Company company) throws Exception {
@@ -65,7 +66,6 @@ public class AddGoogleExpandoColumnsPortalInstanceLifecycleListener
 
 			addExpandoColumn(expandoTable, "googleAccessToken", properties);
 			addExpandoColumn(expandoTable, "googleRefreshToken", properties);
-			addExpandoColumn(expandoTable, "googleUserId", properties);
 		}
 		finally {
 			CompanyThreadLocal.setCompanyId(companyId);
@@ -95,34 +95,18 @@ public class AddGoogleExpandoColumnsPortalInstanceLifecycleListener
 			expandoColumn.getColumnId(), properties.toString());
 	}
 
-	@Reference(unbind = "-")
-	protected void setClassNameLocalService(
-		ClassNameLocalService classNameLocalService) {
-
-		_classNameLocalService = classNameLocalService;
-	}
-
-	@Reference(unbind = "-")
-	protected void setExpandoColumnLocalService(
-		ExpandoColumnLocalService expandoColumnLocalService) {
-
-		_expandoColumnLocalService = expandoColumnLocalService;
-	}
-
-	@Reference(unbind = "-")
-	protected void setExpandoTableLocalService(
-		ExpandoTableLocalService expandoTableLocalService) {
-
-		_expandoTableLocalService = expandoTableLocalService;
-	}
-
 	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
 	protected void setModuleServiceLifecycle(
 		ModuleServiceLifecycle moduleServiceLifecycle) {
 	}
 
+	@Reference
 	private ClassNameLocalService _classNameLocalService;
+
+	@Reference
 	private ExpandoColumnLocalService _expandoColumnLocalService;
+
+	@Reference
 	private ExpandoTableLocalService _expandoTableLocalService;
 
 }

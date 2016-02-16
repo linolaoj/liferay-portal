@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.dao.jdbc.DataSourceFactoryUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -29,7 +30,6 @@ import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PropsValues;
 
 import java.io.IOException;
@@ -175,7 +175,7 @@ public class SetupWizardUtil {
 				defaultDriverClassName) &&
 			PropsValues.JDBC_DEFAULT_PASSWORD.equals(defaultPassword) &&
 			PropsValues.JDBC_DEFAULT_URL.equals(defaultURL) &&
-			PropsValues.JDBC_DEFAULT_USERNAME.equals(defaultUsername) ) {
+			PropsValues.JDBC_DEFAULT_USERNAME.equals(defaultUsername)) {
 
 			return true;
 		}

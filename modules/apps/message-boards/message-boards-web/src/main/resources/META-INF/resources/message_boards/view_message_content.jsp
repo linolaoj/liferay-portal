@@ -29,9 +29,6 @@ MBCategory category = messageDisplay.getCategory();
 
 MBThread thread = messageDisplay.getThread();
 
-MBThread previousThread = messageDisplay.getPreviousThread();
-MBThread nextThread = messageDisplay.getNextThread();
-
 if (Validator.isNull(redirect)) {
 	PortletURL backPortletURL = renderResponse.createRenderURL();
 
@@ -66,46 +63,6 @@ if (portletTitleBasedNavigation) {
 
 <c:if test="<%= !portletTitleBasedNavigation %>">
 	<div class="thread-controls">
-		<c:if test="<%= PropsValues.MESSAGE_BOARDS_THREAD_PREVIOUS_AND_NEXT_NAVIGATION_ENABLED %>">
-			<div class="thread-navigation">
-				<liferay-ui:message key="threads" />
-
-				[
-
-				<c:choose>
-					<c:when test="<%= previousThread != null %>">
-						<portlet:renderURL var="previousThreadURL">
-							<portlet:param name="mvcRenderCommandName" value="/message_boards/view_message" />
-							<portlet:param name="messageId" value="<%= String.valueOf(previousThread.getRootMessageId()) %>" />
-						</portlet:renderURL>
-
-						<aui:a href="<%= previousThreadURL %>" label="previous" />
-					</c:when>
-					<c:otherwise>
-						<liferay-ui:message key="previous" />
-					</c:otherwise>
-				</c:choose>
-
-				|
-
-				<c:choose>
-					<c:when test="<%= nextThread != null %>">
-						<portlet:renderURL var="nextThreadURL">
-							<portlet:param name="mvcRenderCommandName" value="/message_boards/view_message" />
-							<portlet:param name="messageId" value="<%= String.valueOf(nextThread.getRootMessageId()) %>" />
-						</portlet:renderURL>
-
-						<aui:a href="<%= nextThreadURL %>" label="next" />
-					</c:when>
-					<c:otherwise>
-						<liferay-ui:message key="next" />
-					</c:otherwise>
-				</c:choose>
-
-				]
-			</div>
-		</c:if>
-
 		<div class="thread-actions">
 			<liferay-ui:icon-list>
 				<c:if test="<%= MBCategoryPermission.contains(permissionChecker, scopeGroupId, (category != null) ? category.getCategoryId() : MBCategoryConstants.DEFAULT_PARENT_CATEGORY_ID, ActionKeys.ADD_MESSAGE) %>">
@@ -279,32 +236,66 @@ if (portletTitleBasedNavigation) {
 
 	<div class="message-scroll" id="<portlet:namespace />message_0"></div>
 
-	<%
-	boolean viewableThread = false;
-	%>
+	<div class="card-tab-group message-container" id="<portlet:namespace />messageContainer">
 
-	<%
-	request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER, treeWalker);
-	request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_CATEGORY, category);
-	request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_CUR_MESSAGE, treeWalker.getRoot());
-	request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_DEPTH, Integer.valueOf(0));
-	request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_LAST_NODE, Boolean.valueOf(false));
-	request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_SEL_MESSAGE, message);
-	request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_THREAD, thread);
-	request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_VIEWABLE_THREAD, Boolean.FALSE.toString());
-	%>
+		<%
+		boolean viewableThread = false;
 
-	<liferay-util:include page="/message_boards/view_thread_tree.jsp" servletContext="<%= application %>" />
+		request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER, treeWalker);
+		request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_CATEGORY, category);
+		request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_CUR_MESSAGE, treeWalker.getRoot());
+		request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_DEPTH, Integer.valueOf(0));
+		request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_LAST_NODE, Boolean.valueOf(false));
+		request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_SEL_MESSAGE, message);
+		request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_THREAD, thread);
+		request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_VIEWABLE_THREAD, Boolean.FALSE.toString());
+		%>
 
-	<%
-	viewableThread = GetterUtil.getBoolean((String)request.getAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_VIEWABLE_THREAD));
-	%>
+		<liferay-util:include page="/message_boards/view_thread_tree.jsp" servletContext="<%= application %>" />
 
-	<c:if test="<%= !viewableThread %>">
-		<div class="alert alert-danger">
-			<liferay-ui:message key="you-do-not-have-permission-to-access-the-requested-resource" />
-		</div>
-	</c:if>
+		<%
+		int index = 0;
+		int rootIndexPage = 0;
+		boolean moreMessagesPagination = false;
+
+		List<MBMessage> messages = treeWalker.getMessages();
+
+		int[] range = treeWalker.getChildrenRange(treeWalker.getRoot());
+
+		MBMessageIterator mbMessageIterator = new MBMessageIteratorImpl(messages, range[0], range[1]);
+
+		while (mbMessageIterator.hasNext()) {
+			boolean messageFound = GetterUtil.getBoolean(request.getAttribute("view_thread_tree.jsp-messageFound"));
+
+			index = GetterUtil.getInteger(request.getAttribute(WebKeys.MESSAGE_BOARDS_TREE_INDEX), 1);
+
+			rootIndexPage = mbMessageIterator.getIndexPage();
+
+			if ((messageFound) && ((index + 1) > PropsValues.DISCUSSION_COMMENTS_DELTA_VALUE)) {
+				moreMessagesPagination = true;
+
+				break;
+			}
+
+			request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER, treeWalker);
+			request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_CATEGORY, category);
+			request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_CUR_MESSAGE, mbMessageIterator.next());
+			request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_DEPTH, Integer.valueOf(0));
+			request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_LAST_NODE, Boolean.valueOf(false));
+			request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_SEL_MESSAGE, message);
+			request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_THREAD, thread);
+			request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_VIEWABLE_THREAD, Boolean.FALSE.toString());
+		%>
+
+			<div class="card-tab message-container">
+				<liferay-util:include page="/message_boards/view_thread_tree.jsp" servletContext="<%= application %>" />
+			</div>
+
+		<%
+		}
+		%>
+
+	</div>
 
 	<%
 	MBMessage rootMessage = treeWalker.getRoot();
@@ -320,8 +311,56 @@ if (portletTitleBasedNavigation) {
 			<portlet:param name="priority" value="<%= String.valueOf(rootMessage.getPriority()) %>" />
 		</portlet:renderURL>
 
+		<aui:button cssClass="btn-lg btn-primary" href="<%= replyURL.toString() %>" value="reply-to-main-thread" />
+	</c:if>
+
+	<c:if test="<%= moreMessagesPagination %>">
 		<div class="reply-to-main-thread-container">
-			<aui:button cssClass="btn-lg btn-primary" href="<%= replyURL.toString() %>" value="reply-to-main-thread" />
+			<a class="btn btn-default" href="javascript:;" id="<portlet:namespace />moreMessages"><liferay-ui:message key="more-messages" /></a>
+		</div>
+
+		<aui:input name="rootIndexPage" type="hidden" value="<%= String.valueOf(rootIndexPage) %>" />
+		<aui:input name="index" type="hidden" value="<%= String.valueOf(index) %>" />
+	</c:if>
+
+	<%
+	viewableThread = GetterUtil.getBoolean((String)request.getAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_VIEWABLE_THREAD));
+	%>
+
+	<c:if test="<%= !viewableThread %>">
+		<div class="alert alert-danger">
+			<liferay-ui:message key="you-do-not-have-permission-to-access-the-requested-resource" />
 		</div>
 	</c:if>
 </div>
+
+<aui:script sandbox="<%= true %>">
+	$('#<portlet:namespace />moreMessages').on(
+		'click',
+		function(event) {
+			var form = $('#<portlet:namespace />fm');
+
+			var data = Liferay.Util.ns(
+				'<portlet:namespace />',
+				{
+					index: form.fm('index').val(),
+					rootIndexPage: form.fm('rootIndexPage').val(),
+				}
+			);
+
+			<portlet:resourceURL id="/message_boards/get_messages" var="getMessagesURL">
+				<portlet:param name="messageId" value="<%= String.valueOf(message.getMessageId()) %>" />
+			</portlet:resourceURL>
+
+			$.ajax(
+				'<%= getMessagesURL.toString() %>',
+				{
+					data: data,
+					success: function(data) {
+						$('#<portlet:namespace />messageContainer').append(data);
+					}
+				}
+			);
+		}
+	);
+</aui:script>

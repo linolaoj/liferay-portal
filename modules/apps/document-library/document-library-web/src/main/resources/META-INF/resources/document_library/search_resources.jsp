@@ -159,10 +159,10 @@ SearchContainer searchContainer = new SearchContainer(liferayPortletRequest, por
 
 				searchContainer.setTotal(hits.getLength());
 
-				List<SearchResult> searchResultsList = SearchResultUtil.getSearchResults(hits, locale);
+				List<SearchResult> searchResults = SearchResultUtil.getSearchResults(hits, locale);
 
-				for (int i = 0; i < searchResultsList.size(); i++) {
-					SearchResult searchResult = searchResultsList.get(i);
+				for (int i = 0; i < searchResults.size(); i++) {
+					SearchResult searchResult = searchResults.get(i);
 
 					Summary summary = searchResult.getSummary();
 
@@ -195,7 +195,7 @@ SearchContainer searchContainer = new SearchContainer(liferayPortletRequest, por
 								latestFileVersion = fileEntry.getLatestFileVersion();
 							}
 
-							request.setAttribute("view_entries.jsp-fileEntry", fileEntry);
+							request.setAttribute("info_panel.jsp-fileEntry", fileEntry);
 							%>
 
 							<liferay-ui:app-view-search-entry
@@ -238,8 +238,8 @@ SearchContainer searchContainer = new SearchContainer(liferayPortletRequest, por
 							tempRowURL.setParameter("redirect", HttpUtil.removeParameter(currentURL, liferayPortletResponse.getNamespace() + "ajax"));
 							tempRowURL.setParameter("folderId", String.valueOf(curFolder.getFolderId()));
 
-							request.setAttribute("view_entries.jsp-folder", curFolder);
-							request.setAttribute("view_entries.jsp-folderId", String.valueOf(curFolder.getFolderId()));
+							request.setAttribute("info_panel.jsp-folder", curFolder);
+
 							request.setAttribute("view_entries.jsp-repositoryId", String.valueOf(curFolder.getRepositoryId()));
 							%>
 
@@ -270,7 +270,7 @@ SearchContainer searchContainer = new SearchContainer(liferayPortletRequest, por
 				}
 				%>
 
-				<c:if test="<%= searchResultsList.isEmpty() %>">
+				<c:if test="<%= searchResults.isEmpty() %>">
 					<div class="alert alert-info">
 						<liferay-ui:message arguments='<%= "<strong>" + HtmlUtil.escape(keywords) + "</strong>" %>' key="no-documents-were-found-that-matched-the-keywords-x" translateArguments="<%= false %>" />
 					</div>

@@ -15,13 +15,14 @@
 package com.liferay.mobile.device.rules.web.form.navigator;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.servlet.taglib.ui.BaseJSPFormNavigatorEntry;
 import com.liferay.portal.kernel.servlet.taglib.ui.FormNavigatorConstants;
 import com.liferay.portal.kernel.servlet.taglib.ui.FormNavigatorEntry;
-import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.Layout;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
 
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.servlet.ServletContext;
 
@@ -32,7 +33,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Pei-Jung Lan
  */
 @Component(
-	property = {"service.ranking:Integer=30"},
+	property = {"service.ranking:Integer=80"},
 	service = FormNavigatorEntry.class
 )
 public class LayoutMobileDeviceRulesFormNavigatorEntry
@@ -40,7 +41,7 @@ public class LayoutMobileDeviceRulesFormNavigatorEntry
 
 	@Override
 	public String getCategoryKey() {
-		return StringPool.BLANK;
+		return FormNavigatorConstants.CATEGORY_KEY_LAYOUT_ADVANCED;
 	}
 
 	@Override
@@ -55,7 +56,10 @@ public class LayoutMobileDeviceRulesFormNavigatorEntry
 
 	@Override
 	public String getLabel(Locale locale) {
-		return LanguageUtil.get(locale, getKey());
+		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+			"content.Language", locale, getClass());
+
+		return LanguageUtil.get(resourceBundle, getKey());
 	}
 
 	@Override

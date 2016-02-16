@@ -16,6 +16,7 @@ package com.liferay.portal.background.task.internal;
 
 import com.liferay.background.task.kernel.util.comparator.BackgroundTaskCompletionDateComparator;
 import com.liferay.background.task.kernel.util.comparator.BackgroundTaskCreateDateComparator;
+import com.liferay.background.task.kernel.util.comparator.BackgroundTaskNameComparator;
 import com.liferay.portal.background.task.service.BackgroundTaskLocalService;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManager;
@@ -25,10 +26,10 @@ import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.DestinationConfiguration;
 import com.liferay.portal.kernel.messaging.DestinationFactory;
 import com.liferay.portal.kernel.messaging.DestinationNames;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ClassUtil;
 import com.liferay.portal.kernel.util.HashMapDictionary;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.service.ServiceContext;
 
 import java.io.File;
 import java.io.InputStream;
@@ -172,6 +173,15 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 	}
 
 	@Override
+	public void deleteGroupBackgroundTasks(
+			long groupId, String name, String taskExecutorClassName)
+		throws PortalException {
+
+		_backgroundTaskLocalService.deleteGroupBackgroundTasks(
+			groupId, name, taskExecutorClassName);
+	}
+
+	@Override
 	public BackgroundTask
 		fetchBackgroundTask(long backgroundTaskId) {
 
@@ -269,6 +279,20 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 
 	@Override
 	public List<BackgroundTask> getBackgroundTasks(
+		long groupId, String taskExecutorClassName, boolean completed,
+		int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		List<com.liferay.portal.background.task.model.BackgroundTask>
+			backgroundTasks = _backgroundTaskLocalService.getBackgroundTasks(
+				groupId, taskExecutorClassName, completed, start, end,
+				translate(orderByComparator));
+
+		return translate(backgroundTasks);
+	}
+
+	@Override
+	public List<BackgroundTask> getBackgroundTasks(
 		long groupId, String taskExecutorClassName, int status) {
 
 		List<com.liferay.portal.background.task.model.BackgroundTask>
@@ -310,7 +334,7 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 
 		List<com.liferay.portal.background.task.model.BackgroundTask>
 			backgroundTasks = _backgroundTaskLocalService.getBackgroundTasks(
-				groupId, taskExecutorClassNames);
+				new long[] {groupId}, taskExecutorClassNames);
 
 		return translate(backgroundTasks);
 	}
@@ -333,7 +357,34 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 
 		List<com.liferay.portal.background.task.model.BackgroundTask>
 			backgroundTasks = _backgroundTaskLocalService.getBackgroundTasks(
-				groupId, taskExecutorClassNames, start, end,
+				new long[] {groupId}, taskExecutorClassNames, start, end,
+				translate(orderByComparator));
+
+		return translate(backgroundTasks);
+	}
+
+	@Override
+	public List<BackgroundTask> getBackgroundTasks(
+		long[] groupIds, String taskExecutorClassName, boolean completed,
+		int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		List<com.liferay.portal.background.task.model.BackgroundTask>
+			backgroundTasks = _backgroundTaskLocalService.getBackgroundTasks(
+				groupIds, new String[] {taskExecutorClassName}, completed,
+				start, end, translate(orderByComparator));
+
+		return translate(backgroundTasks);
+	}
+
+	@Override
+	public List<BackgroundTask> getBackgroundTasks(
+		long[] groupIds, String taskExecutorClassName, int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		List<com.liferay.portal.background.task.model.BackgroundTask>
+			backgroundTasks = _backgroundTaskLocalService.getBackgroundTasks(
+				groupIds, new String[] {taskExecutorClassName}, start, end,
 				translate(orderByComparator));
 
 		return translate(backgroundTasks);
@@ -438,7 +489,7 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 		long groupId, String[] taskExecutorClassNames) {
 
 		return _backgroundTaskLocalService.getBackgroundTasksCount(
-			groupId, taskExecutorClassNames);
+			new long[] {groupId}, taskExecutorClassNames);
 	}
 
 	@Override
@@ -446,7 +497,23 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 		long groupId, String[] taskExecutorClassNames, boolean completed) {
 
 		return _backgroundTaskLocalService.getBackgroundTasksCount(
-			groupId, taskExecutorClassNames, completed);
+			new long[] {groupId}, taskExecutorClassNames, completed);
+	}
+
+	@Override
+	public int getBackgroundTasksCount(
+		long[] groupIds, String taskExecutorClassName) {
+
+		return _backgroundTaskLocalService.getBackgroundTasksCount(
+			groupIds, new String[] {taskExecutorClassName});
+	}
+
+	@Override
+	public int getBackgroundTasksCount(
+		long[] groupIds, String taskExecutorClassName, boolean completed) {
+
+		return _backgroundTaskLocalService.getBackgroundTasksCount(
+			groupIds, new String[] {taskExecutorClassName}, completed);
 	}
 
 	@Override
@@ -589,6 +656,10 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 			return new com.liferay.portal.background.task.internal.comparator.
 				BackgroundTaskCreateDateComparator(
 					orderByComparator.isAscending());
+		}
+		else if (orderByComparator instanceof BackgroundTaskNameComparator) {
+			return new com.liferay.portal.background.task.internal.comparator.
+				BackgroundTaskNameComparator(orderByComparator.isAscending());
 		}
 
 		throw new IllegalArgumentException(

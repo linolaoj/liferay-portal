@@ -60,14 +60,6 @@
 		<execute function="AssertVisible" locator1="TextInput#TITLE" />
 	</command>
 
-	<command name="gotoAddTemplate">
-		<execute function="Click" locator1="Button#PLUS" />
-
-		<execute function="SelectFrame" />
-
-		<execute function="SelectFrame" locator1="IFrame#TEMPLATES" />
-	</command>
-
 	<command name="gotoAddWithStructureCP">
 		<var name="key_structureName" value="${structureName}" />
 
@@ -88,7 +80,21 @@
 	</command>
 
 	<command name="gotoEditPGViaWCD">
-		<execute function="Click" locator1="WCD#EDIT_WEB_CONTENT" />
+		<execute macro="Portlet#gotoPortletOptions">
+			<var name="portletName" value="Web Content Display" />
+			<var name="portletOption" value="Edit Web Content" />
+		</execute>
+
+		<execute function="SelectFrame" locator1="IFrame#EDIT_ASSET" />
+
+		<execute function="AssertVisible" locator1="TextInput#TITLE" />
+	</command>
+
+	<command name="gotoLocalizedEditPGViaWCD">
+		<execute macro="Portlet#gotoPortletOptions">
+			<var name="portletName" value="${localizedPortletName}" />
+			<var name="portletOption" value="${localizedPortletOption}" />
+		</execute>
 
 		<execute function="SelectFrame" locator1="IFrame#EDIT_ASSET" />
 
@@ -100,7 +106,9 @@
 
 		<execute function="AssertClick" locator1="MenuItem#STRUCTURES" value1="Structures" />
 
-		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME" />
+		<execute macro="SiteAdmin#viewPortletTitle">
+			<var name="portletTitle" value="Structures" />
+		</execute>
 	</command>
 
 	<command name="gotoManageTemplates">
@@ -108,7 +116,9 @@
 
 		<execute function="AssertClick" locator1="MenuItem#TEMPLATES" value1="Templates" />
 
-		<execute function="SelectFrame" locator1="IFrame#TEMPLATES" />
+		<execute macro="SiteAdmin#viewPortletTitle">
+			<var name="portletTitle" value="Templates" />
+		</execute>
 	</command>
 
 	<command name="gotoPreviewEntryCP">
@@ -121,7 +131,9 @@
 	</command>
 
 	<command name="gotoPreviewViaHeaderCP">
-		<execute function="AssertTextEquals" locator1="Home#SITE_ADMINISTRATION_PORTLET_TITLE" value1="${webContentTitle}" />
+		<execute macro="SiteAdmin#viewPortletTitle">
+			<var name="portletTitle" value="${webContentTitle}" />
+		</execute>
 
 		<execute function="Click" locator1="Icon#HEADER_VERTICAL_ELLIPSIS" />
 
@@ -145,10 +157,6 @@
 		<var name="key_ddlTemplateName" value="${templateName}" />
 
 		<execute function="AssertClick" locator1="DDMSelectTemplate#TEMPLATE_TABLE_NAME" value1="${templateName}" />
-
-		<execute function="SelectFrame" />
-
-		<execute function="SelectFrame" locator1="IFrame#TEMPLATES" />
 	</command>
 
 	<command name="showStructureDetails">

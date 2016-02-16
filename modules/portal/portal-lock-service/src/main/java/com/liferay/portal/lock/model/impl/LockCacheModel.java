@@ -16,12 +16,12 @@ package com.liferay.portal.lock.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.lock.model.Lock;
-import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -180,14 +180,18 @@ public class LockCacheModel implements CacheModel<Lock>, Externalizable,
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		mvccVersion = objectInput.readLong();
 		uuid = objectInput.readUTF();
+
 		lockId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userId = objectInput.readLong();
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		className = objectInput.readUTF();
 		key = objectInput.readUTF();
 		owner = objectInput.readUTF();
+
 		inheritable = objectInput.readBoolean();
 		expirationDate = objectInput.readLong();
 	}
@@ -205,7 +209,9 @@ public class LockCacheModel implements CacheModel<Lock>, Externalizable,
 		}
 
 		objectOutput.writeLong(lockId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {

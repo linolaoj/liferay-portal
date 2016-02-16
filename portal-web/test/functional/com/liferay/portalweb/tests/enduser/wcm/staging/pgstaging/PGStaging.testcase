@@ -659,7 +659,7 @@
 
 		<execute macro="Organization#addCP">
 			<var name="orgName" value="Organization Name" />
-			<var name="orgType" value="Regular Organization" />
+			<var name="orgType" value="Organization" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
@@ -858,7 +858,7 @@
 			<var name="siteName" value="Organization Name" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="PGBlogs#PORTLET_TITLE" />
+		<execute function="AssertElementNotPresent" locator1="BasePortlet#TITLE" value1="Blogs" />
 
 		<execute macro="User#loginPG">
 			<var name="password" value="test" />
@@ -882,7 +882,7 @@
 			<var name="siteName" value="Organization Name" />
 		</execute>
 
-		<execute function="AssertElementPresent" locator1="PGBlogs#PORTLET_TITLE" />
+		<execute function="AssertElementPresent" locator1="BasePortlet#TITLE" value1="Blogs" />
 
 		<execute macro="User#loginPG">
 			<var name="password" value="test" />
@@ -907,7 +907,7 @@
 			<var name="siteName" value="Organization Name" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="PGBlogs#ENTRY_TITLE_1" />
+		<execute function="AssertElementNotPresent" locator1="BlogsEntry#TITLE" />
 
 		<execute macro="User#loginPG">
 			<var name="password" value="test" />
@@ -936,7 +936,7 @@
 			<var name="siteName" value="Organization Name" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="PGBlogs#ENTRY_TITLE_1" />
+		<execute function="AssertElementNotPresent" locator1="BlogsEntry#TITLE" />
 
 		<execute macro="User#loginPG">
 			<var name="password" value="test" />
@@ -960,7 +960,7 @@
 			<var name="siteName" value="Organization Name" />
 		</execute>
 
-		<execute function="AssertElementPresent" locator1="PGBlogs#ENTRY_TITLE_1" />
+		<execute function="AssertElementPresent" locator1="BlogsEntry#TITLE" />
 
 		<execute macro="User#loginPG">
 			<var name="password" value="test" />
@@ -1027,14 +1027,16 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="portletName" value="Documents and Media" />
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="Staging Test Page" />
 		</execute>
 
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
+		<execute macro="Page#editPageLayoutColumn">
+			<var name="columnName" value="1_column" />
+		</execute>
+
+		<execute macro="Portlet#addPG">
+			<var name="pageName" value="Staging Test Page" />
 			<var name="portletName" value="Documents and Media" />
 		</execute>
 
@@ -1208,7 +1210,7 @@
 
 		<execute macro="WebContentNavigator#gotoAddCP" />
 
-		<execute macro="WebContent#addViaCKEditor">
+		<execute macro="WebContent#addCP">
 			<var name="webContentContent" value="Web Content Content" />
 			<var name="webContentTitle" value="Web Content Title" />
 		</execute>

@@ -16,25 +16,25 @@ package com.liferay.portal.background.task.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.expando.kernel.model.ExpandoBridge;
+import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
+
 import com.liferay.portal.background.task.model.BackgroundTask;
 import com.liferay.portal.background.task.model.BackgroundTaskModel;
 import com.liferay.portal.background.task.model.BackgroundTaskSoap;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSON;
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.impl.BaseModelImpl;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.User;
-import com.liferay.portal.model.impl.BaseModelImpl;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
-
-import com.liferay.portlet.expando.model.ExpandoBridge;
-import com.liferay.portlet.expando.util.ExpandoBridgeFactoryUtil;
 
 import java.io.Serializable;
 
@@ -108,7 +108,7 @@ public class BackgroundTaskModelImpl extends BaseModelImpl<BackgroundTask>
 		TABLE_COLUMNS_MAP.put("statusMessage", Types.CLOB);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table BackgroundTask (mvccVersion LONG default 0,backgroundTaskId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,name VARCHAR(255) null,servletContextNames VARCHAR(255) null,taskExecutorClassName VARCHAR(200) null,taskContextMap TEXT null,completed BOOLEAN,completionDate DATE null,status INTEGER,statusMessage TEXT null)";
+	public static final String TABLE_SQL_CREATE = "create table BackgroundTask (mvccVersion LONG default 0 not null,backgroundTaskId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,name VARCHAR(255) null,servletContextNames VARCHAR(255) null,taskExecutorClassName VARCHAR(200) null,taskContextMap TEXT null,completed BOOLEAN,completionDate DATE null,status INTEGER,statusMessage TEXT null)";
 	public static final String TABLE_SQL_DROP = "drop table BackgroundTask";
 	public static final String ORDER_BY_JPQL = " ORDER BY backgroundTask.createDate ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY BackgroundTask.createDate ASC";

@@ -54,6 +54,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>SITES_MODAL_TITLE</td>
+	<td>//h3[@class='modal-title']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>GO_TO_SITES_LINK</td>
 	<td>//a[contains(.,'Go to Site')]</td>
 	<td></td>
@@ -66,6 +71,11 @@
 <tr>
 	<td>CATEGORY_EXPANDED</td>
 	<td>//div[div[@aria-expanded='true']]/../..//a[@aria-expanded='true' and contains(.,'${key_category}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRIVATE_PAGE_LINK</td>
+	<td>//div[contains(@id,'layoutsTreeOutput')]//a[contains(.,'${key_pageName}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -227,6 +237,11 @@
 <tr>
 	<td>PRODUCT_MENU_TABS_CONTROL_PANEL_NAVIGATION</td>
 	<td>//div[contains(.,'Control Panel')]/../div[contains(@class,'tab-text')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRODUCT_MENU_TABS_EXPANDED_PANEL</td>
+	<td>//div[(@class='collapse panel-collapse in' or @class='panel-collapse collapse in') and contains(@id,'${key_panelId}')]</td>
 	<td></td>
 </tr>
 <tr>

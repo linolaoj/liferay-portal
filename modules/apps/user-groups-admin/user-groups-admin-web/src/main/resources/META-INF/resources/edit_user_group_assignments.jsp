@@ -48,11 +48,17 @@ UserSearchTerms searchTerms = (UserSearchTerms)userSearchContainer.getSearchTerm
 
 LinkedHashMap<String, Object> userParams = new LinkedHashMap<String, Object>();
 
+userParams.put("forceDatabase", Boolean.TRUE);
+
 if (filterManageableOrganizations) {
 	userParams.put("usersOrgsTree", user.getOrganizations());
 }
 
 userParams.put("usersUserGroups", Long.valueOf(userGroup.getUserGroupId()));
+
+userSearchContainer.setTotal(UserLocalServiceUtil.searchCount(company.getCompanyId(), searchTerms.getKeywords(), searchTerms.getStatus(), userParams));
+
+userSearchContainer.setResults(UserLocalServiceUtil.search(company.getCompanyId(), searchTerms.getKeywords(), searchTerms.getStatus(), userParams, userSearchContainer.getStart(), userSearchContainer.getEnd(), userSearchContainer.getOrderByComparator()));
 
 RowChecker rowChecker = new UnsetUserUserGroupChecker(renderResponse, userGroup);
 
@@ -116,10 +122,8 @@ renderResponse.setTitle(userGroup.getName());
 		rowChecker="<%= rowChecker %>"
 		searchContainer="<%= userSearchContainer %>"
 	>
-		<liferay-ui:user-search-container-results userParams="<%= userParams %>" />
-
 		<liferay-ui:search-container-row
-			className="com.liferay.portal.model.User"
+			className="com.liferay.portal.kernel.model.User"
 			escapedModel="<%= true %>"
 			keyProperty="userId"
 			modelVar="user2"

@@ -19,9 +19,9 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.HttpPrincipal;
+import com.liferay.portal.kernel.service.http.TunnelUtil;
 import com.liferay.portal.kernel.util.MethodHandler;
 import com.liferay.portal.kernel.util.MethodKey;
-import com.liferay.portal.service.http.TunnelUtil;
 
 import com.liferay.shopping.service.ShoppingOrderServiceUtil;
 
@@ -59,7 +59,7 @@ public class ShoppingOrderServiceHttp {
 		java.lang.String number, java.lang.String ppTxnId,
 		java.lang.String ppPaymentStatus, double ppPaymentGross,
 		java.lang.String ppReceiverEmail, java.lang.String ppPayerEmail,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(ShoppingOrderServiceUtil.class,
@@ -149,7 +149,7 @@ public class ShoppingOrderServiceHttp {
 
 	public static void sendEmail(HttpPrincipal httpPrincipal, long groupId,
 		long orderId, java.lang.String emailType,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(ShoppingOrderServiceUtil.class,
@@ -270,7 +270,7 @@ public class ShoppingOrderServiceHttp {
 			long.class, java.lang.String.class, java.lang.String.class,
 			java.lang.String.class, double.class, java.lang.String.class,
 			java.lang.String.class,
-			com.liferay.portal.service.ServiceContext.class
+			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _deleteOrderParameterTypes1 = new Class[] {
 			long.class, long.class
@@ -280,7 +280,7 @@ public class ShoppingOrderServiceHttp {
 		};
 	private static final Class<?>[] _sendEmailParameterTypes3 = new Class[] {
 			long.class, long.class, java.lang.String.class,
-			com.liferay.portal.service.ServiceContext.class
+			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _updateOrderParameterTypes4 = new Class[] {
 			long.class, long.class, java.lang.String.class,

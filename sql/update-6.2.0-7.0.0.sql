@@ -37,7 +37,7 @@ update DLFolder set restrictionType = 1 where overrideFileEntryTypes = 1;
 alter table DLFolder drop column overrideFileEntryTypes;
 
 create table ExportImportConfiguration (
-	mvccVersion LONG default 0,
+	mvccVersion LONG default 0 not null,
 	exportImportConfigurationId LONG not null primary key,
 	groupId LONG,
 	companyId LONG,
@@ -62,19 +62,27 @@ update Group_ set groupKey = name;
 alter table Group_ add inheritContent BOOLEAN;
 
 alter table Layout drop column iconImage;
+alter table Layout drop column wapThemeId;
+alter table Layout drop column wapColorSchemeId;
 
 alter table LayoutRevision drop column iconImage;
+alter table LayoutRevision drop column wapThemeId;
+alter table LayoutRevision drop column wapColorSchemeId;
 
 alter table LayoutSet drop column logo;
+alter table LayoutSet drop column wapThemeId;
+alter table LayoutSet drop column wapColorSchemeId;
 
 alter table LayoutSetBranch drop column logo;
+alter table LayoutSetBranch drop column wapThemeId;
+alter table LayoutSetBranch drop column wapColorSchemeId;
 
 alter table Organization_ add logoId LONG;
 
 alter table RatingsEntry add uuid_ VARCHAR(75) null;
 
 create table RecentLayoutBranch (
-	mvccVersion LONG default 0,
+	mvccVersion LONG default 0 not null,
 	recentLayoutBranchId LONG not null primary key,
 	groupId LONG,
 	companyId LONG,
@@ -85,7 +93,7 @@ create table RecentLayoutBranch (
 );
 
 create table RecentLayoutRevision (
-	mvccVersion LONG default 0,
+	mvccVersion LONG default 0 not null,
 	recentLayoutRevisionId LONG not null primary key,
 	groupId LONG,
 	companyId LONG,
@@ -96,7 +104,7 @@ create table RecentLayoutRevision (
 );
 
 create table RecentLayoutSetBranch (
-	mvccVersion LONG default 0,
+	mvccVersion LONG default 0 not null,
 	recentLayoutSetBranchId LONG not null primary key,
 	groupId LONG,
 	companyId LONG,
@@ -124,6 +132,8 @@ alter table ResourcePermission add viewActionId BOOLEAN;
 alter table Subscription add groupId LONG;
 
 alter table Team add uuid_ VARCHAR(75);
+
+alter table User_ add googleUserId VARCHAR(75) null;
 
 alter table UserNotificationEvent add deliveryType INTEGER;
 alter table UserNotificationEvent add actionRequired BOOLEAN;

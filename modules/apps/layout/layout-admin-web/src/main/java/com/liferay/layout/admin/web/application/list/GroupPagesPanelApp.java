@@ -16,11 +16,16 @@ package com.liferay.layout.admin.web.application.list;
 
 import com.liferay.application.list.BaseJSPPanelApp;
 import com.liferay.application.list.PanelApp;
+import com.liferay.application.list.constants.ApplicationListWebKeys;
 import com.liferay.application.list.constants.PanelCategoryKeys;
 import com.liferay.layout.admin.web.constants.LayoutAdminPortletKeys;
-import com.liferay.portal.model.Portlet;
+import com.liferay.portal.kernel.model.Portlet;
+
+import java.io.IOException;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -46,6 +51,17 @@ public class GroupPagesPanelApp extends BaseJSPPanelApp {
 	@Override
 	public String getPortletId() {
 		return LayoutAdminPortletKeys.GROUP_PAGES;
+	}
+
+	@Override
+	public boolean include(
+			HttpServletRequest request, HttpServletResponse response)
+		throws IOException {
+
+		request.setAttribute(
+			ApplicationListWebKeys.GROUP_PROVIDER, groupProvider);
+
+		return super.include(request, response);
 	}
 
 	@Override

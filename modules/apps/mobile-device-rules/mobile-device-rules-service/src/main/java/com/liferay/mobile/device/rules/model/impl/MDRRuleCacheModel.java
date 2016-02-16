@@ -18,10 +18,10 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.mobile.device.rules.model.MDRRule;
 
+import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -182,13 +182,18 @@ public class MDRRuleCacheModel implements CacheModel<MDRRule>, Externalizable {
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		uuid = objectInput.readUTF();
+
 		ruleId = objectInput.readLong();
+
 		groupId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userId = objectInput.readLong();
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
+
 		ruleGroupId = objectInput.readLong();
 		name = objectInput.readUTF();
 		description = objectInput.readUTF();
@@ -208,8 +213,11 @@ public class MDRRuleCacheModel implements CacheModel<MDRRule>, Externalizable {
 		}
 
 		objectOutput.writeLong(ruleId);
+
 		objectOutput.writeLong(groupId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
@@ -221,6 +229,7 @@ public class MDRRuleCacheModel implements CacheModel<MDRRule>, Externalizable {
 
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
+
 		objectOutput.writeLong(ruleGroupId);
 
 		if (name == null) {

@@ -14,6 +14,7 @@
 
 package com.liferay.product.navigation.product.menu.web.portlet;
 
+import com.liferay.application.list.GroupProvider;
 import com.liferay.application.list.PanelAppRegistry;
 import com.liferay.application.list.PanelCategoryRegistry;
 import com.liferay.application.list.constants.ApplicationListWebKeys;
@@ -41,6 +42,7 @@ import org.osgi.service.component.annotations.Reference;
 		"com.liferay.portlet.header-portlet-css=/css/main.css",
 		"com.liferay.portlet.instanceable=false",
 		"com.liferay.portlet.private-request-attributes=false",
+		"com.liferay.portlet.system=true",
 		"com.liferay.portlet.use-default-template=false",
 		"javax.portlet.display-name=Product Menu",
 		"javax.portlet.init-param.view-template=/portlet/view.jsp",
@@ -60,6 +62,9 @@ public class ProductNavigationProductMenuPortlet extends MVCPortlet {
 		throws IOException, PortletException {
 
 		renderRequest.setAttribute(
+			ApplicationListWebKeys.GROUP_PROVIDER, _groupProvider);
+
+		renderRequest.setAttribute(
 			ApplicationListWebKeys.PANEL_APP_REGISTRY, _panelAppRegistry);
 
 		PanelCategoryHelper panelCategoryHelper = new PanelCategoryHelper(
@@ -76,6 +81,11 @@ public class ProductNavigationProductMenuPortlet extends MVCPortlet {
 	}
 
 	@Reference(unbind = "-")
+	protected void setGroupProvider(GroupProvider groupProvider) {
+		_groupProvider = groupProvider;
+	}
+
+	@Reference(unbind = "-")
 	protected void setPanelAppRegistry(PanelAppRegistry panelAppRegistry) {
 		_panelAppRegistry = panelAppRegistry;
 	}
@@ -87,6 +97,7 @@ public class ProductNavigationProductMenuPortlet extends MVCPortlet {
 		_panelCategoryRegistry = panelCategoryRegistry;
 	}
 
+	private GroupProvider _groupProvider;
 	private PanelAppRegistry _panelAppRegistry;
 	private PanelCategoryRegistry _panelCategoryRegistry;
 

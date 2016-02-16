@@ -14,7 +14,7 @@
 
 package com.liferay.portal.security.pwd;
 
-import com.liferay.portal.exception.PwdEncryptorException;
+import com.liferay.portal.kernel.exception.PwdEncryptorException;
 import com.liferay.portal.kernel.io.BigEndianCodec;
 import com.liferay.portal.kernel.security.SecureRandomUtil;
 import com.liferay.portal.kernel.security.pwd.PasswordEncryptor;
@@ -104,7 +104,7 @@ public class PBKDF2PasswordEncryptor
 	private static final Pattern _pattern = Pattern.compile(
 		"^.*/?([0-9]+)?/([0-9]+)$");
 
-	private class PBKDF2EncryptionConfiguration {
+	private static class PBKDF2EncryptionConfiguration {
 
 		public void configure(String algorithm, String encryptedPassword)
 			throws PwdEncryptorException {

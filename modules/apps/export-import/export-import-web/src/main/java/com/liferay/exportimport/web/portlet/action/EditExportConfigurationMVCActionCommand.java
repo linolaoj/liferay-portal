@@ -14,6 +14,13 @@
 
 package com.liferay.exportimport.web.portlet.action;
 
+import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationConstants;
+import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationHelper;
+import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationSettingsMapFactory;
+import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
+import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
+import com.liferay.exportimport.kernel.service.ExportImportConfigurationService;
+import com.liferay.exportimport.kernel.service.ExportImportService;
 import com.liferay.exportimport.web.constants.ExportImportPortletKeys;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskConstants;
@@ -21,6 +28,7 @@ import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.TrashedModel;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -28,18 +36,12 @@ import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.TrashedModel;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.exportimport.configuration.ExportImportConfigurationConstants;
-import com.liferay.portlet.exportimport.configuration.ExportImportConfigurationHelper;
-import com.liferay.portlet.exportimport.configuration.ExportImportConfigurationSettingsMapFactory;
-import com.liferay.portlet.exportimport.model.ExportImportConfiguration;
-import com.liferay.portlet.exportimport.service.ExportImportConfigurationService;
-import com.liferay.portlet.exportimport.service.ExportImportService;
-import com.liferay.portlet.trash.service.TrashEntryService;
-import com.liferay.portlet.trash.util.TrashUtil;
+import com.liferay.taglib.ui.util.SessionTreeJSClicks;
+import com.liferay.trash.kernel.service.TrashEntryService;
+import com.liferay.trash.kernel.util.TrashUtil;
 
 import java.io.Serializable;
 
@@ -49,6 +51,8 @@ import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -154,6 +158,8 @@ public class EditExportConfigurationMVCActionCommand
 
 		try {
 			if (cmd.equals(Constants.ADD) || cmd.equals(Constants.UPDATE)) {
+				setLayoutIdMap(actionRequest);
+
 				updateExportConfiguration(actionRequest);
 			}
 			else if (cmd.equals(Constants.DELETE)) {
@@ -232,6 +238,26 @@ public class EditExportConfigurationMVCActionCommand
 		ExportImportService exportImportService) {
 
 		this.exportImportService = exportImportService;
+	}
+
+	protected void setLayoutIdMap(ActionRequest actionRequest) {
+		HttpServletRequest portletRequest = PortalUtil.getHttpServletRequest(
+			actionRequest);
+
+		long groupId = ParamUtil.getLong(actionRequest, "groupId");
+		boolean privateLayout = ParamUtil.getBoolean(
+			actionRequest, "privateLayout");
+
+		String treeId = ParamUtil.getString(actionRequest, "treeId");
+
+		String openNodes = SessionTreeJSClicks.getOpenNodes(
+			portletRequest, treeId + "SelectedNode");
+
+		String selectedLayoutsJSON =
+			ExportImportHelperUtil.getSelectedLayoutsJSON(
+				groupId, privateLayout, openNodes);
+
+		actionRequest.setAttribute("layoutIdMap", selectedLayoutsJSON);
 	}
 
 	@Reference(unbind = "-")

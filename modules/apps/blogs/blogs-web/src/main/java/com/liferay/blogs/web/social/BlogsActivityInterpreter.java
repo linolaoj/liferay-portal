@@ -14,21 +14,23 @@
 
 package com.liferay.blogs.web.social;
 
+import com.liferay.blogs.kernel.model.BlogsEntry;
+import com.liferay.blogs.kernel.service.BlogsEntryLocalService;
 import com.liferay.blogs.web.constants.BlogsPortletKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.ClassResourceBundleLoader;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
+import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.blogs.model.BlogsEntry;
-import com.liferay.portlet.blogs.service.BlogsEntryLocalService;
 import com.liferay.portlet.blogs.service.permission.BlogsEntryPermission;
 import com.liferay.portlet.blogs.social.BlogsActivityKeys;
-import com.liferay.portlet.social.model.BaseSocialActivityInterpreter;
-import com.liferay.portlet.social.model.SocialActivity;
-import com.liferay.portlet.social.model.SocialActivityConstants;
-import com.liferay.portlet.social.model.SocialActivityInterpreter;
+import com.liferay.social.kernel.model.BaseSocialActivityInterpreter;
+import com.liferay.social.kernel.model.SocialActivity;
+import com.liferay.social.kernel.model.SocialActivityConstants;
+import com.liferay.social.kernel.model.SocialActivityInterpreter;
 
 import java.text.Format;
 
@@ -56,6 +58,11 @@ public class BlogsActivityInterpreter extends BaseSocialActivityInterpreter {
 		SocialActivity activity, ServiceContext serviceContext) {
 
 		return "/blogs/find_entry?entryId=" + activity.getClassPK();
+	}
+
+	@Override
+	protected ResourceBundleLoader getResourceBundleLoader() {
+		return _resourceBundleLoader;
 	}
 
 	@Override
@@ -180,5 +187,8 @@ public class BlogsActivityInterpreter extends BaseSocialActivityInterpreter {
 	private static final String[] _CLASS_NAMES = {BlogsEntry.class.getName()};
 
 	private BlogsEntryLocalService _blogsEntryLocalService;
+	private final ResourceBundleLoader _resourceBundleLoader =
+		new ClassResourceBundleLoader(
+			"content.Language", BlogsActivityInterpreter.class);
 
 }

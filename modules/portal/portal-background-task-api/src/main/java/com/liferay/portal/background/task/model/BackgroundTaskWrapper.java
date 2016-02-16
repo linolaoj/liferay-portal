@@ -16,8 +16,11 @@ package com.liferay.portal.background.task.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
 
 import java.io.Serializable;
 
@@ -283,7 +286,7 @@ public class BackgroundTaskWrapper implements BackgroundTask,
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _backgroundTask.getExpandoBridge();
 	}
 
@@ -524,19 +527,17 @@ public class BackgroundTaskWrapper implements BackgroundTask,
 
 	@Override
 	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
 		_backgroundTask.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_backgroundTask.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_backgroundTask.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -682,7 +683,7 @@ public class BackgroundTaskWrapper implements BackgroundTask,
 	}
 
 	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.portal.background.task.model.BackgroundTask> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.portal.background.task.model.BackgroundTask> toCacheModel() {
 		return _backgroundTask.toCacheModel();
 	}
 

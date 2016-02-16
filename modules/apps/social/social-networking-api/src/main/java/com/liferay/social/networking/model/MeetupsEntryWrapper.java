@@ -16,8 +16,13 @@ package com.liferay.social.networking.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+
+import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -210,7 +215,7 @@ public class MeetupsEntryWrapper implements MeetupsEntry,
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _meetupsEntry.getExpandoBridge();
 	}
 
@@ -265,7 +270,7 @@ public class MeetupsEntryWrapper implements MeetupsEntry,
 	}
 
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
+	public Serializable getPrimaryKeyObj() {
 		return _meetupsEntry.getPrimaryKeyObj();
 	}
 
@@ -411,19 +416,17 @@ public class MeetupsEntryWrapper implements MeetupsEntry,
 
 	@Override
 	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
 		_meetupsEntry.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_meetupsEntry.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_meetupsEntry.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -483,7 +486,7 @@ public class MeetupsEntryWrapper implements MeetupsEntry,
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_meetupsEntry.setPrimaryKeyObj(primaryKeyObj);
 	}
 
@@ -558,7 +561,7 @@ public class MeetupsEntryWrapper implements MeetupsEntry,
 	}
 
 	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.social.networking.model.MeetupsEntry> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.social.networking.model.MeetupsEntry> toCacheModel() {
 		return _meetupsEntry.toCacheModel();
 	}
 

@@ -26,7 +26,7 @@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
 taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
-<%@ page import="com.liferay.dynamic.data.mapping.configuration.DDMServiceConfiguration" %><%@
+<%@ page import="com.liferay.dynamic.data.mapping.configuration.DDMGroupServiceConfiguration" %><%@
 page import="com.liferay.dynamic.data.mapping.constants.DDMPortletKeys" %><%@
 page import="com.liferay.dynamic.data.mapping.constants.DDMWebKeys" %><%@
 page import="com.liferay.dynamic.data.mapping.exception.NoSuchStructureException" %><%@
@@ -74,13 +74,14 @@ page import="com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfigurat
 page import="com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfigurationKeys" %><%@
 page import="com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfigurationUtil" %><%@
 page import="com.liferay.dynamic.data.mapping.web.context.util.DDMWebRequestHelper" %><%@
-page import="com.liferay.portal.LocaleException" %><%@
-page import="com.liferay.portal.exception.PortletPreferencesException" %><%@
+page import="com.liferay.dynamic.data.mapping.web.display.context.DDMDisplayContext" %><%@
 page import="com.liferay.portal.kernel.bean.BeanParamUtil" %><%@
 page import="com.liferay.portal.kernel.configuration.Filter" %><%@
 page import="com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker" %><%@
 page import="com.liferay.portal.kernel.dao.search.SearchContainer" %><%@
 page import="com.liferay.portal.kernel.editor.EditorModeUtil" %><%@
+page import="com.liferay.portal.kernel.exception.LocaleException" %><%@
+page import="com.liferay.portal.kernel.exception.PortletPreferencesException" %><%@
 page import="com.liferay.portal.kernel.json.JSONArray" %><%@
 page import="com.liferay.portal.kernel.json.JSONFactoryUtil" %><%@
 page import="com.liferay.portal.kernel.json.JSONObject" %><%@
@@ -88,9 +89,12 @@ page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
 page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil" %><%@
 page import="com.liferay.portal.kernel.log.Log" %><%@
 page import="com.liferay.portal.kernel.log.LogFactoryUtil" %><%@
+page import="com.liferay.portal.kernel.model.Group" %><%@
 page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
+page import="com.liferay.portal.kernel.portlet.PortletURLFactoryUtil" %><%@
 page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.kernel.security.permission.ResourceActionsUtil" %><%@
+page import="com.liferay.portal.kernel.service.GroupLocalServiceUtil" %><%@
 page import="com.liferay.portal.kernel.template.TemplateConstants" %><%@
 page import="com.liferay.portal.kernel.template.TemplateHandler" %><%@
 page import="com.liferay.portal.kernel.template.TemplateHandlerRegistryUtil" %><%@
@@ -102,6 +106,7 @@ page import="com.liferay.portal.kernel.util.ListUtil" %><%@
 page import="com.liferay.portal.kernel.util.LocaleUtil" %><%@
 page import="com.liferay.portal.kernel.util.OrderByComparator" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
+page import="com.liferay.portal.kernel.util.PortalUtil" %><%@
 page import="com.liferay.portal.kernel.util.ResourceBundleUtil" %><%@
 page import="com.liferay.portal.kernel.util.StringBundler" %><%@
 page import="com.liferay.portal.kernel.util.StringPool" %><%@
@@ -110,13 +115,7 @@ page import="com.liferay.portal.kernel.util.TextFormatter" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowConstants" %><%@
-page import="com.liferay.portal.model.Group" %><%@
-page import="com.liferay.portal.service.GroupLocalServiceUtil" %><%@
 page import="com.liferay.portal.template.TemplateContextHelper" %><%@
-page import="com.liferay.portal.util.PortalUtil" %><%@
-page import="com.liferay.portlet.PortalPreferences" %><%@
-page import="com.liferay.portlet.PortletPreferencesFactoryUtil" %><%@
-page import="com.liferay.portlet.PortletURLFactoryUtil" %><%@
 page import="com.liferay.portlet.display.template.PortletDisplayTemplate" %><%@
 page import="com.liferay.portlet.display.template.PortletDisplayTemplateUtil" %><%@
 page import="com.liferay.taglib.search.ResultRow" %><%@
@@ -143,8 +142,6 @@ page import="javax.portlet.WindowState" %>
 <portlet:defineObjects />
 
 <%
-PortalPreferences portalPreferences = PortletPreferencesFactoryUtil.getPortalPreferences(request);
-
 String refererPortletName = ParamUtil.getString(request, "refererPortletName", portletName);
 String refererWebDAVToken = ParamUtil.getString(request, "refererWebDAVToken", portletConfig.getInitParameter("refererWebDAVToken"));
 String scopeTitle = ParamUtil.getString(request, "scopeTitle");
@@ -174,10 +171,16 @@ else if (scopeTemplateType.equals(DDMTemplateConstants.TEMPLATE_TYPE_FORM)) {
 	templateTypeValue = DDMTemplateConstants.TEMPLATE_TYPE_FORM;
 }
 
+DDMDisplayContext ddmDisplayContext = new DDMDisplayContext(renderRequest);
 DDMWebRequestHelper ddmWebRequestHelper = new DDMWebRequestHelper(request);
-DDMServiceConfiguration ddmServiceConfiguration = ddmWebRequestHelper.getDDMServiceConfiguration();
+
+DDMGroupServiceConfiguration ddmGroupServiceConfiguration = ddmWebRequestHelper.getDDMGroupServiceConfiguration();
 
 DDMWebConfiguration ddmWebConfiguration = (DDMWebConfiguration)request.getAttribute(DDMWebConfiguration.class.getName());
+
+if (ddmWebConfiguration == null) {
+	ddmWebConfiguration = ddmWebRequestHelper.getDDMWebConfiguration();
+}
 %>
 
 <%@ include file="/init-ext.jsp" %>

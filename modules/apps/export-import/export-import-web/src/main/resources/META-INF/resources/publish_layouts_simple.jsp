@@ -37,6 +37,10 @@ if (exportImportConfiguration.getType() == ExportImportConfigurationConstants.TY
 }
 
 GroupDisplayContextHelper groupDisplayContextHelper = new GroupDisplayContextHelper(request);
+
+Map<String, Serializable> settingsMap = exportImportConfiguration.getSettingsMap();
+
+Map<String, String[]> parameterMap = (Map<String, String[]>)settingsMap.get("parameterMap");
 %>
 
 <div class="container-fluid-1280">
@@ -47,6 +51,7 @@ GroupDisplayContextHelper groupDisplayContextHelper = new GroupDisplayContextHel
 				<portlet:param name="<%= Constants.CMD %>" value="<%= cmd %>" />
 				<portlet:param name="tabs1" value='<%= privateLayout ? "private-pages" : "public-pages" %>' />
 				<portlet:param name="groupId" value="<%= String.valueOf(groupDisplayContextHelper.getGroupId()) %>" />
+				<portlet:param name="layoutSetBranchId" value='<%= MapUtil.getString(parameterMap, "layoutSetBranchId") %>' />
 				<portlet:param name="selPlid" value="<%= String.valueOf(selPlid) %>" />
 				<portlet:param name="privateLayout" value="<%= String.valueOf(privateLayout) %>" />
 				<portlet:param name="quickPublish" value="<%= Boolean.FALSE.toString() %>" />
@@ -110,23 +115,23 @@ GroupDisplayContextHelper groupDisplayContextHelper = new GroupDisplayContextHel
 								</li>
 
 								<%
-								List<Portlet> dataSiteLevelPortlets = ExportImportHelperUtil.getDataSiteLevelPortlets(company.getCompanyId(), false);
+								Set<String> portletDataHandlerClassNames = new HashSet<String>();
 
-								Set<String> portletDataHandlerClasses = new HashSet<String>();
+								List<Portlet> dataSiteLevelPortlets = ExportImportHelperUtil.getDataSiteLevelPortlets(company.getCompanyId(), false);
 
 								if (!dataSiteLevelPortlets.isEmpty()) {
 									for (Portlet portlet : dataSiteLevelPortlets) {
-										String portletDataHandlerClass = portlet.getPortletDataHandlerClass();
+										PortletDataHandler portletDataHandler = portlet.getPortletDataHandlerInstance();
 
-										if (portletDataHandlerClasses.contains(portletDataHandlerClass)) {
+										Class<?> portletDataHandlerClass = portletDataHandler.getClass();
+
+										String portletDataHandlerClassName = portletDataHandlerClass.getName();
+
+										if (portletDataHandlerClassNames.contains(portletDataHandlerClassName)) {
 											continue;
 										}
 
-										portletDataHandlerClasses.add(portletDataHandlerClass);
-
-										PortletDataHandler portletDataHandler = portlet.getPortletDataHandlerInstance();
-
-										Map<String, Serializable> settingsMap = exportImportConfiguration.getSettingsMap();
+										portletDataHandlerClassNames.add(portletDataHandlerClassName);
 
 										settingsMap.put("portletId", portlet.getRootPortletId());
 
@@ -168,6 +173,10 @@ GroupDisplayContextHelper groupDisplayContextHelper = new GroupDisplayContextHel
 						</li>
 					</aui:fieldset>
 				</aui:fieldset-group>
+
+				<span class="publish-simple-help-text">
+					<liferay-ui:message key="simple-publication-help" />
+				</span>
 
 				<aui:button-row>
 					<aui:button cssClass="btn-lg" type="submit" value="<%= LanguageUtil.get(request, publishMessageKey) %>" />

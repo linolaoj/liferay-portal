@@ -81,10 +81,18 @@ if (ddmTemplate == null) {
 	}
 }
 
-String defaultLanguageId = LocaleUtil.toLanguageId(themeDisplay.getSiteDefaultLocale());
+String defaultLanguageId = LocaleUtil.toLanguageId(LocaleUtil.getSiteDefault());
+
+boolean changeableDefaultLanguage = journalWebConfiguration.changeableDefaultLanguage();
 
 if (article != null) {
-	defaultLanguageId = LocalizationUtil.getDefaultLanguageId(article.getContent(), LocaleUtil.getSiteDefault());
+	String articleDefaultLanguageId = LocalizationUtil.getDefaultLanguageId(article.getContent(), LocaleUtil.getSiteDefault());
+
+	if (!Validator.equals(defaultLanguageId, articleDefaultLanguageId)) {
+		changeableDefaultLanguage = true;
+	}
+
+	defaultLanguageId = articleDefaultLanguageId;
 }
 
 boolean showHeader = ParamUtil.getBoolean(request, "showHeader", true);
@@ -156,9 +164,9 @@ request.setAttribute("edit_article.jsp-changeStructure", changeStructure);
 <aui:model-context bean="<%= article %>" model="<%= JournalArticle.class %>" />
 
 <c:if test="<%= (article != null) && !article.isNew() && (classNameId == JournalArticleConstants.CLASSNAME_ID_DEFAULT) %>">
-	<div class="panel text-center">
+	<liferay-frontend:info-bar>
 		<aui:workflow-status id="<%= String.valueOf(article.getArticleId()) %>" markupView="lexicon" showHelpMessage="<%= false %>" showIcon="<%= false %>" showLabel="<%= false %>" status="<%= article.getStatus() %>" version="<%= String.valueOf(article.getVersion()) %>" />
-	</div>
+	</liferay-frontend:info-bar>
 </c:if>
 
 <portlet:actionURL var="editArticleActionURL" windowState="<%= WindowState.MAXIMIZED.toString() %>">
@@ -203,6 +211,7 @@ request.setAttribute("edit_article.jsp-changeStructure", changeStructure);
 
 	<aui:translation-manager
 		availableLocales="<%= availableLocales %>"
+		changeableDefaultLanguage="<%= changeableDefaultLanguage %>"
 		defaultLanguageId="<%= defaultLanguageId %>"
 		id="translationManager"
 	/>

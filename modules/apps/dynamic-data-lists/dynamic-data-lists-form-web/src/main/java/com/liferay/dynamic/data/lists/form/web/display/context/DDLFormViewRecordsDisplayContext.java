@@ -34,10 +34,15 @@ import com.liferay.portal.kernel.dao.search.DisplayTerms;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.portlet.PortalPreferences;
+import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
+import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchContextFactory;
+import com.liferay.portal.kernel.theme.PortletDisplay;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Function;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -47,11 +52,6 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.theme.PortletDisplay;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portlet.PortalPreferences;
-import com.liferay.portlet.PortletPreferencesFactoryUtil;
-import com.liferay.portlet.PortletURLUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,6 +140,50 @@ public class DDLFormViewRecordsDisplayContext {
 		return "list";
 	}
 
+	public String getOrderByCol() {
+		PortalPreferences portalPreferences =
+			PortletPreferencesFactoryUtil.getPortalPreferences(
+				_liferayPortletRequest);
+
+		String orderByCol = ParamUtil.getString(
+			_liferayPortletRequest, "orderByCol");
+
+		if (Validator.isNull(orderByCol)) {
+			orderByCol = portalPreferences.getValue(
+				DDLFormPortletKeys.DYNAMIC_DATA_LISTS_FORM_ADMIN,
+				"view-entries-order-by-col", "modified-date");
+		}
+		else {
+			portalPreferences.setValue(
+				DDLFormPortletKeys.DYNAMIC_DATA_LISTS_FORM_ADMIN,
+				"view-entries-order-by-col", orderByCol);
+		}
+
+		return orderByCol;
+	}
+
+	public String getOrderByType() {
+		PortalPreferences portalPreferences =
+			PortletPreferencesFactoryUtil.getPortalPreferences(
+				_liferayPortletRequest);
+
+		String orderByType = ParamUtil.getString(
+			_liferayPortletRequest, "orderByType");
+
+		if (Validator.isNull(orderByType)) {
+			orderByType = portalPreferences.getValue(
+				DDLFormPortletKeys.DYNAMIC_DATA_LISTS_FORM_ADMIN,
+				"view-entries-order-by-type", "asc");
+		}
+		else {
+			portalPreferences.setValue(
+				DDLFormPortletKeys.DYNAMIC_DATA_LISTS_FORM_ADMIN,
+				"view-entries-order-by-type", orderByType);
+		}
+
+		return orderByType;
+	}
+
 	public RecordSearch getRecordSearchContainer() {
 		return _recordSearchContainer;
 	}
@@ -179,39 +223,13 @@ public class DDLFormViewRecordsDisplayContext {
 		_recordSearchContainer = new RecordSearch(
 			_liferayPortletRequest, portletURL, headerNames);
 
-		String orderByCol = ParamUtil.getString(
-			_liferayPortletRequest, "orderByCol");
-		String orderByType = ParamUtil.getString(
-			_liferayPortletRequest, "orderByType");
-
-		PortalPreferences portalPreferences =
-			PortletPreferencesFactoryUtil.getPortalPreferences(
-				_liferayPortletRequest);
-
-		if (Validator.isNull(orderByCol)) {
-			orderByCol = portalPreferences.getValue(
-				DDLFormPortletKeys.DYNAMIC_DATA_LISTS_FORM_ADMIN,
-				"view-entries-order-by-col", "modified-date");
-			orderByType = portalPreferences.getValue(
-				DDLFormPortletKeys.DYNAMIC_DATA_LISTS_FORM_ADMIN,
-				"view-entries-order-by-type", "asc");
-		}
-		else {
-			portalPreferences.setValue(
-				DDLFormPortletKeys.DYNAMIC_DATA_LISTS_FORM_ADMIN,
-				"view-entries-order-by-col", orderByCol);
-			portalPreferences.setValue(
-				DDLFormPortletKeys.DYNAMIC_DATA_LISTS_FORM_ADMIN,
-				"view-entries-order-by-type", orderByType);
-		}
-
 		OrderByComparator<DDLRecord> orderByComparator =
 			DDLFormAdminPortletUtil.getRecordOrderByComparator(
-				orderByCol, orderByType);
+				getOrderByCol(), getOrderByType());
 
-		_recordSearchContainer.setOrderByCol(orderByCol);
+		_recordSearchContainer.setOrderByCol(getOrderByCol());
 		_recordSearchContainer.setOrderByComparator(orderByComparator);
-		_recordSearchContainer.setOrderByType(orderByType);
+		_recordSearchContainer.setOrderByType(getOrderByType());
 
 		updateSearchContainerResults();
 	}

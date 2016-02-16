@@ -17,23 +17,23 @@ package com.liferay.portal.security.auth;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutTypePortlet;
+import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.security.auth.AuthToken;
 import com.liferay.portal.kernel.security.auth.AuthTokenWhitelistUtil;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
+import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PwdGenerator;
 import com.liferay.portal.kernel.util.ReflectionUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.LayoutTypePortlet;
-import com.liferay.portal.model.Portlet;
-import com.liferay.portal.service.LayoutLocalServiceUtil;
-import com.liferay.portal.service.PortletLocalServiceUtil;
-import com.liferay.portal.service.permission.PortletPermissionUtil;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.SecurityPortletContainerWrapper;
 
@@ -245,8 +245,8 @@ public class SessionAuthToken implements AuthToken {
 
 			return isValidPortletInvocationToken(request, layout, portlet);
 		}
-		catch (PortalException e) {
-			ReflectionUtil.throwException(e);
+		catch (PortalException pe) {
+			ReflectionUtil.throwException(pe);
 		}
 
 		return false;
@@ -277,7 +277,7 @@ public class SessionAuthToken implements AuthToken {
 				(HttpServletRequest)httpServletRequestWrapper.getRequest();
 		}
 
-		if (session == null ) {
+		if (session == null) {
 			session = currentRequest.getSession();
 
 			sessionAuthenticationToken = (String)session.getAttribute(tokenKey);

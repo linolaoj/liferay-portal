@@ -20,6 +20,7 @@
 
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
 taglib uri="http://liferay.com/tld/ddm" prefix="liferay-ddm" %><%@
+taglib uri="http://liferay.com/tld/flags" prefix="liferay-flags" %><%@
 taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/item-selector" prefix="liferay-item-selector" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
@@ -29,12 +30,32 @@ taglib uri="http://liferay.com/tld/trash" prefix="liferay-trash" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
 taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
-<%@ page import="com.liferay.blogs.configuration.BlogsGroupServiceOverriddenConfiguration" %><%@
+<%@ page import="com.liferay.asset.kernel.model.AssetEntry" %><%@
+page import="com.liferay.asset.kernel.model.AssetRenderer" %><%@
+page import="com.liferay.asset.kernel.model.AssetTag" %><%@
+page import="com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil" %><%@
+page import="com.liferay.asset.kernel.service.AssetEntryServiceUtil" %><%@
+page import="com.liferay.asset.kernel.service.AssetTagLocalServiceUtil" %><%@
+page import="com.liferay.blogs.configuration.BlogsGroupServiceOverriddenConfiguration" %><%@
+page import="com.liferay.blogs.kernel.exception.EntryContentException" %><%@
+page import="com.liferay.blogs.kernel.exception.EntryCoverImageCropException" %><%@
+page import="com.liferay.blogs.kernel.exception.EntryDescriptionException" %><%@
+page import="com.liferay.blogs.kernel.exception.EntrySmallImageNameException" %><%@
+page import="com.liferay.blogs.kernel.exception.EntrySmallImageScaleException" %><%@
+page import="com.liferay.blogs.kernel.exception.EntryTitleException" %><%@
+page import="com.liferay.blogs.kernel.exception.NoSuchEntryException" %><%@
+page import="com.liferay.blogs.kernel.model.BlogsEntry" %><%@
+page import="com.liferay.blogs.kernel.service.BlogsEntryLocalServiceUtil" %><%@
+page import="com.liferay.blogs.kernel.service.BlogsEntryServiceUtil" %><%@
+page import="com.liferay.blogs.kernel.util.comparator.EntryModifiedDateComparator" %><%@
 page import="com.liferay.blogs.web.BlogsItemSelectorHelper" %><%@
 page import="com.liferay.blogs.web.configuration.BlogsPortletInstanceConfiguration" %><%@
 page import="com.liferay.blogs.web.constants.BlogsPortletKeys" %><%@
 page import="com.liferay.blogs.web.constants.BlogsWebKeys" %><%@
 page import="com.liferay.blogs.web.display.context.BlogsPortletInstanceSettingsHelper" %><%@
+page import="com.liferay.document.library.kernel.exception.FileSizeException" %><%@
+page import="com.liferay.document.library.kernel.service.DLAppLocalServiceUtil" %><%@
+page import="com.liferay.document.library.kernel.util.DLUtil" %><%@
 page import="com.liferay.portal.kernel.bean.BeanParamUtil" %><%@
 page import="com.liferay.portal.kernel.comment.CommentManagerUtil" %><%@
 page import="com.liferay.portal.kernel.comment.Discussion" %><%@
@@ -47,10 +68,19 @@ page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
 page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil" %><%@
 page import="com.liferay.portal.kernel.log.Log" %><%@
 page import="com.liferay.portal.kernel.log.LogFactoryUtil" %><%@
-page import="com.liferay.portal.kernel.module.configuration.ConfigurationFactoryUtil" %><%@
+page import="com.liferay.portal.kernel.model.Group" %><%@
+page import="com.liferay.portal.kernel.model.Organization" %><%@
+page import="com.liferay.portal.kernel.model.Portlet" %><%@
+page import="com.liferay.portal.kernel.model.User" %><%@
+page import="com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil" %><%@
 page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
+page import="com.liferay.portal.kernel.portlet.PortalPreferences" %><%@
+page import="com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil" %><%@
 page import="com.liferay.portal.kernel.portlet.PortletProvider" %><%@
 page import="com.liferay.portal.kernel.portlet.PortletProviderUtil" %><%@
+page import="com.liferay.portal.kernel.portlet.PortletURLUtil" %><%@
+page import="com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory" %><%@
+page import="com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil" %><%@
 page import="com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil" %><%@
 page import="com.liferay.portal.kernel.repository.model.FileEntry" %><%@
 page import="com.liferay.portal.kernel.repository.model.Folder" %><%@
@@ -63,6 +93,12 @@ page import="com.liferay.portal.kernel.search.SearchContext" %><%@
 page import="com.liferay.portal.kernel.search.SearchContextFactory" %><%@
 page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.kernel.security.permission.ResourceActionsUtil" %><%@
+page import="com.liferay.portal.kernel.service.GroupLocalServiceUtil" %><%@
+page import="com.liferay.portal.kernel.service.OrganizationLocalServiceUtil" %><%@
+page import="com.liferay.portal.kernel.service.PortletLocalServiceUtil" %><%@
+page import="com.liferay.portal.kernel.service.ServiceContextFunction" %><%@
+page import="com.liferay.portal.kernel.service.SubscriptionLocalServiceUtil" %><%@
+page import="com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalServiceUtil" %><%@
 page import="com.liferay.portal.kernel.settings.GroupServiceSettingsLocator" %><%@
 page import="com.liferay.portal.kernel.settings.ParameterMapSettingsLocator" %><%@
 page import="com.liferay.portal.kernel.settings.PortletInstanceSettingsLocator" %><%@
@@ -75,6 +111,8 @@ page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.HttpUtil" %><%@
 page import="com.liferay.portal.kernel.util.ListUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
+page import="com.liferay.portal.kernel.util.Portal" %><%@
+page import="com.liferay.portal.kernel.util.PortalUtil" %><%@
 page import="com.liferay.portal.kernel.util.PrefsPropsUtil" %><%@
 page import="com.liferay.portal.kernel.util.PropsKeys" %><%@
 page import="com.liferay.portal.kernel.util.PropsUtil" %><%@
@@ -87,53 +125,16 @@ page import="com.liferay.portal.kernel.util.UnicodeFormatter" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowConstants" %><%@
-page import="com.liferay.portal.model.Group" %><%@
-page import="com.liferay.portal.model.Organization" %><%@
-page import="com.liferay.portal.model.Portlet" %><%@
-page import="com.liferay.portal.model.User" %><%@
-page import="com.liferay.portal.service.GroupLocalServiceUtil" %><%@
-page import="com.liferay.portal.service.OrganizationLocalServiceUtil" %><%@
-page import="com.liferay.portal.service.PortletLocalServiceUtil" %><%@
-page import="com.liferay.portal.service.ServiceContextFunction" %><%@
-page import="com.liferay.portal.service.SubscriptionLocalServiceUtil" %><%@
-page import="com.liferay.portal.service.WorkflowDefinitionLinkLocalServiceUtil" %><%@
 page import="com.liferay.portal.upload.LiferayFileItem" %><%@
-page import="com.liferay.portal.util.Portal" %><%@
-page import="com.liferay.portal.util.PortalUtil" %><%@
 page import="com.liferay.portal.util.PropsValues" %><%@
-page import="com.liferay.portlet.PortalPreferences" %><%@
-page import="com.liferay.portlet.PortletPreferencesFactoryUtil" %><%@
-page import="com.liferay.portlet.PortletURLUtil" %><%@
-page import="com.liferay.portlet.RequestBackedPortletURLFactory" %><%@
-page import="com.liferay.portlet.RequestBackedPortletURLFactoryUtil" %><%@
-page import="com.liferay.portlet.asset.model.AssetEntry" %><%@
-page import="com.liferay.portlet.asset.model.AssetRenderer" %><%@
-page import="com.liferay.portlet.asset.model.AssetTag" %><%@
-page import="com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil" %><%@
-page import="com.liferay.portlet.asset.service.AssetEntryServiceUtil" %><%@
-page import="com.liferay.portlet.asset.service.AssetTagLocalServiceUtil" %><%@
 page import="com.liferay.portlet.asset.util.AssetUtil" %><%@
 page import="com.liferay.portlet.blogs.BlogsGroupServiceSettings" %><%@
 page import="com.liferay.portlet.blogs.constants.BlogsConstants" %><%@
-page import="com.liferay.portlet.blogs.exception.EntryContentException" %><%@
-page import="com.liferay.portlet.blogs.exception.EntryCoverImageCropException" %><%@
-page import="com.liferay.portlet.blogs.exception.EntryDescriptionException" %><%@
-page import="com.liferay.portlet.blogs.exception.EntrySmallImageNameException" %><%@
-page import="com.liferay.portlet.blogs.exception.EntrySmallImageScaleException" %><%@
-page import="com.liferay.portlet.blogs.exception.EntryTitleException" %><%@
-page import="com.liferay.portlet.blogs.exception.NoSuchEntryException" %><%@
-page import="com.liferay.portlet.blogs.model.BlogsEntry" %><%@
-page import="com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil" %><%@
-page import="com.liferay.portlet.blogs.service.BlogsEntryServiceUtil" %><%@
 page import="com.liferay.portlet.blogs.service.permission.BlogsEntryPermission" %><%@
 page import="com.liferay.portlet.blogs.service.permission.BlogsPermission" %><%@
 page import="com.liferay.portlet.blogs.util.BlogsUtil" %><%@
-page import="com.liferay.portlet.blogs.util.comparator.EntryModifiedDateComparator" %><%@
-page import="com.liferay.portlet.documentlibrary.exception.FileSizeException" %><%@
-page import="com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil" %><%@
-page import="com.liferay.portlet.documentlibrary.util.DLUtil" %><%@
-page import="com.liferay.portlet.trash.util.TrashUtil" %><%@
-page import="com.liferay.taglib.search.ResultRow" %>
+page import="com.liferay.taglib.search.ResultRow" %><%@
+page import="com.liferay.trash.kernel.util.TrashUtil" %>
 
 <%@ page import="java.text.Format" %>
 

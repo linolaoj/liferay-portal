@@ -16,9 +16,9 @@ package com.liferay.frontend.taglib.servlet.taglib;
 
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.PortletURLUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.taglib.util.TagResourceBundleUtil;
 
 import java.util.Locale;
@@ -59,10 +59,6 @@ public class DefineObjectsTag extends TagSupport {
 		_overrideResourceBundle = overrideResourceBundle;
 	}
 
-	public void setResourceBundleBaseName(String resourceBundleBaseName) {
-		_resourceBundleBaseName = resourceBundleBaseName;
-	}
-
 	protected PortletURL getCurrentURLObj() {
 		LiferayPortletRequest liferayPortletRequest =
 			getLiferayPortletRequest();
@@ -90,8 +86,7 @@ public class DefineObjectsTag extends TagSupport {
 
 		Locale locale = PortalUtil.getLocale(request);
 
-		return TagResourceBundleUtil.getResourceBundle(
-			pageContext, _resourceBundleBaseName, locale);
+		return TagResourceBundleUtil.getResourceBundle(request, locale);
 	}
 
 	protected WindowState getWindowState() {
@@ -149,10 +144,6 @@ public class DefineObjectsTag extends TagSupport {
 		return PortalUtil.getLiferayPortletResponse(portletResponse);
 	}
 
-	private static final String _DEFAULT_RESOURCE_BUNDLE_BASE_NAME =
-		"content.Language";
-
 	private ResourceBundle _overrideResourceBundle;
-	private String _resourceBundleBaseName = _DEFAULT_RESOURCE_BUNDLE_BASE_NAME;
 
 }

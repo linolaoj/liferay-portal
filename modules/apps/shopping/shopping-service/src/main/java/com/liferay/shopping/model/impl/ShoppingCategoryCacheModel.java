@@ -16,10 +16,10 @@ package com.liferay.shopping.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import com.liferay.shopping.model.ShoppingCategory;
 
@@ -147,12 +147,16 @@ public class ShoppingCategoryCacheModel implements CacheModel<ShoppingCategory>,
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		categoryId = objectInput.readLong();
+
 		groupId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userId = objectInput.readLong();
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
+
 		parentCategoryId = objectInput.readLong();
 		name = objectInput.readUTF();
 		description = objectInput.readUTF();
@@ -162,8 +166,11 @@ public class ShoppingCategoryCacheModel implements CacheModel<ShoppingCategory>,
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(categoryId);
+
 		objectOutput.writeLong(groupId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
@@ -175,6 +182,7 @@ public class ShoppingCategoryCacheModel implements CacheModel<ShoppingCategory>,
 
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
+
 		objectOutput.writeLong(parentCategoryId);
 
 		if (name == null) {

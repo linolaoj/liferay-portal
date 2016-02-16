@@ -1,3 +1,5 @@
+apply plugin: "com.liferay.lang.merger"
+
 buildService {
 	apiDir = "../journal-api/src/main/java"
 	autoNamespaceTables = false
@@ -12,9 +14,10 @@ dependencies {
 	compile project(":apps:export-import:export-import-api")
 	compile project(":apps:export-import:export-import-service")
 	compile project(":apps:journal:journal-api")
+	compile project(":apps:journal:journal-lang")
 	compile project(":apps:mobile-device-rules:mobile-device-rules-api")
+	compile project(":portal-configuration:portal-configuration-metatype")
 	compile project(":portal:portal-instance-lifecycle")
-	compile project(":portal:portal-metatype")
 	compile project(":portal:portal-upgrade")
 
 	provided group: "com.liferay.portal", name: "util-java", version: liferay.portalVersion

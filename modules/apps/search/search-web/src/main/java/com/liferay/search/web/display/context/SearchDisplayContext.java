@@ -14,22 +14,44 @@
 
 package com.liferay.search.web.display.context;
 
+import com.liferay.portal.kernel.dao.search.SearchContainer;
+import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.portlet.PortletURLUtil;
+import com.liferay.portal.kernel.search.Document;
+import com.liferay.portal.kernel.search.FacetedSearcher;
+import com.liferay.portal.kernel.search.Hits;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.QueryConfig;
+import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.SearchContextFactory;
+import com.liferay.portal.kernel.search.facet.AssetEntriesFacet;
+import com.liferay.portal.kernel.search.facet.Facet;
+import com.liferay.portal.kernel.search.facet.ScopeFacet;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PredicateFilter;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.search.facet.SearchFacet;
 import com.liferay.search.facet.util.SearchFacetTracker;
+import com.liferay.search.web.constants.SearchPortletParameterNames;
 
 import java.util.List;
 
+import javax.portlet.PortletException;
 import javax.portlet.PortletPreferences;
+import javax.portlet.PortletURL;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -39,15 +61,83 @@ import javax.servlet.http.HttpServletRequest;
 public class SearchDisplayContext {
 
 	public SearchDisplayContext(
-		HttpServletRequest request, PortletPreferences portletPreferences) {
+			RenderRequest renderRequest, RenderResponse renderResponse,
+			PortletPreferences portletPreferences)
+		throws Exception {
 
-		_request = request;
+		_renderRequest = renderRequest;
+		_renderResponse = renderResponse;
 		_portletPreferences = portletPreferences;
+
+		if (Validator.isNull(getKeywords())) {
+			_hits = null;
+			_searchContext = null;
+			_searchContainer = null;
+
+			return;
+		}
+
+		HttpServletRequest request = PortalUtil.getHttpServletRequest(
+			_renderRequest);
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)_renderRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		String emptyResultMessage = LanguageUtil.format(
+			request, "no-results-were-found-that-matched-the-keywords-x",
+			"<strong>" + HtmlUtil.escape(getKeywords()) + "</strong>", false);
+
+		SearchContainer<Document> searchContainer = new SearchContainer<>(
+			_renderRequest, getPortletURL(), null, emptyResultMessage);
+
+		SearchContext searchContext = SearchContextFactory.getInstance(request);
+
+		searchContext.setAttribute("paginationType", "more");
+		searchContext.setEnd(searchContainer.getEnd());
+		searchContext.setQueryConfig(getQueryConfig());
+		searchContext.setStart(searchContainer.getStart());
+
+		Facet assetEntriesFacet = new AssetEntriesFacet(searchContext);
+
+		assetEntriesFacet.setStatic(true);
+
+		searchContext.addFacet(assetEntriesFacet);
+
+		Facet scopeFacet = new ScopeFacet(searchContext);
+
+		scopeFacet.setStatic(true);
+
+		searchContext.addFacet(scopeFacet);
+
+		for (SearchFacet searchFacet : getEnabledSearchFacets()) {
+			searchFacet.init(
+				themeDisplay.getCompanyId(), getSearchConfiguration(),
+				searchContext);
+
+			Facet facet = searchFacet.getFacet();
+
+			if (facet == null) {
+				continue;
+			}
+
+			searchContext.addFacet(facet);
+		}
+
+		Indexer<?> indexer = FacetedSearcher.getInstance();
+
+		Hits hits = indexer.search(searchContext);
+
+		searchContainer.setTotal(hits.getLength());
+		searchContainer.setResults(hits.toList());
+		searchContainer.setSearch(true);
+
+		_hits = hits;
+		_searchContext = searchContext;
+		_searchContainer = searchContainer;
 	}
 
 	public String checkViewURL(String viewURL, String currentURL) {
-		ThemeDisplay themeDisplay = (ThemeDisplay)_request.getAttribute(
-			WebKeys.THEME_DISPLAY);
+		ThemeDisplay themeDisplay = getThemeDisplay();
 
 		if (Validator.isNotNull(viewURL) &&
 			viewURL.startsWith(themeDisplay.getURLPortal())) {
@@ -103,6 +193,43 @@ public class SearchDisplayContext {
 		return _enabledSearchFacets;
 	}
 
+	public Hits getHits() throws Exception {
+		return _hits;
+	}
+
+	public String getKeywords() {
+		return ParamUtil.getString(
+			_renderRequest, SearchPortletParameterNames.KEYWORDS);
+	}
+
+	public PortletURL getPortletURL() throws PortletException {
+		PortletURL portletURL = PortletURLUtil.getCurrent(
+			_renderRequest, _renderResponse);
+
+		return PortletURLUtil.clone(portletURL, _renderResponse);
+	}
+
+	public QueryConfig getQueryConfig() {
+		if (_queryConfig != null) {
+			return _queryConfig;
+		}
+
+		_queryConfig = new QueryConfig();
+
+		_queryConfig.setCollatedSpellCheckResultEnabled(
+			isCollatedSpellCheckResultEnabled());
+		_queryConfig.setCollatedSpellCheckResultScoresThreshold(
+			getCollatedSpellCheckResultDisplayThreshold());
+		_queryConfig.setQueryIndexingEnabled(isQueryIndexingEnabled());
+		_queryConfig.setQueryIndexingThreshold(getQueryIndexingThreshold());
+		_queryConfig.setQuerySuggestionEnabled(isQuerySuggestionsEnabled());
+		_queryConfig.setQuerySuggestionScoresThreshold(
+			getQuerySuggestionsDisplayThreshold());
+		_queryConfig.setQuerySuggestionsMax(getQuerySuggestionsMax());
+
+		return _queryConfig;
+	}
+
 	public int getQueryIndexingThreshold() {
 		if (_queryIndexingThreshold != null) {
 			return _queryIndexingThreshold;
@@ -155,6 +282,12 @@ public class SearchDisplayContext {
 		return _querySuggestionsMax;
 	}
 
+	public String[] getQueryTerms() throws Exception {
+		Hits hits = getHits();
+
+		return hits.getQueryTerms();
+	}
+
 	public String getSearchConfiguration() {
 		if (_searchConfiguration != null) {
 			return _searchConfiguration;
@@ -166,15 +299,41 @@ public class SearchDisplayContext {
 		return _searchConfiguration;
 	}
 
-	public String getSearchScope() {
-		if (_searchScope != null) {
-			return _searchScope;
+	public SearchContainer<Document> getSearchContainer() throws Exception {
+		return _searchContainer;
+	}
+
+	public SearchContext getSearchContext() throws Exception {
+		return _searchContext;
+	}
+
+	public long getSearchScopeGroupId() {
+		SearchScope searchScope = getSearchScope();
+
+		if (searchScope == SearchScope.EVERYTHING) {
+			return 0;
 		}
 
-		_searchScope = _portletPreferences.getValue(
+		ThemeDisplay themeDisplay = getThemeDisplay();
+
+		return themeDisplay.getScopeGroupId();
+	}
+
+	public String getSearchScopeParameterString() {
+		SearchScope searchScope = getSearchScope();
+
+		return searchScope.getParameterString();
+	}
+
+	public String getSearchScopePreferenceString() {
+		if (_searchScopePreferenceString != null) {
+			return _searchScopePreferenceString;
+		}
+
+		_searchScopePreferenceString = _portletPreferences.getValue(
 			"searchScope", StringPool.BLANK);
 
-		return _searchScope;
+		return _searchScopePreferenceString;
 	}
 
 	public boolean isCollatedSpellCheckResultEnabled() {
@@ -222,11 +381,10 @@ public class SearchDisplayContext {
 			return _displayResultsInDocumentForm;
 		}
 
-		ThemeDisplay themeDisplay = (ThemeDisplay)_request.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
 		_displayResultsInDocumentForm = GetterUtil.getBoolean(
 			_portletPreferences.getValue("displayResultsInDocumentForm", null));
+
+		ThemeDisplay themeDisplay = getThemeDisplay();
 
 		PermissionChecker permissionChecker =
 			themeDisplay.getPermissionChecker();
@@ -246,6 +404,12 @@ public class SearchDisplayContext {
 		_dlLinkToViewURL = false;
 
 		return _dlLinkToViewURL;
+	}
+
+	public boolean isHighlightEnabled() {
+		QueryConfig queryConfig = getQueryConfig();
+
+		return queryConfig.isHighlightEnabled();
 	}
 
 	public boolean isIncludeSystemPortlets() {
@@ -282,6 +446,31 @@ public class SearchDisplayContext {
 		return _querySuggestionsEnabled;
 	}
 
+	public boolean isSearchScopePreferenceEverythingAvailable() {
+		ThemeDisplay themeDisplay = getThemeDisplay();
+
+		Group group = themeDisplay.getScopeGroup();
+
+		if (group.isStagingGroup()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public boolean isSearchScopePreferenceLetTheUserChoose() {
+		SearchScopePreference searchScopePreference =
+			getSearchScopePreference();
+
+		if (searchScopePreference ==
+				SearchScopePreference.LET_THE_USER_CHOOSE) {
+
+			return true;
+		}
+
+		return false;
+	}
+
 	public boolean isShowMenu() {
 		for (SearchFacet searchFacet : SearchFacetTracker.getSearchFacets()) {
 			if (isDisplayFacet(searchFacet.getClassName())) {
@@ -303,6 +492,37 @@ public class SearchDisplayContext {
 		return _viewInContext;
 	}
 
+	protected SearchScope getSearchScope() {
+		String scopeString = ParamUtil.getString(
+			_renderRequest, SearchPortletParameterNames.SCOPE);
+
+		if (Validator.isNotNull(scopeString)) {
+			return SearchScope.getSearchScope(scopeString);
+		}
+
+		SearchScopePreference searchScopePreference =
+			getSearchScopePreference();
+
+		SearchScope searchScope = searchScopePreference.getSearchScope();
+
+		if (searchScope == null) {
+			throw new IllegalArgumentException(
+				"Scope parameter is empty and no default is set in " +
+					"preferences");
+		}
+
+		return searchScope;
+	}
+
+	protected SearchScopePreference getSearchScopePreference() {
+		return SearchScopePreference.getSearchScopePreference(
+			getSearchScopePreferenceString());
+	}
+
+	protected ThemeDisplay getThemeDisplay() {
+		return (ThemeDisplay)_renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+	}
+
 	private Integer _collatedSpellCheckResultDisplayThreshold;
 	private Boolean _collatedSpellCheckResultEnabled;
 	private Boolean _displayMainQuery;
@@ -310,16 +530,21 @@ public class SearchDisplayContext {
 	private Boolean _displayResultsInDocumentForm;
 	private Boolean _dlLinkToViewURL;
 	private List<SearchFacet> _enabledSearchFacets;
+	private final Hits _hits;
 	private Boolean _includeSystemPortlets;
 	private final PortletPreferences _portletPreferences;
+	private QueryConfig _queryConfig;
 	private Boolean _queryIndexingEnabled;
 	private Integer _queryIndexingThreshold;
 	private Integer _querySuggestionsDisplayThreshold;
 	private Boolean _querySuggestionsEnabled;
 	private Integer _querySuggestionsMax;
-	private final HttpServletRequest _request;
+	private final RenderRequest _renderRequest;
+	private final RenderResponse _renderResponse;
 	private String _searchConfiguration;
-	private String _searchScope;
+	private final SearchContainer<Document> _searchContainer;
+	private final SearchContext _searchContext;
+	private String _searchScopePreferenceString;
 	private Boolean _viewInContext;
 
 }

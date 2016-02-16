@@ -18,9 +18,10 @@ import com.liferay.layout.admin.web.constants.LayoutAdminPortletKeys;
 import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIconFactory;
 import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIcon;
 import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIconFactory;
-import com.liferay.portal.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.LayoutLocalService;
 
 import javax.portlet.PortletRequest;
+import javax.portlet.PortletResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -37,7 +38,9 @@ public class PermissionsPortletConfigurationIconFactory
 	extends BasePortletConfigurationIconFactory {
 
 	@Override
-	public PortletConfigurationIcon create(PortletRequest portletRequest) {
+	public PortletConfigurationIcon create(
+		PortletRequest portletRequest, PortletResponse portletResponse) {
+
 		return new PermissionsPortletConfigurationIcon(
 			portletRequest, _layoutLocalService);
 	}

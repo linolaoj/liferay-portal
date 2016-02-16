@@ -15,7 +15,7 @@
 package com.liferay.mobile.device.rules.web.portlet;
 
 import com.liferay.mobile.device.rules.constants.MDRPortletKeys;
-import com.liferay.mobile.device.rules.web.upgrade.MDRWebUpgrade;
+import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.util.GetterUtil;
 
@@ -85,8 +85,11 @@ public class MDRPortlet extends MVCPortlet {
 		}
 	}
 
-	@Reference(unbind = "-")
-	protected void setMDRWebUpgrade(MDRWebUpgrade mdrWebUpgrade) {
+	@Reference(
+		target = "(&(release.bundle.symbolic.name=com.liferay.mobile.device.rules.web)(release.schema.version=1.0.0))",
+		unbind = "-"
+	)
+	protected void setRelease(Release release) {
 	}
 
 }

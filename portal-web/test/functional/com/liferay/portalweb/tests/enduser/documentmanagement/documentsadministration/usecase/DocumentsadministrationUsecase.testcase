@@ -49,8 +49,6 @@
 
 		<execute macro="DMMetadataSet#save" />
 
-		<execute function="SelectFrameTop" value1="relative=top" />
-
 		<execute macro="ProductMenu#gotoSitesContent">
 			<var name="portlet" value="Documents and Media" />
 		</execute>
@@ -63,8 +61,6 @@
 			<var name="dmDocumentTypeName" value="DM Document Type Name" />
 			<var name="metadataSetName" value="DM Metadata Set Name" />
 		</execute>
-
-		<execute function="SelectFrameTop" value1="relative=top" />
 
 		<execute macro="ProductMenu#gotoSitesContent">
 			<var name="portlet" value="Documents and Media" />
@@ -102,10 +98,26 @@
 			<var name="siteScopeSelected" value="true" />
 		</execute>
 
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="Site Page 1" />
+		</execute>
+
+		<execute macro="Page#editPageLayoutColumn">
+			<var name="columnName" value="1_column" />
+		</execute>
+
 		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Site Page 2" />
 			<var name="siteScopeSelected" value="true" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="Site Page 2" />
+		</execute>
+
+		<execute macro="Page#editPageLayoutColumn">
+			<var name="columnName" value="1_column" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -118,12 +130,6 @@
 			<var name="portletName" value="Documents and Media" />
 		</execute>
 
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Site Page 2" />
 			<var name="siteName" value="Site Name" />
@@ -131,12 +137,6 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
 			<var name="portletName" value="Documents and Media" />
 		</execute>
 
@@ -210,6 +210,14 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="${pageName}" />
+		</execute>
+
+		<execute macro="Page#editPageLayoutColumn">
+			<var name="columnName" value="1_column" />
+		</execute>
+
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="${pageName}" />
 		</execute>
@@ -217,12 +225,6 @@
 		<execute macro="Portlet#addPG">
 			<var name="pageName" value="${pageName}" />
 			<var name="portletName" value="${portletName}" />
-		</execute>
-
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
-			<var name="portletName" value="Documents and Media" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -277,19 +279,24 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
+		<var name="tagCounter" value="1,2" />
+
+		<for list="${tagCounter}" param="tagCount" >
+			<execute macro="DMDocument#editCmdPG">
+				<var name="dmDocumentTagName" value="tag${tagCount}" />
+				<var name="dmDocumentTitle" value="Document_1.doc" />
+			</execute>
+
+			<execute function="AssertClick" locator1="Button#PUBLISH" value1="Publish" />
+
+			<execute macro="Page#gotoPG">
+				<var name="pageName" value="${pageName}" />
+			</execute>
+		</for>
+
 		<execute macro="DMDocument#editPublishPG">
-			<var name="dmDocumentTagName" value="tag1" />
 			<var name="dmDocumentTitle" value="Document_1.doc" />
 			<var name="dmDocumentTitleEdit" value="Document1" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="DMDocument#editPublishPG">
-			<var name="dmDocumentTagName" value="tag2" />
-			<var name="dmDocumentTitle" value="Document1" />
 		</execute>
 
 		<execute macro="User#logoutAndLoginPG">
@@ -316,7 +323,7 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<var name="key_dmDocumentTitle" value="Document1" />
+		<var name="key_dmDocumentTitle" value="Document_1.doc" />
 
 		<execute function="AssertClick" locator1="DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_TITLE" value1="Document1" />
 
@@ -326,7 +333,11 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="DMDocument#editSaveAndCheckinPG">
+		<execute macro="DMDocument#saveAndCheckinEditedDocumentPG">
+			<var name="dmDocumentTitle" value="Document1" />
+		</execute>
+
+		<execute macro="DMNavigator#gotoDocumentPG">
 			<var name="dmDocumentTitle" value="Document1" />
 		</execute>
 
@@ -437,17 +448,19 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="${pageName}" />
+		</execute>
+
+		<execute macro="Page#editPageLayoutColumn">
+			<var name="columnName" value="1_column" />
+		</execute>
+
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
 			<var name="portletName" value="Documents and Media" />
 		</execute>
 
@@ -587,17 +600,19 @@
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="Documents and Media Page" />
+		</execute>
+
+		<execute macro="Page#editPageLayoutColumn">
+			<var name="columnName" value="1_column" />
+		</execute>
+
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
 			<var name="portletName" value="Documents and Media" />
 		</execute>
 
@@ -740,17 +755,19 @@
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="Documents and Media Page" />
+		</execute>
+
+		<execute macro="Page#editPageLayoutColumn">
+			<var name="columnName" value="1_column" />
+		</execute>
+
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
 			<var name="portletName" value="Documents and Media" />
 		</execute>
 
@@ -770,17 +787,19 @@
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="Documents and Media Page" />
+		</execute>
+
+		<execute macro="Page#editPageLayoutColumn">
+			<var name="columnName" value="1_column" />
+		</execute>
+
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
 			<var name="portletName" value="Documents and Media" />
 		</execute>
 
@@ -825,8 +844,6 @@
 			<var name="dmDocumentTypeFieldNames" value="Text Box,Date" />
 			<var name="dmDocumentTypeName" value="Photos" />
 		</execute>
-
-		<execute function="SelectFrameTop" value1="relative=top" />
 
 		<execute macro="ProductMenu#gotoControlPanelConfiguration">
 			<var name="portlet" value="Server Administration" />
@@ -979,17 +996,19 @@
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="Documents and Media Page" />
+		</execute>
+
+		<execute macro="Page#editPageLayoutColumn">
+			<var name="columnName" value="1_column" />
+		</execute>
+
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
 			<var name="portletName" value="Documents and Media" />
 		</execute>
 
@@ -1044,6 +1063,14 @@
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="Documents and Media Page" />
+		</execute>
+
+		<execute macro="Page#editPageLayoutColumn">
+			<var name="columnName" value="1_column" />
+		</execute>
+
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
@@ -1052,14 +1079,16 @@
 			<var name="portletName" value="Documents and Media" />
 		</execute>
 
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
 		<execute macro="Page#add">
 			<var name="pageName" value="Documents and Media Page - Global" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="Documents and Media Page - Global" />
+		</execute>
+
+		<execute macro="Page#editPageLayoutColumn">
+			<var name="columnName" value="1_column" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -1067,12 +1096,6 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
 			<var name="portletName" value="Documents and Media" />
 		</execute>
 
@@ -1204,12 +1227,6 @@
 			<var name="portletName" value="Documents and Media" />
 		</execute>
 
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="DM Site Page Name - Global" />
 			<var name="siteName" value="DM Site Name" />
@@ -1259,6 +1276,14 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="${pageName}" />
+		</execute>
+
+		<execute macro="Page#editPageLayoutColumn">
+			<var name="columnName" value="1_column" />
+		</execute>
+
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesContent">
@@ -1276,12 +1301,6 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
 			<var name="portletName" value="Documents and Media" />
 		</execute>
 
@@ -1340,17 +1359,19 @@
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="Documents and Media Page" />
+		</execute>
+
+		<execute macro="Page#editPageLayoutColumn">
+			<var name="columnName" value="1_column" />
+		</execute>
+
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
 			<var name="portletName" value="Documents and Media" />
 		</execute>
 

@@ -18,10 +18,10 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.journal.model.JournalArticleImage;
 
+import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -137,13 +137,17 @@ public class JournalArticleImageCacheModel implements CacheModel<JournalArticleI
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		articleImageId = objectInput.readLong();
+
 		groupId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
 		articleId = objectInput.readUTF();
+
 		version = objectInput.readDouble();
 		elInstanceId = objectInput.readUTF();
 		elName = objectInput.readUTF();
 		languageId = objectInput.readUTF();
+
 		tempImage = objectInput.readBoolean();
 	}
 
@@ -151,7 +155,9 @@ public class JournalArticleImageCacheModel implements CacheModel<JournalArticleI
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(articleImageId);
+
 		objectOutput.writeLong(groupId);
+
 		objectOutput.writeLong(companyId);
 
 		if (articleId == null) {

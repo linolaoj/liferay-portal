@@ -14,6 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.render;
 
+import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.BaseDDMTestCase;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
@@ -35,6 +36,7 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.service.LayoutServiceUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
@@ -42,12 +44,10 @@ import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.service.LayoutServiceUtil;
 import com.liferay.portal.util.CalendarFactoryImpl;
 import com.liferay.portal.util.DateFormatFactoryImpl;
 import com.liferay.portal.util.FastDateFormatFactoryImpl;
 import com.liferay.portal.util.HtmlImpl;
-import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 
 import org.junit.Assert;
 import org.junit.Before;

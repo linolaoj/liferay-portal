@@ -15,7 +15,18 @@
 package com.liferay.exportimport.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.portal.LocaleException;
+import com.liferay.exportimport.kernel.exception.LARTypeException;
+import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
+import com.liferay.exportimport.kernel.lar.PortletDataHandlerKeys;
+import com.liferay.portal.kernel.exception.LocaleException;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutPrototype;
+import com.liferay.portal.kernel.model.LayoutSetPrototype;
+import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
+import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.service.LayoutSetPrototypeLocalServiceUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
@@ -24,20 +35,9 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.lar.test.BaseExportImportTestCase;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.LayoutPrototype;
-import com.liferay.portal.model.LayoutSetPrototype;
-import com.liferay.portal.service.CompanyLocalServiceUtil;
-import com.liferay.portal.service.LayoutLocalServiceUtil;
-import com.liferay.portal.service.LayoutSetPrototypeLocalServiceUtil;
 import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.util.test.LayoutTestUtil;
-import com.liferay.portlet.exportimport.exception.LARTypeException;
-import com.liferay.portlet.exportimport.lar.ExportImportHelperUtil;
-import com.liferay.portlet.exportimport.lar.PortletDataHandlerKeys;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -139,7 +139,7 @@ public class LayoutExportImportTest extends BaseExportImportTestCase {
 
 			Assert.fail();
 		}
-		catch (LARTypeException lte) {
+		catch (LARTypeException larte) {
 		}
 		finally {
 			importedGroup = originalImportedGroup;
@@ -155,7 +155,7 @@ public class LayoutExportImportTest extends BaseExportImportTestCase {
 
 			Assert.fail();
 		}
-		catch (LARTypeException lte) {
+		catch (LARTypeException larte) {
 		}
 		finally {
 			importedGroup = originalImportedGroup;
@@ -182,7 +182,7 @@ public class LayoutExportImportTest extends BaseExportImportTestCase {
 
 			Assert.fail();
 		}
-		catch (LARTypeException lte) {
+		catch (LARTypeException larte) {
 		}
 
 		// Import a layout prototype to a layout set pototype
@@ -197,7 +197,7 @@ public class LayoutExportImportTest extends BaseExportImportTestCase {
 
 			Assert.fail();
 		}
-		catch (LARTypeException lte) {
+		catch (LARTypeException larte) {
 		}
 		finally {
 			LayoutSetPrototypeLocalServiceUtil.deleteLayoutSetPrototype(
@@ -240,7 +240,7 @@ public class LayoutExportImportTest extends BaseExportImportTestCase {
 
 			Assert.fail();
 		}
-		catch (LARTypeException lte) {
+		catch (LARTypeException larte) {
 		}
 
 		// Import a layout set to a layout set prototype
@@ -255,7 +255,7 @@ public class LayoutExportImportTest extends BaseExportImportTestCase {
 
 			Assert.fail();
 		}
-		catch (LARTypeException lte) {
+		catch (LARTypeException larte) {
 		}
 		finally {
 			LayoutSetPrototypeLocalServiceUtil.deleteLayoutSetPrototype(
@@ -285,7 +285,7 @@ public class LayoutExportImportTest extends BaseExportImportTestCase {
 
 				Assert.fail();
 			}
-			catch (LARTypeException lte) {
+			catch (LARTypeException larte) {
 			}
 
 			// Import a layout set prototype to a layout prototyope
@@ -300,7 +300,7 @@ public class LayoutExportImportTest extends BaseExportImportTestCase {
 
 				Assert.fail();
 			}
-			catch (LARTypeException lte) {
+			catch (LARTypeException larte) {
 			}
 		}
 		finally {

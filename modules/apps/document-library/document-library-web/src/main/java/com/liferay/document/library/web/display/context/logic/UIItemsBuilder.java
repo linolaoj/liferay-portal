@@ -14,6 +14,10 @@
 
 package com.liferay.document.library.web.display.context.logic;
 
+import com.liferay.document.library.kernel.display.context.DLUIItemKeys;
+import com.liferay.document.library.kernel.model.DLFileEntryConstants;
+import com.liferay.document.library.kernel.model.DLFolderConstants;
+import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.portal.kernel.bean.BeanParamUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -23,6 +27,7 @@ import com.liferay.portal.kernel.language.UnicodeLanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
+import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileShortcut;
 import com.liferay.portal.kernel.repository.model.FileVersion;
@@ -40,24 +45,19 @@ import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.template.URLTemplateResource;
+import com.liferay.portal.kernel.theme.PortletDisplay;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.theme.PortletDisplay;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.PortletURLUtil;
-import com.liferay.portlet.documentlibrary.display.context.DLUIItemKeys;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryConstants;
-import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
-import com.liferay.portlet.documentlibrary.util.DLUtil;
-import com.liferay.portlet.trash.util.TrashUtil;
 import com.liferay.taglib.security.PermissionsURLTag;
+import com.liferay.trash.kernel.util.TrashUtil;
 
 import java.util.List;
 
@@ -383,20 +383,20 @@ public class UIItemsBuilder {
 		portletURL.setParameter(
 			"mvcRenderCommandName", "/document_library/move_entry");
 
+		PortletURL redirectURL = liferayPortletResponse.createRenderURL();
+
 		long folderId = _fileEntry.getFolderId();
 
 		if (folderId == DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
-			portletURL.setParameter(
+			redirectURL.setParameter(
 				"mvcRenderCommandName", "/document_library/view");
 		}
 		else {
-			portletURL.setParameter(
+			redirectURL.setParameter(
 				"mvcRenderCommandName", "/document_library/view_folder");
 		}
 
-		portletURL.setParameter("folderId", String.valueOf(folderId));
-
-		PortletURL redirectURL = liferayPortletResponse.createRenderURL();
+		redirectURL.setParameter("folderId", String.valueOf(folderId));
 
 		portletURL.setParameter("redirect", redirectURL.toString());
 
@@ -757,7 +757,7 @@ public class UIItemsBuilder {
 
 	private <T extends JavaScriptUIItem> T _addJavaScriptUIItem(
 		T javascriptUIItem, List<? super T> javascriptUIItems, String key,
-		String label, String onClick ) {
+		String label, String onClick) {
 
 		javascriptUIItem.setKey(key);
 		javascriptUIItem.setLabel(label);
@@ -770,7 +770,7 @@ public class UIItemsBuilder {
 
 	private <T extends URLUIItem> T _addURLUIItem(
 		T urlUIItem, List<? super T> urlUIItems, String key, String label,
-		String url ) {
+		String url) {
 
 		urlUIItem.setKey(key);
 		urlUIItem.setLabel(label);

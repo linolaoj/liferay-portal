@@ -16,7 +16,7 @@ package com.liferay.dynamic.data.mapping.web.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
+import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Lino Alves
@@ -53,5 +53,12 @@ public interface DDMWebConfiguration {
 		required = false
 	)
 	public boolean autogenerateTemplateKey();
+
+	@Meta.AD(
+		deflt = "false",
+		description = "%changeable.default.language.description",
+		name = "%changeable.default.language", required = false
+	)
+	public boolean changeableDefaultLanguage();
 
 }

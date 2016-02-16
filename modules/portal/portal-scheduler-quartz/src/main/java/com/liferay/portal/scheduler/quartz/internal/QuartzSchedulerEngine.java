@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBus;
+import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.scheduler.JobState;
 import com.liferay.portal.kernel.scheduler.SchedulerEngine;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
@@ -29,6 +30,7 @@ import com.liferay.portal.kernel.scheduler.SchedulerException;
 import com.liferay.portal.kernel.scheduler.StorageType;
 import com.liferay.portal.kernel.scheduler.TriggerState;
 import com.liferay.portal.kernel.scheduler.messaging.SchedulerResponse;
+import com.liferay.portal.kernel.service.PortletLocalService;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalRunMode;
@@ -39,7 +41,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.scheduler.JobStateSerializeUtil;
 import com.liferay.portal.scheduler.quartz.QuartzTrigger;
 import com.liferay.portal.scheduler.quartz.internal.job.MessageSenderJob;
-import com.liferay.portal.service.PortletLocalService;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -844,6 +845,13 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 		QuartzTriggerFactory quartzTriggerFactory) {
 
 		_quartzTriggerFactory = quartzTriggerFactory;
+	}
+
+	@Reference(
+		target = "(&(release.bundle.symbolic.name=com.liferay.portal.scheduler.quartz)(release.schema.version=1.0.0))",
+		unbind = "-"
+	)
+	protected void setRelease(Release release) {
 	}
 
 	@Reference(

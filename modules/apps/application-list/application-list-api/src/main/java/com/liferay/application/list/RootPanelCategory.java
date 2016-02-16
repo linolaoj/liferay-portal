@@ -15,10 +15,10 @@
 package com.liferay.application.list;
 
 import com.liferay.application.list.display.context.logic.PanelCategoryHelper;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.User;
 
 import java.util.Locale;
 
@@ -68,7 +68,8 @@ public class RootPanelCategory implements PanelCategory {
 
 	@Override
 	public boolean isActive(
-		HttpServletRequest request, PanelCategoryHelper panelCategoryHelper) {
+		HttpServletRequest request, PanelCategoryHelper panelCategoryHelper,
+		Group group) {
 
 		return false;
 	}

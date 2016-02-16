@@ -16,10 +16,11 @@ package com.liferay.portal.service;
 
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.model.PermissionedModel;
+import com.liferay.portal.kernel.model.ResourceBlockPermissionsContainer;
+import com.liferay.portal.kernel.service.ResourceBlockLocalServiceUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.util.NamedThreadFactory;
-import com.liferay.portal.model.PermissionedModel;
-import com.liferay.portal.model.ResourceBlockPermissionsContainer;
 import com.liferay.portal.test.rule.ExpectedDBType;
 import com.liferay.portal.test.rule.ExpectedLog;
 import com.liferay.portal.test.rule.ExpectedLogs;
@@ -391,7 +392,7 @@ public class ResourceBlockLocalServiceTest {
 
 	private static final int _THREAD_COUNT = 10;
 
-	private class MockPermissionedModel implements PermissionedModel {
+	private static class MockPermissionedModel implements PermissionedModel {
 
 		@Override
 		public long getResourceBlockId() {
@@ -411,7 +412,8 @@ public class ResourceBlockLocalServiceTest {
 
 	}
 
-	private class ReleaseResourceBlockCallable implements Callable<Void> {
+	private static class ReleaseResourceBlockCallable
+		implements Callable<Void> {
 
 		@Override
 		public Void call() throws Exception {
@@ -437,7 +439,8 @@ public class ResourceBlockLocalServiceTest {
 
 	}
 
-	private class UpdateResourceBlockIdCallable implements Callable<Void> {
+	private static class UpdateResourceBlockIdCallable
+		implements Callable<Void> {
 
 		@Override
 		public Void call() throws Exception {

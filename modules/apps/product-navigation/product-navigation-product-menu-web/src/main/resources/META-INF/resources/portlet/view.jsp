@@ -17,25 +17,30 @@
 <%@ include file="/portlet/init.jsp" %>
 
 <%
-String productMenuState = SessionClicks.get(request, "com.liferay.control.menu.web_productMenuState", "closed");
+String productMenuState = SessionClicks.get(request, ProductNavigationProductMenuWebKeys.PRODUCT_NAVIGATION_PRODUCT_MENU_STATE, "closed");
 %>
 
 <div id="productMenuSidebar">
 	<h4 class="sidebar-header">
 		<a href="<%= themeDisplay.getURLPortal() %>">
 			<span class="company-details">
-				<img alt="" class="company-logo" src="<%= themeDisplay.getCompanyLogo() %>" />
+				<img alt="" class="company-logo" src="<%= themeDisplay.getRealCompanyLogo() %>" />
 				<span class="company-name"><%= company.getName() %></span>
 			</span>
 
-			<aui:icon cssClass="icon-monospaced sidenav-close visible-xs-block" image="remove" url="javascript:;" />
+			<aui:icon cssClass="icon-monospaced sidenav-close visible-xs-block" image="times" markupView="lexicon" url="javascript:;" />
 		</a>
 	</h4>
 
 	<div class="sidebar-body">
-		<c:if test='<%= Validator.equals(productMenuState, "open") %>'>
-			<liferay-util:include page="/portlet/product_menu.jsp" servletContext="<%= application %>" />
-		</c:if>
+		<c:choose>
+			<c:when test='<%= Validator.equals(productMenuState, "open") %>'>
+				<liferay-util:include page="/portlet/product_menu.jsp" servletContext="<%= application %>" />
+			</c:when>
+			<c:otherwise>
+				<div class="loading-animation"></div>
+			</c:otherwise>
+		</c:choose>
 	</div>
 </div>
 
@@ -46,20 +51,24 @@ String productMenuState = SessionClicks.get(request, "com.liferay.control.menu.w
 
 	var sidenavSlider = $('#sidenavSliderId');
 
-	sidenavSlider.off('closed.lexicon.sidenav');
-	sidenavSlider.off('open.lexicon.sidenav');
-
 	sidenavSlider.on(
 		'closed.lexicon.sidenav',
 		function(event) {
-			Liferay.Store('com.liferay.control.menu.web_productMenuState', 'closed');
+			Liferay.Store('<%= ProductNavigationProductMenuWebKeys.PRODUCT_NAVIGATION_PRODUCT_MENU_STATE %>', 'closed');
 		}
 	);
 
 	sidenavSlider.on(
 		'open.lexicon.sidenav',
 		function(event) {
-			Liferay.Store('com.liferay.control.menu.web_productMenuState', 'open');
+			Liferay.Store('<%= ProductNavigationProductMenuWebKeys.PRODUCT_NAVIGATION_PRODUCT_MENU_STATE %>', 'open');
+		}
+	);
+
+	sidenavSlider.on(
+		'urlLoaded.lexicon.sidenav',
+		function() {
+			sidenavSlider.find('.loading-animation').remove();
 		}
 	);
 
@@ -72,10 +81,12 @@ String productMenuState = SessionClicks.get(request, "com.liferay.control.menu.w
 				var showUserCollapse = function() {
 					var userCollapse = $(userCollapseSelector);
 
-					userCollapse.collapse({
-						show: true,
-						parent: '#<portlet:namespace />Accordion'
-					});
+					userCollapse.collapse(
+						{
+							parent: '#<portlet:namespace />Accordion',
+							show: true
+						}
+					);
 
 					userCollapse.collapse('show');
 				};

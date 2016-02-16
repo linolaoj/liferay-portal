@@ -100,7 +100,7 @@ renderResponse.setTitle(LanguageUtil.format(request, "select-x", containerModelN
 		/>
 
 		<liferay-ui:search-container-row
-			className="com.liferay.portal.model.ContainerModel"
+			className="com.liferay.portal.kernel.model.ContainerModel"
 			keyProperty="containerModelId"
 			modelVar="curContainerModel"
 		>
@@ -133,7 +133,7 @@ renderResponse.setTitle(LanguageUtil.format(request, "select-x", containerModelN
 
 			<liferay-ui:search-container-column-text
 				name='<%= LanguageUtil.format(request, "num-of-x", containerModelName) %>'
-				value="<%= String.valueOf(curContainerTrashHandler.getContainerModelsCount(classPK, curContainerModelId)) %>"
+				value="<%= String.valueOf(curContainerTrashHandler.getContainerModelsCount(curContainerModelId, curContainerModel.getParentContainerModelId())) %>"
 			/>
 
 			<liferay-ui:search-container-column-text>

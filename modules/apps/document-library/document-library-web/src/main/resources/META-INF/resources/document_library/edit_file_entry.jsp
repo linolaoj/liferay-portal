@@ -135,6 +135,21 @@ if (portletTitleBasedNavigation) {
 }
 %>
 
+<c:if test="<%= portletTitleBasedNavigation && (fileVersion != null) %>">
+
+	<%
+	String version = null;
+
+	if (dlEditFileEntryDisplayContext.isVersionInfoVisible()) {
+		version = fileVersion.getVersion();
+	}
+	%>
+
+	<liferay-frontend:info-bar>
+		<aui:workflow-status markupView="lexicon" model="<%= DLFileEntry.class %>" showIcon="<%= false %>" showLabel="<%= false %>" status="<%= fileVersion.getStatus() %>" version="<%= version %>" />
+	</liferay-frontend:info-bar>
+</c:if>
+
 <div <%= portletTitleBasedNavigation ? "class=\"container-fluid-1280\"" : StringPool.BLANK %>>
 	<c:if test="<%= checkedOut %>">
 		<c:choose>
@@ -238,19 +253,6 @@ if (portletTitleBasedNavigation) {
 		<liferay-ui:asset-tags-error />
 
 		<aui:model-context bean="<%= fileVersion %>" model="<%= DLFileVersion.class %>" />
-
-		<c:if test="<%= fileVersion != null %>">
-
-			<%
-			String version = null;
-
-			if (dlEditFileEntryDisplayContext.isVersionInfoVisible()) {
-				version = fileVersion.getVersion();
-			}
-			%>
-
-			<aui:workflow-status model="<%= DLFileEntry.class %>" showIcon="<%= false %>" showLabel="<%= false %>" status="<%= fileVersion.getStatus() %>" version="<%= version %>" />
-		</c:if>
 
 		<aui:fieldset-group markupView="lexicon">
 			<aui:fieldset>

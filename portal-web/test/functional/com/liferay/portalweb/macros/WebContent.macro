@@ -1,13 +1,13 @@
 <definition>
 	<command name="_gotoAddPGViaAP">
+		<execute function="Click#makeVisibleClickAt" locator1="AP#ADD_ASSET_PLUS_ICON" />
+
 		<if>
 			<equals arg1="${assetTypeConfigured}" arg2="true" />
 			<then>
-				<execute function="Click" locator1="AP#ADD_BASIC_WEB_CONTENT_MENU_ITEM" />
+				<execute function="AssertClick" locator1="AP#ADD_BASIC_WEB_CONTENT_LINK" value1="Add Basic Web Content" />
 			</then>
 			<else>
-				<execute function="Click#makeVisibleClickAt" locator1="AP#ADD_ASSET_PLUS_ICON" />
-
 				<execute function="AssertClick" locator1="MenuItem#BASIC_WEB_CONTENT" value1="Basic Web Content" />
 			</else>
 		</if>
@@ -137,7 +137,7 @@
 			<var name="panelHeading" value="Metadata" />
 		</execute>
 
-		<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="Please select at least one category for ${vocabularyName}." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="Please select at least one category for ${vocabularyName}." />
 	</command>
 
 	<command name="addLocalizedPGViaWCD">
@@ -429,7 +429,7 @@
 			<var name="panelHeading" value="Structure and Template" />
 		</execute>
 
-		<execute function="AssertClick" locator1="WCEditWebContent#SELECT_STRUCTURE_LINK" value1="Select" />
+		<execute function="AssertClick" locator1="WCEditWebContent#SELECT_STRUCTURE" value1="Select" />
 		<execute function="SelectFrame" value1="relative=top" />
 
 		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME" />
@@ -797,7 +797,7 @@
 				<execute function="AssertClick" locator1="Button#SAVE_AS_DRAFT" value1="Save as Draft" />
 
 				<execute macro="Alert#viewRequestCompletedSuccessMessage" />
-				<execute function="AssertTextEquals" locator1="AssetWorkflow#WORKFLOW_STATUS" value1="Draft" />
+				<execute function="AssertTextEquals#assertPartialText" locator1="Message#WEB_CONTENT_STATUS" value1="Draft" />
 			</then>
 			<else>
 				<execute macro="WebContent#publish" />
@@ -1104,7 +1104,6 @@
 		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${webContentTitle}" />
 		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
 		<execute function="AssertTextEquals" locator1="WC#SEARCH_TITLE" value1="${webContentTitle}" />
-		<execute function="AssertTextEquals" locator1="WC#SEARCH_FOLDER" value1="${webContentFolder}" />
 	</command>
 
 	<command name="searchNoResultsCP">
@@ -1113,10 +1112,10 @@
 
 		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${searchQuery}" />
 		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
-		<execute function="AssertTextEquals" locator1="Message#INFO" value1="No web content was found that matched the keywords: ${searchQuery}." />
+		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No web content was found." />
 		<execute function="AssertTextNotPresent" locator1="WC#SEARCH_TITLE" value1="${webContentTitle}" />
-		<execute function="AssertTextNotPresent" locator1="WC#SEARCH_BODY" value1="${webContentContent}" />
-		<execute function="Click" locator1="WC#SEARCH_FILTER_REMOVE_BUTTON" />
+		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="" />
+		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
 		<execute function="AssertTextPresent" locator1="WC#SEARCH_TITLE" value1="${webContentTitle}" />
 	</command>
 
@@ -1154,6 +1153,16 @@
 		<execute function="Confirm" value1="Selecting a new template deletes all unsaved content. Do you want to proceed?" />
 
 		<execute macro="WebContent#publish" />
+	</command>
+
+	<command name="subscribeCP">
+		<execute function="Click#clickAt" locator1="Icon#INFO" />
+
+		<execute function="Pause" locator1="1000" />
+
+		<execute function="Click" locator1="Icon#SUBSCRIBE" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 	</command>
 
 	<command name="tearDownCP">
@@ -1338,7 +1347,7 @@
 			<var name="displayStyle" value="Descriptive" />
 		</execute>
 
-		<execute function="AssertTextEquals" locator1="Message#INFO" value1="No web content was found" />
+		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No web content was found." />
 		<execute function="AssertElementNotPresent" locator1="WC#ENTRY_DESCRIPTIVE_THUMBNAIL" />
 		<execute function="AssertElementNotPresent" locator1="WC#ENTRY_DESCRIPTIVE_TITLE" />
 	</command>
@@ -1369,7 +1378,14 @@
 
 	<command name="viewEditWCViaWCD">
 		<execute function="AssertElementPresent" locator1="WCD#WEB_CONTENT_CONTENT" value1="${webContentContent}" />
-		<execute function="AssertElementPresent" locator1="WCD#EDIT_WEB_CONTENT" />
+
+		<var name="key_portletName" value="Web Content Display" />
+
+		<execute function="Click#makeVisibleClickAt" locator1="BasePortlet#SPECIFIC_PORTLET_BORDERLESS_ELLIPSIS_ICON" />
+
+		<var name="key_menuItem" value="Edit Web Content" />
+
+		<execute function="AssertTextEquals" locator1="MenuItem#ANY_MENU_ITEM" value1="Edit Web Content" />
 	</command>
 
 	<command name="viewEmailConfigurationCP">
@@ -1396,7 +1412,9 @@
 	</command>
 
 	<command name="viewEntryAsWorkflowAsset">
-		<execute function="AssertTextEquals" locator1="Home#SITE_ADMINISTRATION_PORTLET_TITLE" value1="${webContentTitle}" />
+		<execute macro="SiteAdmin#viewPortletTitle">
+			<var name="portletTitle" value="${webContentTitle}" />
+		</execute>
 
 		<var name="key_webContentContent" value="${webContentContent}" />
 
@@ -1471,12 +1489,18 @@
 
 	<command name="viewNoEditWCViaWCD">
 		<execute function="AssertElementPresent" locator1="WCD#WEB_CONTENT_CONTENT" value1="${webContentContent}" />
-		<execute function="AssertElementNotPresent" locator1="WCD#EDIT_WEB_CONTENT" />
+
+		<var name="key_portletName" value="Web Content Display" />
+
+		<execute function="AssertElementNotPresent" locator1="BasePortlet#SPECIFIC_PORTLET_BORDERLESS_ELLIPSIS_ICON" />
 	</command>
 
 	<command name="viewNoPermissionCP">
-		<execute function="AssertTextEquals" locator1="Portlet#TITLE" value1="Web Content" />
-		<execute function="AssertElementPresent" locator1="WC#NAVBAR_CONTAINER" />
+		<execute macro="SiteAdmin#viewPortletTitle">
+			<var name="portletTitle" value="Web Content" />
+		</execute>
+
+		<execute function="AssertElementPresent" locator1="NavBar#CONTAINER" />
 		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No web content was found" />
 	</command>
 
@@ -1633,6 +1657,8 @@
 	</command>
 
 	<command name="viewTranslationPGViaWCD">
+		<execute function="SelectFrame" locator1="IFrame#EDIT_ASSET" />
+
 		<if>
 			<isset var="structureLocalizationName" />
 			<then>

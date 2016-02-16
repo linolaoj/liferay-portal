@@ -14,10 +14,13 @@
 
 package com.liferay.portal.security.permission;
 
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.portal.kernel.cache.MultiVMPoolUtil;
 import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.cache.index.IndexEncoder;
 import com.liferay.portal.kernel.cache.index.PortalCacheIndexer;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.security.permission.ResourceBlockIdsBag;
 import com.liferay.portal.kernel.security.permission.UserBag;
@@ -25,12 +28,11 @@ import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ResourceConstants;
-import com.liferay.portal.model.Role;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.exportimport.lar.ExportImportThreadLocal;
 
 import java.io.Serializable;
+
+import java.util.Arrays;
 
 /**
  * @author Charles May
@@ -135,11 +137,11 @@ public class PermissionCacheUtil {
 	}
 
 	public static Boolean getPermission(
-		long userId, boolean signedIn, long groupId, String name,
-		String primKey, String actionId) {
+		long groupId, String name, String primKey, long[] roleIds,
+		String actionId) {
 
 		PermissionKey permissionKey = new PermissionKey(
-			userId, signedIn, groupId, name, primKey, actionId);
+			groupId, name, primKey, roleIds, actionId);
 
 		return _permissionPortalCache.get(permissionKey);
 	}
@@ -196,11 +198,11 @@ public class PermissionCacheUtil {
 	}
 
 	public static void putPermission(
-		long userId, boolean signedIn, long groupId, String name,
-		String primKey, String actionId, Boolean value) {
+		long groupId, String name, String primKey, long[] roleIds,
+		String actionId, Boolean value) {
 
 		PermissionKey permissionKey = new PermissionKey(
-			userId, signedIn, groupId, name, primKey, actionId);
+			groupId, name, primKey, roleIds, actionId);
 
 		_permissionPortalCache.put(permissionKey, value);
 	}
@@ -261,11 +263,11 @@ public class PermissionCacheUtil {
 	}
 
 	public static void removePermission(
-		long userId, boolean signedIn, long groupId, String name,
-		String primKey, String actionId) {
+		long groupId, String name, String primKey, long[] roleIds,
+		String actionId) {
 
 		PermissionKey permissionKey = new PermissionKey(
-			userId, signedIn, groupId, name, primKey, actionId);
+			groupId, name, primKey, roleIds, actionId);
 
 		_permissionPortalCache.remove(permissionKey);
 	}
@@ -354,11 +356,10 @@ public class PermissionCacheUtil {
 		public boolean equals(Object obj) {
 			PermissionKey permissionKey = (PermissionKey)obj;
 
-			if ((permissionKey._userId == _userId) &&
-				(permissionKey._signedIn == _signedIn) &&
-				(permissionKey._groupId == _groupId) &&
+			if ((permissionKey._groupId == _groupId) &&
 				Validator.equals(permissionKey._name, _name) &&
 				Validator.equals(permissionKey._primKey, _primKey) &&
+				Arrays.equals(permissionKey._roleIds, _roleIds) &&
 				Validator.equals(permissionKey._actionId, _actionId)) {
 
 				return true;
@@ -369,26 +370,29 @@ public class PermissionCacheUtil {
 
 		@Override
 		public int hashCode() {
-			int hashCode = HashUtil.hash(0, _userId);
+			int hashCode = HashUtil.hash(0, _groupId);
 
-			hashCode = HashUtil.hash(hashCode, _signedIn);
-			hashCode = HashUtil.hash(hashCode, _groupId);
 			hashCode = HashUtil.hash(hashCode, _name);
 			hashCode = HashUtil.hash(hashCode, _primKey);
+			hashCode = HashUtil.hash(hashCode, _roleIds.length);
+
+			for (long roleId : _roleIds) {
+				hashCode = HashUtil.hash(hashCode, roleId);
+			}
+
 			hashCode = HashUtil.hash(hashCode, _actionId);
 
 			return hashCode;
 		}
 
 		private PermissionKey(
-			long userId, boolean signedIn, long groupId, String name,
-			String primKey, String actionId) {
+			long groupId, String name, String primKey, long[] roleIds,
+			String actionId) {
 
-			_userId = userId;
-			_signedIn = signedIn;
 			_groupId = groupId;
 			_name = name;
 			_primKey = primKey;
+			_roleIds = roleIds;
 			_actionId = actionId;
 		}
 
@@ -398,8 +402,7 @@ public class PermissionCacheUtil {
 		private final long _groupId;
 		private final String _name;
 		private final String _primKey;
-		private final boolean _signedIn;
-		private final long _userId;
+		private final long[] _roleIds;
 
 	}
 

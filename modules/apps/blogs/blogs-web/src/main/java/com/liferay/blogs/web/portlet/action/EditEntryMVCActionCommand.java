@@ -14,7 +14,21 @@
 
 package com.liferay.blogs.web.portlet.action;
 
+import com.liferay.asset.kernel.exception.AssetCategoryException;
+import com.liferay.asset.kernel.exception.AssetTagException;
+import com.liferay.blogs.kernel.exception.EntryContentException;
+import com.liferay.blogs.kernel.exception.EntryCoverImageCropException;
+import com.liferay.blogs.kernel.exception.EntryDescriptionException;
+import com.liferay.blogs.kernel.exception.EntryDisplayDateException;
+import com.liferay.blogs.kernel.exception.EntrySmallImageNameException;
+import com.liferay.blogs.kernel.exception.EntrySmallImageScaleException;
+import com.liferay.blogs.kernel.exception.EntryTitleException;
+import com.liferay.blogs.kernel.exception.NoSuchEntryException;
+import com.liferay.blogs.kernel.model.BlogsEntry;
+import com.liferay.blogs.kernel.service.BlogsEntryLocalService;
+import com.liferay.blogs.kernel.service.BlogsEntryService;
 import com.liferay.blogs.web.constants.BlogsPortletKeys;
+import com.liferay.document.library.kernel.exception.FileSizeException;
 import com.liferay.portal.kernel.editor.EditorConstants;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -22,6 +36,7 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.TrashedModel;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
@@ -31,9 +46,12 @@ import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.TransactionAttribute;
 import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
@@ -44,36 +62,18 @@ import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.model.TrashedModel;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceContextFactory;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.PortletURLImpl;
-import com.liferay.portlet.asset.exception.AssetCategoryException;
-import com.liferay.portlet.asset.exception.AssetTagException;
 import com.liferay.portlet.blogs.BlogsEntryAttachmentFileEntryHelper;
 import com.liferay.portlet.blogs.BlogsEntryAttachmentFileEntryReference;
 import com.liferay.portlet.blogs.BlogsEntryImageSelectorHelper;
-import com.liferay.portlet.blogs.exception.EntryContentException;
-import com.liferay.portlet.blogs.exception.EntryCoverImageCropException;
-import com.liferay.portlet.blogs.exception.EntryDescriptionException;
-import com.liferay.portlet.blogs.exception.EntryDisplayDateException;
-import com.liferay.portlet.blogs.exception.EntrySmallImageNameException;
-import com.liferay.portlet.blogs.exception.EntrySmallImageScaleException;
-import com.liferay.portlet.blogs.exception.EntryTitleException;
-import com.liferay.portlet.blogs.exception.NoSuchEntryException;
-import com.liferay.portlet.blogs.model.BlogsEntry;
-import com.liferay.portlet.blogs.service.BlogsEntryLocalService;
-import com.liferay.portlet.blogs.service.BlogsEntryService;
-import com.liferay.portlet.documentlibrary.exception.FileSizeException;
-import com.liferay.portlet.trash.service.TrashEntryService;
-import com.liferay.portlet.trash.util.TrashUtil;
+import com.liferay.trash.kernel.service.TrashEntryService;
+import com.liferay.trash.kernel.util.TrashUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -286,7 +286,8 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 				}
 
 				jsonObject.put("blogsEntryAttachmentReferences", jsonArray);
-
+				jsonObject.put(
+					"coverImageFileEntryId", entry.getCoverImageFileEntryId());
 				jsonObject.put("entryId", entry.getEntryId());
 				jsonObject.put("redirect", redirect);
 				jsonObject.put("updateRedirect", updateRedirect);

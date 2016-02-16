@@ -42,8 +42,8 @@ if (Validator.isNull(selThemeId)) {
 	}
 }
 
-Theme selTheme = ThemeLocalServiceUtil.getTheme(company.getCompanyId(), selThemeId, false);
-ColorScheme selColorScheme = ThemeLocalServiceUtil.getColorScheme(company.getCompanyId(), selThemeId, selColorSchemeId, false);
+Theme selTheme = ThemeLocalServiceUtil.getTheme(company.getCompanyId(), selThemeId);
+ColorScheme selColorScheme = ThemeLocalServiceUtil.getColorScheme(company.getCompanyId(), selThemeId, selColorSchemeId);
 %>
 
 <div class="lfr-theme-list">
@@ -90,7 +90,7 @@ ColorScheme selColorScheme = ThemeLocalServiceUtil.getColorScheme(company.getCom
 		<c:if test="<%= !colorSchemes.isEmpty() %>">
 			<liferay-ui:panel-container extended="<%= true %>" id="mobileDeviceRulesColorSchemesPanelContainer" persistState="<%= true %>">
 				<c:if test="<%= !colorSchemes.isEmpty() %>">
-					<liferay-ui:panel collapsible="<%= true %>" extended="<%= false %>" id="mobileDeviceRulesColorSchemesPanel" persistState="<%= true %>" title='<%= LanguageUtil.format(request, "color-schemes-x", colorSchemes.size(), false) %>'>
+					<liferay-ui:panel collapsible="<%= true %>" extended="<%= false %>" id="mobileDeviceRulesColorSchemesPanel" persistState="<%= true %>" title='<%= LanguageUtil.format(resourceBundle, "color-schemes-x", colorSchemes.size(), false) %>'>
 						<aui:fieldset cssClass="color-schemes">
 							<div class="lfr-theme-list list-unstyled">
 
@@ -128,7 +128,7 @@ ColorScheme selColorScheme = ThemeLocalServiceUtil.getColorScheme(company.getCom
 			<span class="header-title">
 
 				<%
-				List<Theme> themes = ThemeLocalServiceUtil.getPageThemes(company.getCompanyId(), groupId, user.getUserId(), false);
+				List<Theme> themes = ThemeLocalServiceUtil.getPageThemes(company.getCompanyId(), groupId, user.getUserId());
 				%>
 
 				<liferay-ui:message arguments="<%= themes.size() - 1 %>" key="available-themes-x" translateArguments="<%= false %>" />

@@ -17,13 +17,25 @@ package com.liferay.portlet;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.Portlet;
+import com.liferay.portal.kernel.model.PortletApp;
+import com.liferay.portal.kernel.model.PublicRenderParameter;
+import com.liferay.portal.kernel.model.impl.VirtualLayout;
 import com.liferay.portal.kernel.portlet.FriendlyURLMapper;
 import com.liferay.portal.kernel.portlet.LiferayPortletConfig;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletModeFactory;
+import com.liferay.portal.kernel.portlet.PortletQName;
+import com.liferay.portal.kernel.portlet.PortletQNameUtil;
 import com.liferay.portal.kernel.portlet.WindowStateFactory;
 import com.liferay.portal.kernel.security.auth.AuthTokenUtil;
+import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
+import com.liferay.portal.kernel.theme.PortletDisplay;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Base64;
 import com.liferay.portal.kernel.util.CharPool;
@@ -34,23 +46,13 @@ import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.xml.QName;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.Portlet;
-import com.liferay.portal.model.PortletApp;
-import com.liferay.portal.model.PublicRenderParameter;
-import com.liferay.portal.model.impl.VirtualLayout;
 import com.liferay.portal.security.lang.DoPrivilegedUtil;
-import com.liferay.portal.service.LayoutLocalServiceUtil;
-import com.liferay.portal.service.PortletLocalServiceUtil;
-import com.liferay.portal.theme.PortletDisplay;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.social.util.FacebookUtil;
 import com.liferay.util.Encryptor;
@@ -813,17 +815,6 @@ public class PortletURLImpl
 			return StringPool.BLANK;
 		}
 
-		String portalURL = null;
-
-		if (themeDisplay.isFacebook()) {
-			portalURL =
-				FacebookUtil.FACEBOOK_APPS_URL +
-					themeDisplay.getFacebookCanvasPageURL();
-		}
-		else {
-			portalURL = PortalUtil.getPortalURL(_request, _secure);
-		}
-
 		try {
 			if (_layoutFriendlyURL == null) {
 				Layout layout = getLayout();
@@ -858,7 +849,7 @@ public class PortletURLImpl
 		}
 
 		if (Validator.isNull(_layoutFriendlyURL)) {
-			sb.append(portalURL);
+			sb.append(PortalUtil.getPortalURL(_request, _secure));
 			sb.append(themeDisplay.getPathMain());
 			sb.append("/portal/layout?");
 
@@ -871,7 +862,8 @@ public class PortletURLImpl
 		}
 		else {
 			if (themeDisplay.isFacebook()) {
-				sb.append(portalURL);
+				sb.append(FacebookUtil.FACEBOOK_APPS_URL);
+				sb.append(themeDisplay.getFacebookCanvasPageURL());
 			}
 			else {
 
@@ -882,7 +874,7 @@ public class PortletURLImpl
 				if (!_layoutFriendlyURL.startsWith(Http.HTTP_WITH_SLASH) &&
 					!_layoutFriendlyURL.startsWith(Http.HTTPS_WITH_SLASH)) {
 
-					sb.append(portalURL);
+					sb.append(PortalUtil.getPortalURL(_request, _secure));
 				}
 
 				sb.append(_layoutFriendlyURL);
@@ -1071,8 +1063,10 @@ public class PortletURLImpl
 
 				String lastString = sb.stringAt(sb.index() - 1);
 
-				if (lastString.charAt(lastString.length() - 1) !=
-						CharPool.AMPERSAND) {
+				char lastChar = lastString.charAt(lastString.length() - 1);
+
+				if ((lastChar != CharPool.AMPERSAND) &&
+					(lastChar != CharPool.QUESTION)) {
 
 					sb.append(StringPool.AMPERSAND);
 				}
@@ -1289,6 +1283,10 @@ public class PortletURLImpl
 		Map<String, String[]> renderParameters = RenderParametersPool.get(
 			_request, layout.getPlid(), getPortlet().getPortletId());
 
+		if (renderParameters == null) {
+			return;
+		}
+
 		for (Map.Entry<String, String[]> entry : renderParameters.entrySet()) {
 			String name = entry.getKey();
 
@@ -1323,15 +1321,14 @@ public class PortletURLImpl
 	protected String prependNamespace(String name) {
 		String namespace = getNamespace();
 
-		if (!PortalUtil.isReservedParameter(name) &&
-			!name.startsWith(PortletQName.PUBLIC_RENDER_PARAMETER_NAMESPACE) &&
-			!name.startsWith(namespace)) {
+		if (!name.startsWith(PortletQName.PUBLIC_RENDER_PARAMETER_NAMESPACE) &&
+			!name.startsWith(namespace) &&
+			!PortalUtil.isReservedParameter(name)) {
 
 			return namespace.concat(name);
 		}
-		else {
-			return name;
-		}
+
+		return name;
 	}
 
 	protected String processValue(Key key, int value) {

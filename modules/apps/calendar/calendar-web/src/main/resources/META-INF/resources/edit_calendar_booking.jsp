@@ -223,7 +223,7 @@ while (manageableCalendarsIterator.hasNext()) {
 
 	<aui:model-context bean="<%= calendarBooking %>" model="<%= CalendarBooking.class %>" />
 
-	<aui:fieldset>
+	<aui:fieldset markupView="lexicon">
 		<aui:input defaultLanguageId="<%= themeDisplay.getLanguageId() %>" name="title" />
 
 		<div class="<%= allDay ? "allday-class-active" : "" %>" id="<portlet:namespace />startDateContainer">
@@ -245,7 +245,7 @@ while (manageableCalendarsIterator.hasNext()) {
 		<aui:input defaultLanguageId="<%= themeDisplay.getLanguageId() %>" name="description" />
 	</aui:fieldset>
 
-	<aui:fieldset>
+	<aui:fieldset markupView="lexicon">
 		<liferay-ui:panel-container extended="<%= true %>" id="calendarBookingDetailsPanelContainer" persistState="<%= true %>">
 			<liferay-ui:panel collapsible="<%= true %>" defaultState="closed" extended="<%= false %>" id="calendarBookingDetailsPanel" persistState="<%= true %>" title="details">
 				<aui:select label="calendar" name="calendarId">
@@ -292,40 +292,42 @@ while (manageableCalendarsIterator.hasNext()) {
 					<div class="separator"><!-- --></div>
 				</c:if>
 
-				<aui:layout cssClass="calendar-booking-invitations">
-					<aui:column columnWidth="<%= (calendarBooking != null) ? 25 : 50 %>" first="<%= true %>">
+				<aui:row cssClass="calendar-booking-invitations">
+					<aui:col width="<%= (calendarBooking != null) ? 25 : 50 %>">
 						<label class="field-label">
 							<liferay-ui:message key="pending" /> (<span id="<portlet:namespace />pendingCounter"><%= pendingCalendarsJSONArray.length() %></span>)
 						</label>
 
 						<div class="calendar-portlet-calendar-list" id="<portlet:namespace />calendarListPending"></div>
-					</aui:column>
-					<aui:column columnWidth="<%= (calendarBooking != null) ? 25 : 50 %>">
+					</aui:col>
+
+					<aui:col width="<%= (calendarBooking != null) ? 25 : 50 %>">
 						<label class="field-label">
 							<liferay-ui:message key="accepted" /> (<span id="<portlet:namespace />acceptedCounter"><%= acceptedCalendarsJSONArray.length() %></span>)
 						</label>
 
 						<div class="calendar-portlet-calendar-list" id="<portlet:namespace />calendarListAccepted"></div>
-					</aui:column>
+					</aui:col>
 
 					<c:if test="<%= calendarBooking != null %>">
-						<aui:column columnWidth="<%= 25 %>" last="<%= true %>">
+						<aui:col width="<%= 25 %>">
 							<label class="field-label">
 								<liferay-ui:message key="maybe" /> (<span id="<portlet:namespace />maybeCounter"><%= maybeCalendarsJSONArray.length() %></span>)
 							</label>
 
 							<div class="calendar-portlet-calendar-list" id="<portlet:namespace />calendarListMaybe"></div>
-						</aui:column>
-						<aui:column columnWidth="<%= 25 %>" last="<%= true %>">
+						</aui:col>
+
+						<aui:col width="<%= 25 %>">
 							<label class="field-label">
 								<liferay-ui:message key="declined" /> (<span id="<portlet:namespace />declinedCounter"><%= declinedCalendarsJSONArray.length() %></span>)
 							</label>
 
 							<div class="calendar-portlet-calendar-list" id="<portlet:namespace />calendarListDeclined"></div>
-						</aui:column>
+						</aui:col>
 					</c:if>
 
-					<aui:column columnWidth="<%= 100 %>">
+					<aui:col width="<%= 100 %>">
 						<div class="calendar-portlet-list-header toggler-header-collapsed" id="<portlet:namespace />checkAvailability">
 							<span class="calendar-portlet-list-arrow"></span>
 
@@ -347,8 +349,8 @@ while (manageableCalendarsIterator.hasNext()) {
 								</liferay-util:include>
 							</div>
 						</div>
-					</aui:column>
-				</aui:layout>
+					</aui:col>
+				</aui:row>
 			</liferay-ui:panel>
 
 			<liferay-ui:panel collapsible="<%= true %>" defaultState="closed" extended="<%= false %>" id="calendarBookingReminderPanel" persistState="<%= true %>" title="reminders">
@@ -463,21 +465,7 @@ while (manageableCalendarsIterator.hasNext()) {
 	</c:if>
 </aui:script>
 
-<aui:script use="liferay-calendar-interval-selector">
-	new Liferay.IntervalSelector(
-		{
-			containerId: 'meetingEventDate',
-			endDatePickerName: 'endTime',
-			endTimePickerName: 'endTimeTime',
-			namespace: '<portlet:namespace/>',
-			startDatePickerName: 'startTime',
-			startTimePickerName: 'startTimeTime',
-			submitButtonId: 'submit'
-		}
-	);
-</aui:script>
-
-<aui:script use="json,liferay-calendar-date-picker-util,liferay-calendar-list,liferay-calendar-recurrence-util,liferay-calendar-reminders,liferay-calendar-simple-menu">
+<aui:script use="json,liferay-calendar-date-picker-util,liferay-calendar-interval-selector,liferay-calendar-list,liferay-calendar-recurrence-util,liferay-calendar-reminders,liferay-calendar-simple-menu">
 	var defaultCalendarId = <%= calendarId %>;
 
 	var scheduler = window.<portlet:namespace />scheduler;
@@ -628,16 +616,23 @@ while (manageableCalendarsIterator.hasNext()) {
 
 	syncCalendarsMap();
 
-	var formNode = A.one(document.<portlet:namespace />fm);
+	var intervalSelector = new Liferay.IntervalSelector(
+		{
+			endDatePicker: Liferay.component('<portlet:namespace />endTimeDatePicker'),
+			endTimePicker: Liferay.component('<portlet:namespace />endTimeTimeTimePicker'),
+			startDatePicker: Liferay.component('<portlet:namespace />startTimeDatePicker'),
+			startTimePicker: Liferay.component('<portlet:namespace />startTimeTimeTimePicker')
+		}
+	);
 
 	window.<portlet:namespace />placeholderSchedulerEvent = new Liferay.SchedulerEvent(
 		{
 			after: {
 				endDateChange: function(event) {
-					Liferay.DatePickerUtil.syncUI(formNode, 'endTime', event.newVal);
+					Liferay.DatePickerUtil.syncUI(event.currentTarget, intervalSelector);
 				},
 				startDateChange: function(event) {
-					Liferay.DatePickerUtil.syncUI(formNode, 'startTime', event.newVal);
+					Liferay.DatePickerUtil.syncUI(event.currentTarget, intervalSelector);
 				}
 			},
 			borderColor: '#000',

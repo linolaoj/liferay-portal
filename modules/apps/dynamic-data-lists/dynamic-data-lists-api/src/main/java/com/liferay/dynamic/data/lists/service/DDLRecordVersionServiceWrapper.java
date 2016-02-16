@@ -16,7 +16,7 @@ package com.liferay.dynamic.data.lists.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.service.ServiceWrapper;
+import com.liferay.portal.kernel.service.ServiceWrapper;
 
 /**
  * Provides a wrapper for {@link DDLRecordVersionService}.
@@ -55,6 +55,13 @@ public class DDLRecordVersionServiceWrapper implements DDLRecordVersionService,
 		long recordVersionId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _ddlRecordVersionService.getRecordVersion(recordVersionId);
+	}
+
+	@Override
+	public java.util.List<com.liferay.dynamic.data.lists.model.DDLRecordVersion> getRecordVersions(
+		long recordId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _ddlRecordVersionService.getRecordVersions(recordId);
 	}
 
 	@Override

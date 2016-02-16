@@ -72,8 +72,10 @@ PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "vocabul
 %>
 
 <aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
+	<portlet:renderURL var="mainURL" />
+
 	<aui:nav cssClass="navbar-nav">
-		<aui:nav-item label="vocabularies" selected="<%= true %>" />
+		<aui:nav-item href="<%= mainURL.toString() %>" label="vocabularies" selected="<%= true %>" />
 	</aui:nav>
 
 	<c:if test="<%= Validator.isNotNull(keywords) || (vocabulariesCount > 0) %>">
@@ -115,7 +117,7 @@ PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "vocabul
 	</liferay-frontend:management-bar-buttons>
 
 	<liferay-frontend:management-bar-action-buttons>
-		<liferay-frontend:management-bar-button href="javascript:;" icon="trash" id="deleteSelectedVocabularies" label="delete"  />
+		<liferay-frontend:management-bar-button href="javascript:;" icon="trash" id="deleteSelectedVocabularies" label="delete" />
 	</liferay-frontend:management-bar-action-buttons>
 </liferay-frontend:management-bar>
 
@@ -137,7 +139,7 @@ PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "vocabul
 	>
 
 		<liferay-ui:search-container-row
-			className="com.liferay.portlet.asset.model.AssetVocabulary"
+			className="com.liferay.asset.kernel.model.AssetVocabulary"
 			keyProperty="vocabularyId"
 			modelVar="vocabulary"
 		>

@@ -14,7 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.service.impl;
 
-import com.liferay.dynamic.data.mapping.configuration.DDMServiceConfiguration;
+import com.liferay.dynamic.data.mapping.configuration.DDMGroupServiceConfiguration;
 import com.liferay.dynamic.data.mapping.constants.DDMConstants;
 import com.liferay.dynamic.data.mapping.exception.InvalidTemplateVersionException;
 import com.liferay.dynamic.data.mapping.exception.NoSuchTemplateException;
@@ -33,8 +33,15 @@ import com.liferay.dynamic.data.mapping.util.DDMXMLUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Image;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.SystemEventConstants;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationFactory;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.permission.ModelPermissions;
+import com.liferay.portal.kernel.service.persistence.ImageUtil;
 import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.template.TemplateConstants;
@@ -43,19 +50,12 @@ import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.model.Image;
-import com.liferay.portal.model.ResourceConstants;
-import com.liferay.portal.model.SystemEventConstants;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.permission.ModelPermissions;
-import com.liferay.portal.service.persistence.ImageUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.util.xml.XMLUtil;
 
 import java.io.File;
@@ -1523,11 +1523,12 @@ public class DDMTemplateLocalServiceImpl
 		return script;
 	}
 
-	protected DDMServiceConfiguration getDDMServiceConfiguration(long groupId)
+	protected DDMGroupServiceConfiguration getDDMGroupServiceConfiguration(
+			long groupId)
 		throws ConfigurationException {
 
-		return configurationFactory.getConfiguration(
-			DDMServiceConfiguration.class,
+		return configurationProvider.getConfiguration(
+			DDMGroupServiceConfiguration.class,
 			new GroupServiceSettingsLocator(
 				groupId, DDMConstants.SERVICE_NAME));
 	}
@@ -1624,11 +1625,11 @@ public class DDMTemplateLocalServiceImpl
 
 		boolean validSmallImageExtension = false;
 
-		DDMServiceConfiguration ddmServiceConfiguration =
-			getDDMServiceConfiguration(groupId);
+		DDMGroupServiceConfiguration ddmGroupServiceConfiguration =
+			getDDMGroupServiceConfiguration(groupId);
 
 		for (String smallImageExtension :
-				ddmServiceConfiguration.smallImageExtensions()) {
+				ddmGroupServiceConfiguration.smallImageExtensions()) {
 
 			if (StringPool.STAR.equals(smallImageExtension) ||
 				StringUtil.endsWith(
@@ -1644,7 +1645,8 @@ public class DDMTemplateLocalServiceImpl
 			throw new TemplateSmallImageNameException(smallImageName);
 		}
 
-		long smallImageMaxSize = ddmServiceConfiguration.smallImageMaxSize();
+		long smallImageMaxSize =
+			ddmGroupServiceConfiguration.smallImageMaxSize();
 
 		if ((smallImageMaxSize > 0) &&
 			(smallImageBytes.length > smallImageMaxSize)) {
@@ -1676,8 +1678,8 @@ public class DDMTemplateLocalServiceImpl
 		}
 	}
 
-	@ServiceReference(type = ConfigurationFactory.class)
-	protected ConfigurationFactory configurationFactory;
+	@ServiceReference(type = ConfigurationProvider.class)
+	protected ConfigurationProvider configurationProvider;
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		DDMTemplateLocalServiceImpl.class);

@@ -18,10 +18,10 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
 
+import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -200,20 +200,28 @@ public class DDMStructureVersionCacheModel implements CacheModel<DDMStructureVer
 	public void readExternal(ObjectInput objectInput)
 		throws ClassNotFoundException, IOException {
 		structureVersionId = objectInput.readLong();
+
 		groupId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userId = objectInput.readLong();
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
+
 		structureId = objectInput.readLong();
 		version = objectInput.readUTF();
+
 		parentStructureId = objectInput.readLong();
 		name = objectInput.readUTF();
 		description = objectInput.readUTF();
 		definition = objectInput.readUTF();
 		storageType = objectInput.readUTF();
+
 		type = objectInput.readInt();
+
 		status = objectInput.readInt();
+
 		statusByUserId = objectInput.readLong();
 		statusByUserName = objectInput.readUTF();
 		statusDate = objectInput.readLong();
@@ -225,8 +233,11 @@ public class DDMStructureVersionCacheModel implements CacheModel<DDMStructureVer
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(structureVersionId);
+
 		objectOutput.writeLong(groupId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
@@ -237,6 +248,7 @@ public class DDMStructureVersionCacheModel implements CacheModel<DDMStructureVer
 		}
 
 		objectOutput.writeLong(createDate);
+
 		objectOutput.writeLong(structureId);
 
 		if (version == null) {
@@ -277,7 +289,9 @@ public class DDMStructureVersionCacheModel implements CacheModel<DDMStructureVer
 		}
 
 		objectOutput.writeInt(type);
+
 		objectOutput.writeInt(status);
+
 		objectOutput.writeLong(statusByUserId);
 
 		if (statusByUserName == null) {

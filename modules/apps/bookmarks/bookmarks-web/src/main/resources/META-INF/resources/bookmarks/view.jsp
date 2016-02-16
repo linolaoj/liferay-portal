@@ -23,6 +23,22 @@ BookmarksFolder folder = (BookmarksFolder)request.getAttribute(BookmarksWebKeys.
 
 long folderId = BeanParamUtil.getLong(folder, request, "folderId", rootFolderId);
 
+String keywords = ParamUtil.getString(request, "keywords");
+
+boolean portletTitleBasedNavigation = GetterUtil.getBoolean(portletConfig.getInitParameter("portlet-title-based-navigation"));
+
+if (Validator.isNotNull(keywords) && portletTitleBasedNavigation) {
+	portletDisplay.setShowBackIcon(true);
+
+	String redirect = ParamUtil.getString(request, "redirect");
+
+	portletDisplay.setURLBack(redirect);
+
+	String headerTitle = LanguageUtil.get(resourceBundle, "search");
+
+	renderResponse.setTitle(headerTitle);
+}
+
 boolean defaultFolderView = false;
 
 if ((folder == null) && (folderId != BookmarksFolderConstants.DEFAULT_PARENT_FOLDER_ID)) {
@@ -76,10 +92,27 @@ portletURL.setParameter("navigation", navigation);
 
 SearchContainer bookmarksSearchContainer = new SearchContainer(liferayPortletRequest, null, null, "curEntry", SearchContainer.DEFAULT_DELTA, portletURL, null, "there-are-no-bookmarks-in-this-folder");
 
-List results = null;
 int total = 0;
 
-if (navigation.equals("mine") || navigation.equals("recent")) {
+if (Validator.isNotNull(keywords)) {
+	Indexer<?> indexer = BookmarksSearcher.getInstance();
+
+	SearchContext searchContext = SearchContextFactory.getInstance(request);
+
+	searchContext.setAttribute("paginationType", "more");
+	searchContext.setEnd(bookmarksSearchContainer.getEnd());
+	searchContext.setFolderIds(new long[] {folderId});
+	searchContext.setKeywords(keywords);
+	searchContext.setStart(bookmarksSearchContainer.getStart());
+
+	Hits hits = indexer.search(searchContext);
+
+	total = hits.getLength();
+
+	bookmarksSearchContainer.setTotal(total);
+	bookmarksSearchContainer.setResults(BookmarksUtil.getEntries(hits));
+}
+else if (navigation.equals("mine") || navigation.equals("recent")) {
 	long groupEntriesUserId = 0;
 
 	if (navigation.equals("mine") && themeDisplay.isSignedIn()) {
@@ -91,30 +124,31 @@ if (navigation.equals("mine") || navigation.equals("recent")) {
 	bookmarksSearchContainer.setTotal(total);
 	bookmarksSearchContainer.setResults(BookmarksEntryServiceUtil.getGroupEntries(scopeGroupId, groupEntriesUserId, bookmarksSearchContainer.getStart(), bookmarksSearchContainer.getEnd()));
 }
+else if (useAssetEntryQuery) {
+	AssetEntryQuery assetEntryQuery = new AssetEntryQuery(BookmarksEntry.class.getName(), bookmarksSearchContainer);
+
+	assetEntryQuery.setEnablePermissions(true);
+	assetEntryQuery.setExcludeZeroViewCount(false);
+	assetEntryQuery.setEnd(bookmarksSearchContainer.getEnd());
+	assetEntryQuery.setStart(bookmarksSearchContainer.getStart());
+
+	if (Validator.isNotNull(keywords)) {
+		assetEntryQuery.setKeywords(keywords);
+	}
+
+	total = AssetEntryServiceUtil.getEntriesCount(assetEntryQuery);
+
+	bookmarksSearchContainer.setTotal(total);
+	bookmarksSearchContainer.setResults(AssetEntryServiceUtil.getEntries(assetEntryQuery));
+}
 else {
-	if (useAssetEntryQuery) {
-		AssetEntryQuery assetEntryQuery = new AssetEntryQuery(BookmarksEntry.class.getName(), bookmarksSearchContainer);
+	total = BookmarksFolderServiceUtil.getFoldersAndEntriesCount(scopeGroupId, folderId);
 
-		assetEntryQuery.setEnablePermissions(true);
-		assetEntryQuery.setExcludeZeroViewCount(false);
-		assetEntryQuery.setEnd(bookmarksSearchContainer.getEnd());
-		assetEntryQuery.setStart(bookmarksSearchContainer.getStart());
-
-		bookmarksSearchContainer.setResults(AssetEntryServiceUtil.getEntries(assetEntryQuery));
-	}
-	else {
-		total = BookmarksFolderServiceUtil.getFoldersAndEntriesCount(scopeGroupId, folderId);
-
-		bookmarksSearchContainer.setTotal(total);
-		bookmarksSearchContainer.setResults(BookmarksFolderServiceUtil.getFoldersAndEntries(scopeGroupId, folderId, WorkflowConstants.STATUS_APPROVED, bookmarksSearchContainer.getStart(), bookmarksSearchContainer.getEnd()));
-	}
+	bookmarksSearchContainer.setTotal(total);
+	bookmarksSearchContainer.setResults(BookmarksFolderServiceUtil.getFoldersAndEntries(scopeGroupId, folderId, WorkflowConstants.STATUS_APPROVED, bookmarksSearchContainer.getStart(), bookmarksSearchContainer.getEnd()));
 }
 
-request.setAttribute("view.jsp-folder", folder);
-
 request.setAttribute("view.jsp-folderId", String.valueOf(folderId));
-
-request.setAttribute("view.jsp-viewFolder", Boolean.TRUE.toString());
 
 request.setAttribute("view.jsp-displayStyle", displayStyle);
 
@@ -140,9 +174,9 @@ BookmarksUtil.addPortletBreadcrumbEntries(folder, request, renderResponse);
 </liferay-util:include>
 
 <div class="closed container-fluid-1280 sidenav-container sidenav-right" id="<portlet:namespace />infoPanelId">
-	<portlet:resourceURL id="/bookmarks/info_panel" var="sidebarPanelURL">
+	<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" id="/bookmarks/info_panel" var="sidebarPanelURL">
 		<portlet:param name="folderId" value="<%= String.valueOf(folderId) %>" />
-	</portlet:resourceURL>
+	</liferay-portlet:resourceURL>
 
 	<liferay-frontend:sidebar-panel
 		resourceURL="<%= sidebarPanelURL %>"
@@ -191,19 +225,6 @@ else {
 	PortalUtil.setPageSubtitle(LanguageUtil.get(request, StringUtil.replace(navigation, StringPool.UNDERLINE, StringPool.DASH)), request);
 }
 %>
-
-<aui:script>
-	$('#<portlet:namespace />infoPanelId').sideNavigation(
-		{
-			gutter: 15,
-			position: 'right',
-			toggler: '.infoPanelToggler',
-			type: 'relative',
-			typeMobile: 'fixed',
-			width: 320
-		}
-	);
-</aui:script>
 
 <aui:script use="liferay-bookmarks">
 	var bookmarks = new Liferay.Portlet.Bookmarks(

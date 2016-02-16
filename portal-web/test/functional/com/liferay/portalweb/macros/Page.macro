@@ -48,19 +48,19 @@
 
 				<execute function="Click" locator1="SitePagesEditPage#PAGE_TYPE_RADIO" />
 				<execute function="AssertTextEquals" locator1="SitePagesEditPage#PAGE_TYPE_TEMPLATE_AUTOMATICALLY_APPLY_CHANGES_LABEL"  value1="Automatically apply changes done to the page template." />
-				<execute function="Check" locator1="SitePagesEditPage#PAGE_TYPE_TEMPLATE_AUTOMATICALLY_APPLY_CHANGES_CHECKBOX" />
+				<execute function="Check#checkToggleSwitch" locator1="SitePagesEditPage#PAGE_TYPE_TEMPLATE_AUTOMATICALLY_APPLY_CHANGES_CHECKBOX" />
 			</then>
 		</if>
 
 		<if>
-			<isset var="pageType" />
+			<isset var="sitePageType" />
 			<then>
 				<execute macro="SitePage#selectSitePageTypeRadioCP">
 					<var name="columnName" value="${columnName}" />
 					<var name="componentName" value="${componentName}" />
 					<var name="pageTypeDescription" value="${pageTypeDescription}" />
 					<var name="pageTypeURL" value="${pageTypeURL}" />
-					<var name="sitePageType" value="${pageType}" />
+					<var name="sitePageType" value="${sitePageType}" />
 				</execute>
 			</then>
 		</if>
@@ -70,43 +70,16 @@
 		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 
 		<if>
-			<isset var="nodePort" />
+			<not>
+				<isset var="pageTypeURL" />
+			</not>
 			<then>
-				<execute function="Open" locator1="http://localhost:${nodePort}" />
+				<execute macro="Navigator#gotoViewPage">
+					<var name="defaultURL" value="${defaultURL}" />
+					<var name="nodePort" value="${nodePort}" />
+					<var name="pageName" value="${pageName}" />
+				</execute>
 			</then>
-			<elseif>
-				<not>
-					<and>
-						<isset var="defaultURL" />
-						<equals arg1="${defaultURL}" arg2="false" />
-					</and>
-				</not>
-				<then>
-					<execute macro="ProductMenuHelper#expandPanelSites" />
-
-					<execute macro="ProductMenuHelper#expandCategory">
-						<var name="category" value="Pages" />
-					</execute>
-
-					<var name="key_page" value="${pageName}" />
-
-					<execute function="Click" locator1="ProductMenu#PAGES" />
-				</then>
-			</elseif>
-		</if>
-
-		<execute macro-mobile="MobileNavigator#clickReorderButton" />
-
-		<var name="key_pageName" value="${pageName}" />
-
-		<if>
-			<contains string="${pageName}" substring="&apos;" />
-			<then>
-				<execute function="AssertClick" locator1="Home#PAGE_WITH_QUOTES" value1="${pageName}" />
-			</then>
-			<else>
-				<execute function="AssertClick" locator1="Home#PAGE" value1="${pageName}" />
-			</else>
 		</if>
 	</command>
 
@@ -203,15 +176,13 @@
 	</command>
 
 	<command name="changeLogoViaPageCP">
-		<var name="key_page" value="${page}" />
-
-		<execute function="Click#makeVisibleClickAt" locator1="ProductMenu#EDIT_PUBLIC_PAGE_ICON" />
-
-		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Logo" />
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="${page}" />
 		</execute>
 
-		<execute function="AssertClick" locator1="Button#CHANGE" value1="Change" />
+		<execute function="Click" locator1="DETAILS_NAVIGATION_ADVANCED" />
+
+		<execute function="AssertClick" locator1="Button#CHANGE_LOGO" value1="Change" />
 		<execute function="SelectFrame" locator1="SitePages#LOGO_UPLOAD_IMAGE_IFRAME" />
 		<execute function="UploadCommonFile" locator1="Button#BROWSE" value1="${logoFile}" />
 
@@ -235,29 +206,31 @@
 	</command>
 
 	<command name="deleteLivePG">
-		<execute function="Click" locator1="ControlMenu#EDIT" />
 		<execute function="ClickNoError" locator1="ControlMenu#EDIT_LIVE_DELETE" />
 
 		<execute function="Confirm#waitForConfirmation" value1="Are you sure you want to delete the selected page?" />
 	</command>
 
 	<command name="deletePG">
-		<var name="key_pageName" value="${pageName}" />
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="${pageName}" />
+		</execute>
 
-		<execute function="MouseOver#mouseOverClickNavigation" locator1="Home#PAGE" />
-		<execute function="ClickNoError" locator1="ControlMenu#EDIT" />
-		<execute function="ClickNoError" locator1="Home#PAGE_DELETE" />
-		<execute function="Confirm#waitForConfirmation" value1="Are you sure you want to delete this page?" />
-		<execute function="AssertElementNotPresent#assertElementNotPresentClickDockbar" locator1="Home#PAGE_DELETE" />
+		<execute function="Click" locator1="Icon#HISTORY_VERTICAL_ELLIPSIS" />
+
+		<execute function="ClickNoError" locator1="MenuItem#DELETE" />
+		<execute function="Confirm#waitForConfirmation" value1="Are you sure you want to delete the selected page?" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 	</command>
 
 	<command name="editPageLayoutColumn">
-		<execute function="Click" locator1="ControlMenu#EDIT" />
-
 		<var name="key_columnName" value="${columnName}" />
 
 		<execute function="Click" locator1="SitePagesEditPage#LAYOUT_RADIO" />
 		<execute function="AssertClick#pauseAssertTextClickAt" locator1="Button#SAVE" value1="Save" />
+
+		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 	</command>
 
 	<command name="gotoChildPagePG">
@@ -280,10 +253,6 @@
 		<var name="key_childPageName" value="${childPageName}" />
 
 		<execute function="AssertClick" locator1="Home#PAGE_CHILD_PAGE" value1="${childPageName}" />
-	</command>
-
-	<command name="gotoEdit">
-		<execute function="Click" locator1="ControlMenu#EDIT" />
 	</command>
 
 	<command name="gotoMyAccount">
@@ -482,11 +451,11 @@
 
 				<execute function="Confirm" value1="Are you sure you want to delete this page?" />
 
-				<execute function="AssertElementNotPresent#assertElementNotPresentClickDockbar" locator1="Home#DELETE_PAGE_ICON" />
-
 				<execute function="Refresh" />
 			</then>
 		</while>
+
+		<execute function="AssertElementNotPresent#assertElementNotPresentClickDockbar" locator1="Home#DELETE_PAGE_ICON" />
 	</command>
 
 	<command name="viewChildPG">
@@ -529,8 +498,6 @@
 	</command>
 
 	<command name="viewFriendlyURLLanguageOptionsPG">
-		<execute function="Click" locator1="ControlMenu#EDIT" />
-
 		<for list="${currentLanguageList}" param="languageKey">
 			<execute function="AssertElementPresent" locator1="DockbarEditpanel#${languageKey}" />
 		</for>
@@ -552,8 +519,6 @@
 	</command>
 
 	<command name="viewPageFriendURLPG">
-		<execute function="Click" locator1="ControlMenu#EDIT" />
-
 		<execute function="AssertTextNotPresent" locator1="SitePagesEditPage#FRIENDLY_URL_FIELD" value1="${pageName}" />
 		<execute function="AssertTextEquals" locator1="SitePagesEditPage#FRIENDLY_URL_FIELD" value1="/2" />
 	</command>
@@ -570,16 +535,19 @@
 			</then>
 		</if>
 
-		<execute function="Click" locator1="ControlMenu#EDIT" />
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="${page}" />
+		</execute>
 
 		<var name="key_defaultSiteLanguageKey" value="${defaultSiteLanguageKey}" />
 
-		<if>
-			<condition function="IsElementNotPresent" locator1="SitePagesEditPage#SEO_HTML_TITLE" />
-			<then>
-				<execute function="Click" locator1="NavListItem#SEO" />
-			</then>
-		</if>
+		<execute macro="Navigator#gotoTab">
+			<var name="tab" value="SEO" />
+		</execute>
+
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="SEO" />
+		</execute>
 
 		<execute function="AssertElementPresent" locator1="SitePagesEditPage#SEO_HTML_TITLE" />
 		<execute function="AssertElementPresent" locator1="SitePagesEditPage#SEO_HTML_TITLE_META_TAGS" />

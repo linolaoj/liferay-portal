@@ -64,7 +64,17 @@ for (long defaultTeamId : defaultTeamIds) {
 <aui:input name="siteRolesRoleIds" type="hidden" value="<%= ListUtil.toString(defaultSiteRoles, Role.ROLE_ID_ACCESSOR) %>" />
 <aui:input name="teamsTeamIds" type="hidden" value="<%= ListUtil.toString(defaultTeams, TeamImpl.TEAM_ID_ACCESSOR) %>" />
 
-<h3><liferay-ui:message key="site-roles" /> <liferay-ui:icon-help message="default-site-roles-assignment-help" /></h3>
+<p class="text-muted">
+	<liferay-ui:message key="select-the-default-roles-and-teams-for-new-members" />
+</p>
+
+<h4 class="text-default"><liferay-ui:message key="site-roles" /> <liferay-ui:icon-help message="default-site-roles-assignment-help" /></h4>
+
+<c:if test="<%= defaultSiteRoles.size() <= 0 %>">
+	<p class="text-muted">
+		<%= StringUtil.lowerCase(LanguageUtil.get(request, "none")) %>
+	</p>
+</c:if>
 
 <liferay-ui:search-container
 	headerNames="title,null"
@@ -76,11 +86,10 @@ for (long defaultTeamId : defaultTeamIds) {
 	/>
 
 	<liferay-ui:search-container-row
-		className="com.liferay.portal.model.Role"
+		className="com.liferay.portal.kernel.model.Role"
 		keyProperty="roleId"
 		modelVar="role"
 	>
-
 		<liferay-ui:search-container-column-text
 			name="title"
 			value="<%= HtmlUtil.escape(role.getTitle(locale)) %>"
@@ -96,11 +105,17 @@ for (long defaultTeamId : defaultTeamIds) {
 	<liferay-ui:search-iterator markupView="lexicon" paginate="<%= false %>" />
 </liferay-ui:search-container>
 
-<aui:button-row>
+<div class="button-holder">
 	<aui:button cssClass="btn-lg modify-link" id="selectSiteRoleLink" value="select" />
-</aui:button-row>
+</div>
 
-<h3><liferay-ui:message key="teams" /> <liferay-ui:icon-help message="default-teams-assignment-help" /></h3>
+<h4 class="text-default"><liferay-ui:message key="teams" /> <liferay-ui:icon-help message="default-teams-assignment-help" /></h4>
+
+<c:if test="<%= defaultSiteRoles.size() <= 0 %>">
+	<p class="text-muted">
+		<%= StringUtil.lowerCase(LanguageUtil.get(request, "none")) %>
+	</p>
+</c:if>
 
 <liferay-ui:search-container
 	headerNames="title,null"
@@ -112,7 +127,7 @@ for (long defaultTeamId : defaultTeamIds) {
 	/>
 
 	<liferay-ui:search-container-row
-		className="com.liferay.portal.model.Team"
+		className="com.liferay.portal.kernel.model.Team"
 		keyProperty="teamId"
 		modelVar="team"
 	>

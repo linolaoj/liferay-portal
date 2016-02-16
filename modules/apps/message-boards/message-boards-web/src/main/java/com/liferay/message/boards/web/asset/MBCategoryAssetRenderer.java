@@ -14,17 +14,17 @@
 
 package com.liferay.message.boards.web.asset;
 
+import com.liferay.asset.kernel.model.AssetRendererFactory;
+import com.liferay.asset.kernel.model.BaseJSPAssetRenderer;
+import com.liferay.message.boards.kernel.model.MBCategory;
 import com.liferay.message.boards.web.constants.MBPortletKeys;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.asset.model.AssetRendererFactory;
-import com.liferay.portlet.asset.model.BaseJSPAssetRenderer;
-import com.liferay.portlet.messageboards.model.MBCategory;
 import com.liferay.portlet.messageboards.service.permission.MBCategoryPermission;
 
 import java.util.Locale;

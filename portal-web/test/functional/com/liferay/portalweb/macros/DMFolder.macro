@@ -56,7 +56,7 @@
 			<then>
 				<execute macro="Alert#viewRequestFailedToComplete" />
 
-				<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="Please enter a unique folder name." />
+				<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="Please enter a unique folder name." />
 			</then>
 			<elseif>
 				<equals arg1="${dmFolder}" arg2="Invalid" />
@@ -89,7 +89,6 @@
 
 		<var name="key_mgFolderName" value="${mgFolderName}" />
 
-		<execute function="AssertElementPresent" locator1="MediaGallery#FOLDER_THUMBNAIL" value1="${mgFolderName}" />
 		<execute function="AssertTextEquals" locator1="MediaGallery#FOLDER_NAME" value1="${mgFolderName}" />
 	</command>
 
@@ -116,14 +115,14 @@
 			<then>
 				<execute macro="Alert#viewRequestFailedToComplete" />
 
-				<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="Please enter a unique folder name." />
+				<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="Please enter a unique folder name." />
 			</then>
 			<elseif>
 				<equals arg1="${dmSubFolder}" arg2="Invalid" />
 				<then>
 					<execute macro="Alert#viewRequestFailedToComplete" />
 
-					<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="Please enter a valid name." />
+					<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="Please enter a valid name." />
 				</then>
 			</elseif>
 			<else>
@@ -155,14 +154,14 @@
 			<then>
 				<execute macro="Alert#viewRequestFailedToComplete" />
 
-				<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="Please enter a unique folder name." />
+				<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="Please enter a unique folder name." />
 			</then>
 			<elseif>
 				<equals arg1="${dmSubFolder}" arg2="Invalid" />
 				<then>
 					<execute macro="Alert#viewRequestFailedToComplete" />
 
-					<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="Please enter a valid name." />
+					<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="Please enter a valid name." />
 				</then>
 			</elseif>
 			<else>
@@ -352,9 +351,11 @@
 	</command>
 
 	<command name="gotoPGViaMG">
+		<execute function="MakeVisible" locator1="MediaGallery#FOLDER_GENERIC" />
+
 		<var name="key_mgFolderName" value="${mgFolderName}" />
 
-		<execute function="AssertClick" locator1="MediaGallery#FOLDER_NAME" value1="${mgFolderName}" />
+		<execute function="Click" locator1="MediaGallery#FOLDER_NAME" />
 
 		<execute function="AssertTextEquals" locator1="MediaGallery#BREADCRUMB" value1="${mgFolderName}" />
 	</command>
@@ -565,9 +566,12 @@
 	</command>
 
 	<command name="viewPGViaMG">
+		<execute function="MakeVisible" locator1="MediaGallery#FOLDER_GENERIC" />
+
 		<var name="key_mgFolderName" value="${mgFolderName}" />
 
-		<execute function="Click" locator1="MediaGallery#FOLDER_NAME" value1="${mgFolderName}" />
+		<execute function="Click" locator1="MediaGallery#FOLDER_NAME" />
+
 		<execute function="AssertTextEquals" locator1="MediaGallery#FOLDER_HEADER_TITLE" value1="${mgFolderName}" />
 	</command>
 </definition>

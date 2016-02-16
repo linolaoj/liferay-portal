@@ -16,8 +16,13 @@ package com.liferay.wiki.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+
+import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -123,7 +128,7 @@ public class WikiPageResourceWrapper implements WikiPageResource,
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _wikiPageResource.getExpandoBridge();
 	}
 
@@ -158,7 +163,7 @@ public class WikiPageResourceWrapper implements WikiPageResource,
 	}
 
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
+	public Serializable getPrimaryKeyObj() {
 		return _wikiPageResource.getPrimaryKeyObj();
 	}
 
@@ -234,19 +239,17 @@ public class WikiPageResourceWrapper implements WikiPageResource,
 
 	@Override
 	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
 		_wikiPageResource.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_wikiPageResource.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_wikiPageResource.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -286,7 +289,7 @@ public class WikiPageResourceWrapper implements WikiPageResource,
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_wikiPageResource.setPrimaryKeyObj(primaryKeyObj);
 	}
 
@@ -321,7 +324,7 @@ public class WikiPageResourceWrapper implements WikiPageResource,
 	}
 
 	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.wiki.model.WikiPageResource> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.wiki.model.WikiPageResource> toCacheModel() {
 		return _wikiPageResource.toCacheModel();
 	}
 

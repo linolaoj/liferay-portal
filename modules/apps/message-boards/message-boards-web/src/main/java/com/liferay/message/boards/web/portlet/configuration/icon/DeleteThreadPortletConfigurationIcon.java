@@ -14,20 +14,20 @@
 
 package com.liferay.message.boards.web.portlet.configuration.icon;
 
+import com.liferay.message.boards.kernel.model.MBCategory;
+import com.liferay.message.boards.kernel.model.MBCategoryConstants;
+import com.liferay.message.boards.kernel.model.MBMessage;
+import com.liferay.message.boards.kernel.model.MBMessageDisplay;
+import com.liferay.message.boards.kernel.model.MBThread;
 import com.liferay.message.boards.web.constants.MBPortletKeys;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIcon;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.Constants;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.PortletURLFactoryUtil;
-import com.liferay.portlet.messageboards.model.MBCategory;
-import com.liferay.portlet.messageboards.model.MBCategoryConstants;
-import com.liferay.portlet.messageboards.model.MBMessage;
-import com.liferay.portlet.messageboards.model.MBMessageDisplay;
-import com.liferay.portlet.messageboards.model.MBThread;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portlet.messageboards.service.permission.MBMessagePermission;
-import com.liferay.portlet.trash.util.TrashUtil;
+import com.liferay.trash.kernel.util.TrashUtil;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.PortletRequest;

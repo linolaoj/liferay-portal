@@ -51,12 +51,12 @@
 </tr>
 <tr>
 	<td>PAGE_TYPE_LABEL</td>
-	<td>//li[contains(@data-search,'${key_pageType}')]//label[contains(@for,'addLayoutSelectedPageTemplate')]</td>
+	<td>//div[contains(@data-search,'${key_pageType}')]//label[contains(@for,'addLayoutSelectedPageTemplate')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_TYPE_RADIO</td>
-	<td>//li[contains(@data-search,'${key_pageType}')]//input[contains(@id,'addLayoutSelectedPageTemplate')]</td>
+	<td>//div[contains(@data-search,'${key_pageType}')]//input[contains(@id,'addLayoutSelectedPageTemplate')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -71,7 +71,7 @@
 </tr>
 <tr>
 	<td>PAGE_TYPE_TEMPLATE_AUTOMATICALLY_APPLY_CHANGES_LABEL</td>
-	<td>//li[contains(@data-search,'${key_pageType}')]//label[contains(@for,'addLayoutLayoutPrototypeLinkEnabled')]</td>
+	<td>//div[contains(@data-search,'${key_pageType}')]//label[contains(@for,'addLayoutLayoutPrototypeLinkEnabled')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -81,7 +81,7 @@
 </tr>
 <tr>
 	<td>PAGE_TYPE_TEMPLATE_AUTOMATICALLY_APPLY_CHANGES_CHECKBOX</td>
-	<td>//li[contains(@data-search,'${key_pageType}')]//input[contains(@name,'layoutPrototypeLinkEnabled')]</td>
+	<td>//div[contains(@data-search,'${key_pageType}')]//input[contains(@name,'layoutPrototypeLinkEnabled')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -121,7 +121,7 @@
 </tr>
 <tr>
 	<td>PAGE_TYPE_LINK_TO_URL_URL_FIELD</td>
-	<td>//input[contains(@id,'GroupPagesPortlet_url')]</td>
+	<td>//input[contains(@name,'TypeSettingsProperties--url') and contains(@type,'text')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -239,52 +239,6 @@
 <tr>
 	<td></td>
 	<td></td>
-	<td></td>
-</tr>
-<!--EMBEDDED_PORTLETS-->
-<tr>
-	<td>EMBEDDED_PORTLETS_PANEL_TOGGLE</td>
-	<td>//li/a[contains(@id,'embeddedPortlets')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>EMBEDDED_PORTLETS_CHECKBOX_1</td>
-	<td>//div[contains(@id,'embeddedPortlets')]//tbody/tr[1]/td[1]//input</td>
-	<td></td>
-</tr>
-<tr>
-	<td>EMBEDDED_PORTLETS_CHECKBOX_2</td>
-	<td>//div[contains(@id,'embeddedPortlets')]//tbody/tr[2]/td[1]//input</td>
-	<td></td>
-</tr>
-<tr>
-	<td>EMBEDDED_PORTLETS_PORTLET_ID_1</td>
-	<td>//div[contains(@id,'embeddedPortlets')]//tbody/tr[1]/td[2]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>EMBEDDED_PORTLETS_PORTLET_ID_2</td>
-	<td>//div[contains(@id,'embeddedPortlets')]//tbody/tr[2]/td[2]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>EMBEDDED_PORTLETS_TITLE_1</td>
-	<td>//div[contains(@id,'embeddedPortlets')]//tbody/tr[1]/td[3]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>EMBEDDED_PORTLETS_TITLE_2</td>
-	<td>//div[contains(@id,'embeddedPortlets')]//tbody/tr[2]/td[3]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>EMBEDDED_PORTLETS_STATUS_1</td>
-	<td>//div[contains(@id,'embeddedPortlets')]//tbody/tr[1]/td[4]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>EMBEDDED_PORTLETS_STATUS_2</td>
-	<td>//div[contains(@id,'embeddedPortlets')]//tbody/tr[2]/td[4]</td>
 	<td></td>
 </tr>
 <tr>

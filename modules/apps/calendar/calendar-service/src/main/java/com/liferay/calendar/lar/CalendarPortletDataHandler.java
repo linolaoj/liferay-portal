@@ -24,20 +24,20 @@ import com.liferay.calendar.service.CalendarLocalService;
 import com.liferay.calendar.service.CalendarNotificationTemplateLocalService;
 import com.liferay.calendar.service.CalendarResourceLocalService;
 import com.liferay.calendar.util.CalendarResourceUtil;
+import com.liferay.exportimport.kernel.lar.BasePortletDataHandler;
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.kernel.lar.PortletDataHandler;
+import com.liferay.exportimport.kernel.lar.PortletDataHandlerBoolean;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
+import com.liferay.exportimport.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.exportimport.lar.BasePortletDataHandler;
-import com.liferay.portlet.exportimport.lar.PortletDataContext;
-import com.liferay.portlet.exportimport.lar.PortletDataHandler;
-import com.liferay.portlet.exportimport.lar.PortletDataHandlerBoolean;
-import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
-import com.liferay.portlet.exportimport.lar.StagedModelType;
 
 import java.util.List;
 
@@ -147,8 +147,6 @@ public class CalendarPortletDataHandler extends BasePortletDataHandler {
 			PortletPreferences portletPreferences)
 		throws Exception {
 
-		portletDataContext.addPortletPermissions(RESOURCE_NAME);
-
 		Element rootElement = addExportDataRootElement(portletDataContext);
 
 		if (portletDataContext.getBooleanParameter(NAMESPACE, "calendars")) {
@@ -201,8 +199,6 @@ public class CalendarPortletDataHandler extends BasePortletDataHandler {
 			PortletDataContext portletDataContext, String portletId,
 			PortletPreferences portletPreferences, String data)
 		throws Exception {
-
-		portletDataContext.importPortletPermissions(RESOURCE_NAME);
 
 		if (portletDataContext.getBooleanParameter(NAMESPACE, "calendars")) {
 			Element calendarsElement =
@@ -348,9 +344,6 @@ public class CalendarPortletDataHandler extends BasePortletDataHandler {
 
 		_calendarResourceLocalService = calendarResourceLocalService;
 	}
-
-	protected static final String RESOURCE_NAME =
-		"com.liferay.portlet.calendar";
 
 	private CalendarBookingLocalService _calendarBookingLocalService;
 	private CalendarLocalService _calendarLocalService;

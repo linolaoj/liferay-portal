@@ -56,6 +56,11 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
+	public void testExceptionVariableName() throws Exception {
+		test("ExceptionVariableName.testjava");
+	}
+
+	@Test
 	public void testFormatAnnotations() throws Exception {
 		test("FormatAnnotations.testjava");
 	}
@@ -91,6 +96,11 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	@Test
 	public void testIncorrectClose() throws Exception {
 		test("IncorrectClose.testjava");
+	}
+
+	@Test
+	public void testIncorrectCopyright() throws Exception {
+		test("IncorrectCopyright.testjava", "File must start with copyright:");
 	}
 
 	@Test

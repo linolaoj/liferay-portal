@@ -33,7 +33,13 @@ portletURL.setParameter("tag", StringPool.BLANK);
 	searchContainerId="<%= searchContainerId %>"
 >
 	<liferay-frontend:management-bar-buttons>
-		<liferay-frontend:management-bar-button cssClass="infoPanelToggler" disabled="<%= false %>" href="javascript:;" icon="info-circle" label="info" />
+		<liferay-frontend:management-bar-sidenav-toggler-button
+			disabled="<%= false %>"
+			href="javascript:;"
+			icon="info-circle"
+			label="info"
+			sidenavId='<%= liferayPortletResponse.getNamespace() + "infoPanelId" %>'
+		/>
 
 		<liferay-util:include page="/bookmarks/display_style_buttons.jsp" servletContext="<%= application %>" />
 	</liferay-frontend:management-bar-buttons>
@@ -58,6 +64,13 @@ portletURL.setParameter("tag", StringPool.BLANK);
 	</liferay-frontend:management-bar-filters>
 
 	<liferay-frontend:management-bar-action-buttons>
+		<liferay-frontend:management-bar-sidenav-toggler-button
+			disabled="<%= false %>"
+			href="javascript:;"
+			icon="info-circle"
+			label="info"
+			sidenavId='<%= liferayPortletResponse.getNamespace() + "infoPanelId" %>'
+		/>
 
 		<%
 		String taglibURL = "javascript:" + renderResponse.getNamespace() + "deleteEntries();";

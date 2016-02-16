@@ -21,12 +21,12 @@ import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapListener;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
-import com.liferay.portal.model.Release;
+import com.liferay.portal.kernel.service.ReleaseLocalService;
 import com.liferay.portal.output.stream.container.OutputStreamContainer;
 import com.liferay.portal.output.stream.container.OutputStreamContainerFactory;
 import com.liferay.portal.output.stream.container.OutputStreamContainerFactoryTracker;
-import com.liferay.portal.service.ReleaseLocalService;
 import com.liferay.portal.verify.VerifyException;
 import com.liferay.portal.verify.VerifyProcess;
 import com.liferay.portal.verify.extender.internal.configuration.VerifyProcessTrackerConfiguration;
@@ -39,7 +39,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
@@ -132,24 +131,18 @@ public class VerifyProcessTracker {
 		_verifyProcessTrackerConfiguration = Configurable.createConfigurable(
 			VerifyProcessTrackerConfiguration.class, properties);
 
-		try {
-			VerifyServiceTrackerMapListener verifyServiceTrackerMapListener =
-				null;
+		VerifyServiceTrackerMapListener verifyServiceTrackerMapListener = null;
 
-			if (_verifyProcessTrackerConfiguration.autoVerify()) {
-				verifyServiceTrackerMapListener =
-					new VerifyServiceTrackerMapListener();
-			}
-
-			_verifyProcesses = ServiceTrackerMapFactory.singleValueMap(
-				bundleContext, VerifyProcess.class, "verify.process.name",
-				verifyServiceTrackerMapListener);
-
-			_verifyProcesses.open();
+		if (_verifyProcessTrackerConfiguration.autoVerify()) {
+			verifyServiceTrackerMapListener =
+				new VerifyServiceTrackerMapListener();
 		}
-		catch (InvalidSyntaxException ise) {
-			throw new IllegalStateException(ise);
-		}
+
+		_verifyProcesses = ServiceTrackerMapFactory.singleValueMap(
+			bundleContext, VerifyProcess.class, "verify.process.name",
+			verifyServiceTrackerMapListener);
+
+		_verifyProcesses.open();
 	}
 
 	protected void close(OutputStream outputStream) {

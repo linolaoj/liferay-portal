@@ -14,26 +14,26 @@
 
 package com.liferay.document.library.repository.cmis.internal.model;
 
+import com.liferay.document.library.kernel.exception.NoSuchFileEntryException;
+import com.liferay.document.library.kernel.service.DLAppHelperLocalServiceUtil;
+import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.document.library.repository.cmis.internal.CMISRepository;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+import com.liferay.exportimport.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.RepositoryModelOperation;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.UserLocalServiceUtil;
-import com.liferay.portlet.documentlibrary.exception.NoSuchFileEntryException;
-import com.liferay.portlet.documentlibrary.service.DLAppHelperLocalServiceUtil;
-import com.liferay.portlet.documentlibrary.util.DLUtil;
-import com.liferay.portlet.expando.model.ExpandoBridge;
-import com.liferay.portlet.exportimport.lar.StagedModelType;
 
 import java.io.InputStream;
 import java.io.Serializable;

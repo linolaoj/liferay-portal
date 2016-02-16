@@ -14,25 +14,27 @@
 
 package com.liferay.layout.admin.web.display.context;
 
+import com.liferay.exportimport.kernel.background.task.BackgroundTaskExecutorNames;
+import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.layout.admin.web.constants.LayoutAdminPortletKeys;
-import com.liferay.portal.exception.NoSuchLayoutSetBranchException;
+import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
+import com.liferay.portal.kernel.exception.NoSuchLayoutSetBranchException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.LayoutSet;
+import com.liferay.portal.kernel.model.LayoutSetBranch;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.service.LayoutSetBranchLocalServiceUtil;
+import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
+import com.liferay.portal.kernel.service.permission.LayoutPermissionUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.LayoutConstants;
-import com.liferay.portal.model.LayoutSet;
-import com.liferay.portal.model.LayoutSetBranch;
-import com.liferay.portal.service.LayoutSetBranchLocalServiceUtil;
-import com.liferay.portal.service.permission.GroupPermissionUtil;
-import com.liferay.portal.service.permission.LayoutPermissionUtil;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.exportimport.staging.StagingUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -95,7 +97,7 @@ public class LayoutsTreeDisplayContext extends BaseLayoutDisplayContext {
 		throws PortalException {
 
 		if (isLayoutSetBranchSelected(layoutSetBranch)) {
-			return "disabled";
+			return "active";
 		}
 
 		return StringPool.BLANK;
@@ -125,10 +127,6 @@ public class LayoutsTreeDisplayContext extends BaseLayoutDisplayContext {
 
 	public String getLayoutSetBranchURL(LayoutSetBranch layoutSetBranch)
 		throws PortalException {
-
-		if (isLayoutSetBranchSelected(layoutSetBranch)) {
-			return null;
-		}
 
 		PortletURL layoutSetBranchURL = PortalUtil.getControlPanelPortletURL(
 			liferayPortletRequest, LayoutAdminPortletKeys.GROUP_PAGES,
@@ -253,6 +251,39 @@ public class LayoutsTreeDisplayContext extends BaseLayoutDisplayContext {
 		}
 
 		return true;
+	}
+
+	public boolean isShowStagingProcessMessage() throws PortalException {
+		Group group = getSelGroup();
+
+		if (!GroupPermissionUtil.contains(
+				themeDisplay.getPermissionChecker(), group,
+				ActionKeys.PUBLISH_STAGING)) {
+
+			return false;
+		}
+
+		Group backgroundTaskExcutorGroup = null;
+
+		if (group.isStagingGroup()) {
+			backgroundTaskExcutorGroup = getLiveGroup();
+		}
+		else {
+			backgroundTaskExcutorGroup = getStagingGroup();
+		}
+
+		int incompleteBackgroundTaskCount =
+			BackgroundTaskManagerUtil.getBackgroundTasksCount(
+				backgroundTaskExcutorGroup.getGroupId(),
+				BackgroundTaskExecutorNames.
+					LAYOUT_STAGING_BACKGROUND_TASK_EXECUTOR,
+				false);
+
+		if (incompleteBackgroundTaskCount > 0) {
+			return true;
+		}
+
+		return false;
 	}
 
 	protected LayoutSetBranch getLayoutSetBranch() throws PortalException {

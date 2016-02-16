@@ -28,6 +28,7 @@ import com.liferay.journal.util.impl.JournalUtil;
 import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.PortletRequestModel;
+import com.liferay.portal.kernel.service.ClassNameLocalServiceUtil;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -36,14 +37,14 @@ import com.liferay.portal.kernel.test.util.TestPropsUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.xml.Attribute;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.UnsecureSAXReaderUtil;
-import com.liferay.portal.service.ClassNameLocalServiceUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.util.PortalUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -177,6 +178,48 @@ public class JournalTransformerTest {
 		content = JournalUtil.transform(
 			null, tokens, Constants.VIEW, "fr_CA",
 			UnsecureSAXReaderUtil.read(xml), null, script,
+			TemplateConstants.LANG_TYPE_VM);
+
+		Assert.assertEquals("Joe Bloggs", content);
+	}
+
+	@Test
+	public void testLocaleTransformerListenerNestedFieldWithNoTranslation()
+		throws Exception {
+
+		Map<String, String> tokens = getTokens();
+
+		Map<Locale, String> contents = new HashMap<>();
+
+		contents.put(LocaleUtil.US, "Joe Bloggs");
+
+		String xml = DDMStructureTestUtil.getSampleStructuredContent(
+			contents, LanguageUtil.getLanguageId(LocaleUtil.US));
+
+		Document document = UnsecureSAXReaderUtil.read(xml);
+
+		Element rootElement = document.getRootElement();
+
+		Attribute availableLocalesAttribute = rootElement.attribute(
+			"available-locales");
+
+		availableLocalesAttribute.setValue("en_US,pt_BR");
+
+		Element dynamicElement = (Element)document.selectSingleNode(
+			"//dynamic-element");
+
+		dynamicElement.addElement("nestedElement");
+
+		String script = "$name.getData()";
+
+		String content = JournalUtil.transform(
+			null, tokens, Constants.VIEW, "en_US", document, null, script,
+			TemplateConstants.LANG_TYPE_VM);
+
+		Assert.assertEquals("Joe Bloggs", content);
+
+		content = JournalUtil.transform(
+			null, tokens, Constants.VIEW, "pt_BR", document, null, script,
 			TemplateConstants.LANG_TYPE_VM);
 
 		Assert.assertEquals("Joe Bloggs", content);

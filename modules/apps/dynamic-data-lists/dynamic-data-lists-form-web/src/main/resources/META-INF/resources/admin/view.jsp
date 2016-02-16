@@ -25,14 +25,18 @@ portletURL.setParameter("displayStyle", displayStyle);
 
 RecordSetSearch recordSetSearch = new RecordSetSearch(renderRequest, portletURL);
 
-String orderByCol = ParamUtil.getString(request, "orderByCol", "modified-date");
-String orderByType = ParamUtil.getString(request, "orderByType", "asc");
+OrderByComparator<DDLRecordSet> orderByComparator = DDLFormAdminPortletUtil.getDDLRecordSetOrderByComparator(ddlFormAdminDisplayContext.getOrderByCol(), ddlFormAdminDisplayContext.getOrderByType());
 
-OrderByComparator<DDLRecordSet> orderByComparator = DDLFormAdminPortletUtil.getDDLRecordSetOrderByComparator(orderByCol, orderByType);
-
-recordSetSearch.setOrderByCol(orderByCol);
+recordSetSearch.setOrderByCol(ddlFormAdminDisplayContext.getOrderByCol());
 recordSetSearch.setOrderByComparator(orderByComparator);
-recordSetSearch.setOrderByType(orderByType);
+recordSetSearch.setOrderByType(ddlFormAdminDisplayContext.getOrderByType());
+
+if (recordSetSearch.isSearch()) {
+	recordSetSearch.setEmptyResultsMessage("no-forms-were-found");
+}
+else {
+	recordSetSearch.setEmptyResultsMessage("there-are-no-forms");
+}
 %>
 
 <liferay-util:include page="/admin/search_bar.jsp" servletContext="<%= application %>" />
@@ -42,10 +46,12 @@ recordSetSearch.setOrderByType(orderByType);
 <div class="container-fluid-1280" id="<portlet:namespace />formContainer">
 	<aui:form action="<%= portletURL.toString() %>" method="post" name="searchContainerForm">
 		<aui:input name="redirect" type="hidden" value="<%= portletURL.toString() %>" />
+		<aui:input name="deleteRecordSetIds" type="hidden" />
 
 		<liferay-ui:search-container
 			emptyResultsMessage="no-forms-were-found"
-			id="searchContainer"
+			id="ddlRecordSet"
+			rowChecker="<%= new EmptyOnClickRowChecker(renderResponse) %>"
 			searchContainer="<%= recordSetSearch %>"
 		>
 
@@ -74,9 +80,9 @@ recordSetSearch.setOrderByType(orderByType);
 
 				<c:choose>
 					<c:when test='<%= displayStyle.equals("descriptive") %>'>
-						<liferay-ui:search-container-column-image
-							src='<%= themeDisplay.getPathThemeImages() + "/file_system/large/article.png" %>'
-							toggleRowChecker="<%= true %>"
+						<liferay-ui:search-container-column-icon
+							cssClass="asset-icon"
+							icon="forms"
 						/>
 
 						<liferay-ui:search-container-column-jsp
@@ -89,48 +95,19 @@ recordSetSearch.setOrderByType(orderByType);
 							path="/admin/record_set_action.jsp"
 						/>
 					</c:when>
-					<c:when test='<%= displayStyle.equals("icon") %>'>
-
-						<%
-						row.setCssClass("col-md-3 col-sm-4 col-xs-12");
-						%>
-
-						<liferay-ui:search-container-column-text colspan="<%= 2 %>">
-							<liferay-frontend:icon-vertical-card
-								actionJsp="/admin/record_set_action.jsp"
-								actionJspServletContext="<%= application %>"
-								cssClass="entry-display-style"
-								icon="forms"
-								resultRow="<%= row %>"
-								showCheckbox= "<%= false %>"
-								title="<%= HtmlUtil.escape(recordSet.getName(locale)) %>"
-								url="<%= rowURL %>"
-							>
-								<liferay-frontend:vertical-card-sticker-bottom>
-									<liferay-ui:user-portrait
-										cssClass="sticker sticker-bottom"
-										imageCssClass="user-icon-lg"
-										userId="<%= recordSet.getUserId() %>"
-									/>
-								</liferay-frontend:vertical-card-sticker-bottom>
-
-								<liferay-frontend:vertical-card-header>
-									<liferay-ui:message arguments="<%= new String[] {LanguageUtil.getTimeDescription(locale, System.currentTimeMillis() - recordSet.getModifiedDate().getTime(), true), HtmlUtil.escape(recordSet.getUserName())} %>" key="x-ago-by-x" translateArguments="<%= false %>" />
-								</liferay-frontend:vertical-card-header>
-							</liferay-frontend:icon-vertical-card>
-						</liferay-ui:search-container-column-text>
-					</c:when>
 					<c:otherwise>
 
 						<liferay-ui:search-container-column-text
 							href="<%= rowURL %>"
 							name="name"
+							truncate="<%= true %>"
 							value="<%= HtmlUtil.escape(recordSet.getName(locale)) %>"
 						/>
 
 						<liferay-ui:search-container-column-text
 							name="description"
-							value="<%= HtmlUtil.escape(StringUtil.shorten(recordSet.getDescription(locale), 100)) %>"
+							truncate="<%= true %>"
+							value="<%= HtmlUtil.escape(recordSet.getDescription(locale)) %>"
 						/>
 
 						<liferay-ui:search-container-column-date

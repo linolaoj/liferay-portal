@@ -71,13 +71,23 @@
 	<td></td>
 </tr>
 <tr>
+	<td>SELECTION_METHOD_SELECT</td>
+	<td>//select[contains(@id,'selectionMethod')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SOURCE_SCOPE_SELECT</td>
 	<td>//div[@class='select-asset-selector']/div/a[@title='Select']/span</td>
 	<td></td>
 </tr>
 <tr>
 	<td>SETUP_DISPLAY_SETTINGS</td>
-	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Display Settings')]</td>
+	<td>//a[contains(@class,'collapse-icon') and contains(.,'Display Settings')] | //ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Display Settings')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
 	<td></td>
 </tr>
 <!--SETUP_DISPLAY_SETTINGS-->

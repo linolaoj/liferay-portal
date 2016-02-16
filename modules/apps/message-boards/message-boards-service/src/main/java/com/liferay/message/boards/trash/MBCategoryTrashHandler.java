@@ -14,30 +14,30 @@
 
 package com.liferay.message.boards.trash;
 
+import com.liferay.message.boards.kernel.model.MBCategory;
+import com.liferay.message.boards.kernel.model.MBThread;
+import com.liferay.message.boards.kernel.service.MBCategoryLocalService;
+import com.liferay.message.boards.kernel.service.MBThreadLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.ContainerModel;
+import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.portlet.PortletProvider;
 import com.liferay.portal.kernel.portlet.PortletProviderUtil;
+import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.trash.BaseTrashHandler;
 import com.liferay.portal.kernel.trash.TrashActionKeys;
 import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil;
 import com.liferay.portal.kernel.trash.TrashRenderer;
 import com.liferay.portal.kernel.trash.TrashRendererFactory;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.model.ContainerModel;
-import com.liferay.portal.model.LayoutConstants;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.PortletURLFactoryUtil;
-import com.liferay.portlet.messageboards.model.MBCategory;
-import com.liferay.portlet.messageboards.model.MBThread;
-import com.liferay.portlet.messageboards.service.MBCategoryLocalService;
-import com.liferay.portlet.messageboards.service.MBThreadLocalService;
 import com.liferay.portlet.messageboards.service.permission.MBCategoryPermission;
 import com.liferay.portlet.messageboards.util.MBUtil;
-import com.liferay.portlet.trash.model.TrashEntry;
+import com.liferay.trash.kernel.model.TrashEntry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +54,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Eduardo Garcia
  */
 @Component(
-	property = {"model.class.name=com.liferay.portlet.messageboards.model.MBCategory"},
+	property = {"model.class.name=com.liferay.message.boards.kernel.model.MBCategory"},
 	service = TrashHandler.class
 )
 public class MBCategoryTrashHandler extends BaseTrashHandler {
@@ -438,7 +438,7 @@ public class MBCategoryTrashHandler extends BaseTrashHandler {
 	}
 
 	@Reference(
-		target = "(model.class.name=com.liferay.portlet.messageboards.model.MBCategory)",
+		target = "(model.class.name=com.liferay.message.boards.kernel.model.MBCategory)",
 		unbind = "-"
 	)
 	protected void setTrashRendererFactory(

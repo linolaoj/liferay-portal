@@ -16,10 +16,15 @@ package com.liferay.polls.model;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+import com.liferay.expando.kernel.model.ExpandoBridge;
 
-import com.liferay.portlet.exportimport.lar.StagedModelType;
+import com.liferay.exportimport.kernel.lar.StagedModelType;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.Validator;
+
+import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -277,7 +282,7 @@ public class PollsQuestionWrapper implements PollsQuestion,
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _pollsQuestion.getExpandoBridge();
 	}
 
@@ -342,7 +347,7 @@ public class PollsQuestionWrapper implements PollsQuestion,
 	}
 
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
+	public Serializable getPrimaryKeyObj() {
 		return _pollsQuestion.getPrimaryKeyObj();
 	}
 
@@ -510,8 +515,7 @@ public class PollsQuestionWrapper implements PollsQuestion,
 	}
 
 	@Override
-	public boolean isExpired(
-		com.liferay.portal.service.ServiceContext serviceContext,
+	public boolean isExpired(ServiceContext serviceContext,
 		Date defaultCreateDate) {
 		return _pollsQuestion.isExpired(serviceContext, defaultCreateDate);
 	}
@@ -528,14 +532,14 @@ public class PollsQuestionWrapper implements PollsQuestion,
 
 	@Override
 	public void prepareLocalizedFieldsForImport()
-		throws com.liferay.portal.LocaleException {
+		throws com.liferay.portal.kernel.exception.LocaleException {
 		_pollsQuestion.prepareLocalizedFieldsForImport();
 	}
 
 	@Override
 	public void prepareLocalizedFieldsForImport(
 		java.util.Locale defaultImportLocale)
-		throws com.liferay.portal.LocaleException {
+		throws com.liferay.portal.kernel.exception.LocaleException {
 		_pollsQuestion.prepareLocalizedFieldsForImport(defaultImportLocale);
 	}
 
@@ -630,19 +634,17 @@ public class PollsQuestionWrapper implements PollsQuestion,
 
 	@Override
 	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
 		_pollsQuestion.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_pollsQuestion.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_pollsQuestion.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -712,7 +714,7 @@ public class PollsQuestionWrapper implements PollsQuestion,
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_pollsQuestion.setPrimaryKeyObj(primaryKeyObj);
 	}
 
@@ -828,7 +830,7 @@ public class PollsQuestionWrapper implements PollsQuestion,
 	}
 
 	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.polls.model.PollsQuestion> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.polls.model.PollsQuestion> toCacheModel() {
 		return _pollsQuestion.toCacheModel();
 	}
 

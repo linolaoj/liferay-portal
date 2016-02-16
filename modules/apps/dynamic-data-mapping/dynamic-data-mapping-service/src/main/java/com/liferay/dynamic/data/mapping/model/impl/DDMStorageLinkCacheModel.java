@@ -18,10 +18,10 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.dynamic.data.mapping.model.DDMStorageLink;
 
+import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -108,10 +108,15 @@ public class DDMStorageLinkCacheModel implements CacheModel<DDMStorageLink>,
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		uuid = objectInput.readUTF();
+
 		storageLinkId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		classNameId = objectInput.readLong();
+
 		classPK = objectInput.readLong();
+
 		structureId = objectInput.readLong();
 	}
 
@@ -126,9 +131,13 @@ public class DDMStorageLinkCacheModel implements CacheModel<DDMStorageLink>,
 		}
 
 		objectOutput.writeLong(storageLinkId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(classNameId);
+
 		objectOutput.writeLong(classPK);
+
 		objectOutput.writeLong(structureId);
 	}
 

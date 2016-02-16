@@ -16,6 +16,7 @@ package com.liferay.source.formatter;
 
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
+import com.liferay.portal.kernel.nio.charset.CharsetDecoderUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -38,6 +39,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -545,6 +549,21 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		processErrorMessage(fileName, "plus: " + fileName + " " + lineCount);
 	}
 
+	protected void checkUTF8(File file, String fileName) throws Exception {
+		byte[] bytes = FileUtil.getBytes(file);
+
+		try {
+			CharsetDecoder charsetDecoder =
+				CharsetDecoderUtil.getCharsetDecoder(
+					StringPool.UTF8, CodingErrorAction.REPORT);
+
+			charsetDecoder.decode(ByteBuffer.wrap(bytes));
+		}
+		catch (Exception e) {
+			processErrorMessage(fileName, "UTF-8: " + fileName);
+		}
+	}
+
 	protected abstract String doFormat(
 			File file, String fileName, String absolutePath, String content)
 		throws Exception;
@@ -626,6 +645,18 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 			if (!content.contains(copyright)) {
 				processErrorMessage(fileName, "(c): " + fileName);
 			}
+			else if (!content.startsWith(copyright) &&
+					 !content.startsWith("<%--\n" + copyright)) {
+
+				processErrorMessage(
+					fileName, "File must start with copyright: " + fileName);
+			}
+		}
+		else if (!content.startsWith(copyright) &&
+				 !content.startsWith("<%--\n" + copyright)) {
+
+			processErrorMessage(
+				fileName, "File must start with copyright: " + fileName);
 		}
 
 		if (fileName.endsWith(".jsp") || fileName.endsWith(".jspf")) {
@@ -794,6 +825,8 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 		_errorMessagesMap.remove(fileName);
 
+		checkUTF8(file, fileName);
+
 		String newContent = doFormat(file, fileName, absolutePath, content);
 
 		newContent = StringUtil.replace(
@@ -884,7 +917,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		}
 
 		JavaClass javaClass = new JavaClass(
-			javaClassName, packagePath, file, fileName, absolutePath,
+			javaClassName, packagePath, file, fileName, absolutePath, content,
 			javaClassContent, javaClassLineCount, StringPool.TAB, null,
 			javaTermAccessLevelModifierExcludes, javaSourceProcessor);
 
@@ -908,7 +941,39 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		return line;
 	}
 
-	protected String formatWhitespace(String line, String linePart) {
+	protected String formatWhitespace(String line, boolean javaSource) {
+		String trimmedLine = StringUtil.trimLeading(line);
+
+		line = formatWhitespace(line, trimmedLine, javaSource);
+
+		if (javaSource) {
+			return line;
+		}
+
+		Matcher matcher = javaSourceInsideJSPTagPattern.matcher(line);
+
+		while (matcher.find()) {
+			String linePart = matcher.group(1);
+
+			if (!linePart.startsWith(StringPool.SPACE)) {
+				return StringUtil.replace(
+					line, matcher.group(), "<%= " + linePart + "%>");
+			}
+
+			if (!linePart.endsWith(StringPool.SPACE)) {
+				return StringUtil.replace(
+					line, matcher.group(), "<%=" + linePart + " %>");
+			}
+
+			line = formatWhitespace(line, linePart, true);
+		}
+
+		return line;
+	}
+
+	protected String formatWhitespace(
+		String line, String linePart, boolean javaSource) {
+
 		String originalLinePart = linePart;
 
 		linePart = formatIncorrectSyntax(linePart, "catch(", "catch (", true);
@@ -919,9 +984,38 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		linePart = formatIncorrectSyntax(linePart, "List <", "List<", false);
 		linePart = formatIncorrectSyntax(linePart, "){", ") {", false);
 		linePart = formatIncorrectSyntax(linePart, "]{", "] {", false);
-		linePart = formatIncorrectSyntax(linePart, " [", "[", false);
-		linePart = formatIncorrectSyntax(linePart, "{ ", "{", false);
-		linePart = formatIncorrectSyntax(linePart, " }", "}", false);
+
+		if (javaSource) {
+			linePart = formatIncorrectSyntax(linePart, " [", "[", false);
+			linePart = formatIncorrectSyntax(linePart, "{ ", "{", false);
+			linePart = formatIncorrectSyntax(linePart, " }", "}", false);
+			linePart = formatIncorrectSyntax(linePart, " )", ")", false);
+			linePart = formatIncorrectSyntax(linePart, "( ", "(", false);
+		}
+
+		if (!linePart.startsWith("##")) {
+			for (int x = 0;;) {
+				x = linePart.indexOf(StringPool.DOUBLE_SPACE, x + 1);
+
+				if (x == -1) {
+					break;
+				}
+
+				if (ToolsUtil.isInsideQuotes(linePart, x)) {
+					continue;
+				}
+
+				linePart = StringUtil.replaceFirst(
+					linePart, StringPool.DOUBLE_SPACE, StringPool.SPACE, x);
+			}
+		}
+
+		if (!javaSource) {
+			line = StringUtil.replace(line, originalLinePart, linePart);
+
+			return formatIncorrectSyntax(
+				line, StringPool.SPACE + StringPool.TAB, StringPool.TAB, false);
+		}
 
 		for (int x = 0;;) {
 			x = linePart.indexOf(CharPool.EQUAL, x + 1);
@@ -960,21 +1054,6 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 				linePart = StringUtil.replaceLast(
 					linePart, StringPool.TAB, StringPool.SPACE);
 			}
-		}
-
-		for (int x = 0;;) {
-			x = linePart.indexOf(StringPool.DOUBLE_SPACE, x + 1);
-
-			if (x == -1) {
-				break;
-			}
-
-			if (ToolsUtil.isInsideQuotes(linePart, x)) {
-				continue;
-			}
-
-			linePart = StringUtil.replaceFirst(
-				linePart, StringPool.DOUBLE_SPACE, StringPool.SPACE, x);
 		}
 
 		if (line.contains(StringPool.DOUBLE_SLASH)) {
@@ -1060,34 +1139,6 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 			line, StringPool.SPACE + StringPool.TAB, StringPool.TAB, false);
 	}
 
-	protected String formatWhitespace(
-		String line, String trimmedLine, boolean javaSource) {
-
-		if (javaSource) {
-			return formatWhitespace(line, trimmedLine);
-		}
-
-		Matcher matcher = javaSourceInsideJSPTagPattern.matcher(line);
-
-		while (matcher.find()) {
-			String linePart = matcher.group(1);
-
-			if (!linePart.startsWith(StringPool.SPACE)) {
-				return StringUtil.replace(
-					line, matcher.group(), "<%= " + linePart + "%>");
-			}
-
-			if (!linePart.endsWith(StringPool.SPACE)) {
-				return StringUtil.replace(
-					line, matcher.group(), "<%=" + linePart + " %>");
-			}
-
-			line = formatWhitespace(line, linePart);
-		}
-
-		return line;
-	}
-
 	protected String getAbsolutePath(File file) throws Exception {
 		String absolutePath = file.getCanonicalPath();
 
@@ -1104,8 +1155,8 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 		_annotationsExclusions = SetUtil.fromArray(
 			new String[] {
-				"ArquillianResource", "BeanReference", "Inject", "Mock",
-				"ServiceReference", "SuppressWarnings"
+				"ArquillianResource", "BeanReference", "Captor", "Inject",
+				"Mock", "Reference", "ServiceReference", "SuppressWarnings"
 			});
 
 		return _annotationsExclusions;
@@ -1433,6 +1484,33 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		return StringUtil.count(beforePos, StringPool.NEW_LINE) + 1;
 	}
 
+	protected int getLineLength(String line) {
+		int lineLength = 0;
+
+		int tabLength = 4;
+
+		for (char c : line.toCharArray()) {
+			if (c == CharPool.TAB) {
+				for (int i = 0; i < tabLength; i++) {
+					lineLength++;
+				}
+
+				tabLength = 4;
+			}
+			else {
+				lineLength++;
+
+				tabLength--;
+
+				if (tabLength <= 0) {
+					tabLength = 4;
+				}
+			}
+		}
+
+		return lineLength;
+	}
+
 	protected String getMainReleaseVersion() {
 		if (_mainReleaseVersion != null) {
 			return _mainReleaseVersion;
@@ -1720,6 +1798,20 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 			File file, String fileName, String content, String newContent)
 		throws IOException {
 
+		if (!content.equals(newContent)) {
+			if (sourceFormatterArgs.isPrintErrors()) {
+				_sourceFormatterHelper.printError(fileName, file);
+			}
+
+			if (sourceFormatterArgs.isAutoFix()) {
+				FileUtil.write(file, newContent);
+			}
+			else if (_firstSourceMismatchException == null) {
+				_firstSourceMismatchException = new SourceMismatchException(
+					fileName, content, newContent);
+			}
+		}
+
 		if (sourceFormatterArgs.isPrintErrors()) {
 			List<String> errorMessages = _errorMessagesMap.get(fileName);
 
@@ -1731,22 +1823,6 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		}
 
 		_modifiedFileNames.add(file.getAbsolutePath());
-
-		if (content.equals(newContent)) {
-			return;
-		}
-
-		if (sourceFormatterArgs.isAutoFix()) {
-			FileUtil.write(file, newContent);
-		}
-		else if (_firstSourceMismatchException == null) {
-			_firstSourceMismatchException = new SourceMismatchException(
-				fileName, content, newContent);
-		}
-
-		if (sourceFormatterArgs.isPrintErrors()) {
-			_sourceFormatterHelper.printError(fileName, file);
-		}
 	}
 
 	protected String replacePrimitiveWrapperInstantiation(String line) {

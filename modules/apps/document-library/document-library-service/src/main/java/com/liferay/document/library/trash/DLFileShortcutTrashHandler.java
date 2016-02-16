@@ -14,9 +14,17 @@
 
 package com.liferay.document.library.trash;
 
+import com.liferay.document.library.kernel.exception.NoSuchFolderException;
+import com.liferay.document.library.kernel.model.DLFileShortcut;
+import com.liferay.document.library.kernel.model.DLFileShortcutConstants;
+import com.liferay.document.library.kernel.model.DLFolderConstants;
+import com.liferay.document.library.kernel.service.DLAppLocalService;
+import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.ContainerModel;
+import com.liferay.portal.kernel.model.TrashedModel;
 import com.liferay.portal.kernel.repository.DocumentRepository;
 import com.liferay.portal.kernel.repository.LocalRepository;
 import com.liferay.portal.kernel.repository.Repository;
@@ -27,22 +35,14 @@ import com.liferay.portal.kernel.repository.model.FileShortcut;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.trash.TrashActionKeys;
 import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.trash.TrashRenderer;
 import com.liferay.portal.kernel.trash.TrashRendererFactory;
-import com.liferay.portal.model.ContainerModel;
-import com.liferay.portal.model.TrashedModel;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.documentlibrary.exception.NoSuchFolderException;
-import com.liferay.portlet.documentlibrary.model.DLFileShortcut;
-import com.liferay.portlet.documentlibrary.model.DLFileShortcutConstants;
-import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
-import com.liferay.portlet.documentlibrary.service.DLAppLocalService;
 import com.liferay.portlet.documentlibrary.service.permission.DLFileShortcutPermission;
 import com.liferay.portlet.documentlibrary.service.permission.DLFolderPermission;
-import com.liferay.portlet.documentlibrary.util.DLUtil;
-import com.liferay.portlet.trash.model.TrashEntry;
+import com.liferay.trash.kernel.model.TrashEntry;
 
 import javax.portlet.PortletRequest;
 
@@ -56,7 +56,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	property = {
-		"model.class.name=com.liferay.portlet.documentlibrary.model.DLFileShortcut"
+		"model.class.name=com.liferay.document.library.kernel.model.DLFileShortcut"
 	},
 	service = TrashHandler.class
 )
@@ -311,7 +311,7 @@ public class DLFileShortcutTrashHandler extends DLBaseTrashHandler {
 	}
 
 	@Reference(
-		target = "(model.class.name=com.liferay.portlet.documentlibrary.model.DLFileShortcut)",
+		target = "(model.class.name=com.liferay.document.library.kernel.model.DLFileShortcut)",
 		unbind = "-"
 	)
 	protected void setTrashRendererFactory(

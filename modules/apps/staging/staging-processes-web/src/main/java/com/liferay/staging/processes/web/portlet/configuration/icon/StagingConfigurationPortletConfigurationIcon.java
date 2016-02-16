@@ -14,9 +14,10 @@
 
 package com.liferay.staging.processes.web.portlet.configuration.icon;
 
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIcon;
-import com.liferay.portal.model.User;
-import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.staging.constants.StagingProcessesPortletKeys;
 
 import javax.portlet.PortletRequest;
@@ -55,6 +56,12 @@ public class StagingConfigurationPortletConfigurationIcon
 
 	@Override
 	public boolean isShow() {
+		Group group = themeDisplay.getScopeGroup();
+
+		if (!group.isStaged()) {
+			return false;
+		}
+
 		User user = themeDisplay.getUser();
 
 		if (user.isDefaultUser()) {

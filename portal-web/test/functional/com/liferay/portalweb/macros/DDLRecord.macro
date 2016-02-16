@@ -97,9 +97,11 @@
 	</command>
 
 	<command name="editTranslation">
+		<execute function="Click" locator1="Translation#ADD" />
+
 		<var name="key_localizedLanguage" value="${localizedLanguage}" />
 
-		<execute function="AssertClick" locator1="Translation#AVAILABLE_TRANSLATION" value1="${localizedLanguage}" />
+		<execute function="AssertClick" locator1="Translation#ADD_MENULIST_LANGUAGE" value1="${localizedLanguage}" />
 	</command>
 
 	<command name="editViaRecordViewCP">
@@ -359,6 +361,14 @@
 		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 	</command>
 
+	<command name="removeTranslation">
+		<var name="key_localizedLanguage" value="${localizedLanguage}" />
+
+		<execute function="ClickNoError" locator1="Translation#REMOVE_TRANSLATION" />
+
+		<execute function="Confirm" value1="Are you sure you want to deactivate this language?" />
+	</command>
+
 	<command name="save">
 		<execute macro="Button#clickSave" />
 
@@ -375,6 +385,10 @@
 		<execute macro="Button#clickSubmitForPublication" />
 
 		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
+	</command>
+
+	<command name="viewDefaultLanguage">
+		<execute function="AssertTextEquals" locator1="Translation#DEFAULT_LANGUAGE" value1="${defaultLanguage}" />
 	</command>
 
 	<command name="viewEditPreview">

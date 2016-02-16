@@ -16,8 +16,13 @@ package com.liferay.dynamic.data.mapping.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+
+import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -146,7 +151,7 @@ public class DDMTemplateLinkWrapper implements DDMTemplateLink,
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _ddmTemplateLink.getExpandoBridge();
 	}
 
@@ -161,7 +166,7 @@ public class DDMTemplateLinkWrapper implements DDMTemplateLink,
 	}
 
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
+	public Serializable getPrimaryKeyObj() {
 		return _ddmTemplateLink.getPrimaryKeyObj();
 	}
 
@@ -258,19 +263,17 @@ public class DDMTemplateLinkWrapper implements DDMTemplateLink,
 
 	@Override
 	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
 		_ddmTemplateLink.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_ddmTemplateLink.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_ddmTemplateLink.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -290,7 +293,7 @@ public class DDMTemplateLinkWrapper implements DDMTemplateLink,
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_ddmTemplateLink.setPrimaryKeyObj(primaryKeyObj);
 	}
 
@@ -315,7 +318,7 @@ public class DDMTemplateLinkWrapper implements DDMTemplateLink,
 	}
 
 	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.dynamic.data.mapping.model.DDMTemplateLink> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.dynamic.data.mapping.model.DDMTemplateLink> toCacheModel() {
 		return _ddmTemplateLink.toCacheModel();
 	}
 

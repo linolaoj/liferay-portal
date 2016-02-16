@@ -16,8 +16,13 @@ package com.liferay.shopping.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+
+import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -288,7 +293,7 @@ public class ShoppingCouponWrapper implements ShoppingCoupon,
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _shoppingCoupon.getExpandoBridge();
 	}
 
@@ -363,7 +368,7 @@ public class ShoppingCouponWrapper implements ShoppingCoupon,
 	}
 
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
+	public Serializable getPrimaryKeyObj() {
 		return _shoppingCoupon.getPrimaryKeyObj();
 	}
 
@@ -554,19 +559,17 @@ public class ShoppingCouponWrapper implements ShoppingCoupon,
 
 	@Override
 	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
 		_shoppingCoupon.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_shoppingCoupon.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_shoppingCoupon.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -646,7 +649,7 @@ public class ShoppingCouponWrapper implements ShoppingCoupon,
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_shoppingCoupon.setPrimaryKeyObj(primaryKeyObj);
 	}
 
@@ -691,7 +694,7 @@ public class ShoppingCouponWrapper implements ShoppingCoupon,
 	}
 
 	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.shopping.model.ShoppingCoupon> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.shopping.model.ShoppingCoupon> toCacheModel() {
 		return _shoppingCoupon.toCacheModel();
 	}
 

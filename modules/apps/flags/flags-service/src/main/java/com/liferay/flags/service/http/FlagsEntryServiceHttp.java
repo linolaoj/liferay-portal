@@ -21,9 +21,9 @@ import com.liferay.flags.service.FlagsEntryServiceUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.HttpPrincipal;
+import com.liferay.portal.kernel.service.http.TunnelUtil;
 import com.liferay.portal.kernel.util.MethodHandler;
 import com.liferay.portal.kernel.util.MethodKey;
-import com.liferay.portal.service.http.TunnelUtil;
 
 /**
  * Provides the HTTP utility for the
@@ -60,7 +60,7 @@ public class FlagsEntryServiceHttp {
 		java.lang.String reporterEmailAddress, long reportedUserId,
 		java.lang.String contentTitle, java.lang.String contentURL,
 		java.lang.String reason,
-		com.liferay.portal.service.ServiceContext serviceContext) {
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
 		try {
 			MethodKey methodKey = new MethodKey(FlagsEntryServiceUtil.class,
 					"addEntry", _addEntryParameterTypes0);
@@ -88,6 +88,6 @@ public class FlagsEntryServiceHttp {
 			java.lang.String.class, long.class, java.lang.String.class,
 			long.class, java.lang.String.class, java.lang.String.class,
 			java.lang.String.class,
-			com.liferay.portal.service.ServiceContext.class
+			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 }

@@ -32,13 +32,13 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalServiceUtil;
+import com.liferay.portal.kernel.service.WorkflowInstanceLinkLocalServiceUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.service.WorkflowDefinitionLinkLocalServiceUtil;
-import com.liferay.portal.service.WorkflowInstanceLinkLocalServiceUtil;
-import com.liferay.portal.theme.ThemeDisplay;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -87,10 +87,16 @@ public class CalendarUtil {
 				displayTimeZone = _utcTimeZone;
 			}
 
+			long maxStartTime = Math.max(
+				calendarBooking.getStartTime(), startTime);
+
 			java.util.Calendar startTimeJCalendar = JCalendarUtil.getJCalendar(
-				calendarBooking.getStartTime(), displayTimeZone);
+				maxStartTime, displayTimeZone);
+
+			long minEndTime = Math.min(calendarBooking.getEndTime(), endTime);
+
 			java.util.Calendar endTimeJCalendar = JCalendarUtil.getJCalendar(
-				calendarBooking.getEndTime(), displayTimeZone);
+				minEndTime, displayTimeZone);
 
 			long days = JCalendarUtil.getDaysBetween(
 				startTimeJCalendar, endTimeJCalendar);

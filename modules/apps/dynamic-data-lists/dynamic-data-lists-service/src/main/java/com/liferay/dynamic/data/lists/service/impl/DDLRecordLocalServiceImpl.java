@@ -14,6 +14,8 @@
 
 package com.liferay.dynamic.data.lists.service.impl;
 
+import com.liferay.document.library.kernel.util.DLUtil;
+import com.liferay.dynamic.data.lists.model.DDLFormRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecordConstants;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
@@ -30,9 +32,12 @@ import com.liferay.dynamic.data.mapping.storage.StorageEngineUtil;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverterUtil;
 import com.liferay.dynamic.data.mapping.util.DDMUtil;
 import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverterUtil;
+import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.model.SystemEventConstants;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexable;
@@ -40,6 +45,7 @@ import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ContentTypes;
@@ -50,11 +56,6 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
-import com.liferay.portal.model.SystemEventConstants;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.documentlibrary.util.DLUtil;
-import com.liferay.portlet.expando.model.ExpandoBridge;
 
 import java.io.Serializable;
 
@@ -127,15 +128,9 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 
 		// Workflow
 
-		String assetClassName = (String)serviceContext.getAttribute(
-			"assetClassName");
-
-		if (assetClassName == null) {
-			assetClassName = DDLRecord.class.getName();
-		}
-
 		WorkflowHandlerRegistryUtil.startWorkflowInstance(
-			user.getCompanyId(), groupId, userId, assetClassName,
+			user.getCompanyId(), groupId, userId,
+			getWorkflowAssetClassName(recordSet),
 			recordVersion.getRecordVersionId(), recordVersion, serviceContext);
 
 		return record;
@@ -204,20 +199,18 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 
 			// Workflow
 
-			workflowInstanceLinkLocalService.deleteWorkflowInstanceLinks(
+			deleteWorkflowInstanceLink(
 				record.getCompanyId(), record.getGroupId(),
-				DDLRecord.class.getName(), recordVersion.getPrimaryKey());
+				recordVersion.getPrimaryKey());
 		}
 
 		// Asset
 
-		assetEntryLocalService.deleteEntry(
-			DDLRecord.class.getName(), record.getRecordId());
+		deleteAssetEntry(record.getRecordId());
 
 		// Ratings
 
-		ratingsStatsLocalService.deleteStats(
-			DDLRecord.class.getName(), record.getRecordId());
+		deleteRatingsStats(record.getRecordId());
 
 		return record;
 	}
@@ -764,6 +757,32 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 		return recordVersion;
 	}
 
+	protected void deleteAssetEntry(long recordId) throws PortalException {
+		assetEntryLocalService.deleteEntry(
+			DDLFormRecord.class.getName(), recordId);
+
+		assetEntryLocalService.deleteEntry(DDLRecord.class.getName(), recordId);
+	}
+
+	protected void deleteRatingsStats(long recordId) throws PortalException {
+		ratingsStatsLocalService.deleteStats(
+			DDLFormRecord.class.getName(), recordId);
+
+		ratingsStatsLocalService.deleteStats(
+			DDLRecord.class.getName(), recordId);
+	}
+
+	protected void deleteWorkflowInstanceLink(
+			long companyId, long groupId, long recordVersionId)
+		throws PortalException {
+
+		workflowInstanceLinkLocalService.deleteWorkflowInstanceLinks(
+			companyId, groupId, DDLFormRecord.class.getName(), recordVersionId);
+
+		workflowInstanceLinkLocalService.deleteWorkflowInstanceLinks(
+			companyId, groupId, DDLRecord.class.getName(), recordVersionId);
+	}
+
 	protected String getNextVersion(
 		String version, boolean majorVersion, int workflowAction) {
 
@@ -784,8 +803,16 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 		return versionParts[0] + StringPool.PERIOD + versionParts[1];
 	}
 
+	protected String getWorkflowAssetClassName(DDLRecordSet recordSet) {
+		if (recordSet.getScope() == DDLRecordSetConstants.SCOPE_FORMS) {
+			return DDLFormRecord.class.getName();
+		}
+
+		return DDLRecord.class.getName();
+	}
+
 	/**
-	 * @see com.liferay.portlet.documentlibrary.service.impl.DLFileEntryLocalServiceImpl#isKeepFileVersionLabel(
+	 * @see com.liferay.portlet.documentlibrary.util.DLFileVersionPolicyImpl#isKeepFileVersionLabel(
 	 *      com.liferay.portlet.documentlibrary.model.DLFileEntry,
 	 *      com.liferay.portlet.documentlibrary.model.DLFileVersion,
 	 *      com.liferay.portlet.documentlibrary.model.DLFileVersion,

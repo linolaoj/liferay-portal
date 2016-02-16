@@ -15,6 +15,7 @@
 package com.liferay.journal.trash.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.dynamic.data.mapping.io.DDMFormXSDDeserializerUtil;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
@@ -31,6 +32,11 @@ import com.liferay.journal.service.JournalArticleResourceLocalServiceUtil;
 import com.liferay.journal.service.JournalArticleServiceUtil;
 import com.liferay.journal.service.JournalFolderServiceUtil;
 import com.liferay.journal.test.util.JournalTestUtil;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.ClassedModel;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.WorkflowedModel;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
@@ -41,17 +47,11 @@ import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.PortalRunMode;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.model.ClassedModel;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.WorkflowedModel;
-import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.asset.model.AssetEntry;
 import com.liferay.portlet.trash.test.BaseTrashHandlerTestCase;
 import com.liferay.portlet.trash.test.DefaultWhenIsAssetable;
 import com.liferay.portlet.trash.test.DefaultWhenIsIndexableBaseModel;
@@ -69,7 +69,7 @@ import com.liferay.portlet.trash.test.WhenIsRestorableBaseModel;
 import com.liferay.portlet.trash.test.WhenIsRestorableParentBaseModelFromTrash;
 import com.liferay.portlet.trash.test.WhenIsUpdatableBaseModel;
 import com.liferay.portlet.trash.test.WhenIsVersionableBaseModel;
-import com.liferay.portlet.trash.util.TrashUtil;
+import com.liferay.trash.kernel.util.TrashUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -284,7 +284,7 @@ public class JournalArticleTrashHandlerTest
 		Map<String, byte[]> images = new HashMap<>();
 
 		images.put(
-			"_image_1_0_en_US",
+			"uewn_image_1_en_US",
 			FileUtil.getBytes(
 				clazz, "/com/liferay/journal/dependencies/liferay.png"));
 

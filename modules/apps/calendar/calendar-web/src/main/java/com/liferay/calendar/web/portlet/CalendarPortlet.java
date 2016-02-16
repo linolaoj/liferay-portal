@@ -61,6 +61,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.PortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.search.Document;
@@ -71,7 +73,12 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
@@ -83,6 +90,7 @@ import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -91,16 +99,8 @@ import com.liferay.portal.kernel.util.TimeZoneUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.util.comparator.UserFirstNameComparator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.GroupLocalService;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceContextFactory;
-import com.liferay.portal.service.UserLocalService;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portal.util.comparator.UserFirstNameComparator;
 import com.liferay.util.dao.orm.CustomSQLUtil;
 
 import java.io.File;
@@ -646,17 +646,12 @@ public class CalendarPortlet extends MVCPortlet {
 			java.util.Calendar firstDayJCalendar = JCalendarUtil.getJCalendar(
 				calendarBooking.getStartTime(), timeZone);
 
-			firstDayJCalendar.set(
-				java.util.Calendar.DAY_OF_WEEK_IN_MONTH,
-				startTimeJCalendar.get(
-					java.util.Calendar.DAY_OF_WEEK_IN_MONTH));
+			long startTime = firstDayJCalendar.getTimeInMillis();
 
-			firstDayJCalendar.set(java.util.Calendar.DAY_OF_WEEK, 7);
+			long endTime = startTime + calendarBooking.getDuration();
 
-			calendarBooking.setStartTime(firstDayJCalendar.getTimeInMillis());
-			calendarBooking.setEndTime(
-				firstDayJCalendar.getTimeInMillis() +
-					calendarBooking.getDuration());
+			calendarBooking.setStartTime(startTime);
+			calendarBooking.setEndTime(endTime);
 
 			calendarBooking.setRecurrence(
 				RecurrenceSerializer.serialize(recurrenceObj));
@@ -710,7 +705,7 @@ public class CalendarPortlet extends MVCPortlet {
 	}
 
 	protected long getOffset(
-			CalendarBooking calendarBooking, long startTime,
+			CalendarBooking editedCalendarBookingInstance, long newStartTime,
 			Recurrence recurrence)
 		throws PortalException {
 
@@ -720,37 +715,35 @@ public class CalendarPortlet extends MVCPortlet {
 			frequency = recurrence.getFrequency();
 		}
 
+		long oldStartTime = editedCalendarBookingInstance.getStartTime();
+		TimeZone timeZone = editedCalendarBookingInstance.getTimeZone();
+
 		if (frequency == Frequency.WEEKLY) {
 			CalendarBooking firstInstance =
 				_calendarBookingService.getCalendarBookingInstance(
-					calendarBooking.getCalendarBookingId(), 0);
+					editedCalendarBookingInstance.getCalendarBookingId(), 0);
 
-			java.util.Calendar startTimeJCalendar =
-				CalendarFactoryUtil.getCalendar(
-					startTime, calendarBooking.getTimeZone());
+			java.util.Calendar oldStartTimeJCalendar =
+				CalendarFactoryUtil.getCalendar(oldStartTime, timeZone);
 
 			java.util.Calendar firstInstanceJCalendar =
 				CalendarFactoryUtil.getCalendar(
-					firstInstance.getStartTime(),
-					calendarBooking.getTimeZone());
+					firstInstance.getStartTime(), timeZone);
 
 			if (!JCalendarUtil.isSameDayOfWeek(
-					startTimeJCalendar, firstInstanceJCalendar)) {
+					oldStartTimeJCalendar, firstInstanceJCalendar)) {
 
-				java.util.Calendar currentInstanceJCalendar =
-					CalendarFactoryUtil.getCalendar(
-						calendarBooking.getStartTime(),
-						calendarBooking.getTimeZone());
+				java.util.Calendar newStartTimeJCalendar =
+					CalendarFactoryUtil.getCalendar(newStartTime, timeZone);
 
-				startTimeJCalendar = JCalendarUtil.mergeJCalendar(
-					currentInstanceJCalendar, startTimeJCalendar,
-					calendarBooking.getTimeZone());
+				newStartTimeJCalendar = JCalendarUtil.mergeJCalendar(
+					oldStartTimeJCalendar, newStartTimeJCalendar, timeZone);
 
-				startTime = startTimeJCalendar.getTimeInMillis();
+				newStartTime = newStartTimeJCalendar.getTimeInMillis();
 			}
 		}
 
-		return startTime - calendarBooking.getStartTime();
+		return newStartTime - oldStartTime;
 	}
 
 	protected Recurrence getRecurrence(ActionRequest actionRequest) {

@@ -27,7 +27,9 @@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
 taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
-<%@ page import="com.liferay.dynamic.data.lists.constants.DDLActionKeys" %><%@
+<%@ page import="com.liferay.document.library.kernel.exception.DuplicateFileEntryException" %><%@
+page import="com.liferay.document.library.kernel.exception.FileSizeException" %><%@
+page import="com.liferay.dynamic.data.lists.constants.DDLActionKeys" %><%@
 page import="com.liferay.dynamic.data.lists.constants.DDLPortletKeys" %><%@
 page import="com.liferay.dynamic.data.lists.constants.DDLWebKeys" %><%@
 page import="com.liferay.dynamic.data.lists.exception.NoSuchRecordException" %><%@
@@ -45,6 +47,7 @@ page import="com.liferay.dynamic.data.lists.service.DDLRecordVersionServiceUtil"
 page import="com.liferay.dynamic.data.lists.service.permission.DDLPermission" %><%@
 page import="com.liferay.dynamic.data.lists.service.permission.DDLRecordSetPermission" %><%@
 page import="com.liferay.dynamic.data.lists.util.DDLUtil" %><%@
+page import="com.liferay.dynamic.data.lists.web.configuration.DDLWebConfiguration" %><%@
 page import="com.liferay.dynamic.data.lists.web.display.context.DDLDisplayContext" %><%@
 page import="com.liferay.dynamic.data.lists.web.display.context.DDLViewRecordsDisplayContext" %><%@
 page import="com.liferay.dynamic.data.lists.web.portlet.DDLPortletUtil" %><%@
@@ -56,7 +59,6 @@ page import="com.liferay.dynamic.data.mapping.exception.NoSuchStructureException
 page import="com.liferay.dynamic.data.mapping.exception.StorageFieldRequiredException" %><%@
 page import="com.liferay.dynamic.data.mapping.model.DDMFormField" %><%@
 page import="com.liferay.dynamic.data.mapping.model.DDMStructure" %><%@
-page import="com.liferay.dynamic.data.mapping.model.DDMStructureVersion" %><%@
 page import="com.liferay.dynamic.data.mapping.model.DDMTemplate" %><%@
 page import="com.liferay.dynamic.data.mapping.model.DDMTemplateConstants" %><%@
 page import="com.liferay.dynamic.data.mapping.model.LocalizedValue" %><%@
@@ -69,29 +71,35 @@ page import="com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue" %><%@
 page import="com.liferay.dynamic.data.mapping.storage.DDMFormValues" %><%@
 page import="com.liferay.dynamic.data.mapping.storage.StorageEngineUtil" %><%@
 page import="com.liferay.dynamic.data.mapping.util.DDMUtil" %><%@
-page import="com.liferay.portal.exception.NoSuchWorkflowDefinitionLinkException" %><%@
-page import="com.liferay.portal.exception.PortletPreferencesException" %><%@
 page import="com.liferay.portal.kernel.bean.BeanParamUtil" %><%@
 page import="com.liferay.portal.kernel.dao.orm.QueryUtil" %><%@
 page import="com.liferay.portal.kernel.dao.search.DisplayTerms" %><%@
+page import="com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker" %><%@
 page import="com.liferay.portal.kernel.dao.search.SearchContainer" %><%@
+page import="com.liferay.portal.kernel.exception.NoSuchWorkflowDefinitionLinkException" %><%@
+page import="com.liferay.portal.kernel.exception.PortletPreferencesException" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
 page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil" %><%@
+page import="com.liferay.portal.kernel.model.*" %><%@
+page import="com.liferay.portal.kernel.model.impl.*" %><%@
 page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
 page import="com.liferay.portal.kernel.portlet.PortletProvider" %><%@
 page import="com.liferay.portal.kernel.portlet.PortletProviderUtil" %><%@
+page import="com.liferay.portal.kernel.portlet.PortletURLFactoryUtil" %><%@
 page import="com.liferay.portal.kernel.search.BaseModelSearchResult" %><%@
 page import="com.liferay.portal.kernel.search.Field" %><%@
 page import="com.liferay.portal.kernel.search.SearchContext" %><%@
 page import="com.liferay.portal.kernel.search.SearchContextFactory" %><%@
 page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
+page import="com.liferay.portal.kernel.service.*" %><%@
 page import="com.liferay.portal.kernel.util.Constants" %><%@
+page import="com.liferay.portal.kernel.util.FastDateFormatFactoryUtil" %><%@
 page import="com.liferay.portal.kernel.util.GetterUtil" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.LocaleUtil" %><%@
 page import="com.liferay.portal.kernel.util.OrderByComparator" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
-page import="com.liferay.portal.kernel.util.PrefsParamUtil" %><%@
+page import="com.liferay.portal.kernel.util.PortalUtil" %><%@
 page import="com.liferay.portal.kernel.util.PropsKeys" %><%@
 page import="com.liferay.portal.kernel.util.StringBundler" %><%@
 page import="com.liferay.portal.kernel.util.StringPool" %><%@
@@ -108,12 +116,11 @@ page import="com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil" %><
 page import="com.liferay.portal.model.*" %><%@
 page import="com.liferay.portal.model.impl.*" %><%@
 page import="com.liferay.portal.service.*" %><%@
-page import="com.liferay.portal.util.PortalUtil" %><%@
 page import="com.liferay.portal.util.PrefsPropsUtil" %><%@
-page import="com.liferay.portlet.PortletURLFactoryUtil" %><%@
-page import="com.liferay.portlet.documentlibrary.exception.DuplicateFileEntryException" %><%@
-page import="com.liferay.portlet.documentlibrary.exception.FileSizeException" %><%@
+page import="com.liferay.taglib.search.DateSearchEntry" %><%@
 page import="com.liferay.taglib.search.ResultRow" %>
+
+<%@ page import="java.text.Format" %>
 
 <%@ page import="java.util.ArrayList" %><%@
 page import="java.util.List" %><%@
@@ -133,6 +140,8 @@ page import="javax.portlet.WindowState" %>
 
 <%
 DDLDisplayContext ddlDisplayContext = new DDLDisplayContext(request);
+
+DDLWebConfiguration ddlWebConfiguration = (DDLWebConfiguration)request.getAttribute(DDLWebConfiguration.class.getName());
 %>
 
 <%@ include file="/init-ext.jsp" %>

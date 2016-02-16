@@ -15,13 +15,13 @@
 package com.liferay.site.admin.web.servlet.taglib.ui;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.servlet.taglib.ui.FormNavigatorConstants;
 import com.liferay.portal.kernel.servlet.taglib.ui.FormNavigatorEntry;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceContextThreadLocal;
-import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.taglib.util.CustomAttributesUtil;
 
 import java.util.Locale;
@@ -35,7 +35,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Sergio González
  */
 @Component(
-	property = {"service.ranking:Integer=30"},
+	property = {"service.ranking:Integer=50"},
 	service = FormNavigatorEntry.class
 )
 public class SiteCustomFieldsFormNavigatorEntry
@@ -43,7 +43,7 @@ public class SiteCustomFieldsFormNavigatorEntry
 
 	@Override
 	public String getCategoryKey() {
-		return FormNavigatorConstants.CATEGORY_KEY_SITES_MISCELLANEOUS;
+		return FormNavigatorConstants.CATEGORY_KEY_SITES_GENERAL;
 	}
 
 	@Override

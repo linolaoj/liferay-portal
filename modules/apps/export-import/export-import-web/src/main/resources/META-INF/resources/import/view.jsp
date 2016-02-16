@@ -19,18 +19,37 @@
 <%
 boolean privateLayout = ParamUtil.getBoolean(request, "privateLayout");
 
+String displayStyle = ParamUtil.getString(request, "displayStyle", "list");
+String navigation = ParamUtil.getString(request, "navigation", "all");
+
+String orderByCol = ParamUtil.getString(request, "orderByCol");
+String orderByType = ParamUtil.getString(request, "orderByType");
+
+if (Validator.isNotNull(orderByCol) && Validator.isNotNull(orderByType)) {
+	portalPreferences.setValue(PortletKeys.BACKGROUND_TASK, "entries-order-by-col", orderByCol);
+	portalPreferences.setValue(PortletKeys.BACKGROUND_TASK, "entries-order-by-type", orderByType);
+}
+else {
+	orderByCol = portalPreferences.getValue(PortletKeys.BACKGROUND_TASK, "entries-order-by-col", "create-date");
+	orderByType = portalPreferences.getValue(PortletKeys.BACKGROUND_TASK, "entries-order-by-type", "desc");
+}
+
+String searchContainerId = "importLayoutProcesses";
+
 GroupDisplayContextHelper groupDisplayContextHelper = new GroupDisplayContextHelper(request);
 %>
 
 <liferay-util:include page="/import/navigation.jsp" servletContext="<%= application %>" />
 
-<div class="container-fluid-1280" id="<portlet:namespace />processesContainer">
-	<liferay-util:include page="/import/processes_list/import_layouts_processes.jsp" servletContext="<%= application %>">
-		<liferay-util:param name="groupId" value="<%= String.valueOf(groupDisplayContextHelper.getGroupId()) %>" />
-		<liferay-util:param name="privateLayout" value="<%= String.valueOf(privateLayout) %>" />
-		<liferay-util:param name="validate" value="<%= String.valueOf(Boolean.TRUE) %>" />
-	</liferay-util:include>
-</div>
+<liferay-util:include page="/import/processes_list/view.jsp" servletContext="<%= application %>">
+	<liferay-util:param name="groupId" value="<%= String.valueOf(groupDisplayContextHelper.getGroupId()) %>" />
+	<liferay-util:param name="displayStyle" value="<%= displayStyle %>" />
+	<liferay-util:param name="navigation" value="<%= navigation %>" />
+	<liferay-util:param name="orderByCol" value="<%= orderByCol %>" />
+	<liferay-util:param name="orderByType" value="<%= orderByType %>" />
+	<liferay-util:param name="privateLayout" value="<%= String.valueOf(privateLayout) %>" />
+	<liferay-util:param name="searchContainerId" value="<%= searchContainerId %>" />
+</liferay-util:include>
 
 <portlet:renderURL var="addNewImportProcessURL">
 	<portlet:param name="mvcPath" value="/import/new_import/import_layouts.jsp" />
@@ -50,6 +69,11 @@ GroupDisplayContextHelper groupDisplayContextHelper = new GroupDisplayContextHel
 		<portlet:param name="<%= SearchContainer.DEFAULT_DELTA_PARAM %>" value="<%= ParamUtil.getString(request, SearchContainer.DEFAULT_DELTA_PARAM) %>" />
 		<portlet:param name="groupId" value="<%= String.valueOf(groupDisplayContextHelper.getGroupId()) %>" />
 		<portlet:param name="privateLayout" value="<%= String.valueOf(privateLayout) %>" />
+		<portlet:param name="displayStyle" value="<%= displayStyle %>" />
+		<portlet:param name="navigation" value="<%= navigation %>" />
+		<portlet:param name="orderByCol" value="<%= orderByCol %>" />
+		<portlet:param name="orderByType" value="<%= orderByType %>" />
+		<portlet:param name="searchContainerId" value="<%= searchContainerId %>" />
 	</liferay-portlet:resourceURL>
 
 	new Liferay.ExportImport(

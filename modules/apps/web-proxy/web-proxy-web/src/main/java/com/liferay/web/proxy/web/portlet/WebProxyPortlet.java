@@ -16,6 +16,7 @@ package com.liferay.web.proxy.web.portlet;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.servlet.BufferCacheServletResponse;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.HashMapDictionary;
@@ -23,7 +24,6 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portlet.RenderResponseImpl;
-import com.liferay.web.proxy.web.upgrade.WebProxyWebUpgrade;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -219,9 +219,11 @@ public class WebProxyPortlet extends PortletBridgePortlet {
 		}
 	}
 
-	@Reference(unbind = "-")
-	protected void setWebProxyWebUpgrade(
-		WebProxyWebUpgrade webProxyWebUpgrade) {
+	@Reference(
+		target = "(&(release.bundle.symbolic.name=com.liferay.web.proxy.web)(release.schema.version=1.0.0))",
+		unbind = "-"
+	)
+	protected void setRelease(Release release) {
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

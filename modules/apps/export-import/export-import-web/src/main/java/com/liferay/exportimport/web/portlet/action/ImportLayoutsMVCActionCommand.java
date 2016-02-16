@@ -14,9 +14,25 @@
 
 package com.liferay.exportimport.web.portlet.action;
 
+import com.liferay.document.library.kernel.exception.FileSizeException;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
+import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationConstants;
+import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationSettingsMapFactory;
+import com.liferay.exportimport.kernel.exception.LARFileException;
+import com.liferay.exportimport.kernel.exception.LARFileSizeException;
+import com.liferay.exportimport.kernel.exception.LARTypeException;
+import com.liferay.exportimport.kernel.exception.LayoutImportException;
+import com.liferay.exportimport.kernel.lar.ExportImportHelper;
+import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
+import com.liferay.exportimport.kernel.lar.MissingReference;
+import com.liferay.exportimport.kernel.lar.MissingReferences;
+import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
+import com.liferay.exportimport.kernel.service.ExportImportConfigurationLocalService;
+import com.liferay.exportimport.kernel.service.ExportImportService;
+import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.exportimport.web.constants.ExportImportPortletKeys;
-import com.liferay.portal.LocaleException;
-import com.liferay.portal.exception.LayoutPrototypeException;
+import com.liferay.portal.kernel.exception.LayoutPrototypeException;
+import com.liferay.portal.kernel.exception.LocaleException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -26,35 +42,19 @@ import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.service.LayoutService;
 import com.liferay.portal.kernel.servlet.ServletResponseUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.upload.UploadException;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.upload.UploadRequestSizeException;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.service.LayoutService;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.documentlibrary.exception.FileSizeException;
-import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalService;
-import com.liferay.portlet.exportimport.configuration.ExportImportConfigurationConstants;
-import com.liferay.portlet.exportimport.configuration.ExportImportConfigurationSettingsMapFactory;
-import com.liferay.portlet.exportimport.exception.LARFileException;
-import com.liferay.portlet.exportimport.exception.LARFileSizeException;
-import com.liferay.portlet.exportimport.exception.LARTypeException;
-import com.liferay.portlet.exportimport.exception.LayoutImportException;
-import com.liferay.portlet.exportimport.lar.ExportImportHelper;
-import com.liferay.portlet.exportimport.lar.ExportImportHelperUtil;
-import com.liferay.portlet.exportimport.lar.MissingReference;
-import com.liferay.portlet.exportimport.lar.MissingReferences;
-import com.liferay.portlet.exportimport.model.ExportImportConfiguration;
-import com.liferay.portlet.exportimport.service.ExportImportConfigurationLocalService;
-import com.liferay.portlet.exportimport.service.ExportImportService;
-import com.liferay.portlet.exportimport.staging.StagingUtil;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -217,11 +217,15 @@ public class ImportLayoutsMVCActionCommand extends BaseMVCActionCommand {
 				validateFile(
 					actionRequest, actionResponse,
 					ExportImportHelper.TEMP_FOLDER_NAME);
+
+				hideDefaultSuccessMessage(actionRequest);
 			}
 			else if (cmd.equals(Constants.DELETE_TEMP)) {
 				deleteTempFileEntry(
 					actionRequest, actionResponse,
 					ExportImportHelper.TEMP_FOLDER_NAME);
+
+				hideDefaultSuccessMessage(actionRequest);
 			}
 			else if (cmd.equals(Constants.IMPORT)) {
 				hideDefaultSuccessMessage(actionRequest);
@@ -237,6 +241,8 @@ public class ImportLayoutsMVCActionCommand extends BaseMVCActionCommand {
 		catch (Exception e) {
 			if (cmd.equals(Constants.ADD_TEMP) ||
 				cmd.equals(Constants.DELETE_TEMP)) {
+
+				hideDefaultSuccessMessage(actionRequest);
 
 				handleUploadException(
 					actionRequest, actionResponse,

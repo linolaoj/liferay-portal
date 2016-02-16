@@ -14,8 +14,11 @@
 
 package com.liferay.document.library.web.settings.internal;
 
+import com.liferay.document.library.kernel.model.DLFolderConstants;
+import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.document.library.web.constants.DLPortletKeys;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.settings.FallbackKeys;
 import com.liferay.portal.kernel.settings.ParameterMapSettings;
 import com.liferay.portal.kernel.settings.PortletInstanceSettingsLocator;
@@ -24,9 +27,6 @@ import com.liferay.portal.kernel.settings.SettingsFactoryUtil;
 import com.liferay.portal.kernel.settings.TypedSettings;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.model.Layout;
-import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
-import com.liferay.portlet.documentlibrary.util.DLUtil;
 
 import java.util.Map;
 
@@ -62,6 +62,11 @@ public class DLPortletInstanceSettings {
 			parameterMap, settings);
 
 		return new DLPortletInstanceSettings(parameterMapSettings);
+	}
+
+	public static void registerSettingsMetadata() {
+		SettingsFactoryUtil.registerSettingsMetadata(
+			DLPortletInstanceSettings.class, null, _getFallbackKeys());
 	}
 
 	public DLPortletInstanceSettings(Settings settings) {

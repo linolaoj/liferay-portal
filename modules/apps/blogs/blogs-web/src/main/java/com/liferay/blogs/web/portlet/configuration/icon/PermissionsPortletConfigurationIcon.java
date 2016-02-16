@@ -14,12 +14,12 @@
 
 package com.liferay.blogs.web.portlet.configuration.icon;
 
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIcon;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.User;
 import com.liferay.portlet.blogs.service.permission.BlogsPermission;
 import com.liferay.taglib.security.PermissionsURLTag;
 
@@ -46,7 +46,7 @@ public class PermissionsPortletConfigurationIcon
 
 		try {
 			url = PermissionsURLTag.doTag(
-				StringPool.BLANK, "com.liferay.portlet.blogs",
+				StringPool.BLANK, "com.liferay.blogs",
 				themeDisplay.getScopeGroupName(), null,
 				String.valueOf(themeDisplay.getScopeGroupId()),
 				LiferayWindowState.POP_UP.toString(), null,

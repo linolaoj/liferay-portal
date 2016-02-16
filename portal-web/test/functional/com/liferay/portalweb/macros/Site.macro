@@ -96,6 +96,10 @@
 				<if>
 					<equals arg1="${uncheckPropagation}" arg2="true" />
 					<then>
+						<execute macro="Panel#expandPanel">
+							<var name="panelHeading" value="Pages" />
+						</execute>
+
 						<execute function="Uncheck#uncheckToggleSwitch" locator1="Checkbox#ENABLE_PROPAGATION" />
 					</then>
 				</if>
@@ -485,7 +489,7 @@
 			<condition function="IsNotVisible" locator1="SiteSettingsDisplaySettings#DEFINE_DEFAULT_AND_AVAILABLE_SITE_LANGUAGES_RADIO" />
 			<then>
 				<execute macro="Navigator#gotoTab">
-					<var name="tab" value="Miscellaneous" />
+					<var name="tab" value="Languages" />
 				</execute>
 			</then>
 		</if>
@@ -555,7 +559,7 @@
 			<else>
 				<execute macro="Alert#viewRequestFailedToComplete" />
 
-				<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="The site cannot be deleted or deactivated because you are accessing the site." />
+				<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="The site cannot be deleted or deactivated because you are accessing the site." />
 			</else>
 		</if>
 	</command>
@@ -601,9 +605,7 @@
 			<then>
 				<execute macro="Alert#viewRequestFailedToComplete" />
 
-				<execute function="AssertClick" locator1="SiteSettingsSiteURL#SITE_URL_LABEL" value1="Site URL" />
-
-				<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="The friendly URL has too many slashes." />
+				<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="The friendly URL has too many slashes." />
 				<execute function="AssertTextEquals" locator1="TextInput#FRIENDLY_URL" value1="${siteFriendlyURLEdit}" />
 			</then>
 			<else>
@@ -731,9 +733,7 @@
 
 					<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS_2" />
 
-					<var name="key_menuItem" value="Membership Requested" />
-
-					<execute function="AssertTextEquals" locator1="MenuItem#ANY_MENU_ITEM" value1="Membership Requested" />
+					<execute function="AssertTextEquals" locator1="MenuItem#MEMBERSHIP_REQUESTED" value1="Membership Requested" />
 				</then>
 			</elseif>
 			<else>
@@ -1004,7 +1004,7 @@
 			<then>
 				<execute macro="Alert#viewRequestFailedToComplete" />
 
-				<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="Please enter a unique name." />
+				<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="Please enter a unique name." />
 			</then>
 			<elseif>
 				<equals arg1="${siteNameInvalid}" arg2="Null" />
@@ -1015,7 +1015,8 @@
 			<else>
 				<execute macro="Alert#viewRequestFailedToComplete" />
 
-				<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="The Site Name cannot be blank, numeric or a reserved word such as null. The Site Name cannot contain the following invalid characters: *." />
+				<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="The Site Name cannot be blank, numeric or a reserved word such as null." />
+				<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="The Site Name cannot contain the following invalid characters: *." />
 			</else>
 		</if>
 	</command>
@@ -1099,7 +1100,7 @@
 			<condition function="IsNotVisible" locator1="SiteSettingsDisplaySettings#DEFINE_DEFAULT_AND_AVAILABLE_SITE_LANGUAGES_RADIO" />
 			<then>
 				<execute macro="Navigator#gotoTab">
-					<var name="tab" value="Miscellaneous" />
+					<var name="tab" value="Languages" />
 				</execute>
 			</then>
 		</if>

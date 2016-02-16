@@ -6,6 +6,7 @@
 			groups: {
 				'navigation-simulation-device': {
 					base: PATH_NAVIGATION_SIMULATION_DEVICE + '/js/',
+					combine: Liferay.AUI.getCombine(),
 					modules: {
 						'liferay-product-navigation-simulation-device': {
 							path: 'product_navigation_simulation_device.js',
@@ -13,8 +14,8 @@
 								'aui-dialog-iframe-deprecated',
 								'aui-event-input',
 								'aui-modal',
-								'liferay-control-menu',
 								'liferay-portlet-base',
+								'liferay-product-navigation-control-menu',
 								'liferay-util-window',
 								'liferay-widget-size-animation-plugin'
 							]

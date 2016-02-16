@@ -36,8 +36,9 @@ import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.model.SyncSite;
 import com.liferay.sync.engine.service.SyncFileService;
 import com.liferay.sync.engine.util.FileUtil;
+import com.liferay.sync.engine.util.IODeltaUtil;
 import com.liferay.sync.engine.util.PropsValues;
-import com.liferay.sync.engine.util.ReleaseInfo;
+import com.liferay.sync.engine.util.ServerInfo;
 
 import java.io.IOException;
 
@@ -274,7 +275,7 @@ public class FileEventUtil {
 
 		parameters.put("repositoryId", repositoryId);
 
-		if (ReleaseInfo.isServerCompatible(syncAccountId, 5)) {
+		if (ServerInfo.supportsRetrieveFromCache(syncAccountId)) {
 			parameters.put("retrieveFromCache", retrieveFromCache);
 		}
 
@@ -409,6 +410,8 @@ public class FileEventUtil {
 			uploadingSyncFile.setSize(Files.size(filePath));
 
 			SyncFileService.update(uploadingSyncFile);
+
+			IODeltaUtil.checksums(uploadingSyncFile);
 
 			if (uploadingSyncFile.getTypePK() > 0) {
 				updateFile(

@@ -16,61 +16,61 @@ package com.liferay.login.web.portlet.action;
 
 import com.liferay.login.web.constants.LoginPortletKeys;
 import com.liferay.login.web.portlet.util.LoginUtil;
-import com.liferay.portal.RequiredFieldException;
-import com.liferay.portal.TermsOfUseException;
-import com.liferay.portal.exception.AddressCityException;
-import com.liferay.portal.exception.AddressStreetException;
-import com.liferay.portal.exception.AddressZipException;
-import com.liferay.portal.exception.CompanyMaxUsersException;
-import com.liferay.portal.exception.ContactBirthdayException;
-import com.liferay.portal.exception.ContactNameException;
-import com.liferay.portal.exception.DuplicateOpenIdException;
-import com.liferay.portal.exception.EmailAddressException;
-import com.liferay.portal.exception.GroupFriendlyURLException;
-import com.liferay.portal.exception.NoSuchCountryException;
-import com.liferay.portal.exception.NoSuchLayoutException;
-import com.liferay.portal.exception.NoSuchListTypeException;
-import com.liferay.portal.exception.NoSuchOrganizationException;
-import com.liferay.portal.exception.NoSuchRegionException;
-import com.liferay.portal.exception.OrganizationParentException;
-import com.liferay.portal.exception.PhoneNumberException;
-import com.liferay.portal.exception.RequiredUserException;
-import com.liferay.portal.exception.UserEmailAddressException;
-import com.liferay.portal.exception.UserIdException;
-import com.liferay.portal.exception.UserPasswordException;
-import com.liferay.portal.exception.UserScreenNameException;
-import com.liferay.portal.exception.UserSmsException;
-import com.liferay.portal.exception.WebsiteURLException;
 import com.liferay.portal.kernel.captcha.CaptchaConfigurationException;
 import com.liferay.portal.kernel.captcha.CaptchaMaxChallengesException;
 import com.liferay.portal.kernel.captcha.CaptchaTextException;
 import com.liferay.portal.kernel.captcha.CaptchaUtil;
+import com.liferay.portal.kernel.exception.AddressCityException;
+import com.liferay.portal.kernel.exception.AddressStreetException;
+import com.liferay.portal.kernel.exception.AddressZipException;
+import com.liferay.portal.kernel.exception.CompanyMaxUsersException;
+import com.liferay.portal.kernel.exception.ContactBirthdayException;
+import com.liferay.portal.kernel.exception.ContactNameException;
+import com.liferay.portal.kernel.exception.DuplicateOpenIdException;
+import com.liferay.portal.kernel.exception.EmailAddressException;
+import com.liferay.portal.kernel.exception.GroupFriendlyURLException;
+import com.liferay.portal.kernel.exception.NoSuchCountryException;
+import com.liferay.portal.kernel.exception.NoSuchLayoutException;
+import com.liferay.portal.kernel.exception.NoSuchListTypeException;
+import com.liferay.portal.kernel.exception.NoSuchOrganizationException;
+import com.liferay.portal.kernel.exception.NoSuchRegionException;
+import com.liferay.portal.kernel.exception.OrganizationParentException;
+import com.liferay.portal.kernel.exception.PhoneNumberException;
+import com.liferay.portal.kernel.exception.RequiredFieldException;
+import com.liferay.portal.kernel.exception.RequiredUserException;
+import com.liferay.portal.kernel.exception.TermsOfUseException;
+import com.liferay.portal.kernel.exception.UserEmailAddressException;
+import com.liferay.portal.kernel.exception.UserIdException;
+import com.liferay.portal.kernel.exception.UserPasswordException;
+import com.liferay.portal.kernel.exception.UserScreenNameException;
+import com.liferay.portal.kernel.exception.UserSmsException;
+import com.liferay.portal.kernel.exception.WebsiteURLException;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.CompanyConstants;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.auth.session.AuthenticatedSessionManagerUtil;
+import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
+import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.service.UserService;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PwdGenerator;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.CompanyConstants;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.LayoutLocalService;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceContextFactory;
-import com.liferay.portal.service.UserLocalService;
-import com.liferay.portal.service.UserService;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
 
 import javax.portlet.ActionRequest;
@@ -196,22 +196,8 @@ public class CreateAccountMVCActionCommand extends BaseMVCActionCommand {
 
 		// Send redirect
 
-		String login = null;
-
-		String authType = company.getAuthType();
-
-		if (authType.equals(CompanyConstants.AUTH_TYPE_ID)) {
-			login = String.valueOf(user.getUserId());
-		}
-		else if (authType.equals(CompanyConstants.AUTH_TYPE_SN)) {
-			login = user.getScreenName();
-		}
-		else {
-			login = user.getEmailAddress();
-		}
-
 		sendRedirect(
-			actionRequest, actionResponse, themeDisplay, login,
+			actionRequest, actionResponse, themeDisplay, user,
 			user.getPasswordUnencrypted());
 	}
 
@@ -349,8 +335,24 @@ public class CreateAccountMVCActionCommand extends BaseMVCActionCommand {
 
 	protected void sendRedirect(
 			ActionRequest actionRequest, ActionResponse actionResponse,
-			ThemeDisplay themeDisplay, String login, String password)
+			ThemeDisplay themeDisplay, User user, String password)
 		throws Exception {
+
+		String login = null;
+
+		Company company = themeDisplay.getCompany();
+
+		String authType = company.getAuthType();
+
+		if (authType.equals(CompanyConstants.AUTH_TYPE_ID)) {
+			login = String.valueOf(user.getUserId());
+		}
+		else if (authType.equals(CompanyConstants.AUTH_TYPE_SN)) {
+			login = user.getScreenName();
+		}
+		else {
+			login = user.getEmailAddress();
+		}
 
 		HttpServletRequest request = PortalUtil.getHttpServletRequest(
 			actionRequest);
@@ -398,8 +400,8 @@ public class CreateAccountMVCActionCommand extends BaseMVCActionCommand {
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
-		HttpServletRequest request = PortalUtil.getHttpServletRequest(
-			actionRequest);
+		HttpServletRequest request = PortalUtil.getOriginalServletRequest(
+			PortalUtil.getHttpServletRequest(actionRequest));
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -416,8 +418,14 @@ public class CreateAccountMVCActionCommand extends BaseMVCActionCommand {
 
 		long facebookId = GetterUtil.getLong(
 			session.getAttribute(WebKeys.FACEBOOK_INCOMPLETE_USER_ID));
+		String googleUserId = GetterUtil.getString(
+			session.getAttribute(WebKeys.GOOGLE_INCOMPLETE_USER_ID));
 
-		if (facebookId > 0) {
+		if (Validator.isNotNull(googleUserId)) {
+			autoPassword = false;
+		}
+
+		if ((facebookId > 0) || Validator.isNotNull(googleUserId)) {
 			password1 = PwdGenerator.getPassword();
 			password2 = password1;
 		}
@@ -435,7 +443,12 @@ public class CreateAccountMVCActionCommand extends BaseMVCActionCommand {
 		int birthdayYear = ParamUtil.getInteger(actionRequest, "birthdayYear");
 		String jobTitle = ParamUtil.getString(actionRequest, "jobTitle");
 		boolean updateUserInformation = true;
+
 		boolean sendEmail = true;
+
+		if (Validator.isNotNull(googleUserId)) {
+			sendEmail = false;
+		}
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			User.class.getName(), actionRequest);
@@ -445,39 +458,25 @@ public class CreateAccountMVCActionCommand extends BaseMVCActionCommand {
 			autoScreenName, screenName, emailAddress, facebookId, openId,
 			themeDisplay.getLocale(), firstName, middleName, lastName, prefixId,
 			suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle,
-			sendEmail, updateUserInformation, serviceContext);
+			updateUserInformation, sendEmail, serviceContext);
 
 		if (facebookId > 0) {
-			_userLocalService.updateLastLogin(
-				user.getUserId(), user.getLoginIP());
-
-			_userLocalService.updatePasswordReset(user.getUserId(), false);
-
-			_userLocalService.updateEmailAddressVerified(
-				user.getUserId(), true);
-
 			session.removeAttribute(WebKeys.FACEBOOK_INCOMPLETE_USER_ID);
 
-			Company company = themeDisplay.getCompany();
+			updateUserAndSendRedirect(
+				actionRequest, actionResponse, themeDisplay, user, password1);
 
-			// Send redirect
+			return;
+		}
 
-			String login = null;
+		if (Validator.isNotNull(googleUserId)) {
+			_userLocalService.updateGoogleUserId(
+				user.getUserId(), googleUserId);
 
-			String authType = company.getAuthType();
+			session.removeAttribute(WebKeys.GOOGLE_INCOMPLETE_USER_ID);
 
-			if (authType.equals(CompanyConstants.AUTH_TYPE_ID)) {
-				login = String.valueOf(user.getUserId());
-			}
-			else if (authType.equals(CompanyConstants.AUTH_TYPE_SN)) {
-				login = user.getScreenName();
-			}
-			else {
-				login = user.getEmailAddress();
-			}
-
-			sendRedirect(
-				actionRequest, actionResponse, themeDisplay, login, password1);
+			updateUserAndSendRedirect(
+				actionRequest, actionResponse, themeDisplay, user, password1);
 
 			return;
 		}
@@ -495,25 +494,24 @@ public class CreateAccountMVCActionCommand extends BaseMVCActionCommand {
 
 		// Send redirect
 
-		String login = null;
+		sendRedirect(
+			actionRequest, actionResponse, themeDisplay, user,
+			user.getPasswordUnencrypted());
+	}
 
-		Company company = themeDisplay.getCompany();
+	protected void updateUserAndSendRedirect(
+			ActionRequest actionRequest, ActionResponse actionResponse,
+			ThemeDisplay themeDisplay, User user, String password1)
+		throws Exception {
 
-		String authType = company.getAuthType();
+		_userLocalService.updateLastLogin(user.getUserId(), user.getLoginIP());
 
-		if (authType.equals(CompanyConstants.AUTH_TYPE_ID)) {
-			login = String.valueOf(user.getUserId());
-		}
-		else if (authType.equals(CompanyConstants.AUTH_TYPE_SN)) {
-			login = user.getScreenName();
-		}
-		else {
-			login = user.getEmailAddress();
-		}
+		_userLocalService.updatePasswordReset(user.getUserId(), false);
+
+		_userLocalService.updateEmailAddressVerified(user.getUserId(), true);
 
 		sendRedirect(
-			actionRequest, actionResponse, themeDisplay, login,
-			user.getPasswordUnencrypted());
+			actionRequest, actionResponse, themeDisplay, user, password1);
 	}
 
 	private static final boolean _AUTO_SCREEN_NAME = false;

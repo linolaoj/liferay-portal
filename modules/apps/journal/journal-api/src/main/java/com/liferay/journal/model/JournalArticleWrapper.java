@@ -16,10 +16,15 @@ package com.liferay.journal.model;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+import com.liferay.expando.kernel.model.ExpandoBridge;
 
-import com.liferay.portlet.exportimport.lar.StagedModelType;
+import com.liferay.exportimport.kernel.lar.StagedModelType;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.Validator;
+
+import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -336,7 +341,7 @@ public class JournalArticleWrapper implements JournalArticle,
 
 	@Override
 	public java.lang.String getArticleImageURL(
-		com.liferay.portal.theme.ThemeDisplay themeDisplay) {
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay) {
 		return _journalArticle.getArticleImageURL(themeDisplay);
 	}
 
@@ -553,7 +558,7 @@ public class JournalArticleWrapper implements JournalArticle,
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _journalArticle.getExpandoBridge();
 	}
 
@@ -624,7 +629,7 @@ public class JournalArticleWrapper implements JournalArticle,
 	}
 
 	@Override
-	public com.liferay.portal.model.Layout getLayout() {
+	public com.liferay.portal.kernel.model.Layout getLayout() {
 		return _journalArticle.getLayout();
 	}
 
@@ -659,7 +664,7 @@ public class JournalArticleWrapper implements JournalArticle,
 	}
 
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
+	public Serializable getPrimaryKeyObj() {
 		return _journalArticle.getPrimaryKeyObj();
 	}
 
@@ -870,7 +875,7 @@ public class JournalArticleWrapper implements JournalArticle,
 	* @return the trash entry created when this journal article was moved to the Recycle Bin
 	*/
 	@Override
-	public com.liferay.portlet.trash.model.TrashEntry getTrashEntry()
+	public com.liferay.trash.kernel.model.TrashEntry getTrashEntry()
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _journalArticle.getTrashEntry();
 	}
@@ -1141,14 +1146,14 @@ public class JournalArticleWrapper implements JournalArticle,
 
 	@Override
 	public void prepareLocalizedFieldsForImport()
-		throws com.liferay.portal.LocaleException {
+		throws com.liferay.portal.kernel.exception.LocaleException {
 		_journalArticle.prepareLocalizedFieldsForImport();
 	}
 
 	@Override
 	public void prepareLocalizedFieldsForImport(
 		java.util.Locale defaultImportLocale)
-		throws com.liferay.portal.LocaleException {
+		throws com.liferay.portal.kernel.exception.LocaleException {
 		_journalArticle.prepareLocalizedFieldsForImport(defaultImportLocale);
 	}
 
@@ -1328,19 +1333,17 @@ public class JournalArticleWrapper implements JournalArticle,
 
 	@Override
 	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
 		_journalArticle.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_journalArticle.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_journalArticle.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -1440,7 +1443,7 @@ public class JournalArticleWrapper implements JournalArticle,
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_journalArticle.setPrimaryKeyObj(primaryKeyObj);
 	}
 
@@ -1699,7 +1702,7 @@ public class JournalArticleWrapper implements JournalArticle,
 	}
 
 	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.journal.model.JournalArticle> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.journal.model.JournalArticle> toCacheModel() {
 		return _journalArticle.toCacheModel();
 	}
 

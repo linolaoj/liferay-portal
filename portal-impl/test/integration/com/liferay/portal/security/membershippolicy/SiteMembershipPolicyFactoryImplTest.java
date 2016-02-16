@@ -14,6 +14,8 @@
 
 package com.liferay.portal.security.membershippolicy;
 
+import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.membershippolicy.SiteMembershipPolicy;
 import com.liferay.portal.kernel.security.membershippolicy.SiteMembershipPolicyFactory;
@@ -27,8 +29,6 @@ import com.liferay.portal.security.membershippolicy.bundle.sitemembershippolicyf
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.SyntheticBundleRule;
 import com.liferay.portal.util.test.AtomicState;
-import com.liferay.portlet.asset.model.AssetCategory;
-import com.liferay.portlet.asset.model.AssetTag;
 
 import java.io.Serializable;
 
@@ -73,7 +73,7 @@ public class SiteMembershipPolicyFactoryImplTest {
 		try {
 			SiteMembershipPolicyUtil.checkMembership(array, array, array);
 		}
-		catch (PortalException e) {
+		catch (PortalException pe) {
 			Assert.fail();
 		}
 
@@ -87,7 +87,7 @@ public class SiteMembershipPolicyFactoryImplTest {
 		try {
 			SiteMembershipPolicyUtil.checkRoles(null, null);
 		}
-		catch (PortalException e) {
+		catch (PortalException pe) {
 			Assert.fail();
 		}
 

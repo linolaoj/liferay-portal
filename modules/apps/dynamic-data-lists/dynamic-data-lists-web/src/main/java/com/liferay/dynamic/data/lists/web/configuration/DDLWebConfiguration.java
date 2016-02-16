@@ -16,7 +16,7 @@ package com.liferay.dynamic.data.lists.web.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
+import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Lino Alves
@@ -27,6 +27,13 @@ import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 	localization = "content/Language", name = "%ddl.web.configuration.name"
 )
 public interface DDLWebConfiguration {
+
+	@Meta.AD(
+		deflt = "false",
+		description = "%changeable.default.language.description",
+		name = "%changeable.default.language", required = false
+	)
+	public boolean changeableDefaultLanguage();
 
 	@Meta.AD(
 		deflt = "list", optionLabels = {"List", "Descriptive"},

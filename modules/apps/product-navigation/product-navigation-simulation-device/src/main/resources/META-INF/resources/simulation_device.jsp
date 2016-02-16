@@ -22,32 +22,36 @@
 	<div class="list-group-panel">
 		<div class="devices">
 			<div class="container-fluid default-devices">
-				<div class="col-xs-3 lfr-device-item selected text-center" data-device="smartphone">
-					<span class="icon icon-lg icon-mobile icon-monospaced"></span>
+				<div class="col-md-3 col-sm-12 lfr-device-item selected text-center" data-device="smartphone">
+					<aui:icon cssClass="icon icon-monospaced" image="mobile-portrait" markupView="lexicon" />
+
+					<aui:icon cssClass="hide icon icon-monospaced icon-rotate" image="mobile-landscape" markupView="lexicon" />
 
 					<h5 class="text-default"><%= LanguageUtil.get(resourceBundle, "mobile") %></h5>
 
 					<h5 class="text-default">768px</h5>
 				</div>
 
-				<div class="col-xs-3 lfr-device-item text-center" data-device="tablet">
-					<span class="icon icon-lg icon-monospaced icon-tablet"></span>
+				<div class="col-md-3 hidden-sm hidden-xs lfr-device-item text-center" data-device="tablet">
+					<aui:icon cssClass="icon icon-monospaced" image="tablet-portrait" markupView="lexicon" />
+
+					<aui:icon cssClass="hide icon icon-monospaced icon-rotate" image="tablet-landscape" markupView="lexicon" />
 
 					<h5 class="text-default"><%= LanguageUtil.get(resourceBundle, "tablet") %></h5>
 
 					<h5 class="text-default">1024px</h5>
 				</div>
 
-				<div class="col-xs-3 lfr-device-item text-center" data-device="desktop">
-					<span class="icon icon-desktop icon-lg icon-monospaced"></span>
+				<div class="col-md-3 hidden-sm hidden-xs lfr-device-item text-center" data-device="desktop">
+					<aui:icon cssClass="icon icon-monospaced" image="desktop" markupView="lexicon" />
 
 					<h5 class="text-default"><%= LanguageUtil.get(resourceBundle, "desktop") %></h5>
 
 					<h5 class="text-default">1280px</h5>
 				</div>
 
-				<div class="col-xs-3 lfr-device-item text-center" data-device="autosize">
-					<span class="icon icon-lg icon-monospaced icon-resize-full"></span>
+				<div class="col-md-3 hidden-sm hidden-xs lfr-device-item text-center" data-device="autosize">
+					<aui:icon cssClass="icon icon-monospaced" image="full-size" markupView="lexicon" />
 
 					<h5 class="text-default"><%= LanguageUtil.get(resourceBundle, "autosize") %></h5>
 
@@ -55,13 +59,13 @@
 				</div>
 			</div>
 
-			<div class="container-fluid custom-devices">
+			<div class="container-fluid custom-devices hidden-sm hidden-xs">
 				<aui:input inlineField="<%= true %>" inlineLabel="left" name="width" size="4" value="400" wrapperCssClass="col-xs-5" />
 
 				<aui:input inlineField="<%= true %>" inlineLabel="left" name="height" size="4" value="400" wrapperCssClass="col-xs-5" />
 
 				<span class="col-xs-2 lfr-device-item" data-device="custom">
-					<i class="icon icon-cog icon-lg icon-monospaced"></i>
+					<aui:icon cssClass="icon icon-monospaced" image="cog" markupView="lexicon" />
 				</span>
 			</div>
 		</div>
@@ -109,6 +113,4 @@
 			namespace: '<portlet:namespace />'
 		}
 	);
-
-	Liferay.once('dockbarHidePanel', A.bind('destroy', simulationDevice));
 </aui:script>

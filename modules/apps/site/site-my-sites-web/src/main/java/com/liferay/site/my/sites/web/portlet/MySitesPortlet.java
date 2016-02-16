@@ -14,21 +14,22 @@
 
 package com.liferay.site.my.sites.web.portlet;
 
-import com.liferay.portal.exception.MembershipRequestCommentsException;
+import com.liferay.portal.kernel.exception.MembershipRequestCommentsException;
+import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.service.MembershipRequestService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
+import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.service.UserService;
 import com.liferay.portal.kernel.servlet.SessionMessages;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.liveusers.LiveUsers;
-import com.liferay.portal.service.MembershipRequestService;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceContextFactory;
-import com.liferay.portal.service.UserLocalService;
-import com.liferay.portal.service.UserService;
-import com.liferay.portal.theme.ThemeDisplay;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -163,6 +164,13 @@ public class MySitesPortlet extends MVCPortlet {
 		MembershipRequestService membershipRequestService) {
 
 		_membershipRequestService = membershipRequestService;
+	}
+
+	@Reference(
+		target = "(&(release.bundle.symbolic.name=com.liferay.site.my.sites.web)(release.schema.version=1.0.0))",
+		unbind = "-"
+	)
+	protected void setRelease(Release release) {
 	}
 
 	@Reference(unbind = "-")

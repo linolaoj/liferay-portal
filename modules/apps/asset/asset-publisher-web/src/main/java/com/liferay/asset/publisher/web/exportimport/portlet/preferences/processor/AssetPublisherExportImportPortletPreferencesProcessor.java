@@ -14,65 +14,65 @@
 
 package com.liferay.asset.publisher.web.exportimport.portlet.preferences.processor;
 
+import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
+import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetRenderer;
+import com.liferay.asset.kernel.model.AssetVocabulary;
+import com.liferay.asset.kernel.service.AssetCategoryLocalService;
+import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
+import com.liferay.asset.kernel.service.persistence.AssetCategoryUtil;
+import com.liferay.asset.kernel.service.persistence.AssetEntryQuery;
+import com.liferay.asset.kernel.service.persistence.AssetVocabularyUtil;
 import com.liferay.asset.publisher.web.configuration.AssetPublisherWebConfigurationValues;
 import com.liferay.asset.publisher.web.constants.AssetPublisherPortletKeys;
 import com.liferay.asset.publisher.web.util.AssetPublisherUtil;
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.model.DLFileEntryType;
+import com.liferay.document.library.kernel.service.DLFileEntryTypeLocalService;
+import com.liferay.document.library.kernel.service.persistence.DLFileEntryTypeUtil;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.persistence.DDMStructureUtil;
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.kernel.lar.PortletDataException;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.portlet.preferences.processor.Capability;
 import com.liferay.exportimport.portlet.preferences.processor.ExportImportPortletPreferencesProcessor;
 import com.liferay.exportimport.portlet.preferences.processor.base.BaseExportImportPortletPreferencesProcessor;
 import com.liferay.exportimport.portlet.preferences.processor.capability.ReferencedStagedModelImporterCapability;
 import com.liferay.journal.model.JournalArticle;
-import com.liferay.portal.exception.NoSuchGroupException;
-import com.liferay.portal.exception.NoSuchLayoutException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.NoSuchGroupException;
+import com.liferay.portal.kernel.exception.NoSuchLayoutException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.Organization;
+import com.liferay.portal.kernel.model.Portlet;
+import com.liferay.portal.kernel.model.StagedModel;
+import com.liferay.portal.kernel.model.UserConstants;
+import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
+import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.OrganizationLocalService;
+import com.liferay.portal.kernel.service.PortletLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TimeZoneUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.Organization;
-import com.liferay.portal.model.Portlet;
-import com.liferay.portal.model.StagedModel;
-import com.liferay.portal.model.UserConstants;
-import com.liferay.portal.service.CompanyLocalService;
-import com.liferay.portal.service.LayoutLocalService;
-import com.liferay.portal.service.OrganizationLocalService;
-import com.liferay.portal.service.PortletLocalService;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.PortletPreferencesFactoryUtil;
-import com.liferay.portlet.asset.AssetRendererFactoryRegistryUtil;
-import com.liferay.portlet.asset.model.AssetCategory;
-import com.liferay.portlet.asset.model.AssetEntry;
-import com.liferay.portlet.asset.model.AssetRenderer;
-import com.liferay.portlet.asset.model.AssetVocabulary;
-import com.liferay.portlet.asset.service.AssetCategoryLocalService;
-import com.liferay.portlet.asset.service.AssetVocabularyLocalService;
-import com.liferay.portlet.asset.service.persistence.AssetCategoryUtil;
-import com.liferay.portlet.asset.service.persistence.AssetEntryQuery;
-import com.liferay.portlet.asset.service.persistence.AssetVocabularyUtil;
-import com.liferay.portlet.documentlibrary.model.DLFileEntry;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
-import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalService;
-import com.liferay.portlet.documentlibrary.service.persistence.DLFileEntryTypeUtil;
-import com.liferay.portlet.exportimport.lar.PortletDataContext;
-import com.liferay.portlet.exportimport.lar.PortletDataException;
-import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
 
 import java.io.Serializable;
 
@@ -296,12 +296,13 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 	}
 
 	@Override
-	protected String getExportPortletPreferencesUuid(
+	protected String getExportPortletPreferencesValue(
 			PortletDataContext portletDataContext, Portlet portlet,
 			String className, long primaryKeyLong)
 		throws Exception {
 
 		String uuid = null;
+		long groupId = 0L;
 
 		Element rootElement = portletDataContext.getExportDataRootElement();
 
@@ -311,6 +312,7 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 
 			if (assetCategory != null) {
 				uuid = assetCategory.getUuid();
+				groupId = assetCategory.getGroupId();
 
 				portletDataContext.addReferenceElement(
 					portlet, rootElement, assetCategory,
@@ -324,6 +326,7 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 
 			if (assetVocabulary != null) {
 				uuid = assetVocabulary.getUuid();
+				groupId = assetVocabulary.getGroupId();
 
 				portletDataContext.addReferenceElement(
 					portlet, rootElement, assetVocabulary,
@@ -336,6 +339,7 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 
 			if (ddmStructure != null) {
 				uuid = ddmStructure.getUuid();
+				groupId = ddmStructure.getGroupId();
 
 				portletDataContext.addReferenceElement(
 					portlet, rootElement, ddmStructure,
@@ -348,6 +352,7 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 
 			if (dlFileEntryType != null) {
 				uuid = dlFileEntryType.getUuid();
+				groupId = dlFileEntryType.getGroupId();
 
 				portletDataContext.addReferenceElement(
 					portlet, rootElement, dlFileEntryType,
@@ -367,31 +372,46 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 			}
 		}
 
-		return uuid;
+		if (Validator.isNull(uuid)) {
+			return null;
+		}
+
+		return StringUtil.merge(new Object[] {uuid, groupId}, StringPool.POUND);
 	}
 
 	@Override
-	protected Long getImportPortletPreferencesNewPrimaryKey(
+	protected Long getImportPortletPreferencesNewValue(
 			PortletDataContext portletDataContext, Class<?> clazz,
-			long companyGroupId, Map<Long, Long> primaryKeys, String uuid)
+			long companyGroupId, Map<Long, Long> primaryKeys,
+			String portletPreferencesOldValue)
 		throws Exception {
 
-		if (Validator.isNumber(uuid)) {
-			long oldPrimaryKey = GetterUtil.getLong(uuid);
+		if (Validator.isNumber(portletPreferencesOldValue)) {
+			long oldPrimaryKey = GetterUtil.getLong(portletPreferencesOldValue);
 
 			return MapUtil.getLong(primaryKeys, oldPrimaryKey, oldPrimaryKey);
 		}
 
 		String className = clazz.getName();
 
+		String[] oldValues = StringUtil.split(
+			portletPreferencesOldValue, StringPool.POUND);
+
+		String uuid = oldValues[0];
+		long groupId = portletDataContext.getScopeGroupId();
+
+		if (oldValues.length > 1) {
+			Map<Long, Long> groupIds =
+				(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
+					Group.class);
+
+			groupId = MapUtil.getLong(
+				groupIds, GetterUtil.getLong(oldValues[1]));
+		}
+
 		if (className.equals(AssetCategory.class.getName())) {
 			AssetCategory assetCategory = AssetCategoryUtil.fetchByUUID_G(
-				uuid, portletDataContext.getScopeGroupId());
-
-			if (assetCategory == null) {
-				assetCategory = AssetCategoryUtil.fetchByUUID_G(
-					uuid, companyGroupId);
-			}
+				uuid, groupId);
 
 			if (assetCategory != null) {
 				return assetCategory.getCategoryId();
@@ -399,12 +419,7 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 		}
 		else if (className.equals(AssetVocabulary.class.getName())) {
 			AssetVocabulary assetVocabulary = AssetVocabularyUtil.fetchByUUID_G(
-				uuid, portletDataContext.getScopeGroupId());
-
-			if (assetVocabulary == null) {
-				assetVocabulary = AssetVocabularyUtil.fetchByUUID_G(
-					uuid, companyGroupId);
-			}
+				uuid, groupId);
 
 			if (assetVocabulary != null) {
 				return assetVocabulary.getVocabularyId();
@@ -412,12 +427,7 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 		}
 		else if (className.equals(DDMStructure.class.getName())) {
 			DDMStructure ddmStructure = DDMStructureUtil.fetchByUUID_G(
-				uuid, portletDataContext.getScopeGroupId());
-
-			if (ddmStructure == null) {
-				ddmStructure = DDMStructureUtil.fetchByUUID_G(
-					uuid, companyGroupId);
-			}
+				uuid, groupId);
 
 			if (ddmStructure != null) {
 				return ddmStructure.getStructureId();
@@ -425,12 +435,7 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 		}
 		else if (className.equals(DLFileEntryType.class.getName())) {
 			DLFileEntryType dlFileEntryType = DLFileEntryTypeUtil.fetchByUUID_G(
-				uuid, portletDataContext.getScopeGroupId());
-
-			if (dlFileEntryType == null) {
-				dlFileEntryType = DLFileEntryTypeUtil.fetchByUUID_G(
-					uuid, companyGroupId);
-			}
+				uuid, groupId);
 
 			if (dlFileEntryType == null) {
 				Element rootElement =

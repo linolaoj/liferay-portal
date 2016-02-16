@@ -14,12 +14,14 @@
 
 package com.liferay.portal.instance.lifecycle;
 
-import com.liferay.portal.model.Company;
+import com.liferay.portal.kernel.model.Company;
 
 /**
  * @author Michael C. Han
  */
 public interface PortalInstanceLifecycleListener {
+
+	public void portalInstancePreregistered(long companyId);
 
 	public void portalInstanceRegistered(Company company) throws Exception;
 

@@ -16,13 +16,15 @@ package com.liferay.announcements.kernel.service;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.announcements.kernel.model.AnnouncementsDelivery;
+
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebService;
 import com.liferay.portal.kernel.security.access.control.AccessControlled;
+import com.liferay.portal.kernel.service.BaseService;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Transactional;
-import com.liferay.portal.service.BaseService;
 
 /**
  * Provides the remote service interface for AnnouncementsDelivery. Methods of this
@@ -54,7 +56,7 @@ public interface AnnouncementsDeliveryService extends BaseService {
 	*/
 	public java.lang.String getOSGiServiceIdentifier();
 
-	public com.liferay.announcements.kernel.model.AnnouncementsDelivery updateDelivery(
-		long userId, java.lang.String type, boolean email, boolean sms,
-		boolean website) throws PortalException;
+	public AnnouncementsDelivery updateDelivery(long userId,
+		java.lang.String type, boolean email, boolean sms, boolean website)
+		throws PortalException;
 }

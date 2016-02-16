@@ -14,6 +14,8 @@
 
 package com.liferay.journal.service.impl;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureLink;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLinkLocalService;
@@ -33,10 +35,16 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.SystemEventConstants;
+import com.liferay.portal.kernel.model.TreeModel;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.WorkflowDefinitionLink;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.social.SocialActivityManagerUtil;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -44,6 +52,7 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -51,21 +60,12 @@ import com.liferay.portal.kernel.util.TreeModelTasksAdapter;
 import com.liferay.portal.kernel.util.TreePathUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.model.ResourceConstants;
-import com.liferay.portal.model.SystemEventConstants;
-import com.liferay.portal.model.TreeModel;
-import com.liferay.portal.model.User;
-import com.liferay.portal.model.WorkflowDefinitionLink;
-import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.spring.extender.service.ServiceReference;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.asset.model.AssetEntry;
-import com.liferay.portlet.asset.model.AssetLinkConstants;
-import com.liferay.portlet.social.model.SocialActivityConstants;
-import com.liferay.portlet.trash.model.TrashEntry;
-import com.liferay.portlet.trash.model.TrashVersion;
-import com.liferay.portlet.trash.util.TrashUtil;
+import com.liferay.social.kernel.model.SocialActivityConstants;
+import com.liferay.trash.kernel.model.TrashEntry;
+import com.liferay.trash.kernel.model.TrashVersion;
+import com.liferay.trash.kernel.util.TrashUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -218,7 +218,7 @@ public class JournalFolderLocalServiceImpl
 			}
 		}
 
-		for (DDMStructureLink ddmStructureLink : ddmStructureLinks ) {
+		for (DDMStructureLink ddmStructureLink : ddmStructureLinks) {
 			ddmStructureLinkLocalService.deleteStructureLink(
 				ddmStructureLink.getStructureLinkId());
 

@@ -15,8 +15,22 @@
 package com.liferay.layout.set.prototype.lar.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.layout.set.prototype.lar.LayoutSetPrototypeStagedModelDataHandler;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.LayoutFriendlyURL;
+import com.liferay.portal.kernel.model.LayoutPrototype;
+import com.liferay.portal.kernel.model.LayoutSetPrototype;
+import com.liferay.portal.kernel.model.StagedModel;
+import com.liferay.portal.kernel.service.LayoutFriendlyURLLocalServiceUtil;
+import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.service.LayoutPrototypeLocalServiceUtil;
+import com.liferay.portal.kernel.service.LayoutSetPrototypeLocalServiceUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.test.rule.Sync;
+import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
 import com.liferay.portal.kernel.test.rule.TransactionalTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.StreamUtil;
@@ -29,20 +43,8 @@ import com.liferay.portal.kernel.xml.UnsecureSAXReaderUtil;
 import com.liferay.portal.kernel.zip.ZipReader;
 import com.liferay.portal.kernel.zip.ZipReaderFactoryUtil;
 import com.liferay.portal.lar.test.BaseStagedModelDataHandlerTestCase;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.LayoutConstants;
-import com.liferay.portal.model.LayoutFriendlyURL;
-import com.liferay.portal.model.LayoutPrototype;
-import com.liferay.portal.model.LayoutSetPrototype;
-import com.liferay.portal.model.StagedModel;
-import com.liferay.portal.service.LayoutFriendlyURLLocalServiceUtil;
-import com.liferay.portal.service.LayoutLocalServiceUtil;
-import com.liferay.portal.service.LayoutPrototypeLocalServiceUtil;
-import com.liferay.portal.service.LayoutSetPrototypeLocalServiceUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.util.test.LayoutTestUtil;
-import com.liferay.portlet.exportimport.lar.ExportImportPathUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,6 +64,7 @@ import org.junit.runner.RunWith;
  * @author Daniela Zapata Riesco
  */
 @RunWith(Arquillian.class)
+@Sync
 public class LayoutSetPrototypeStagedModelDataHandlerTest
 	extends BaseStagedModelDataHandlerTestCase {
 
@@ -69,7 +72,9 @@ public class LayoutSetPrototypeStagedModelDataHandlerTest
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			new LiferayIntegrationTestRule(), TransactionalTestRule.INSTANCE);
+			new LiferayIntegrationTestRule(),
+			SynchronousDestinationTestRule.INSTANCE,
+			TransactionalTestRule.INSTANCE);
 
 	@After
 	@Override

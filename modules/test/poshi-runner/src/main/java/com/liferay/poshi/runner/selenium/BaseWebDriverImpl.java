@@ -549,7 +549,7 @@ public abstract class BaseWebDriverImpl
 
 	@Override
 	public void copyText(String locator) throws Exception {
-		_clipBoard = getElementText(locator);
+		_clipBoard = getText(locator);
 	}
 
 	@Override
@@ -853,36 +853,6 @@ public abstract class BaseWebDriverImpl
 	}
 
 	@Override
-	public String getElementText(String locator) throws Exception {
-		return getElementText(locator, null);
-	}
-
-	public String getElementText(String locator, String timeout)
-		throws Exception {
-
-		if (locator.contains("x:")) {
-			return getHtmlNodeText(locator);
-		}
-
-		WebElement webElement = getWebElement(locator, timeout);
-
-		if (webElement == null) {
-			throw new Exception(
-				"Element is not present at \"" + locator + "\"");
-		}
-
-		if (!webElement.isDisplayed()) {
-			scrollWebElementIntoView(webElement);
-		}
-
-		String text = webElement.getText();
-
-		text = text.trim();
-
-		return text.replace("\n", " ");
-	}
-
-	@Override
 	public String getElementValue(String locator) throws Exception {
 		return getElementValue(locator, null);
 	}
@@ -1146,8 +1116,31 @@ public abstract class BaseWebDriverImpl
 	}
 
 	@Override
-	public String getText(String locator) {
-		throw new UnsupportedOperationException();
+	public String getText(String locator) throws Exception {
+		return getText(locator, null);
+	}
+
+	public String getText(String locator, String timeout) throws Exception {
+		if (locator.contains("x:")) {
+			return getHtmlNodeText(locator);
+		}
+
+		WebElement webElement = getWebElement(locator, timeout);
+
+		if (webElement == null) {
+			throw new Exception(
+				"Element is not present at \"" + locator + "\"");
+		}
+
+		if (!webElement.isDisplayed()) {
+			scrollWebElementIntoView(webElement);
+		}
+
+		String text = webElement.getText();
+
+		text = text.trim();
+
+		return text.replace("\n", " ");
 	}
 
 	@Override
@@ -1350,7 +1343,7 @@ public abstract class BaseWebDriverImpl
 
 	@Override
 	public boolean isText(String locator, String value) throws Exception {
-		return value.equals(getElementText(locator, "1"));
+		return value.equals(getText(locator, "1"));
 	}
 
 	@Override
@@ -1883,6 +1876,11 @@ public abstract class BaseWebDriverImpl
 	}
 
 	@Override
+	public void selectFieldText() {
+		LiferaySeleniumHelper.selectFieldText();
+	}
+
+	@Override
 	public void selectFrame(String locator) {
 		WebDriverHelper.selectFrame(this, locator);
 	}
@@ -2205,6 +2203,11 @@ public abstract class BaseWebDriverImpl
 	@Override
 	public void typeCKEditor(String locator, String value) {
 		LiferaySeleniumHelper.typeCKEditor(this, locator, value);
+	}
+
+	@Override
+	public void typeEditor(String locator, String value) {
+		WebDriverHelper.typeEditor(this, locator, value);
 	}
 
 	@Override

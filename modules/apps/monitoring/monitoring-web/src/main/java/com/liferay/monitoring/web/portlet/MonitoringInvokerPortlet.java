@@ -21,10 +21,10 @@ import com.liferay.portal.kernel.monitoring.DataSampleThreadLocal;
 import com.liferay.portal.kernel.monitoring.PortletMonitoringControl;
 import com.liferay.portal.kernel.monitoring.PortletRequestType;
 import com.liferay.portal.kernel.monitoring.RequestStatus;
+import com.liferay.portal.kernel.portlet.InvokerFilterContainer;
+import com.liferay.portal.kernel.portlet.InvokerPortlet;
 import com.liferay.portal.kernel.portlet.LiferayPortletConfig;
 import com.liferay.portal.monitoring.statistics.DataSampleFactoryUtil;
-import com.liferay.portlet.InvokerFilterContainer;
-import com.liferay.portlet.InvokerPortlet;
 
 import java.io.IOException;
 
@@ -139,7 +139,7 @@ public class MonitoringInvokerPortlet
 
 		_invokerPortlet.init(liferayPortletConfig);
 
-		com.liferay.portal.model.Portlet portletModel =
+		com.liferay.portal.kernel.model.Portlet portletModel =
 			liferayPortletConfig.getPortlet();
 
 		_actionTimeout = portletModel.getActionTimeout();

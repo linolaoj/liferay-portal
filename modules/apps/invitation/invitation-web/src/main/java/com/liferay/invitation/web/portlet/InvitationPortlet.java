@@ -15,7 +15,7 @@
 package com.liferay.invitation.web.portlet;
 
 import com.liferay.invitation.web.constants.InvitationPortletKeys;
-import com.liferay.invitation.web.upgrade.InvitationWebUpgrade;
+import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 
 import javax.portlet.Portlet;
@@ -50,9 +50,11 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class InvitationPortlet extends MVCPortlet {
 
-	@Reference(unbind = "-")
-	protected void setInvitationWebUpgrade(
-		InvitationWebUpgrade invitationWebUpgrade) {
+	@Reference(
+		target = "(&(release.bundle.symbolic.name=com.liferay.invitation.web)(release.schema.version=1.0.0))",
+		unbind = "-"
+	)
+	protected void setRelease(Release release) {
 	}
 
 }

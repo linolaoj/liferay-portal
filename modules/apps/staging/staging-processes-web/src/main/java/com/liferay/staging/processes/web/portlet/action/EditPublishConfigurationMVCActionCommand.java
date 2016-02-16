@@ -14,36 +14,36 @@
 
 package com.liferay.staging.processes.web.portlet.action;
 
+import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationConstants;
+import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationHelper;
+import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
+import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
+import com.liferay.exportimport.kernel.service.ExportImportConfigurationLocalService;
+import com.liferay.exportimport.kernel.service.ExportImportConfigurationService;
+import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskConstants;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.TrashedModel;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.TrashedModel;
-import com.liferay.portal.service.GroupLocalService;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.exportimport.configuration.ExportImportConfigurationConstants;
-import com.liferay.portlet.exportimport.configuration.ExportImportConfigurationHelper;
-import com.liferay.portlet.exportimport.lar.ExportImportHelperUtil;
-import com.liferay.portlet.exportimport.model.ExportImportConfiguration;
-import com.liferay.portlet.exportimport.service.ExportImportConfigurationLocalService;
-import com.liferay.portlet.exportimport.service.ExportImportConfigurationService;
-import com.liferay.portlet.exportimport.staging.StagingUtil;
-import com.liferay.portlet.trash.service.TrashEntryService;
-import com.liferay.portlet.trash.util.TrashUtil;
 import com.liferay.staging.constants.StagingProcessesPortletKeys;
 import com.liferay.taglib.ui.util.SessionTreeJSClicks;
+import com.liferay.trash.kernel.service.TrashEntryService;
+import com.liferay.trash.kernel.util.TrashUtil;
 
 import java.io.Serializable;
 
@@ -132,10 +132,10 @@ public class EditPublishConfigurationMVCActionCommand
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		setLayoutIds(actionRequest);
-
 		try {
 			if (cmd.equals(Constants.ADD) || cmd.equals(Constants.UPDATE)) {
+				setLayoutIdMap(actionRequest);
+
 				updatePublishConfiguration(actionRequest);
 			}
 			else if (cmd.equals(Constants.MOVE_TO_TRASH)) {
@@ -222,7 +222,7 @@ public class EditPublishConfigurationMVCActionCommand
 		_groupLocalService = groupLocalService;
 	}
 
-	protected void setLayoutIds(ActionRequest actionRequest) {
+	protected void setLayoutIdMap(ActionRequest actionRequest) {
 		HttpServletRequest portletRequest = PortalUtil.getHttpServletRequest(
 			actionRequest);
 
@@ -239,7 +239,7 @@ public class EditPublishConfigurationMVCActionCommand
 			ExportImportHelperUtil.getSelectedLayoutsJSON(
 				groupId, privateLayout, openNodes);
 
-		actionRequest.setAttribute("layoutIds", selectedLayoutsJSON);
+		actionRequest.setAttribute("layoutIdMap", selectedLayoutsJSON);
 	}
 
 	@Reference(unbind = "-")

@@ -33,7 +33,7 @@ long ruleGroupId = BeanParamUtil.getLong(ruleGroup, request, "ruleGroupId");
 String title = StringPool.BLANK;
 
 if (ruleGroup != null) {
-	title = LanguageUtil.format(request, "new-classification-rule-for-x", ruleGroup.getName(locale), false);
+	title = LanguageUtil.format(resourceBundle, "new-classification-rule-for-x", ruleGroup.getName(locale), false);
 
 	if (rule != null) {
 		title = rule.getName(locale) + " (" + ruleGroup.getName(locale) + ")";
@@ -72,9 +72,9 @@ renderResponse.setTitle(title);
 
 	<aui:fieldset-group markupView="lexicon">
 		<aui:fieldset>
-			<aui:input name="name" />
+			<aui:input name="name" placeholder="name" />
 
-			<aui:input name="description" />
+			<aui:input name="description" placeholder="description" />
 
 			<c:choose>
 				<c:when test="<%= ruleHandlerTypes.size() == 1 %>">

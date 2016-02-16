@@ -16,16 +16,16 @@ package com.liferay.calendar.upgrade.v1_0_3;
 
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.RoleConstants;
+import com.liferay.portal.kernel.service.ClassNameLocalService;
+import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Role;
-import com.liferay.portal.model.RoleConstants;
-import com.liferay.portal.service.ClassNameLocalService;
-import com.liferay.portal.service.CompanyLocalService;
-import com.liferay.portal.service.RoleLocalServiceUtil;
-import com.liferay.portal.service.UserLocalService;
-import com.liferay.portal.service.UserLocalServiceUtil;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -90,9 +90,9 @@ public class UpgradeCalendarResource extends UpgradeProcess {
 
 		try {
 			ps = connection.prepareStatement(
-				"select Calendar.calendarId from Calendar join " +
-					"CalendarResource where CalendarResource.classNameId = " +
-						"? and CalendarResource.userId = ?");
+				"select Calendar.calendarId from Calendar, CalendarResource " +
+					"where CalendarResource.classNameId = ? " +
+						"and CalendarResource.userId = ?");
 
 			ps.setLong(1, groupClassNameId);
 			ps.setLong(2, defaultUserId);

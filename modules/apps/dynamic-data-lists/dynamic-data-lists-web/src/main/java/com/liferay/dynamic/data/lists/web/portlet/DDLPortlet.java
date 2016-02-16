@@ -25,8 +25,8 @@ import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.service.DDLRecordService;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetService;
 import com.liferay.dynamic.data.lists.web.configuration.DDLWebConfiguration;
-import com.liferay.portal.exception.PortletPreferencesException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.PortletPreferencesException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
@@ -99,13 +99,13 @@ public class DDLPortlet extends MVCPortlet {
 			renderRequest.setAttribute(
 				DDLWebConfiguration.class.getName(), _ddlWebConfiguration);
 		}
-		catch (NoSuchRecordException | NoSuchRecordSetException nsre) {
+		catch (NoSuchRecordException | NoSuchRecordSetException e) {
 
 			// Let this slide because the user can manually input an record set
 			// key for a new record set that does not yet exist
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(nsre, nsre);
+				_log.debug(e, e);
 			}
 		}
 		catch (PortalException pe) {

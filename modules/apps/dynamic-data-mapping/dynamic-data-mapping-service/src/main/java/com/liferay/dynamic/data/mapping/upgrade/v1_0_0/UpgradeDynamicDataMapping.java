@@ -14,6 +14,18 @@
 
 package com.liferay.dynamic.data.mapping.upgrade.v1_0_0;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.model.DLFileEntryConstants;
+import com.liferay.document.library.kernel.model.DLFileEntryTypeConstants;
+import com.liferay.document.library.kernel.model.DLFileVersion;
+import com.liferay.document.library.kernel.model.DLFolder;
+import com.liferay.document.library.kernel.model.DLFolderConstants;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
+import com.liferay.document.library.kernel.service.DLFileVersionLocalService;
+import com.liferay.document.library.kernel.service.DLFolderLocalService;
+import com.liferay.document.library.kernel.store.DLStoreUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializerUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializerUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONSerializerUtil;
@@ -38,6 +50,12 @@ import com.liferay.dynamic.data.mapping.util.DDMFormValuesTransformer;
 import com.liferay.dynamic.data.mapping.util.DDMUtil;
 import com.liferay.dynamic.data.mapping.util.impl.DDMFieldsCounter;
 import com.liferay.dynamic.data.mapping.util.impl.DDMImpl;
+import com.liferay.expando.kernel.model.ExpandoColumn;
+import com.liferay.expando.kernel.model.ExpandoRow;
+import com.liferay.expando.kernel.model.ExpandoValue;
+import com.liferay.expando.kernel.service.ExpandoRowLocalService;
+import com.liferay.expando.kernel.service.ExpandoTableLocalService;
+import com.liferay.expando.kernel.service.ExpandoValueLocalService;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -45,6 +63,13 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.CompanyConstants;
+import com.liferay.portal.kernel.model.ResourceAction;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.ResourcePermission;
+import com.liferay.portal.kernel.model.RoleConstants;
+import com.liferay.portal.kernel.service.ResourceActionLocalService;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.upgrade.UpgradeException;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.upgrade.util.UpgradeProcessUtil;
@@ -54,6 +79,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -67,32 +93,6 @@ import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.Node;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.kernel.xml.XPath;
-import com.liferay.portal.model.CompanyConstants;
-import com.liferay.portal.model.ResourceAction;
-import com.liferay.portal.model.ResourceConstants;
-import com.liferay.portal.model.ResourcePermission;
-import com.liferay.portal.model.RoleConstants;
-import com.liferay.portal.service.ResourceActionLocalService;
-import com.liferay.portal.service.ResourcePermissionLocalService;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.asset.model.AssetEntry;
-import com.liferay.portlet.asset.service.AssetEntryLocalService;
-import com.liferay.portlet.documentlibrary.model.DLFileEntry;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryConstants;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryTypeConstants;
-import com.liferay.portlet.documentlibrary.model.DLFileVersion;
-import com.liferay.portlet.documentlibrary.model.DLFolder;
-import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
-import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalService;
-import com.liferay.portlet.documentlibrary.service.DLFileVersionLocalService;
-import com.liferay.portlet.documentlibrary.service.DLFolderLocalService;
-import com.liferay.portlet.documentlibrary.store.DLStoreUtil;
-import com.liferay.portlet.expando.model.ExpandoColumn;
-import com.liferay.portlet.expando.model.ExpandoRow;
-import com.liferay.portlet.expando.model.ExpandoValue;
-import com.liferay.portlet.expando.service.ExpandoRowLocalService;
-import com.liferay.portlet.expando.service.ExpandoTableLocalService;
-import com.liferay.portlet.expando.service.ExpandoValueLocalService;
 
 import java.io.File;
 
@@ -448,7 +448,7 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 		try {
 			ps = connection.prepareStatement(
 				"select parentStructureId, definition, storageType from " +
-					"DDMStructure where structureId = ?" );
+					"DDMStructure where structureId = ?");
 
 			ps.setLong(1, structureId);
 
@@ -1417,12 +1417,12 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 	static {
 		_structureModelResourceNames.put(
-			"com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata",
+			"com.liferay.document.library.kernel.model.DLFileEntryMetadata",
 			"com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata-" +
 				DDMStructure.class.getName());
 
 		_structureModelResourceNames.put(
-			"com.liferay.portlet.documentlibrary.util.RawMetadataProcessor",
+			"com.liferay.document.library.kernel.util.RawMetadataProcessor",
 			DDMStructure.class.getName());
 
 		_structureModelResourceNames.put(
@@ -1469,7 +1469,7 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 	private final Map<Long, Long> _templateResourceClassNameIds =
 		new HashMap<>();
 
-	private class DateDDMFormFieldValueTransformer
+	private static class DateDDMFormFieldValueTransformer
 		implements DDMFormFieldValueTransformer {
 
 		@Override
@@ -1503,7 +1503,7 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 	}
 
-	private class DDMFormValuesXSDDeserializer {
+	private static class DDMFormValuesXSDDeserializer {
 
 		public DDMFormValuesXSDDeserializer(long companyId) {
 			_companyId = companyId;

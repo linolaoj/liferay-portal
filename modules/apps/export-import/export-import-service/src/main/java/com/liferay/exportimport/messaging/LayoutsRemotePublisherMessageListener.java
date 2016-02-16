@@ -14,19 +14,22 @@
 
 package com.liferay.exportimport.messaging;
 
+import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
+import com.liferay.exportimport.kernel.service.ExportImportConfigurationLocalService;
+import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageStatus;
+import com.liferay.portal.kernel.model.Release;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.UserLocalService;
-import com.liferay.portlet.exportimport.model.ExportImportConfiguration;
-import com.liferay.portlet.exportimport.service.ExportImportConfigurationLocalService;
-import com.liferay.portlet.exportimport.staging.StagingUtil;
 
 import java.io.Serializable;
 
@@ -73,8 +76,18 @@ public class LayoutsRemotePublisherMessageListener
 			message.getPayload());
 
 		ExportImportConfiguration exportImportConfiguration =
-			_exportImportConfigurationLocalService.getExportImportConfiguration(
-				exportImportConfigurationId);
+			_exportImportConfigurationLocalService.
+				fetchExportImportConfiguration(exportImportConfigurationId);
+
+		if (exportImportConfiguration == null) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"Unable to find export import configuration with ID " +
+						exportImportConfigurationId);
+			}
+
+			return;
+		}
 
 		messageStatus.setPayload(exportImportConfiguration);
 
@@ -133,10 +146,20 @@ public class LayoutsRemotePublisherMessageListener
 			exportImportConfigurationLocalService;
 	}
 
+	@Reference(
+		target = "(&(release.bundle.symbolic.name=com.liferay.exportimport.service)(release.schema.version=1.0.0))",
+		unbind = "-"
+	)
+	protected void setRelease(Release release) {
+	}
+
 	@Reference(unbind = "-")
 	protected void setUserLocalService(UserLocalService userLocalService) {
 		_userLocalService = userLocalService;
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		LayoutsRemotePublisherMessageListener.class);
 
 	private ExportImportConfigurationLocalService
 		_exportImportConfigurationLocalService;

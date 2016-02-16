@@ -333,6 +333,8 @@
 		position: relative;
 
 		h1 {
+			@include ellipsis;
+
 			font-size: 60px;
 			line-height: 80px;
 			margin-bottom: 25px;
@@ -350,14 +352,15 @@
 					margin-bottom: 0;
 				}
 			}
-		}
 
-		a {
-			color: inherit;
-			font-weight: bold;
+			& > a {
+				color: inherit;
+				font-weight: bold;
+				word-wrap: break-word;
 
-			&:hover {
-				text-decoration: none;
+				&:hover {
+					text-decoration: none;
+				}
 			}
 		}
 	}

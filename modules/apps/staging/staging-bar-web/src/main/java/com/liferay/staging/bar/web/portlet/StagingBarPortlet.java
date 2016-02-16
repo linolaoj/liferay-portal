@@ -14,28 +14,28 @@
 
 package com.liferay.staging.bar.web.portlet;
 
-import com.liferay.portal.exception.LayoutBranchNameException;
-import com.liferay.portal.exception.LayoutSetBranchNameException;
-import com.liferay.portal.exception.NoSuchGroupException;
+import com.liferay.exportimport.kernel.staging.StagingUtil;
+import com.liferay.portal.kernel.exception.LayoutBranchNameException;
+import com.liferay.portal.kernel.exception.LayoutSetBranchNameException;
+import com.liferay.portal.kernel.exception.NoSuchGroupException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.model.LayoutRevision;
+import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.service.LayoutRevisionLocalService;
+import com.liferay.portal.kernel.service.LayoutSetBranchLocalService;
+import com.liferay.portal.kernel.service.LayoutSetBranchService;
+import com.liferay.portal.kernel.service.LayoutSetLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.MultiSessionMessages;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.model.LayoutRevision;
-import com.liferay.portal.model.Release;
-import com.liferay.portal.service.LayoutRevisionLocalService;
-import com.liferay.portal.service.LayoutSetBranchLocalService;
-import com.liferay.portal.service.LayoutSetBranchService;
-import com.liferay.portal.service.LayoutSetLocalService;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceContextFactory;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.exportimport.staging.StagingUtil;
 import com.liferay.staging.bar.web.portlet.constants.StagingBarPortletKeys;
 
 import java.io.IOException;
@@ -136,9 +136,7 @@ public class StagingBarPortlet extends MVCPortlet {
 				layoutRevision.getKeywords(), layoutRevision.getRobots(),
 				layoutRevision.getTypeSettings(), layoutRevision.getIconImage(),
 				layoutRevision.getIconImageId(), layoutRevision.getThemeId(),
-				layoutRevision.getColorSchemeId(),
-				layoutRevision.getWapThemeId(),
-				layoutRevision.getWapColorSchemeId(), layoutRevision.getCss(),
+				layoutRevision.getColorSchemeId(), layoutRevision.getCss(),
 				serviceContext);
 
 		if (layoutRevision.getStatus() != WorkflowConstants.STATUS_INCOMPLETE) {
@@ -174,8 +172,6 @@ public class StagingBarPortlet extends MVCPortlet {
 					lastLayoutRevision.getIconImageId(),
 					lastLayoutRevision.getThemeId(),
 					lastLayoutRevision.getColorSchemeId(),
-					lastLayoutRevision.getWapThemeId(),
-					lastLayoutRevision.getWapColorSchemeId(),
 					lastLayoutRevision.getCss(), serviceContext);
 
 			StagingUtil.setRecentLayoutRevisionId(

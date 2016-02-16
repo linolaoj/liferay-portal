@@ -172,6 +172,8 @@ public interface WebKeys {
 
 	public static final String GOOGLE_GADGET = "GOOGLE_GADGET";
 
+	public static final String GOOGLE_INCOMPLETE_USER_ID = "GOOGLE_INCOMPLETE_USER_ID";
+
 	public static final String GROUP = "GROUP";
 
 	public static final String HTTPS_INITIAL = "HTTPS_INITIAL";
@@ -316,6 +318,8 @@ public interface WebKeys {
 	public static final String MESSAGE_BOARDS_MESSAGE = "MESSAGE_BOARDS_MESSAGE";
 
 	public static final String MESSAGE_BOARDS_MESSAGE_DISPLAY = "MESSAGE_BOARDS_MESSAGE_DISPLAY";
+
+	public static final String MESSAGE_BOARDS_TREE_INDEX = "MESSAGE_BOARDS_TREE_INDEX";
 
 	public static final String MESSAGE_BOARDS_TREE_WALKER = "MESSAGE_BOARDS_TREE_WALKER";
 
@@ -480,6 +484,8 @@ public interface WebKeys {
 	public static final String RENDER_PORTLET_RESOURCE = "RENDER_PORTLET_RESOURCE";
 
 	public static final String REQUESTED_LAYOUT = "REQUESTED_LAYOUT";
+
+	public static final String RESOURCE_BUNDLE_LOADER = "RESOURCE_BUNDLE_LOADER";
 
 	public static final String ROLE = "ROLE";
 

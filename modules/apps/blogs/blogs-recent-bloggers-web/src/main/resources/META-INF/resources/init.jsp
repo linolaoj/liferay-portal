@@ -23,32 +23,32 @@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
-<%@ page import="com.liferay.portal.kernel.dao.orm.QueryDefinition" %><%@
+<%@ page import="com.liferay.blogs.kernel.model.BlogsEntry" %><%@
+page import="com.liferay.blogs.kernel.model.BlogsStatsUser" %><%@
+page import="com.liferay.blogs.kernel.service.BlogsEntryLocalServiceUtil" %><%@
+page import="com.liferay.blogs.kernel.service.BlogsStatsUserLocalServiceUtil" %><%@
+page import="com.liferay.blogs.kernel.util.comparator.StatsUserLastPostDateComparator" %><%@
+page import="com.liferay.portal.kernel.dao.orm.QueryDefinition" %><%@
 page import="com.liferay.portal.kernel.dao.search.SearchContainer" %><%@
+page import="com.liferay.portal.kernel.model.Group" %><%@
+page import="com.liferay.portal.kernel.model.Organization" %><%@
+page import="com.liferay.portal.kernel.model.User" %><%@
 page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
 page import="com.liferay.portal.kernel.portlet.PortletProvider" %><%@
 page import="com.liferay.portal.kernel.portlet.PortletProviderUtil" %><%@
+page import="com.liferay.portal.kernel.service.GroupLocalServiceUtil" %><%@
+page import="com.liferay.portal.kernel.service.OrganizationLocalServiceUtil" %><%@
+page import="com.liferay.portal.kernel.service.UserLocalServiceUtil" %><%@
 page import="com.liferay.portal.kernel.util.Constants" %><%@
 page import="com.liferay.portal.kernel.util.FastDateFormatFactoryUtil" %><%@
 page import="com.liferay.portal.kernel.util.GetterUtil" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
+page import="com.liferay.portal.kernel.util.PortalUtil" %><%@
 page import="com.liferay.portal.kernel.util.StringBundler" %><%@
 page import="com.liferay.portal.kernel.util.StringPool" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowConstants" %><%@
-page import="com.liferay.portal.model.Group" %><%@
-page import="com.liferay.portal.model.Organization" %><%@
-page import="com.liferay.portal.model.User" %><%@
-page import="com.liferay.portal.service.GroupLocalServiceUtil" %><%@
-page import="com.liferay.portal.service.OrganizationLocalServiceUtil" %><%@
-page import="com.liferay.portal.service.UserLocalServiceUtil" %><%@
-page import="com.liferay.portal.util.PortalUtil" %><%@
-page import="com.liferay.portlet.blogs.model.BlogsEntry" %><%@
-page import="com.liferay.portlet.blogs.model.BlogsStatsUser" %><%@
-page import="com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil" %><%@
-page import="com.liferay.portlet.blogs.service.BlogsStatsUserLocalServiceUtil" %><%@
-page import="com.liferay.portlet.blogs.util.comparator.StatsUserLastPostDateComparator" %><%@
-page import="com.liferay.portlet.ratings.RatingsType" %><%@
+page import="com.liferay.ratings.kernel.RatingsType" %><%@
 page import="com.liferay.taglib.search.ResultRow" %>
 
 <%@ page import="java.text.Format" %>

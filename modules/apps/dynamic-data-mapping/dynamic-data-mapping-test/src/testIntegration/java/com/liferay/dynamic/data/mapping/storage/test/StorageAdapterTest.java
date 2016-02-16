@@ -15,6 +15,8 @@
 package com.liferay.dynamic.data.mapping.storage.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.document.library.kernel.model.DLFolderConstants;
+import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationResult;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
@@ -39,6 +41,7 @@ import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidationExcepti
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONSerializer;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
@@ -46,13 +49,10 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.test.randomizerbumpers.TikaSafeRandomizerBumper;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
-import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 
 import java.io.Serializable;
 
@@ -142,7 +142,7 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 		DDMFormFieldValidation ddmFormFieldValidation =
 			new DDMFormFieldValidation();
 
-		ddmFormFieldValidation.setExpression("text.contains(\"test\")");
+		ddmFormFieldValidation.setExpression("contains(text, \"test\")");
 		ddmFormFieldValidation.setErrorMessage(
 			"custom validation error message");
 
@@ -217,7 +217,7 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 		DDMFormFieldValidation ddmFormFieldValidation =
 			new DDMFormFieldValidation();
 
-		ddmFormFieldValidation.setExpression("!text.isEmpty()");
+		ddmFormFieldValidation.setExpression("NOT(equals(text, \"\"))");
 		ddmFormFieldValidation.setErrorMessage(
 			"custom validation error message");
 

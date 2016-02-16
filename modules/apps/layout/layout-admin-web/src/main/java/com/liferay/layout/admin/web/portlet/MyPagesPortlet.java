@@ -15,11 +15,11 @@
 package com.liferay.layout.admin.web.portlet;
 
 import com.liferay.layout.admin.web.constants.LayoutAdminPortletKeys;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.servlet.DynamicServletRequest;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.RoleLocalService;
-import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portlet.RenderRequestImpl;
 import com.liferay.portlet.sites.action.ActionUtil;
 
@@ -40,6 +40,7 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"com.liferay.portlet.css-class-wrapper=portlet-layouts-admin",
+		"com.liferay.portlet.header-portlet-css=/css/main.css",
 		"com.liferay.portlet.icon=/icons/my_pages.png",
 		"com.liferay.portlet.preferences-owned-by-group=true",
 		"com.liferay.portlet.private-request-attributes=false",

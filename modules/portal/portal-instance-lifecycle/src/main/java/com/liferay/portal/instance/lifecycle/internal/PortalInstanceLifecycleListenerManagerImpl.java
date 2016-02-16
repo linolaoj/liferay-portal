@@ -18,8 +18,8 @@ import com.liferay.portal.instance.lifecycle.PortalInstanceLifecycleListener;
 import com.liferay.portal.kernel.instance.lifecycle.PortalInstanceLifecycleManager;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
-import com.liferay.portal.model.Company;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -36,6 +36,15 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 @Component(immediate = true, service = PortalInstanceLifecycleManager.class)
 public class PortalInstanceLifecycleListenerManagerImpl
 	implements PortalInstanceLifecycleManager {
+
+	@Override
+	public void preregisterCompany(long companyId) {
+		for (PortalInstanceLifecycleListener portalInstanceLifecycleListener :
+				_portalInstanceLifecycleListeners) {
+
+			preregisterCompany(portalInstanceLifecycleListener, companyId);
+		}
+	}
 
 	@Override
 	public void registerCompany(Company company) {
@@ -77,6 +86,13 @@ public class PortalInstanceLifecycleListenerManagerImpl
 		for (Company company : _companies) {
 			registerCompany(portalInstanceLifecycleListener, company);
 		}
+	}
+
+	protected void preregisterCompany(
+		PortalInstanceLifecycleListener portalInstanceLifecycleListener,
+		long companyId) {
+
+		portalInstanceLifecycleListener.portalInstancePreregistered(companyId);
 	}
 
 	protected void registerCompany(

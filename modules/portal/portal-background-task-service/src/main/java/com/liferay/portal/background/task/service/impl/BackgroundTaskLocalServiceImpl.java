@@ -14,6 +14,7 @@
 
 package com.liferay.portal.background.task.service.impl;
 
+import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.portal.background.task.internal.BackgroundTaskImpl;
 import com.liferay.portal.background.task.model.BackgroundTask;
 import com.liferay.portal.background.task.service.base.BackgroundTaskLocalServiceBaseImpl;
@@ -27,22 +28,21 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
+import com.liferay.portal.kernel.model.CompanyConstants;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserConstants;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.kernel.repository.model.Folder;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.CompanyConstants;
-import com.liferay.portal.model.User;
-import com.liferay.portal.model.UserConstants;
-import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.spring.extender.service.ServiceReference;
-import com.liferay.portal.util.PortletKeys;
-import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 
 import java.io.File;
 import java.io.InputStream;
@@ -310,6 +310,20 @@ public class BackgroundTaskLocalServiceImpl
 	}
 
 	@Override
+	public void deleteGroupBackgroundTasks(
+			long groupId, String name, String taskExecutorClassName)
+		throws PortalException {
+
+		List<BackgroundTask> backgroundTasks =
+			backgroundTaskPersistence.findByG_N_T(
+				groupId, name, taskExecutorClassName);
+
+		for (BackgroundTask backgroundTask : backgroundTasks) {
+			deleteBackgroundTask(backgroundTask);
+		}
+	}
+
+	@Override
 	public BackgroundTask fetchBackgroundTask(long backgroundTaskId) {
 		return backgroundTaskPersistence.fetchByPrimaryKey(backgroundTaskId);
 	}
@@ -361,6 +375,17 @@ public class BackgroundTaskLocalServiceImpl
 
 	@Override
 	public List<BackgroundTask> getBackgroundTasks(
+		long groupId, String taskExecutorClassName, boolean completed,
+		int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return backgroundTaskPersistence.findByG_T_C(
+			groupId, taskExecutorClassName, completed, start, end,
+			orderByComparator);
+	}
+
+	@Override
+	public List<BackgroundTask> getBackgroundTasks(
 		long groupId, String taskExecutorClassName, int status) {
 
 		return backgroundTaskPersistence.findByG_T_S(
@@ -388,27 +413,10 @@ public class BackgroundTaskLocalServiceImpl
 
 	@Override
 	public List<BackgroundTask> getBackgroundTasks(
-		long groupId, String[] taskExecutorClassNames) {
-
-		return backgroundTaskPersistence.findByG_T(
-			groupId, taskExecutorClassNames);
-	}
-
-	@Override
-	public List<BackgroundTask> getBackgroundTasks(
 		long groupId, String[] taskExecutorClassNames, int status) {
 
 		return backgroundTaskPersistence.findByG_T_S(
 			groupId, taskExecutorClassNames, status);
-	}
-
-	@Override
-	public List<BackgroundTask> getBackgroundTasks(
-		long groupId, String[] taskExecutorClassNames, int start, int end,
-		OrderByComparator<BackgroundTask> orderByComparator) {
-
-		return backgroundTaskPersistence.findByG_T(
-			groupId, taskExecutorClassNames, start, end, orderByComparator);
 	}
 
 	@Override
@@ -419,6 +427,42 @@ public class BackgroundTaskLocalServiceImpl
 		return backgroundTaskPersistence.findByG_N_T(
 			groupIds, name, taskExecutorClassName, start, end,
 			orderByComparator);
+	}
+
+	@Override
+	public List<BackgroundTask> getBackgroundTasks(
+		long[] groupIds, String[] taskExecutorClassNames) {
+
+		return backgroundTaskPersistence.findByG_T(
+			groupIds, taskExecutorClassNames);
+	}
+
+	@Override
+	public List<BackgroundTask> getBackgroundTasks(
+		long[] groupIds, String[] taskExecutorClassNames, boolean completed) {
+
+		return backgroundTaskPersistence.findByG_T_C(
+			groupIds, taskExecutorClassNames, completed);
+	}
+
+	@Override
+	public List<BackgroundTask> getBackgroundTasks(
+		long[] groupIds, String[] taskExecutorClassNames, boolean completed,
+		int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return backgroundTaskPersistence.findByG_T_C(
+			groupIds, taskExecutorClassNames, completed, start, end,
+			orderByComparator);
+	}
+
+	@Override
+	public List<BackgroundTask> getBackgroundTasks(
+		long[] groupIds, String[] taskExecutorClassNames, int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return backgroundTaskPersistence.findByG_T(
+			groupIds, taskExecutorClassNames, start, end, orderByComparator);
 	}
 
 	@Override
@@ -490,22 +534,6 @@ public class BackgroundTaskLocalServiceImpl
 
 	@Override
 	public int getBackgroundTasksCount(
-		long groupId, String[] taskExecutorClassNames) {
-
-		return backgroundTaskPersistence.countByG_T(
-			groupId, taskExecutorClassNames);
-	}
-
-	@Override
-	public int getBackgroundTasksCount(
-		long groupId, String[] taskExecutorClassNames, boolean completed) {
-
-		return backgroundTaskPersistence.countByG_T_C(
-			groupId, taskExecutorClassNames, completed);
-	}
-
-	@Override
-	public int getBackgroundTasksCount(
 		long[] groupIds, String name, String taskExecutorClassName) {
 
 		return backgroundTaskPersistence.countByG_N_T(
@@ -519,6 +547,22 @@ public class BackgroundTaskLocalServiceImpl
 
 		return backgroundTaskPersistence.countByG_N_T_C(
 			groupIds, name, taskExecutorClassName, completed);
+	}
+
+	@Override
+	public int getBackgroundTasksCount(
+		long[] groupIds, String[] taskExecutorClassNames) {
+
+		return backgroundTaskPersistence.countByG_T(
+			groupIds, taskExecutorClassNames);
+	}
+
+	@Override
+	public int getBackgroundTasksCount(
+		long[] groupIds, String[] taskExecutorClassNames, boolean completed) {
+
+		return backgroundTaskPersistence.countByG_T_C(
+			groupIds, taskExecutorClassNames, completed);
 	}
 
 	@Clusterable(onMaster = true)

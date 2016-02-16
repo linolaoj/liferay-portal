@@ -15,8 +15,8 @@
 package com.liferay.blogs.web.portlet;
 
 import com.liferay.blogs.web.constants.BlogsPortletKeys;
+import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.model.Release;
 
 import javax.portlet.Portlet;
 
@@ -29,9 +29,9 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"com.liferay.portlet.css-class-wrapper=portlet-blogs-aggregator",
+		"com.liferay.portlet.css-class-wrapper=portlet-blogs",
 		"com.liferay.portlet.display-category=category.collaboration",
-		"com.liferay.portlet.header-portlet-css=/blogs_aggregator/css/main.css",
+		"com.liferay.portlet.header-portlet-css=/blogs/css/main.css",
 		"com.liferay.portlet.icon=/blogs_aggregator/icons/blogs_aggregator.png",
 		"com.liferay.portlet.preferences-owned-by-group=true",
 		"com.liferay.portlet.private-request-attributes=false",

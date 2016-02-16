@@ -26,7 +26,9 @@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
 taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
-<%@ page import="com.liferay.calendar.constants.CalendarActionKeys" %><%@
+<%@ page import="com.liferay.asset.kernel.model.AssetEntry" %><%@
+page import="com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil" %><%@
+page import="com.liferay.calendar.constants.CalendarActionKeys" %><%@
 page import="com.liferay.calendar.constants.CalendarWebKeys" %><%@
 page import="com.liferay.calendar.exception.CalendarBookingDurationException" %><%@
 page import="com.liferay.calendar.exception.CalendarBookingRecurrenceException" %><%@
@@ -75,9 +77,15 @@ page import="com.liferay.portal.kernel.json.JSONFactoryUtil" %><%@
 page import="com.liferay.portal.kernel.json.JSONObject" %><%@
 page import="com.liferay.portal.kernel.json.JSONSerializer" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
+page import="com.liferay.portal.kernel.model.Group" %><%@
+page import="com.liferay.portal.kernel.model.User" %><%@
 page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
 page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.kernel.security.permission.ResourceActionsUtil" %><%@
+page import="com.liferay.portal.kernel.service.GroupServiceUtil" %><%@
+page import="com.liferay.portal.kernel.service.UserLocalServiceUtil" %><%@
+page import="com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalServiceUtil" %><%@
+page import="com.liferay.portal.kernel.service.WorkflowInstanceLinkLocalServiceUtil" %><%@
 page import="com.liferay.portal.kernel.servlet.BrowserSnifferUtil" %><%@
 page import="com.liferay.portal.kernel.util.ArrayUtil" %><%@
 page import="com.liferay.portal.kernel.util.CalendarFactoryUtil" %><%@
@@ -90,25 +98,16 @@ page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.ListUtil" %><%@
 page import="com.liferay.portal.kernel.util.OrderByComparator" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
+page import="com.liferay.portal.kernel.util.PortalUtil" %><%@
+page import="com.liferay.portal.kernel.util.SessionClicks" %><%@
 page import="com.liferay.portal.kernel.util.StringBundler" %><%@
 page import="com.liferay.portal.kernel.util.StringPool" %><%@
 page import="com.liferay.portal.kernel.util.StringUtil" %><%@
 page import="com.liferay.portal.kernel.util.Time" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
+page import="com.liferay.portal.kernel.util.comparator.UserScreenNameComparator" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowConstants" %><%@
-page import="com.liferay.portal.model.Group" %><%@
-page import="com.liferay.portal.model.User" %><%@
-page import="com.liferay.portal.service.GroupServiceUtil" %><%@
-page import="com.liferay.portal.service.UserLocalServiceUtil" %><%@
-page import="com.liferay.portal.service.WorkflowDefinitionLinkLocalServiceUtil" %><%@
-page import="com.liferay.portal.service.WorkflowInstanceLinkLocalServiceUtil" %><%@
-page import="com.liferay.portal.util.PortalUtil" %><%@
-page import="com.liferay.portal.util.SessionClicks" %><%@
-page import="com.liferay.portal.util.comparator.UserScreenNameComparator" %><%@
-page import="com.liferay.portlet.PortletURLUtil" %><%@
-page import="com.liferay.portlet.asset.model.AssetEntry" %><%@
-page import="com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil" %><%@
 page import="com.liferay.taglib.search.ResultRow" %><%@
 page import="com.liferay.util.RSSUtil" %>
 
@@ -124,15 +123,13 @@ page import="java.util.TimeZone" %>
 
 <%@ page import="javax.portlet.PortletURL" %>
 
+<liferay-frontend:defineObjects />
+
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />
 
 <%
-PortletURL currentURLObj = PortletURLUtil.getCurrent(liferayPortletRequest, liferayPortletResponse);
-
-String currentURL = currentURLObj.toString();
-
 CalendarBooking calendarBooking = (CalendarBooking)request.getAttribute(CalendarWebKeys.CALENDAR_BOOKING);
 
 CalendarResource groupCalendarResource = CalendarResourceUtil.getScopeGroupCalendarResource(liferayPortletRequest, scopeGroupId);

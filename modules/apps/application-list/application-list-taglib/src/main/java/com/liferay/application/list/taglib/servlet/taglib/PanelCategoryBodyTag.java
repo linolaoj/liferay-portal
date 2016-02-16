@@ -18,10 +18,10 @@ import com.liferay.application.list.PanelApp;
 import com.liferay.application.list.PanelAppRegistry;
 import com.liferay.application.list.PanelCategory;
 import com.liferay.application.list.constants.ApplicationListWebKeys;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.theme.ThemeDisplay;
 
 import java.util.List;
 
@@ -62,8 +62,7 @@ public class PanelCategoryBodyTag extends BasePanelTag {
 			WebKeys.THEME_DISPLAY);
 
 		return panelAppRegistry.getPanelApps(
-			_panelCategory, themeDisplay.getPermissionChecker(),
-			themeDisplay.getScopeGroup());
+			_panelCategory, themeDisplay.getPermissionChecker(), getGroup());
 	}
 
 	@Override

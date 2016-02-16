@@ -14,30 +14,28 @@
 
 package com.liferay.layout.admin.web.display.context;
 
-import com.liferay.application.list.util.LatentGroupManagerUtil;
+import com.liferay.application.list.GroupProvider;
+import com.liferay.application.list.constants.ApplicationListWebKeys;
+import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.layout.admin.web.constants.LayoutAdminPortletKeys;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.service.LayoutSetLocalServiceUtil;
+import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.LayoutConstants;
-import com.liferay.portal.model.LayoutSet;
-import com.liferay.portal.service.LayoutLocalServiceUtil;
-import com.liferay.portal.service.LayoutSetLocalServiceUtil;
-import com.liferay.portal.service.permission.GroupPermissionUtil;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.exportimport.staging.StagingUtil;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 /**
  * @author Julio Camarero
@@ -52,6 +50,8 @@ public class BaseLayoutDisplayContext {
 		this.liferayPortletRequest = liferayPortletRequest;
 		this.liferayPortletResponse = liferayPortletResponse;
 
+		groupProvider = (GroupProvider)liferayPortletRequest.getAttribute(
+			ApplicationListWebKeys.GROUP_PROVIDER);
 		themeDisplay = (ThemeDisplay)liferayPortletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 	}
@@ -242,20 +242,10 @@ public class BaseLayoutDisplayContext {
 			return _selGroup;
 		}
 
-		_selGroup = themeDisplay.getScopeGroup();
-
-		if (_selGroup.isControlPanel()) {
-			_selGroup = LatentGroupManagerUtil.getLatentGroup(getSession());
-		}
-
-		return _selGroup;
-	}
-
-	protected HttpSession getSession() {
-		HttpServletRequest request = PortalUtil.getOriginalServletRequest(
+		_selGroup = groupProvider.getGroup(
 			PortalUtil.getHttpServletRequest(liferayPortletRequest));
 
-		return request.getSession();
+		return _selGroup;
 	}
 
 	protected Group getStagingGroup() {
@@ -268,6 +258,7 @@ public class BaseLayoutDisplayContext {
 		return _stagingGroup;
 	}
 
+	protected final GroupProvider groupProvider;
 	protected final LiferayPortletRequest liferayPortletRequest;
 	protected final LiferayPortletResponse liferayPortletResponse;
 	protected final ThemeDisplay themeDisplay;

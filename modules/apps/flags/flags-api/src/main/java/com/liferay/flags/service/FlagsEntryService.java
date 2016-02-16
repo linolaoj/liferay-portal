@@ -20,10 +20,11 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebService;
 import com.liferay.portal.kernel.security.access.control.AccessControlled;
+import com.liferay.portal.kernel.service.BaseService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Transactional;
-import com.liferay.portal.service.BaseService;
 
 /**
  * Provides the remote service interface for FlagsEntry. Methods of this
@@ -52,8 +53,7 @@ public interface FlagsEntryService extends BaseService {
 	public void addEntry(java.lang.String className, long classPK,
 		java.lang.String reporterEmailAddress, long reportedUserId,
 		java.lang.String contentTitle, java.lang.String contentURL,
-		java.lang.String reason,
-		com.liferay.portal.service.ServiceContext serviceContext);
+		java.lang.String reason, ServiceContext serviceContext);
 
 	/**
 	* Returns the OSGi service identifier.

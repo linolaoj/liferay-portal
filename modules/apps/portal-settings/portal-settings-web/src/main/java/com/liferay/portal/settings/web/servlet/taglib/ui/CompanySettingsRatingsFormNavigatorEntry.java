@@ -14,12 +14,12 @@
 
 package com.liferay.portal.settings.web.servlet.taglib.ui;
 
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.servlet.taglib.ui.FormNavigatorConstants;
 import com.liferay.portal.kernel.servlet.taglib.ui.FormNavigatorEntry;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.User;
-import com.liferay.portlet.ratings.definition.PortletRatingsDefinitionUtil;
-import com.liferay.portlet.ratings.definition.PortletRatingsDefinitionValues;
+import com.liferay.ratings.kernel.definition.PortletRatingsDefinitionUtil;
+import com.liferay.ratings.kernel.definition.PortletRatingsDefinitionValues;
 
 import java.util.Map;
 

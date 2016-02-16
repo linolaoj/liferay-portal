@@ -14,6 +14,11 @@
 
 package com.liferay.portal.deploy.hot;
 
+import com.liferay.document.library.kernel.antivirus.AntivirusScanner;
+import com.liferay.document.library.kernel.antivirus.AntivirusScannerUtil;
+import com.liferay.document.library.kernel.antivirus.AntivirusScannerWrapper;
+import com.liferay.document.library.kernel.util.DLProcessor;
+import com.liferay.document.library.kernel.util.DLProcessorRegistryUtil;
 import com.liferay.portal.captcha.CaptchaImpl;
 import com.liferay.portal.kernel.bean.BeanLocatorException;
 import com.liferay.portal.kernel.bean.ClassLoaderBeanHandler;
@@ -42,7 +47,9 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.lock.LockListener;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.ModelListener;
 import com.liferay.portal.kernel.plugin.PluginPackage;
+import com.liferay.portal.kernel.portlet.ControlPanelEntry;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.search.IndexerPostProcessor;
 import com.liferay.portal.kernel.security.auth.AuthFailure;
@@ -66,6 +73,9 @@ import com.liferay.portal.kernel.security.membershippolicy.UserGroupMembershipPo
 import com.liferay.portal.kernel.security.pacl.PACLConstants;
 import com.liferay.portal.kernel.security.pacl.permission.PortalHookPermission;
 import com.liferay.portal.kernel.security.pwd.Toolkit;
+import com.liferay.portal.kernel.service.ReleaseLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceWrapper;
+import com.liferay.portal.kernel.service.persistence.BasePersistence;
 import com.liferay.portal.kernel.servlet.DirectServletRegistryUtil;
 import com.liferay.portal.kernel.servlet.LiferayFilter;
 import com.liferay.portal.kernel.servlet.LiferayFilterTracker;
@@ -98,15 +108,11 @@ import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.UnsecureSAXReaderUtil;
 import com.liferay.portal.language.LiferayResourceBundle;
-import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.repository.registry.RepositoryClassDefinitionCatalogUtil;
 import com.liferay.portal.repository.util.ExternalRepositoryFactory;
 import com.liferay.portal.repository.util.ExternalRepositoryFactoryImpl;
 import com.liferay.portal.security.auth.AuthVerifierPipeline;
 import com.liferay.portal.security.lang.DoPrivilegedBean;
-import com.liferay.portal.service.ReleaseLocalServiceUtil;
-import com.liferay.portal.service.ServiceWrapper;
-import com.liferay.portal.service.persistence.BasePersistence;
 import com.liferay.portal.servlet.filters.cache.CacheUtil;
 import com.liferay.portal.servlet.taglib.ui.DeprecatedFormNavigatorEntry;
 import com.liferay.portal.spring.aop.ServiceBeanAopProxy;
@@ -115,13 +121,7 @@ import com.liferay.portal.util.JavaScriptBundleUtil;
 import com.liferay.portal.util.PortalInstances;
 import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.ControlPanelEntry;
-import com.liferay.portlet.documentlibrary.antivirus.AntivirusScanner;
-import com.liferay.portlet.documentlibrary.antivirus.AntivirusScannerUtil;
-import com.liferay.portlet.documentlibrary.antivirus.AntivirusScannerWrapper;
 import com.liferay.portlet.documentlibrary.store.StoreFactory;
-import com.liferay.portlet.documentlibrary.util.DLProcessor;
-import com.liferay.portlet.documentlibrary.util.DLProcessorRegistryUtil;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
 import com.liferay.registry.ServiceRegistration;
@@ -185,14 +185,13 @@ public class HookHotDeployListener
 		"company.settings.form.miscellaneous", "company.settings.form.social",
 		"control.panel.entry.class.default", "default.landing.page.path",
 		"default.regular.color.scheme.id", "default.regular.theme.id",
-		"default.wap.color.scheme.id", "default.wap.theme.id",
 		"dl.file.entry.drafts.enabled",
 		"dl.file.entry.open.in.ms.office.manual.check.in.required",
 		"dl.file.entry.processors", "dl.repository.impl",
 		"dl.store.antivirus.impl", "dl.store.impl", "dockbar.add.portlets",
-		"field.enable.com.liferay.portal.model.Contact.birthday",
-		"field.enable.com.liferay.portal.model.Contact.male",
-		"field.enable.com.liferay.portal.model.Organization.status",
+		"field.enable.com.liferay.portal.kernel.model.Contact.birthday",
+		"field.enable.com.liferay.portal.kernel.model.Contact.male",
+		"field.enable.com.liferay.portal.kernel.model.Organization.status",
 		"hot.deploy.listeners", "javascript.fast.load",
 		"journal.article.form.add", "journal.article.form.translate",
 		"journal.article.form.update", "layout.form.add", "layout.form.update",
@@ -1005,11 +1004,11 @@ public class HookHotDeployListener
 			FormNavigatorConstants.FORM_NAVIGATOR_ID_SITES, "sites_admin/site");
 		initFormNavigatorEntry(
 			servletContextName, portalProperties, SITES_FORM_ADD_MAIN,
-			FormNavigatorConstants.CATEGORY_KEY_SITES_BASIC_INFORMATION,
+			FormNavigatorConstants.CATEGORY_KEY_SITES_GENERAL,
 			FormNavigatorConstants.FORM_NAVIGATOR_ID_SITES, "sites_admin/site");
 		initFormNavigatorEntry(
 			servletContextName, portalProperties, SITES_FORM_ADD_MISCELLANEOUS,
-			FormNavigatorConstants.CATEGORY_KEY_SITES_MISCELLANEOUS,
+			FormNavigatorConstants.CATEGORY_KEY_SITES_LANGUAGES,
 			FormNavigatorConstants.FORM_NAVIGATOR_ID_SITES, "sites_admin/site");
 		initFormNavigatorEntry(
 			servletContextName, portalProperties, SITES_FORM_ADD_SEO,
@@ -1021,12 +1020,12 @@ public class HookHotDeployListener
 			FormNavigatorConstants.FORM_NAVIGATOR_ID_SITES, "sites_admin/site");
 		initFormNavigatorEntry(
 			servletContextName, portalProperties, SITES_FORM_UPDATE_MAIN,
-			FormNavigatorConstants.CATEGORY_KEY_SITES_BASIC_INFORMATION,
+			FormNavigatorConstants.CATEGORY_KEY_SITES_GENERAL,
 			FormNavigatorConstants.FORM_NAVIGATOR_ID_SITES, "sites_admin/site");
 		initFormNavigatorEntry(
 			servletContextName, portalProperties,
 			SITES_FORM_UPDATE_MISCELLANEOUS,
-			FormNavigatorConstants.CATEGORY_KEY_SITES_MISCELLANEOUS,
+			FormNavigatorConstants.CATEGORY_KEY_SITES_LANGUAGES,
 			FormNavigatorConstants.FORM_NAVIGATOR_ID_SITES, "sites_admin/site");
 		initFormNavigatorEntry(
 			servletContextName, portalProperties, SITES_FORM_UPDATE_SEO,
@@ -1560,14 +1559,14 @@ public class HookHotDeployListener
 			String mailHookClassName = portalProperties.getProperty(
 				PropsKeys.MAIL_HOOK_IMPL);
 
-			com.liferay.mail.util.Hook mailHook =
-				(com.liferay.mail.util.Hook)newInstance(
-					portletClassLoader, com.liferay.mail.util.Hook.class,
+			com.liferay.mail.kernel.util.Hook mailHook =
+				(com.liferay.mail.kernel.util.Hook)newInstance(
+					portletClassLoader, com.liferay.mail.kernel.util.Hook.class,
 					mailHookClassName);
 
 			registerService(
 				servletContextName, mailHookClassName,
-				com.liferay.mail.util.Hook.class, mailHook);
+				com.liferay.mail.kernel.util.Hook.class, mailHook);
 		}
 
 		if (portalProperties.containsKey(
@@ -2331,9 +2330,9 @@ public class HookHotDeployListener
 		"auth.forward.by.last.path", "captcha.check.portal.create_account",
 		"dl.file.entry.drafts.enabled",
 		"dl.file.entry.open.in.ms.office.manual.check.in.required",
-		"field.enable.com.liferay.portal.model.Contact.birthday",
-		"field.enable.com.liferay.portal.model.Contact.male",
-		"field.enable.com.liferay.portal.model.Organization.status",
+		"field.enable.com.liferay.portal.kernel.model.Contact.birthday",
+		"field.enable.com.liferay.portal.kernel.model.Contact.male",
+		"field.enable.com.liferay.portal.kernel.model.Organization.status",
 		"javascript.fast.load", "layout.template.cache.enabled",
 		"layout.user.private.layouts.auto.create",
 		"layout.user.private.layouts.enabled",
@@ -2406,8 +2405,7 @@ public class HookHotDeployListener
 	private static final String[] _PROPS_VALUES_STRING = {
 		"company.default.locale", "company.default.time.zone",
 		"default.landing.page.path", "default.regular.color.scheme.id",
-		"default.regular.theme.id", "default.wap.color.scheme.id",
-		"default.wap.theme.id", "passwords.passwordpolicytoolkit.generator",
+		"default.regular.theme.id", "passwords.passwordpolicytoolkit.generator",
 		"passwords.passwordpolicytoolkit.static",
 		"phone.number.format.international.regexp",
 		"phone.number.format.usa.regexp", "social.activity.sets.selector",
@@ -2444,7 +2442,7 @@ public class HookHotDeployListener
 		_serviceRegistrations = newMap();
 	private final Set<String> _servletContextNames = new HashSet<>();
 
-	private class DLFileEntryProcessorContainer {
+	private static class DLFileEntryProcessorContainer {
 
 		public void registerDLProcessor(DLProcessor dlProcessor) {
 			DLProcessorRegistryUtil.register(dlProcessor);
@@ -2464,7 +2462,7 @@ public class HookHotDeployListener
 
 	}
 
-	private class DLRepositoryContainer {
+	private static class DLRepositoryContainer {
 
 		public void registerRepositoryFactory(
 			String className,
@@ -2490,7 +2488,7 @@ public class HookHotDeployListener
 
 	}
 
-	private class HotDeployListenersContainer {
+	private static class HotDeployListenersContainer {
 
 		public void registerHotDeployListener(
 			HotDeployListener hotDeployListener) {
@@ -2511,7 +2509,8 @@ public class HookHotDeployListener
 
 	}
 
-	private class MergeStringArraysContainer implements StringArraysContainer {
+	private static class MergeStringArraysContainer
+		implements StringArraysContainer {
 
 		@Override
 		public String[] getStringArray() {
@@ -2551,7 +2550,7 @@ public class HookHotDeployListener
 
 	}
 
-	private class OverrideStringArraysContainer
+	private static class OverrideStringArraysContainer
 		implements StringArraysContainer {
 
 		@Override

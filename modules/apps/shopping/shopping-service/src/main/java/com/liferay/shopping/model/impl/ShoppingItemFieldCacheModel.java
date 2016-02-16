@@ -16,10 +16,10 @@ package com.liferay.shopping.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import com.liferay.shopping.model.ShoppingItemField;
 
@@ -120,7 +120,9 @@ public class ShoppingItemFieldCacheModel implements CacheModel<ShoppingItemField
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		itemFieldId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		itemId = objectInput.readLong();
 		name = objectInput.readUTF();
 		values = objectInput.readUTF();
@@ -131,7 +133,9 @@ public class ShoppingItemFieldCacheModel implements CacheModel<ShoppingItemField
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(itemFieldId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(itemId);
 
 		if (name == null) {

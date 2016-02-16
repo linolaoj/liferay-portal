@@ -14,19 +14,22 @@
 
 package com.liferay.polls.service.permission;
 
+import com.liferay.exportimport.kernel.staging.permission.StagingPermissionUtil;
 import com.liferay.polls.constants.PollsPortletKeys;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.ResourcePermissionChecker;
-import com.liferay.portlet.exportimport.staging.permission.StagingPermissionUtil;
 
 import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Mika Koivisto
  */
-@Component(immediate = true, property = {"resource.name=com.liferay.polls"})
+@Component(
+	immediate = true,
+	property = {"resource.name=" + PollsResourcePermissionChecker.RESOURCE_NAME}
+)
 public class PollsResourcePermissionChecker
 	implements ResourcePermissionChecker {
 

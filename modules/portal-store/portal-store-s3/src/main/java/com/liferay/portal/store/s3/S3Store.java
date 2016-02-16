@@ -41,6 +41,10 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.s3.model.StorageClass;
 
+import com.liferay.document.library.kernel.exception.DuplicateFileException;
+import com.liferay.document.library.kernel.exception.NoSuchFileException;
+import com.liferay.document.library.kernel.store.BaseStore;
+import com.liferay.document.library.kernel.store.Store;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
@@ -51,10 +55,6 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.store.s3.configuration.S3StoreConfiguration;
-import com.liferay.portlet.documentlibrary.exception.DuplicateFileException;
-import com.liferay.portlet.documentlibrary.exception.NoSuchFileException;
-import com.liferay.portlet.documentlibrary.store.BaseStore;
-import com.liferay.portlet.documentlibrary.store.Store;
 
 import java.io.File;
 import java.io.IOException;
@@ -114,8 +114,8 @@ public class S3Store extends BaseStore {
 
 			_amazonS3.putObject(putObjectRequest);
 		}
-		catch (AmazonClientException amazonClientException) {
-			throw transform(amazonClientException);
+		catch (AmazonClientException ace) {
+			throw transform(ace);
 		}
 		finally {
 			StreamUtil.cleanUp(is);
@@ -158,8 +158,8 @@ public class S3Store extends BaseStore {
 
 			_amazonS3.deleteObject(deleteObjectRequest);
 		}
-		catch (AmazonClientException amazonClientException) {
-			throw transform(amazonClientException);
+		catch (AmazonClientException ace) {
+			throw transform(ace);
 		}
 	}
 
@@ -348,8 +348,8 @@ public class S3Store extends BaseStore {
 
 			_amazonS3.putObject(putObjectRequest);
 		}
-		catch (AmazonClientException amazonClientException) {
-			throw transform(amazonClientException);
+		catch (AmazonClientException ace) {
+			throw transform(ace);
 		}
 		finally {
 			StreamUtil.cleanUp(is);
@@ -424,8 +424,8 @@ public class S3Store extends BaseStore {
 				_amazonS3.deleteObjects(deleteObjectsRequest);
 			}
 		}
-		catch (AmazonClientException amazonClientException) {
-			throw transform(amazonClientException);
+		catch (AmazonClientException ace) {
+			throw transform(ace);
 		}
 	}
 
@@ -527,13 +527,13 @@ public class S3Store extends BaseStore {
 				return s3Object;
 			}
 		}
-		catch (AmazonClientException amazonClientException) {
-			if (isFileNotFound(amazonClientException)) {
+		catch (AmazonClientException ace) {
+			if (isFileNotFound(ace)) {
 				throw new NoSuchFileException(
 					companyId, repositoryId, fileName, versionLabel);
 			}
 
-			throw transform(amazonClientException);
+			throw transform(ace);
 		}
 	}
 
@@ -564,8 +564,8 @@ public class S3Store extends BaseStore {
 
 			return s3ObjectSummaries;
 		}
-		catch (AmazonClientException amazonClientException) {
-			throw transform(amazonClientException);
+		catch (AmazonClientException ace) {
+			throw transform(ace);
 		}
 	}
 

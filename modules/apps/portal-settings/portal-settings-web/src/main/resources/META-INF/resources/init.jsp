@@ -30,15 +30,18 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
 taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
 <%@ page import="com.liferay.map.constants.MapProviderWebKeys" %><%@
-page import="com.liferay.portal.LocaleException" %><%@
-page import="com.liferay.portal.exception.AccountNameException" %><%@
-page import="com.liferay.portal.exception.CompanyMxException" %><%@
-page import="com.liferay.portal.exception.CompanyVirtualHostException" %><%@
+page import="com.liferay.portal.kernel.exception.AccountNameException" %><%@
+page import="com.liferay.portal.kernel.exception.CompanyMxException" %><%@
+page import="com.liferay.portal.kernel.exception.CompanyVirtualHostException" %><%@
+page import="com.liferay.portal.kernel.exception.LocaleException" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
 page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil" %><%@
+page import="com.liferay.portal.kernel.model.*" %><%@
+page import="com.liferay.portal.kernel.model.impl.*" %><%@
 page import="com.liferay.portal.kernel.portlet.PortletProvider" %><%@
 page import="com.liferay.portal.kernel.portlet.PortletProviderUtil" %><%@
 page import="com.liferay.portal.kernel.security.permission.ResourceActionsUtil" %><%@
+page import="com.liferay.portal.kernel.service.*" %><%@
 page import="com.liferay.portal.kernel.servlet.taglib.DynamicInclude" %><%@
 page import="com.liferay.portal.kernel.servlet.taglib.ui.FormNavigatorConstants" %><%@
 page import="com.liferay.portal.kernel.util.ArrayUtil" %><%@
@@ -51,10 +54,14 @@ page import="com.liferay.portal.kernel.util.ListUtil" %><%@
 page import="com.liferay.portal.kernel.util.LocaleUtil" %><%@
 page import="com.liferay.portal.kernel.util.LocalizationUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
+page import="com.liferay.portal.kernel.util.PortalUtil" %><%@
+page import="com.liferay.portal.kernel.util.PortletKeys" %><%@
 page import="com.liferay.portal.kernel.util.PropsKeys" %><%@
 page import="com.liferay.portal.kernel.util.SetUtil" %><%@
 page import="com.liferay.portal.kernel.util.StringPool" %><%@
 page import="com.liferay.portal.kernel.util.StringUtil" %><%@
+page import="com.liferay.portal.kernel.util.TermsOfUseContentProvider" %><%@
+page import="com.liferay.portal.kernel.util.TermsOfUseContentProviderRegistryUtil" %><%@
 page import="com.liferay.portal.kernel.util.TextFormatter" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
@@ -63,16 +70,11 @@ page import="com.liferay.portal.model.*" %><%@
 page import="com.liferay.portal.model.impl.*" %><%@
 page import="com.liferay.portal.service.*" %><%@
 page import="com.liferay.portal.settings.web.constants.PortalSettingsWebKeys" %><%@
-page import="com.liferay.portal.util.PortalUtil" %><%@
-page import="com.liferay.portal.util.PortletKeys" %><%@
 page import="com.liferay.portal.util.PrefsPropsUtil" %><%@
 page import="com.liferay.portal.util.PropsValues" %><%@
-page import="com.liferay.portal.util.TermsOfUseContentProvider" %><%@
-page import="com.liferay.portal.util.TermsOfUseContentProviderRegistryUtil" %><%@
-page import="com.liferay.portlet.PortletURLUtil" %><%@
-page import="com.liferay.portlet.ratings.RatingsType" %><%@
-page import="com.liferay.portlet.ratings.display.context.CompanyPortletRatingsDefinitionDisplayContext" %><%@
-page import="com.liferay.portlet.ratings.transformer.RatingsDataTransformerUtil" %><%@
+page import="com.liferay.ratings.kernel.RatingsType" %><%@
+page import="com.liferay.ratings.kernel.display.context.CompanyPortletRatingsDefinitionDisplayContext" %><%@
+page import="com.liferay.ratings.kernel.transformer.RatingsDataTransformerUtil" %><%@
 page import="com.liferay.sites.kernel.util.Sites" %><%@
 page import="com.liferay.taglib.servlet.JspWriterHttpServletResponse" %><%@
 page import="com.liferay.util.ContentUtil" %>
@@ -87,14 +89,10 @@ page import="java.util.Set" %>
 <%@ page import="javax.portlet.PortletPreferences" %><%@
 page import="javax.portlet.PortletURL" %>
 
+<liferay-frontend:defineObjects />
+
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />
-
-<%
-PortletURL currentURLObj = PortletURLUtil.getCurrent(liferayPortletRequest, liferayPortletResponse);
-
-String currentURL = currentURLObj.toString();
-%>
 
 <%@ include file="/init-ext.jsp" %>

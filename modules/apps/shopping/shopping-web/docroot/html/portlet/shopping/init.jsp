@@ -33,9 +33,16 @@ page import="com.liferay.portal.kernel.dao.search.RowChecker" %><%@
 page import="com.liferay.portal.kernel.dao.search.SearchContainer" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
 page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil" %><%@
-page import="com.liferay.portal.kernel.module.configuration.ConfigurationFactoryUtil" %><%@
+page import="com.liferay.portal.kernel.model.Address" %><%@
+page import="com.liferay.portal.kernel.model.Contact" %><%@
+page import="com.liferay.portal.kernel.model.Country" %><%@
+page import="com.liferay.portal.kernel.model.ModelHintsConstants" %><%@
+page import="com.liferay.portal.kernel.model.Region" %><%@
+page import="com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil" %><%@
 page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
+page import="com.liferay.portal.kernel.portlet.PortletURLUtil" %><%@
 page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
+page import="com.liferay.portal.kernel.service.*" %><%@
 page import="com.liferay.portal.kernel.servlet.SessionErrors" %><%@
 page import="com.liferay.portal.kernel.settings.GroupServiceSettingsLocator" %><%@
 page import="com.liferay.portal.kernel.settings.ParameterMapSettingsLocator" %><%@
@@ -51,6 +58,7 @@ page import="com.liferay.portal.kernel.util.ListUtil" %><%@
 page import="com.liferay.portal.kernel.util.OrderByComparator" %><%@
 page import="com.liferay.portal.kernel.util.OrderedProperties" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
+page import="com.liferay.portal.kernel.util.PortalUtil" %><%@
 page import="com.liferay.portal.kernel.util.PropertiesUtil" %><%@
 page import="com.liferay.portal.kernel.util.PropsKeys" %><%@
 page import="com.liferay.portal.kernel.util.StringBundler" %><%@
@@ -60,16 +68,9 @@ page import="com.liferay.portal.kernel.util.TextFormatter" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
 page import="com.liferay.portal.kernel.webserver.WebServerServletTokenUtil" %><%@
-page import="com.liferay.portal.model.Address" %><%@
-page import="com.liferay.portal.model.Contact" %><%@
-page import="com.liferay.portal.model.Country" %><%@
-page import="com.liferay.portal.model.ModelHintsConstants" %><%@
-page import="com.liferay.portal.model.Region" %><%@
 page import="com.liferay.portal.service.*" %><%@
-page import="com.liferay.portal.util.PortalUtil" %><%@
 page import="com.liferay.portal.util.PrefsPropsUtil" %><%@
 page import="com.liferay.portal.util.PropsValues" %><%@
-page import="com.liferay.portlet.PortletURLUtil" %><%@
 page import="com.liferay.shopping.configuration.ShoppingGroupServiceOverriddenConfiguration" %><%@
 page import="com.liferay.shopping.constants.ShoppingConstants" %><%@
 page import="com.liferay.shopping.exception.BillingCityException" %><%@
@@ -185,7 +186,7 @@ page import="javax.portlet.WindowState" %>
 <portlet:defineObjects />
 
 <%
-ShoppingGroupServiceOverriddenConfiguration shoppingGroupServiceOverriddenConfiguration = ConfigurationFactoryUtil.getConfiguration(ShoppingGroupServiceOverriddenConfiguration.class, new GroupServiceSettingsLocator(scopeGroupId, ShoppingConstants.SERVICE_NAME));
+ShoppingGroupServiceOverriddenConfiguration shoppingGroupServiceOverriddenConfiguration = ConfigurationProviderUtil.getConfiguration(ShoppingGroupServiceOverriddenConfiguration.class, new GroupServiceSettingsLocator(scopeGroupId, ShoppingConstants.SERVICE_NAME));
 
 Currency currency = Currency.getInstance(shoppingGroupServiceOverriddenConfiguration.getCurrencyId());
 
