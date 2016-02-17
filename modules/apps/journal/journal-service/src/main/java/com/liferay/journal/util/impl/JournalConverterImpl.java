@@ -873,6 +873,10 @@ public class JournalConverterImpl implements JournalConverter {
 		else if (DDMImpl.TYPE_SELECT.equals(fieldType) &&
 				 Validator.isNotNull(fieldValue)) {
 
+			if (!fieldValue.startsWith(StringPool.OPEN_BRACKET)) {
+				return;
+			}
+
 			JSONArray jsonArray = null;
 
 			try {
