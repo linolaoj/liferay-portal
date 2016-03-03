@@ -56,6 +56,10 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
+		<execute macro="SitePageNavigator#gotoEditPage">
+			<var name="page" value="Site Page Name" />
+		</execute>
+
 		<execute macro="PageCustomizations#gotoCustomizationSettingsPG" />
 
 		<execute macro="PageCustomizations#enableSectionCustomizablePG">
@@ -166,6 +170,10 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
+		<execute macro="SitePageNavigator#gotoEditPage">
+			<var name="page" value="Site Page Name" />
+		</execute>
+
 		<execute macro="PageCustomizations#gotoCustomizationSettingsPG" />
 
 		<execute macro="PageCustomizations#enableSectionCustomizablePG">
@@ -185,8 +193,6 @@
 		<execute macro="Portlet#addPG">
 			<var name="portletName" value="Wiki" />
 		</execute>
-
-		<execute function="Refresh" />
 
 		<execute macro="Portlet#viewSpecificPG">
 			<var name="portletName" value="Wiki" />
@@ -285,6 +291,10 @@
 			<var name="pageName" value="Site Page Name" />
 			<var name="siteName" value="Site Name" />
 			<var name="siteURL" value="true" />
+		</execute>
+
+		<execute macro="SitePageNavigator#gotoEditPage">
+			<var name="page" value="Site Page Name" />
 		</execute>
 
 		<execute macro="PageCustomizations#gotoCustomizationSettingsPG" />
@@ -449,7 +459,7 @@
 			<var name="userScreenName" value="usersn" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesPages">
+		<execute macro="SitePageNavigator#gotoPages">
 			<var name="page" value="Public Pages" />
 			<var name="site" value="Liferay" />
 		</execute>
@@ -458,7 +468,7 @@
 			<var name="pageName" value="Site Page Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesPages">
+		<execute macro="SitePageNavigator#gotoPages">
 			<var name="page" value="Public Pages" />
 		</execute>
 
@@ -467,7 +477,7 @@
 			<var name="sitePageName" value="Site Page Name" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Site Page Name" />
 		</execute>
 
@@ -490,7 +500,7 @@
 			<var name="userEmailAddress" value="userea@liferay.com" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Site Page Name" />
 		</execute>
 
@@ -548,7 +558,7 @@
 			<var name="userEmailAddress" value="userea@liferay.com" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Site Page Name" />
 		</execute>
 

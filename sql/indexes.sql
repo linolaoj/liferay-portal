@@ -77,13 +77,6 @@ create index IX_507BA031 on BlogsStatsUser (userId, lastPostDate);
 
 create unique index IX_E7B95510 on BrowserTracker (userId);
 
-create index IX_D6FD9496 on CalEvent (companyId);
-create index IX_4FDDD2BF on CalEvent (groupId, repeating);
-create index IX_FD93CBFA on CalEvent (groupId, type_[$COLUMN_LENGTH:75$], repeating);
-create index IX_F6006202 on CalEvent (remindBy);
-create index IX_299639C6 on CalEvent (uuid_[$COLUMN_LENGTH:75$], companyId);
-create unique index IX_5CCE79C8 on CalEvent (uuid_[$COLUMN_LENGTH:75$], groupId);
-
 create unique index IX_B27A301F on ClassName_ (value[$COLUMN_LENGTH:200$]);
 
 create index IX_38EFE3FD on Company (logoId);
@@ -184,6 +177,7 @@ create index IX_1827A2E5 on ExportImportConfiguration (companyId);
 create index IX_38FA468D on ExportImportConfiguration (groupId, status);
 create index IX_47CC6234 on ExportImportConfiguration (groupId, type_, status);
 
+create index IX_BD3CB13A on Group_ (classNameId, groupId, companyId, parentGroupId);
 create index IX_DDC91A87 on Group_ (companyId, active_);
 create unique index IX_D0D5E397 on Group_ (companyId, classNameId, classPK);
 create unique index IX_A729E3A6 on Group_ (companyId, classNameId, liveGroupId, groupKey[$COLUMN_LENGTH:150$]);
@@ -526,6 +520,7 @@ create index IX_BCFDA257 on User_ (companyId, createDate, modifiedDate);
 create index IX_C6EA4F34 on User_ (companyId, defaultUser, status);
 create unique index IX_615E9F7A on User_ (companyId, emailAddress[$COLUMN_LENGTH:75$]);
 create index IX_1D731F03 on User_ (companyId, facebookId);
+create index IX_B6E3AE1 on User_ (companyId, googleUserId[$COLUMN_LENGTH:75$]);
 create index IX_EE8ABD19 on User_ (companyId, modifiedDate);
 create index IX_89509087 on User_ (companyId, openId[$COLUMN_LENGTH:1024$]);
 create unique index IX_C5806019 on User_ (companyId, screenName[$COLUMN_LENGTH:75$]);

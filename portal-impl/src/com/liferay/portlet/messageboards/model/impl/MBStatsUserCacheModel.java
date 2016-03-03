@@ -16,11 +16,11 @@ package com.liferay.portlet.messageboards.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.message.boards.kernel.model.MBStatsUser;
+
+import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.model.CacheModel;
-
-import com.liferay.portlet.messageboards.model.MBStatsUser;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -109,9 +109,13 @@ public class MBStatsUserCacheModel implements CacheModel<MBStatsUser>,
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		statsUserId = objectInput.readLong();
+
 		groupId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userId = objectInput.readLong();
+
 		messageCount = objectInput.readInt();
 		lastPostDate = objectInput.readLong();
 	}
@@ -120,9 +124,13 @@ public class MBStatsUserCacheModel implements CacheModel<MBStatsUser>,
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(statsUserId);
+
 		objectOutput.writeLong(groupId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userId);
+
 		objectOutput.writeInt(messageCount);
 		objectOutput.writeLong(lastPostDate);
 	}

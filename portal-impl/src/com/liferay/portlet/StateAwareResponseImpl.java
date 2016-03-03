@@ -16,13 +16,14 @@ package com.liferay.portlet;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.Portlet;
+import com.liferay.portal.kernel.model.PortletApp;
+import com.liferay.portal.kernel.model.PublicRenderParameter;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.portlet.PortletQNameUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.Portlet;
-import com.liferay.portal.model.PortletApp;
-import com.liferay.portal.model.PublicRenderParameter;
-import com.liferay.portal.model.User;
-import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 
 import java.io.Serializable;
 
@@ -346,7 +347,7 @@ public abstract class StateAwareResponseImpl
 	private PortletMode _portletMode;
 	private String _portletName;
 	private PortletRequestImpl _portletRequestImpl;
-	private PublicRenderParameters _publicRenderParameters;
+	private Map<String, String[]> _publicRenderParameters;
 	private String _redirectLocation;
 	private User _user;
 	private WindowState _windowState;

@@ -16,12 +16,12 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.MVCCModel;
+import com.liferay.portal.kernel.model.UserTrackerPath;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
-import com.liferay.portal.model.UserTrackerPath;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -129,8 +129,11 @@ public class UserTrackerPathCacheModel implements CacheModel<UserTrackerPath>,
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		mvccVersion = objectInput.readLong();
+
 		userTrackerPathId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userTrackerId = objectInput.readLong();
 		path = objectInput.readUTF();
 		pathDate = objectInput.readLong();
@@ -140,8 +143,11 @@ public class UserTrackerPathCacheModel implements CacheModel<UserTrackerPath>,
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(mvccVersion);
+
 		objectOutput.writeLong(userTrackerPathId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userTrackerId);
 
 		if (path == null) {

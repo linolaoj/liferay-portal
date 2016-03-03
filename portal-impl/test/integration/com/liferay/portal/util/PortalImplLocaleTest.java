@@ -15,6 +15,8 @@
 package com.liferay.portal.util;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.servlet.HttpMethods;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -27,8 +29,6 @@ import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.language.LanguageResources;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Layout;
 import com.liferay.portal.servlet.I18nServlet;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.util.test.LayoutTestUtil;
@@ -68,6 +68,8 @@ public class PortalImplLocaleTest {
 
 	@Before
 	public void setUp() throws Exception {
+		_availableLocales = LanguageUtil.getAvailableLocales();
+
 		PropsValues.LOCALES_ENABLED = new String[] {
 			"ca_ES", "en_US", "fr_FR", "de_DE", "pt_BR", "es_ES", "en_GB"
 		};
@@ -79,8 +81,6 @@ public class PortalImplLocaleTest {
 
 		_group = GroupTestUtil.addGroup();
 		_layout = LayoutTestUtil.addLayout(_group);
-
-		_availableLocales = LanguageUtil.getAvailableLocales();
 
 		List<Locale> availableLocales = Arrays.asList(
 			LocaleUtil.fromLanguageId("ca_ES"), LocaleUtil.US,

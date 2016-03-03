@@ -16,11 +16,11 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.MVCCModel;
+import com.liferay.portal.kernel.model.ResourceBlockPermission;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
-import com.liferay.portal.model.ResourceBlockPermission;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -114,10 +114,15 @@ public class ResourceBlockPermissionCacheModel implements CacheModel<ResourceBlo
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		mvccVersion = objectInput.readLong();
+
 		resourceBlockPermissionId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		resourceBlockId = objectInput.readLong();
+
 		roleId = objectInput.readLong();
+
 		actionIds = objectInput.readLong();
 	}
 
@@ -125,10 +130,15 @@ public class ResourceBlockPermissionCacheModel implements CacheModel<ResourceBlo
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(mvccVersion);
+
 		objectOutput.writeLong(resourceBlockPermissionId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(resourceBlockId);
+
 		objectOutput.writeLong(roleId);
+
 		objectOutput.writeLong(actionIds);
 	}
 

@@ -22,7 +22,10 @@ import com.liferay.gradle.plugins.extensions.LiferayOSGiExtension;
 import com.liferay.gradle.plugins.node.tasks.PublishNodeModuleTask;
 import com.liferay.gradle.plugins.patcher.PatchTask;
 import com.liferay.gradle.plugins.service.builder.ServiceBuilderPlugin;
+import com.liferay.gradle.plugins.tasks.ReplaceRegexTask;
 import com.liferay.gradle.plugins.test.integration.TestIntegrationBasePlugin;
+import com.liferay.gradle.plugins.tlddoc.builder.TLDDocBuilderPlugin;
+import com.liferay.gradle.plugins.tlddoc.builder.tasks.TLDDocTask;
 import com.liferay.gradle.plugins.upgrade.table.builder.UpgradeTableBuilderPlugin;
 import com.liferay.gradle.plugins.util.FileUtil;
 import com.liferay.gradle.plugins.util.GradleUtil;
@@ -36,8 +39,10 @@ import com.liferay.gradle.util.copy.RenameDependencyClosure;
 import groovy.lang.Closure;
 
 import java.io.File;
+import java.io.IOException;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,6 +60,7 @@ import org.dm.gradle.plugins.bundle.BundlePlugin;
 
 import org.gradle.StartParameter;
 import org.gradle.api.Action;
+import org.gradle.api.GradleException;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -73,7 +79,10 @@ import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.file.CopySpec;
 import org.gradle.api.file.DuplicatesStrategy;
 import org.gradle.api.file.FileTree;
+import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.invocation.Gradle;
+import org.gradle.api.logging.Logger;
+import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.plugins.BasePluginConvention;
 import org.gradle.api.plugins.JavaPlugin;
@@ -91,7 +100,6 @@ import org.gradle.api.tasks.SourceSetOutput;
 import org.gradle.api.tasks.TaskCollection;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.bundling.Jar;
-import org.gradle.api.tasks.bundling.Zip;
 import org.gradle.api.tasks.compile.CompileOptions;
 import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.api.tasks.javadoc.Javadoc;
@@ -101,12 +109,14 @@ import org.gradle.api.tasks.testing.TestTaskReports;
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat;
 import org.gradle.api.tasks.testing.logging.TestLogEvent;
 import org.gradle.api.tasks.testing.logging.TestLoggingContainer;
+import org.gradle.external.javadoc.MinimalJavadocOptions;
 import org.gradle.plugins.ide.eclipse.EclipsePlugin;
 import org.gradle.plugins.ide.eclipse.model.EclipseClasspath;
 import org.gradle.plugins.ide.eclipse.model.EclipseModel;
 import org.gradle.plugins.ide.idea.IdeaPlugin;
 import org.gradle.plugins.ide.idea.model.IdeaModel;
 import org.gradle.plugins.ide.idea.model.IdeaModule;
+import org.gradle.util.VersionNumber;
 
 /**
  * @author Andrea Di Giorgi
@@ -118,11 +128,19 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 	public static final String DEFAULT_REPOSITORY_URL =
 		"http://cdn.repository.liferay.com/nexus/content/groups/public";
 
+	public static final String JAR_JAVADOC_TASK_NAME = "jarJavadoc";
+
 	public static final String JAR_SOURCES_TASK_NAME = "jarSources";
+
+	public static final String JAR_TLDDOC_TASK_NAME = "jarTLDDoc";
 
 	public static final String PORTAL_TEST_CONFIGURATION_NAME = "portalTest";
 
-	public static final String ZIP_JAVADOC_TASK_NAME = "zipJavadoc";
+	public static final String UPDATE_BUNDLE_VERSION_TASK_NAME =
+		"updateBundleVersion";
+
+	public static final String UPDATE_FILE_VERSIONS_TASK_NAME =
+		"updateFileVersions";
 
 	protected Configuration addConfigurationPortalTest(final Project project) {
 		Configuration configuration = GradleUtil.addConfiguration(
@@ -136,10 +154,10 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 	protected void addDependenciesPortalTest(Project project) {
 		GradleUtil.addDependency(
 			project, PORTAL_TEST_CONFIGURATION_NAME, "com.liferay.portal",
-			"portal-test", "default");
+			"com.liferay.portal.test", "default");
 		GradleUtil.addDependency(
 			project, PORTAL_TEST_CONFIGURATION_NAME, "com.liferay.portal",
-			"portal-test-internal", "default");
+			"com.liferay.portal.test.internal", "default");
 	}
 
 	protected void addDependenciesTestCompile(Project project) {
@@ -192,6 +210,23 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 		classesTask.dependsOn(copy);
 
 		return copy;
+	}
+
+	protected Jar addTaskJarJavadoc(Project project) {
+		Jar jar = GradleUtil.addTask(project, JAR_JAVADOC_TASK_NAME, Jar.class);
+
+		jar.setClassifier("javadoc");
+		jar.setDescription(
+			"Assembles a jar archive containing the Javadoc files for this " +
+				"project.");
+		jar.setGroup(BasePlugin.BUILD_GROUP);
+
+		Javadoc javadoc = (Javadoc)GradleUtil.getTask(
+			project, JavaPlugin.JAVADOC_TASK_NAME);
+
+		jar.from(javadoc);
+
+		return jar;
 	}
 
 	protected Jar addTaskJarSources(Project project, boolean testProject) {
@@ -261,22 +296,137 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 		return jar;
 	}
 
-	protected Zip addTaskZipJavadoc(Project project) {
-		Zip zip = GradleUtil.addTask(project, ZIP_JAVADOC_TASK_NAME, Zip.class);
+	protected Jar addTaskJarTLDDoc(Project project) {
+		Jar jar = GradleUtil.addTask(project, JAR_TLDDOC_TASK_NAME, Jar.class);
 
-		zip.setClassifier("javadoc");
-		zip.setDescription(
-			"Assembles a zip archive containing the Javadoc files for this " +
-				"project.");
-		zip.setGroup(BasePlugin.BUILD_GROUP);
+		jar.setClassifier("taglibdoc");
+		jar.setDescription(
+			"Assembles a jar archive containing the Tag Library " +
+				"Documentation files for this project.");
+		jar.setGroup(BasePlugin.BUILD_GROUP);
 
-		Javadoc javadoc = (Javadoc)GradleUtil.getTask(
-			project, JavaPlugin.JAVADOC_TASK_NAME);
+		TLDDocTask tlddocTask = (TLDDocTask)GradleUtil.getTask(
+			project, TLDDocBuilderPlugin.TLDDOC_TASK_NAME);
 
-		zip.dependsOn(javadoc);
-		zip.from(javadoc);
+		jar.from(tlddocTask);
 
-		return zip;
+		return jar;
+	}
+
+	protected Task addTaskUpdateBundleVersion(Project project) {
+		Task task = project.task(UPDATE_BUNDLE_VERSION_TASK_NAME);
+
+		Action<Task> action = new Action<Task>() {
+
+			@Override
+			public void execute(Task task) {
+				try {
+					Project project = task.getProject();
+
+					File bndFile = project.file("bnd.bnd");
+
+					if (!bndFile.exists()) {
+						if (_logger.isInfoEnabled()) {
+							_logger.info("Unable to find " + bndFile);
+						}
+
+						return;
+					}
+
+					String bndContent = new String(
+						Files.readAllBytes(bndFile.toPath()),
+						StandardCharsets.UTF_8);
+
+					VersionNumber versionNumber = VersionNumber.parse(
+						String.valueOf(project.getVersion()));
+
+					VersionNumber nextVersionNumber = new VersionNumber(
+						versionNumber.getMajor(), versionNumber.getMinor(),
+						versionNumber.getMicro() + 1,
+						versionNumber.getQualifier());
+
+					String nextBndContent = bndContent.replace(
+						Constants.BUNDLE_VERSION + ": " + versionNumber,
+						Constants.BUNDLE_VERSION + ": " + nextVersionNumber);
+
+					if (bndContent.equals(nextBndContent)) {
+						if (_logger.isWarnEnabled()) {
+							_logger.warn(
+								"Unable to update " + Constants.BUNDLE_VERSION);
+						}
+
+						return;
+					}
+
+					Files.write(
+						bndFile.toPath(),
+						nextBndContent.getBytes(StandardCharsets.UTF_8));
+
+					if (_logger.isLifecycleEnabled()) {
+						_logger.lifecycle(
+							Constants.BUNDLE_VERSION + " of " + project +
+								" updated to " + nextVersionNumber);
+					}
+				}
+				catch (IOException ioe) {
+					throw new GradleException(
+						"Unable to update " + Constants.BUNDLE_VERSION, ioe);
+				}
+			}
+
+		};
+
+		task.doLast(action);
+
+		task.setDescription(
+			"Updates the project version in the " + Constants.BUNDLE_VERSION +
+				" header.");
+
+		return task;
+	}
+
+	protected ReplaceRegexTask addTaskUpdateFileVersions(
+		final Project project) {
+
+		ReplaceRegexTask replaceRegexTask = GradleUtil.addTask(
+			project, UPDATE_FILE_VERSIONS_TASK_NAME, ReplaceRegexTask.class);
+
+		replaceRegexTask.doLast(
+			new Action<Task>() {
+
+				@Override
+				public void execute(Task task) {
+					ReplaceRegexTask replaceRegexTask = (ReplaceRegexTask)task;
+
+					if (!_logger.isLifecycleEnabled()) {
+						return;
+					}
+
+					String replacement = replaceRegexTask.getReplacement();
+
+					for (Object file : replaceRegexTask.getMatchedFiles()) {
+						_logger.lifecycle(
+							"Project version in " + project.relativePath(file) +
+								" updated to " + replacement);
+					}
+				}
+
+			});
+
+		replaceRegexTask.setDescription(
+			"Updates the project version in external files.");
+
+		replaceRegexTask.setReplacement(
+			new Callable<Object>() {
+
+				@Override
+				public Object call() throws Exception {
+					return project.getVersion();
+				}
+
+			});
+
+		return replaceRegexTask;
 	}
 
 	protected void applyConfigScripts(Project project) {
@@ -310,11 +460,11 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 		}
 	}
 
-	protected void configureArtifacts(Project project) {
-		ArtifactHandler artifactHandler = project.getArtifacts();
+	protected void configureArtifacts(
+		Project project, Jar jarJavadocTask, Jar jarSourcesTask,
+		Jar jarTLDDocTask) {
 
-		Task jarSourcesTask = GradleUtil.getTask(
-			project, JAR_SOURCES_TASK_NAME);
+		ArtifactHandler artifactHandler = project.getArtifacts();
 
 		Spec<File> spec = new Spec<File>() {
 
@@ -355,11 +505,31 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 		};
 
 		if (FileUtil.hasSourceFiles(javadocTask, spec)) {
-			Task zipJavadocTask = GradleUtil.getTask(
-				project, ZIP_JAVADOC_TASK_NAME);
-
 			artifactHandler.add(
-				Dependency.ARCHIVES_CONFIGURATION, zipJavadocTask);
+				Dependency.ARCHIVES_CONFIGURATION, jarJavadocTask);
+		}
+
+		Task tlddocTask = GradleUtil.getTask(
+			project, TLDDocBuilderPlugin.TLDDOC_TASK_NAME);
+
+		spec = new Spec<File>() {
+
+			@Override
+			public boolean isSatisfiedBy(File file) {
+				String fileName = file.getName();
+
+				if (fileName.endsWith(".tld")) {
+					return true;
+				}
+
+				return false;
+			}
+
+		};
+
+		if (FileUtil.hasSourceFiles(tlddocTask, spec)) {
+			artifactHandler.add(
+				Dependency.ARCHIVES_CONFIGURATION, jarTLDDocTask);
 		}
 	}
 
@@ -429,9 +599,28 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 
 							String group = moduleVersionSelector.getGroup();
 
-							if (group.equals("com.liferay.portal")) {
-								dependencyResolveDetails.useVersion(
-									liferayExtension.getPortalVersion());
+							if (!group.equals("com.liferay.portal")) {
+								return;
+							}
+
+							String name = moduleVersionSelector.getName();
+
+							if (name.equals("portal-service")) {
+								name = "com.liferay.portal.kernel";
+							}
+							else if (!name.startsWith("com.liferay.")) {
+								name = "com.liferay." + name.replace('-', '.');
+							}
+
+							String version = liferayExtension.getDefaultVersion(
+								group, name, "latest.integration");
+
+							if (!name.equals(moduleVersionSelector.getName())) {
+								dependencyResolveDetails.useTarget(
+									group + ":" + name + ":" + version);
+							}
+							else {
+								dependencyResolveDetails.useVersion(version);
 							}
 						}
 
@@ -470,8 +659,13 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 
 		addDependenciesPortalTest(project);
 		addDependenciesTestCompile(project);
-		addTaskJarSources(project, testProject);
-		addTaskZipJavadoc(project);
+
+		final Jar jarJavadocTask = addTaskJarJavadoc(project);
+		final Jar jarSourcesTask = addTaskJarSources(project, testProject);
+		final Jar jarTLDDocTask = addTaskJarTLDDoc(project);
+		final ReplaceRegexTask updateFileVersionsTask =
+			addTaskUpdateFileVersions(project);
+
 		configureBasePlugin(project, portalRootDir);
 		configureConfigurations(project);
 		configureEclipse(project, portalTestConfiguration);
@@ -498,6 +692,7 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 				@Override
 				public void execute(BundlePlugin bundlePlugin) {
 					addTaskCopyLibs(project);
+					addTaskUpdateBundleVersion(project);
 					configureBundleDefaultInstructions(project, publishing);
 					configureTaskJavadoc(project);
 				}
@@ -524,7 +719,8 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 
 				@Override
 				public void execute(Project project) {
-					configureArtifacts(project);
+					configureArtifacts(
+						project, jarJavadocTask, jarSourcesTask, jarTLDDocTask);
 					configureProjectBndProperties(project);
 					configureProjectVersion(project);
 
@@ -532,7 +728,8 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 					// configureTaskUploadArchives, because the latter one needs
 					// to know if we are publishing a snapshot or not.
 
-					configureTaskUploadArchives(project);
+					configureTaskUploadArchives(
+						project, updateFileVersionsTask);
 				}
 
 			});
@@ -793,15 +990,20 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 	}
 
 	protected void configureTaskJavadoc(Project project) {
+		Javadoc javadoc = (Javadoc)GradleUtil.getTask(
+			project, JavaPlugin.JAVADOC_TASK_NAME);
+
+		configureTaskJavadocFilter(javadoc);
+		configureTaskJavadocOptions(javadoc);
+	}
+
+	protected void configureTaskJavadocFilter(Javadoc javadoc) {
 		String exportPackage = getBundleInstruction(
-			project, Constants.EXPORT_PACKAGE);
+			javadoc.getProject(), Constants.EXPORT_PACKAGE);
 
 		if (Validator.isNull(exportPackage)) {
 			return;
 		}
-
-		Javadoc javadoc = (Javadoc)GradleUtil.getTask(
-			project, JavaPlugin.JAVADOC_TASK_NAME);
 
 		String[] exportPackageArray = exportPackage.split(",");
 
@@ -841,6 +1043,33 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 			else {
 				javadoc.include(pattern);
 			}
+		}
+	}
+
+	protected void configureTaskJavadocOptions(Javadoc javadoc) {
+		MinimalJavadocOptions minimalJavadocOptions = javadoc.getOptions();
+		Project project = javadoc.getProject();
+
+		File overviewFile = null;
+
+		SourceSet sourceSet = GradleUtil.getSourceSet(
+			project, SourceSet.MAIN_SOURCE_SET_NAME);
+
+		SourceDirectorySet sourceDirectorySet = sourceSet.getJava();
+
+		for (File dir : sourceDirectorySet.getSrcDirs()) {
+			File file = new File(dir, "overview.html");
+
+			if (file.exists()) {
+				overviewFile = file;
+
+				break;
+			}
+		}
+
+		if (overviewFile != null) {
+			minimalJavadocOptions.setOverview(
+				project.relativePath(overviewFile));
 		}
 	}
 
@@ -945,7 +1174,9 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 		testLoggingContainer.setStackTraceFilters(Collections.emptyList());
 	}
 
-	protected void configureTaskUploadArchives(Project project) {
+	protected void configureTaskUploadArchives(
+		Project project, ReplaceRegexTask updateFileVersionsTask) {
+
 		String version = String.valueOf(project.getVersion());
 
 		if (version.endsWith(_SNAPSHOT_VERSION_SUFFIX)) {
@@ -961,6 +1192,15 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 			taskContainer.withType(PublishNodeModuleTask.class);
 
 		uploadArchivesTask.dependsOn(publishNodeModuleTasks);
+
+		Task updateBundleVersionTask = taskContainer.findByName(
+			UPDATE_BUNDLE_VERSION_TASK_NAME);
+
+		if (updateBundleVersionTask != null) {
+			uploadArchivesTask.finalizedBy(updateBundleVersionTask);
+		}
+
+		uploadArchivesTask.finalizedBy(updateFileVersionsTask);
 	}
 
 	protected String getBundleInstruction(Project project, String key) {
@@ -1067,5 +1307,8 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 		"-XX:-UseAdaptiveSizePolicy", "-XX:+UseParallelOldGC",
 		"-XX:-UseSplitVerifier"
 	};
+
+	private static final Logger _logger = Logging.getLogger(
+		LiferayDefaultsPlugin.class);
 
 }

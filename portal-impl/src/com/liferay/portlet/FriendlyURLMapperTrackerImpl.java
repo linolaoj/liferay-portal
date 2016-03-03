@@ -16,6 +16,7 @@ package com.liferay.portlet;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.portlet.FriendlyURLMapper;
 import com.liferay.portal.kernel.portlet.FriendlyURLMapperTracker;
 import com.liferay.portal.kernel.portlet.Route;
@@ -25,7 +26,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.UnsecureSAXReaderUtil;
-import com.liferay.portal.model.Portlet;
 import com.liferay.registry.Filter;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
@@ -35,6 +35,7 @@ import com.liferay.registry.ServiceTracker;
 import com.liferay.registry.ServiceTrackerCustomizer;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -163,13 +164,13 @@ public class FriendlyURLMapperTrackerImpl implements FriendlyURLMapperTracker {
 		@Override
 		public void modifiedService(
 			ServiceReference<FriendlyURLMapper> serviceReference,
-			FriendlyURLMapper service) {
+			FriendlyURLMapper friendlyURLMapper) {
 		}
 
 		@Override
 		public void removedService(
 			ServiceReference<FriendlyURLMapper> serviceReference,
-			FriendlyURLMapper service) {
+			FriendlyURLMapper friendlyURLMapper) {
 
 			Registry registry = RegistryUtil.getRegistry();
 
@@ -181,13 +182,15 @@ public class FriendlyURLMapperTrackerImpl implements FriendlyURLMapperTracker {
 				return null;
 			}
 
-			Router router = new RouterImpl();
-
 			Document document = UnsecureSAXReaderUtil.read(xml, true);
 
 			Element rootElement = document.getRootElement();
 
-			for (Element routeElement : rootElement.elements("route")) {
+			List<Element> routeElements = rootElement.elements("route");
+
+			Router router = new RouterImpl(routeElements.size());
+
+			for (Element routeElement : routeElements) {
 				String pattern = routeElement.elementText("pattern");
 
 				Route route = router.addRoute(pattern);

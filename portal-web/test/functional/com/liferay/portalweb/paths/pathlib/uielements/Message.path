@@ -115,7 +115,7 @@
 </tr>
 <tr>
 	<td>INFO_NO_RESULTS_FOUND</td>
-	<td>//div[contains(@id,'EmptyResultsMessage') and contains(@class,'alert-info')]</td>
+	<td>//div[contains(@id,'EmptyResultsMessage')]//p</td>
 	<td></td>
 </tr>
 <tr>
@@ -139,6 +139,16 @@
 	<td></td>
 </tr>
 <tr>
+	<td>NO_ENTRIES</td>
+	<td>//div[contains(@id,'Empty') and contains(.,'No entries were found')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>NO_TOP_POSTERS</td>
+	<td>//p[contains(.,'There are no top posters.')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>EMPTY_INFO</td>
 	<td>//div[contains(@class,'empty-result-message')]//div[@class='card-footer']</td>
 	<td></td>
@@ -155,7 +165,7 @@
 </tr>
 <tr>
 	<td>RECYCLE_BIN_INFO</td>
-	<td>//div[contains(@class,'tooltip-help-content') and contains(@class,'tooltip-content')]</td>
+	<td>//div[contains(@class,'tooltip-content')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -194,6 +204,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>SUCCESS_3</td>
+	<td>//div[contains(@class,'alert') and contains(@class,'alert-success')]/div</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SUCCESS_CONTENT</td>
 	<td>//div[@class='portlet-body']/div[contains(.,'${key_assetType}')]</td>
 	<td></td>
@@ -216,6 +231,11 @@
 <tr>
 	<td>USER_BLOCKED</td>
 	<td>//div[contains(@class,'alert-block')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>WEB_CONTENT_STATUS</td>
+	<td>//span[contains(@class,'workflow-status')]/span[3]</td>
 	<td></td>
 </tr>
 <tr>

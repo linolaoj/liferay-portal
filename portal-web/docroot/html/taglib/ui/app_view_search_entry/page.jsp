@@ -21,7 +21,7 @@ String actionJsp = (String)request.getAttribute("liferay-ui:app-view-search-entr
 ServletContext actionJspServletContext = (ServletContext)request.getAttribute("liferay-ui:app-view-entry:actionJspServletContext");
 List<RelatedSearchResult<Comment>> commentRelatedSearchResults = (List<RelatedSearchResult<Comment>>)request.getAttribute("liferay-ui:app-view-search-entry:commentRelatedSearchResults");
 String containerName = (String)request.getAttribute("liferay-ui:app-view-search-entry:containerName");
-String containerType = GetterUtil.getString(request.getAttribute("liferay-ui:app-view-search-entry:containerType"), LanguageUtil.get(request, "folder"));
+String containerType = GetterUtil.getString(request.getAttribute("liferay-ui:app-view-search-entry:containerType"), LanguageUtil.get(resourceBundle, "folder"));
 String cssClass = GetterUtil.getString((String)request.getAttribute("liferay-ui:app-view-search-entry:cssClass"));
 String description = (String)request.getAttribute("liferay-ui:app-view-search-entry:description");
 boolean escape = GetterUtil.getBoolean(request.getAttribute("liferay-ui:app-view-search-entry:escape"));
@@ -125,7 +125,14 @@ summary.setQueryTerms(queryTerms);
 			<div class="entry-attachment">
 				<aui:a class="lfr-discussion-details" href="<%= url %>">
 					<div class="image">
-						<img alt="<%= HtmlUtil.escapeAttribute(fileEntry.getTitle()) %>" class="attachment" src="<%= DLUtil.getThumbnailSrc(fileEntry, themeDisplay) %>" />
+
+						<%
+						String fileEntryThumbnailSrc = DLUtil.getThumbnailSrc(fileEntry, themeDisplay);
+						%>
+
+						<c:if test="<%= Validator.isNotNull(fileEntryThumbnailSrc) %>">
+							<img alt="<%= HtmlUtil.escapeAttribute(fileEntry.getTitle()) %>" class="attachment" src="<%= fileEntryThumbnailSrc %>" />
+						</c:if>
 					</div>
 
 					<span class="title">

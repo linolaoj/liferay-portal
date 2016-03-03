@@ -9,6 +9,11 @@
 </thead>
 <tbody>
 <tr>
+	<td>ACTIVE_TAB_LINK</td>
+	<td>//ul[contains(@class,'nav-tabs')]/li[contains(.,'${key_tab}') and contains(@class,'active')]/a</td>
+	<td></td>
+</tr>
+<tr>
 	<td>TAB_LINK</td>
 	<td>//ul[contains(@class,'nav-tabs')]//li[contains(.,'${key_tab}')]/a</td>
 	<td></td>
@@ -124,6 +129,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>MENTIONS</td>
+	<td>//li[contains(@id,'microblogs')]/a[contains(.,'Mentions')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>NTLM</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'NTLM')]</td>
 	<td></td>
@@ -164,8 +174,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>PORTLET_CONFIGURATION</td>
-	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Portlet Configuration')]</td>
+	<td>LOOK_AND_FEEL_GENERAL</td>
+	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'General')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -224,8 +234,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>TAB_LINK</td>
-	<td>//ul[contains(@class,'nav-tabs')]//li[contains(.,'${key_tab}')]/a</td>
+	<td>TIMELINE</td>
+	<td>//li[contains(@id,'microblogs')]/a[contains(.,'Timeline')]</td>
 	<td></td>
 </tr>
 <tr>

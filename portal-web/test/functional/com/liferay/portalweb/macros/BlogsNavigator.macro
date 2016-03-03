@@ -87,9 +87,7 @@
 
 		<execute function="AssertTextEquals" locator1="BlogsEntry#TITLE" value1="${entryTitle}" />
 
-		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
-
-		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
+		<execute macro="PortletEntry#clickEditFromEllipsis" />
 	</command>
 
 	<command name="gotoEntryCP">
@@ -123,16 +121,6 @@
 		<execute function="AssertClick#assertTextClickAtAndWait" locator1="BlogsEntry#TITLE_LINK" value1="${entryTitle}" />
 	</command>
 
-	<command name="gotoEntrySpecific">
-		<var name="key_entryContent" value="${entryContent}" />
-		<var name="key_entryTitle" value="${entryTitle}" />
-
-		<execute function="AssertTextEquals" locator1="BlogsEntry#TITLE" value1="${entryTitle}" />
-		<execute function="AssertTextEquals" locator1="BlogsEntry#ENTRY_CONTENT_SPECIFIC" value1="${entryContent}" />
-
-		<execute function="AssertClick" locator1="BlogsEntry#TITLE_LINK" value1="${entryTitle}" />
-	</command>
-
 	<command name="gotoEntryWithAbstractPG">
 		<var name="key_entryAbstractDescription" value="${entryAbstractDescription}" />
 		<var name="key_entryTitle" value="${entryTitle}" />
@@ -149,12 +137,7 @@
 		<if>
 			<isset var="blogEntryURL" />
 			<then>
-				<var method="selenium#getLocation()" name="currentURL" />
-
-				<execute macro="TestUtils#assertEquals">
-					<var name="actual" value="${currentURL}" />
-					<var name="expected" value="${blogEntryURL}" />
-				</execute>
+				<execute function="AssertLocation" value1="http://localhost:8080/web/guest/blogs/-/${blogEntryURL}" />
 			</then>
 			<else>
 				<execute function="Click" locator1="BlogsEntry#TITLE_LINK" value1="${entryTitle}" />
@@ -186,9 +169,9 @@
 
 		<execute function="Click" locator1="Blogs#ICON_VIEW_ENTRY_OPTIONS_DROPDOWN" />
 
-		<execute function="AssertClick" locator1="MenuItem#MOVE_TO_THE_RECYCLE_BIN" value1="Move to the Recycle Bin" />
+		<execute macro="PortletEntry#clickMoveToRecycleBin" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="The ${assetType} ${entryTitle} was moved to the Recycle Bin. Undo" />
+		<execute function="AssertElementPresent" locator1="Message#SUCCESS" />
 	</command>
 
 	<command name="moveToRecycleBinDraftCP">
@@ -199,9 +182,9 @@
 
 		<execute function="Click" locator1="Blogs#ENTRY_TABLE_ACTIONS" />
 
-		<execute function="AssertClick" locator1="MenuItem#MOVE_TO_THE_RECYCLE_BIN" value1="Move to the Recycle Bin" />
+		<execute macro="PortletEntry#clickMoveToRecycleBin" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="The ${assetType} ${entryTitle} was moved to the Recycle Bin. Undo" />
+		<execute function="AssertElementPresent" locator1="Message#SUCCESS" />
 	</command>
 
 	<command name="viewEditLinkPG">

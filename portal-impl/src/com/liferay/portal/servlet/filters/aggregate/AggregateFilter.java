@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -43,7 +44,6 @@ import com.liferay.portal.servlet.filters.IgnoreModuleRequestFilter;
 import com.liferay.portal.servlet.filters.dynamiccss.DynamicCSSUtil;
 import com.liferay.portal.util.AggregateUtil;
 import com.liferay.portal.util.JavaScriptBundleUtil;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
 
@@ -509,14 +509,28 @@ public class AggregateFilter extends IgnoreModuleRequestFilter {
 			URL resourceURL, String resourcePath)
 		throws IOException {
 
+		ServletContext cssServletContext = null;
+		String resourcePathRoot = null;
+
+		String requestURI = request.getRequestURI();
+
+		if (PortalWebResourcesUtil.hasContextPath(requestURI)) {
+			cssServletContext = PortalWebResourcesUtil.getPathServletContext(
+				requestURI);
+			resourcePathRoot = "/";
+		}
+
+		if (cssServletContext == null) {
+			cssServletContext = _servletContext;
+			resourcePathRoot = ServletPaths.getParentPath(resourcePath);
+		}
+
 		URLConnection urlConnection = resourceURL.openConnection();
 
 		String content = StringUtil.read(urlConnection.getInputStream());
 
 		content = aggregateCss(
-			new ServletPaths(
-				_servletContext, ServletPaths.getParentPath(resourcePath)),
-			content);
+			new ServletPaths(cssServletContext, resourcePathRoot), content);
 
 		return getCssContent(request, response, resourcePath, content);
 	}

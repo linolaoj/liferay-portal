@@ -16,11 +16,11 @@ package com.liferay.portlet.ratings.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.model.CacheModel;
 
-import com.liferay.portlet.ratings.model.RatingsStats;
+import com.liferay.ratings.kernel.model.RatingsStats;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -104,11 +104,17 @@ public class RatingsStatsCacheModel implements CacheModel<RatingsStats>,
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		statsId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		classNameId = objectInput.readLong();
+
 		classPK = objectInput.readLong();
+
 		totalEntries = objectInput.readInt();
+
 		totalScore = objectInput.readDouble();
+
 		averageScore = objectInput.readDouble();
 	}
 
@@ -116,11 +122,17 @@ public class RatingsStatsCacheModel implements CacheModel<RatingsStats>,
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(statsId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(classNameId);
+
 		objectOutput.writeLong(classPK);
+
 		objectOutput.writeInt(totalEntries);
+
 		objectOutput.writeDouble(totalScore);
+
 		objectOutput.writeDouble(averageScore);
 	}
 

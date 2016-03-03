@@ -18,9 +18,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import com.liferay.sync.engine.documentlibrary.event.Event;
 import com.liferay.sync.engine.filesystem.Watcher;
-import com.liferay.sync.engine.filesystem.util.WatcherRegistry;
+import com.liferay.sync.engine.filesystem.util.WatcherManager;
 import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncFile;
+import com.liferay.sync.engine.service.SyncAccountService;
 import com.liferay.sync.engine.service.SyncFileService;
 import com.liferay.sync.engine.session.Session;
 import com.liferay.sync.engine.session.SessionManager;
@@ -31,8 +32,6 @@ import com.liferay.sync.engine.util.JSONUtil;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.http.Header;
@@ -63,6 +62,8 @@ public class BaseJSONHandler extends BaseHandler {
 
 		try {
 			response = StringEscapeUtils.unescapeJava(response);
+
+			response = response.replaceAll("\n", "\\n");
 
 			responseJsonNode = JSONUtil.readTree(response);
 		}
@@ -101,7 +102,7 @@ public class BaseJSONHandler extends BaseHandler {
 			exception = typeJsonNode.asText();
 		}
 
-		if (exception.endsWith("RuntimeException")) {
+		if (exception.equals("java.lang.RuntimeException")) {
 			JsonNode messageJsonNode = null;
 
 			if (errorJsonNode != null) {
@@ -146,11 +147,15 @@ public class BaseJSONHandler extends BaseHandler {
 		if (exception.equals("Authenticated access required") ||
 			exception.equals("java.lang.SecurityException")) {
 
-			retryServerConnection(
-				SyncAccount.UI_EVENT_AUTHENTICATION_EXCEPTION);
+			throw new HttpResponseException(
+				HttpStatus.SC_UNAUTHORIZED, "Authenticated access required");
 		}
 		else if (exception.endsWith("DuplicateLockException")) {
 			SyncFile syncFile = getLocalSyncFile();
+
+			if (syncFile == null) {
+				return true;
+			}
 
 			syncFile.setState(SyncFile.STATE_ERROR);
 			syncFile.setUiEvent(SyncFile.UI_EVENT_DUPLICATE_LOCK);
@@ -159,6 +164,10 @@ public class BaseJSONHandler extends BaseHandler {
 		}
 		else if (exception.endsWith("FileExtensionException")) {
 			SyncFile syncFile = getLocalSyncFile();
+
+			if (syncFile == null) {
+				return true;
+			}
 
 			syncFile.setState(SyncFile.STATE_ERROR);
 			syncFile.setUiEvent(SyncFile.UI_EVENT_INVALID_FILE_EXTENSION);
@@ -170,26 +179,33 @@ public class BaseJSONHandler extends BaseHandler {
 
 			SyncFile syncFile = getLocalSyncFile();
 
+			if (syncFile == null) {
+				return true;
+			}
+
 			syncFile.setState(SyncFile.STATE_ERROR);
 			syncFile.setUiEvent(SyncFile.UI_EVENT_INVALID_FILE_NAME);
 
 			SyncFileService.update(syncFile);
+		}
+		else if (exception.equals("java.lang.OutOfMemoryError")) {
+			retryServerConnection(SyncAccount.UI_EVENT_CONNECTION_EXCEPTION);
 		}
 		else if (exception.endsWith("NoSuchFileEntryException") ||
 				 exception.endsWith("NoSuchFolderException")) {
 
 			SyncFile syncFile = getLocalSyncFile();
 
+			if (syncFile == null) {
+				return true;
+			}
+
 			Path filePath = Paths.get(syncFile.getFilePathName());
 
 			if (Files.exists(filePath)) {
-				Watcher watcher = WatcherRegistry.getWatcher(
-					getSyncAccountId());
+				Watcher watcher = WatcherManager.getWatcher(getSyncAccountId());
 
-				List<String> deletedFilePathNames =
-					watcher.getDeletedFilePathNames();
-
-				deletedFilePathNames.add(syncFile.getFilePathName());
+				watcher.addDeletedFilePathName(syncFile.getFilePathName());
 
 				FileUtil.deleteFile(filePath);
 			}
@@ -200,13 +216,25 @@ public class BaseJSONHandler extends BaseHandler {
 			retryServerConnection(SyncAccount.UI_EVENT_SYNC_WEB_MISSING);
 		}
 		else if (exception.endsWith("PrincipalException")) {
+			SyncFile syncFile = getLocalSyncFile();
+
+			if (syncFile == null) {
+				return true;
+			}
+
 			SyncFileService.setStatuses(
-				getLocalSyncFile(), SyncFile.STATE_ERROR,
+				syncFile, SyncFile.STATE_ERROR,
 				SyncFile.UI_EVENT_INVALID_PERMISSIONS);
 		}
 		else if (exception.endsWith("SyncClientMinBuildException")) {
 			retryServerConnection(
 				SyncAccount.UI_EVENT_MIN_BUILD_REQUIREMENT_FAILED);
+		}
+		else if (exception.endsWith("SyncDeviceActiveException")) {
+			retryServerConnection(SyncAccount.UI_EVENT_SYNC_ACCOUNT_NOT_ACTIVE);
+		}
+		else if (exception.endsWith("SyncDeviceWipeException")) {
+			SyncAccountService.deleteSyncAccount(getSyncAccountId(), false);
 		}
 		else if (exception.endsWith("SyncServicesUnavailableException")) {
 			retryServerConnection(
@@ -220,6 +248,10 @@ public class BaseJSONHandler extends BaseHandler {
 
 			SyncFile syncFile = getLocalSyncFile();
 
+			if ((syncFile == null) || syncFile.isSystem()) {
+				return true;
+			}
+
 			syncFile.setState(SyncFile.STATE_ERROR);
 			syncFile.setUiEvent(SyncFile.UI_EVENT_EXCEEDED_SIZE_LIMIT);
 
@@ -231,6 +263,10 @@ public class BaseJSONHandler extends BaseHandler {
 			}
 
 			SyncFile syncFile = getLocalSyncFile();
+
+			if ((syncFile == null) || syncFile.isSystem()) {
+				return true;
+			}
 
 			syncFile.setState(SyncFile.STATE_ERROR);
 			syncFile.setUiEvent(SyncFile.UI_EVENT_NONE);
@@ -244,6 +280,10 @@ public class BaseJSONHandler extends BaseHandler {
 	@Override
 	public Void handleResponse(HttpResponse httpResponse) {
 		try {
+			if (isEventCancelled()) {
+				return null;
+			}
+
 			StatusLine statusLine = httpResponse.getStatusLine();
 
 			if (statusLine.getStatusCode() != HttpStatus.SC_OK) {
@@ -266,6 +306,8 @@ public class BaseJSONHandler extends BaseHandler {
 		}
 		finally {
 			processFinally();
+
+			removeEvent();
 		}
 
 		return null;
@@ -280,7 +322,7 @@ public class BaseJSONHandler extends BaseHandler {
 		if (header != null) {
 			Session session = SessionManager.getSession(getSyncAccountId());
 
-			session.setToken(header.getValue());
+			session.addHeader("Sync-JWT", header.getValue());
 		}
 
 		String response = getResponseString(httpResponse);

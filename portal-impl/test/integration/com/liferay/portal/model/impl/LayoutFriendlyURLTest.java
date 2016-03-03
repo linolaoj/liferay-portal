@@ -14,8 +14,12 @@
 
 package com.liferay.portal.model.impl;
 
-import com.liferay.portal.exception.LayoutFriendlyURLException;
-import com.liferay.portal.exception.LayoutFriendlyURLsException;
+import com.liferay.portal.kernel.exception.LayoutFriendlyURLException;
+import com.liferay.portal.kernel.exception.LayoutFriendlyURLsException;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
@@ -25,10 +29,6 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.LayoutConstants;
-import com.liferay.portal.service.LayoutLocalServiceUtil;
-import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.util.ArrayList;
@@ -141,19 +141,20 @@ public class LayoutFriendlyURLTest {
 
 			Assert.fail();
 		}
-		catch (LayoutFriendlyURLsException lfurlse) {
+		catch (LayoutFriendlyURLsException lfurle) {
 			Map<Locale, Exception> localizedExceptionsMap =
-				lfurlse.getLocalizedExceptionsMap();
+				lfurle.getLocalizedExceptionsMap();
 
 			List<Exception> layoutFriendlyURLExceptions =
 				ListUtil.fromCollection(localizedExceptionsMap.values());
 
 			Assert.assertEquals(1, layoutFriendlyURLExceptions.size());
 
-			LayoutFriendlyURLException lfurle =
+			LayoutFriendlyURLException layoutFriendlyURLException =
 				(LayoutFriendlyURLException)layoutFriendlyURLExceptions.get(0);
 
-			Assert.assertEquals(lfurle.getKeywordConflict(), "tags");
+			Assert.assertEquals(
+				layoutFriendlyURLException.getKeywordConflict(), "tags");
 		}
 
 		friendlyURLMap = new HashMap<>();
@@ -165,19 +166,20 @@ public class LayoutFriendlyURLTest {
 
 			Assert.fail();
 		}
-		catch (LayoutFriendlyURLsException lfurlse) {
+		catch (LayoutFriendlyURLsException lfurle) {
 			Map<Locale, Exception> localizedExceptionsMap =
-				lfurlse.getLocalizedExceptionsMap();
+				lfurle.getLocalizedExceptionsMap();
 
 			List<Exception> layoutFriendlyURLExceptions =
 				ListUtil.fromCollection(localizedExceptionsMap.values());
 
 			Assert.assertEquals(1, layoutFriendlyURLExceptions.size());
 
-			LayoutFriendlyURLException lfurle =
+			LayoutFriendlyURLException layoutFriendlyURLException =
 				(LayoutFriendlyURLException)layoutFriendlyURLExceptions.get(0);
 
-			Assert.assertEquals(lfurle.getKeywordConflict(), "tags");
+			Assert.assertEquals(
+				layoutFriendlyURLException.getKeywordConflict(), "tags");
 		}
 
 		friendlyURLMap = new HashMap<>();
@@ -189,19 +191,20 @@ public class LayoutFriendlyURLTest {
 
 			Assert.fail();
 		}
-		catch (LayoutFriendlyURLsException lfurlse) {
+		catch (LayoutFriendlyURLsException lfurle) {
 			Map<Locale, Exception> localizedExceptionsMap =
-				lfurlse.getLocalizedExceptionsMap();
+				lfurle.getLocalizedExceptionsMap();
 
 			List<Exception> layoutFriendlyURLExceptions =
 				ListUtil.fromCollection(localizedExceptionsMap.values());
 
 			Assert.assertEquals(1, layoutFriendlyURLExceptions.size());
 
-			LayoutFriendlyURLException lfurle =
+			LayoutFriendlyURLException layoutFriendlyURLException =
 				(LayoutFriendlyURLException)layoutFriendlyURLExceptions.get(0);
 
-			Assert.assertEquals(lfurle.getKeywordConflict(), "tags");
+			Assert.assertEquals(
+				layoutFriendlyURLException.getKeywordConflict(), "tags");
 		}
 
 		friendlyURLMap = new HashMap<>();
@@ -213,19 +216,20 @@ public class LayoutFriendlyURLTest {
 
 			Assert.fail();
 		}
-		catch (LayoutFriendlyURLsException lfurlse) {
+		catch (LayoutFriendlyURLsException lfurle) {
 			Map<Locale, Exception> localizedExceptionsMap =
-				lfurlse.getLocalizedExceptionsMap();
+				lfurle.getLocalizedExceptionsMap();
 
 			List<Exception> layoutFriendlyURLExceptions =
 				ListUtil.fromCollection(localizedExceptionsMap.values());
 
 			Assert.assertEquals(1, layoutFriendlyURLExceptions.size());
 
-			LayoutFriendlyURLException lfurle =
+			LayoutFriendlyURLException layoutFriendlyURLException =
 				(LayoutFriendlyURLException)layoutFriendlyURLExceptions.get(0);
 
-			Assert.assertEquals(lfurle.getKeywordConflict(), "/-/");
+			Assert.assertEquals(
+				layoutFriendlyURLException.getKeywordConflict(), "/-/");
 		}
 	}
 
@@ -285,9 +289,9 @@ public class LayoutFriendlyURLTest {
 		try {
 			addLayout(_group.getGroupId(), false, friendlyURLMap);
 		}
-		catch (LayoutFriendlyURLsException lfurlse) {
+		catch (LayoutFriendlyURLsException lfurle) {
 			Map<Locale, Exception> localizedExceptionsMap =
-				lfurlse.getLocalizedExceptionsMap();
+				lfurle.getLocalizedExceptionsMap();
 
 			List<Exception> layoutFriendlyURLExceptions =
 				ListUtil.fromCollection(localizedExceptionsMap.values());

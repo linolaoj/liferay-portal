@@ -22,13 +22,13 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.WebDirDetector;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.tools.WebXMLBuilder;
 import com.liferay.portal.util.ExtRegistry;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.taglib.FileAvailabilityUtil;
 import com.liferay.util.ant.CopyTask;
 
@@ -162,7 +162,7 @@ public class ExtHotDeployListener extends BaseHotDeployListener {
 			return;
 		}
 
-		installExt(servletContext, hotDeployEvent.getContextClassLoader());
+		installExt(servletContext);
 
 		FileAvailabilityUtil.clearAvailabilities();
 
@@ -200,16 +200,14 @@ public class ExtHotDeployListener extends BaseHotDeployListener {
 		}
 	}
 
-	protected void installExt(
-			ServletContext servletContext, ClassLoader portletClassLoader)
-		throws Exception {
-
+	protected void installExt(ServletContext servletContext) throws Exception {
 		String servletContextName = servletContext.getServletContextName();
 
 		String globalLibDir = PortalUtil.getGlobalLibDir();
 		String portalWebDir = PortalUtil.getPortalWebDir();
 		String portalLibDir = PortalUtil.getPortalLibDir();
-		String pluginWebDir = WebDirDetector.getRootDir(portletClassLoader);
+		String pluginWebDir = WebDirDetector.getRootDir(
+			servletContext.getClassLoader());
 
 		copyJar(servletContext, globalLibDir, "ext-service");
 		copyJar(servletContext, portalLibDir, "ext-impl");

@@ -26,7 +26,6 @@ import ${apiPackagePath}.service.persistence.${entity.name}Persistence;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.exception.NoSuchModelException;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.jdbc.MappingSqlQuery;
 import com.liferay.portal.kernel.dao.jdbc.MappingSqlQueryFactoryUtil;
@@ -43,14 +42,26 @@ import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SQLQuery;
+import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.service.persistence.CompanyProvider;
+import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
+import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.NestedSetsTreeManager;
+import com.liferay.portal.kernel.service.persistence.impl.PersistenceNestedSetsTreeManager;
+import com.liferay.portal.kernel.service.persistence.impl.TableMapper;
+import com.liferay.portal.kernel.service.persistence.impl.TableMapperFactory;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.ContentTypes;
@@ -65,17 +76,6 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
-import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceContextThreadLocal;
-import com.liferay.portal.service.persistence.CompanyProvider;
-import com.liferay.portal.service.persistence.CompanyProviderWrapper;
-import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
-import com.liferay.portal.service.persistence.impl.NestedSetsTreeManager;
-import com.liferay.portal.service.persistence.impl.PersistenceNestedSetsTreeManager;
-import com.liferay.portal.service.persistence.impl.TableMapper;
-import com.liferay.portal.service.persistence.impl.TableMapperFactory;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.io.Serializable;
@@ -96,7 +96,7 @@ import java.util.Map;
 import java.util.Set;
 
 <#list referenceList as tempEntity>
-	<#if tempEntity.hasColumns() && (entity.name == "Counter" || tempEntity.name != "Counter")>
+	<#if tempEntity.hasColumns() && ((entity.name == "Counter") || (tempEntity.name != "Counter"))>
 		import ${tempEntity.apiPackagePath}.service.persistence.${tempEntity.name}Persistence;
 	</#if>
 </#list>
@@ -421,7 +421,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	 *
 	 * @param ${entity.PKVarName} the primary key of the ${entity.humanName}
 	 * @return the ${entity.humanName} that was removed
-	 * @throws ${apiPackagePath}.exception.${noSuchEntity}Exception if a ${entity.humanName} with the primary key could not be found
+	 * @throws ${noSuchEntity}Exception if a ${entity.humanName} with the primary key could not be found
 	 */
 	@Override
 	public ${entity.name} remove(${entity.PKClassName} ${entity.PKVarName}) throws ${noSuchEntity}Exception {
@@ -433,7 +433,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	 *
 	 * @param primaryKey the primary key of the ${entity.humanName}
 	 * @return the ${entity.humanName} that was removed
-	 * @throws ${apiPackagePath}.exception.${noSuchEntity}Exception if a ${entity.humanName} with the primary key could not be found
+	 * @throws ${noSuchEntity}Exception if a ${entity.humanName} with the primary key could not be found
 	 */
 	@Override
 	public ${entity.name} remove(Serializable primaryKey) throws ${noSuchEntity}Exception {
@@ -812,11 +812,11 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	}
 
 	/**
-	 * Returns the ${entity.humanName} with the primary key or throws a {@link com.liferay.portal.exception.NoSuchModelException} if it could not be found.
+	 * Returns the ${entity.humanName} with the primary key or throws a {@link com.liferay.portal.kernel.exception.NoSuchModelException} if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the ${entity.humanName}
 	 * @return the ${entity.humanName}
-	 * @throws ${apiPackagePath}.exception.${noSuchEntity}Exception if a ${entity.humanName} with the primary key could not be found
+	 * @throws ${noSuchEntity}Exception if a ${entity.humanName} with the primary key could not be found
 	 */
 	@Override
 	public ${entity.name} findByPrimaryKey(Serializable primaryKey) throws ${noSuchEntity}Exception {
@@ -834,11 +834,11 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	}
 
 	/**
-	 * Returns the ${entity.humanName} with the primary key or throws a {@link ${apiPackagePath}.exception.${noSuchEntity}Exception} if it could not be found.
+	 * Returns the ${entity.humanName} with the primary key or throws a {@link ${noSuchEntity}Exception} if it could not be found.
 	 *
 	 * @param ${entity.PKVarName} the primary key of the ${entity.humanName}
 	 * @return the ${entity.humanName}
-	 * @throws ${apiPackagePath}.exception.${noSuchEntity}Exception if a ${entity.humanName} with the primary key could not be found
+	 * @throws ${noSuchEntity}Exception if a ${entity.humanName} with the primary key could not be found
 	 */
 	@Override
 	public ${entity.name} findByPrimaryKey(${entity.PKClassName} ${entity.PKVarName}) throws ${noSuchEntity}Exception {
@@ -1845,7 +1845,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 		private static final String _FILTER_ENTITY_TABLE_FILTER_PK_COLUMN = "${entity.alias}.${entity.filterPKColumn.DBName}";
 
 		<#if entity.isPermissionedModel()>
-			<#if entity.hasColumn("userId") >
+			<#if entity.hasColumn("userId")>
 				private static final String _FILTER_ENTITY_TABLE_FILTER_USERID_COLUMN = "${entity.alias}.userId";
 			<#else>
 				private static final String _FILTER_ENTITY_TABLE_FILTER_USERID_COLUMN = null;
@@ -1943,7 +1943,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 
 <#function bindParameter finderColsList>
 	<#list finderColsList as finderCol>
-		<#if !finderCol.hasArrayableOperator() || finderCol.type == "String">
+		<#if !finderCol.hasArrayableOperator() || (finderCol.type == "String")>
 			<#return true>
 		</#if>
 	</#list>
@@ -1971,7 +1971,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 				qPos.add(
 					<#if finderCol.type == "Date">
 						new Timestamp(${finderCol.name}.getTime())
-					<#elseif finderCol.type == "String" && !finderCol.isCaseSensitive()>
+					<#elseif (finderCol.type == "String") && !finderCol.isCaseSensitive()>
 						StringUtil.toLowerCase(${finderCol.name})
 					<#else>
 						${finderCol.name}

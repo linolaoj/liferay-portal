@@ -69,12 +69,6 @@
 		<execute function="SelectWindow" locator1="title=Site Page Name 2 - Site Name - Liferay" />
 	</command>
 
-	<command name="save">
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-
-		<execute macro="Alert#viewSetupUpdatedSuccessMessage" />
-	</command>
-
 	<command name="viewCorruptScript">
 		<execute function="AssertTextPresent" value1="An error occurred while processing the template." />
 		<execute function="AssertTextPresent" value1="Unexpected end of file reached." />
@@ -133,9 +127,10 @@
 	</command>
 
 	<command name="viewWarningMessageDisplay">
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+		<execute macro="Button#clickSave" />
 
-		<execute function="AssertTextEquals" locator1="Message#ERROR" value1="${warningMessage}" />
-		<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="${errorMessage}" />
+		<execute macro="Alert#viewRequestFailedToComplete" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="${errorMessage}" />
 	</command>
 </definition>

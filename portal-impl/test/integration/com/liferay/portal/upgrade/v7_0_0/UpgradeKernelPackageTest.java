@@ -14,16 +14,17 @@
 
 package com.liferay.portal.upgrade.v7_0_0;
 
-import com.liferay.counter.service.CounterLocalServiceUtil;
+import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
+import com.liferay.portal.kernel.dao.orm.WildcardMode;
+import com.liferay.portal.kernel.model.ClassName;
+import com.liferay.portal.kernel.model.ResourceBlock;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.ResourcePermission;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.model.ClassName;
-import com.liferay.portal.model.ResourceBlock;
-import com.liferay.portal.model.ResourceConstants;
-import com.liferay.portal.model.ResourcePermission;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.sql.PreparedStatement;
@@ -64,7 +65,7 @@ public class UpgradeKernelPackageTest extends UpgradeKernelPackage {
 		sb.append(TestPropsValues.getCompanyId());
 		sb.append(", ");
 		sb.append(TestPropsValues.getGroupId());
-		sb.append( ", '");
+		sb.append(", '");
 		sb.append(_OLD_CLASS_NAME);
 		sb.append("_POSTFIX', 'HASH', 1)");
 
@@ -155,7 +156,8 @@ public class UpgradeKernelPackageTest extends UpgradeKernelPackage {
 			oldValue = rs.getString(columnName);
 		}
 
-		upgradeTable(tableName, columnName);
+		upgradeTable(
+			tableName, columnName, getClassNames(), WildcardMode.SURROUND);
 
 		String newValue = StringUtil.replace(
 			oldValue, _OLD_CLASS_NAME, _NEW_CLASS_NAME);

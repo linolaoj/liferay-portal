@@ -15,25 +15,24 @@
 package com.liferay.taglib.ui;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.language.UnicodeLanguageUtil;
+import com.liferay.portal.kernel.model.Portlet;
+import com.liferay.portal.kernel.model.PortletApp;
+import com.liferay.portal.kernel.model.SpriteImage;
+import com.liferay.portal.kernel.model.Theme;
 import com.liferay.portal.kernel.servlet.BrowserSnifferUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.JavaConstants;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.model.Portlet;
-import com.liferay.portal.model.PortletApp;
-import com.liferay.portal.model.SpriteImage;
-import com.liferay.portal.model.Theme;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.taglib.util.IncludeTag;
 import com.liferay.taglib.util.TagResourceBundleUtil;
 
@@ -228,20 +227,9 @@ public class IconTag extends IncludeTag {
 			sb.append(" alt=\"");
 			sb.append(LanguageUtil.get(resourceBundle, getProcessedMessage()));
 			sb.append("\"");
-
-			if (_toolTip) {
-				sb.append(" onmouseover=\"Liferay.Portal.ToolTip.show(this, '");
-				sb.append(
-					UnicodeLanguageUtil.get(
-						resourceBundle, getProcessedMessage()));
-				sb.append("')\"");
-			}
-			else {
-				sb.append(" title=\"");
-				sb.append(
-					LanguageUtil.get(resourceBundle, getProcessedMessage()));
-				sb.append("\"");
-			}
+			sb.append(" title=\"");
+			sb.append(LanguageUtil.get(resourceBundle, getProcessedMessage()));
+			sb.append("\"");
 
 			details = sb.toString();
 		}
@@ -272,7 +260,7 @@ public class IconTag extends IncludeTag {
 
 					imageFileName = imageURL.getPath();
 				}
-				catch (MalformedURLException e) {
+				catch (MalformedURLException murle) {
 				}
 			}
 		}

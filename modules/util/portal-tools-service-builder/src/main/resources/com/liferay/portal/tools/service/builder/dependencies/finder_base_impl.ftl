@@ -4,7 +4,7 @@ import ${apiPackagePath}.model.${entity.name};
 import ${apiPackagePath}.service.persistence.${entity.name}Persistence;
 
 import com.liferay.portal.kernel.bean.BeanReference;
-import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 
 import java.util.Set;
 
@@ -30,7 +30,7 @@ public class ${entity.name}FinderBaseImpl
 		}
 	</#if>
 
-	<#if entity.hasColumns() && entity.name != "Counter">
+	<#if entity.hasColumns() && (entity.name != "Counter")>
 		/**
 		 * Returns the ${entity.humanName} persistence.
 		 *
@@ -50,7 +50,7 @@ public class ${entity.name}FinderBaseImpl
 		}
 	</#if>
 
-	<#if entity.hasColumns() && entity.name != "Counter">
+	<#if entity.hasColumns() && (entity.name != "Counter")>
 		@BeanReference(type = ${entity.name}Persistence.class)
 		protected ${entity.name}Persistence ${entity.varName}Persistence;
 	</#if>

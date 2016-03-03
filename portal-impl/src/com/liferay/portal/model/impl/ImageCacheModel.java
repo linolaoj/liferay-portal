@@ -16,12 +16,12 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.Image;
+import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.Image;
-import com.liferay.portal.model.MVCCModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -136,12 +136,17 @@ public class ImageCacheModel implements CacheModel<Image>, Externalizable,
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		mvccVersion = objectInput.readLong();
+
 		imageId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
 		type = objectInput.readUTF();
+
 		height = objectInput.readInt();
+
 		width = objectInput.readInt();
+
 		size = objectInput.readInt();
 	}
 
@@ -149,7 +154,9 @@ public class ImageCacheModel implements CacheModel<Image>, Externalizable,
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(mvccVersion);
+
 		objectOutput.writeLong(imageId);
+
 		objectOutput.writeLong(companyId);
 		objectOutput.writeLong(modifiedDate);
 
@@ -161,7 +168,9 @@ public class ImageCacheModel implements CacheModel<Image>, Externalizable,
 		}
 
 		objectOutput.writeInt(height);
+
 		objectOutput.writeInt(width);
+
 		objectOutput.writeInt(size);
 	}
 

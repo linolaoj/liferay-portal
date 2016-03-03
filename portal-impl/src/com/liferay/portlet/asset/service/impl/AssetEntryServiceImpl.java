@@ -14,6 +14,10 @@
 
 package com.liferay.portlet.asset.service.impl;
 
+import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetRendererFactory;
+import com.liferay.asset.kernel.service.persistence.AssetEntryQuery;
 import com.liferay.portal.kernel.cache.thread.local.Lifecycle;
 import com.liferay.portal.kernel.cache.thread.local.ThreadLocalCache;
 import com.liferay.portal.kernel.cache.thread.local.ThreadLocalCacheManager;
@@ -25,12 +29,8 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.asset.AssetRendererFactoryRegistryUtil;
-import com.liferay.portlet.asset.model.AssetEntry;
-import com.liferay.portlet.asset.model.AssetRendererFactory;
 import com.liferay.portlet.asset.service.base.AssetEntryServiceBaseImpl;
 import com.liferay.portlet.asset.service.permission.AssetEntryPermission;
-import com.liferay.portlet.asset.service.persistence.AssetEntryQuery;
 import com.liferay.portlet.asset.util.AssetUtil;
 
 import java.util.ArrayList;
@@ -147,10 +147,11 @@ public class AssetEntryServiceImpl extends AssetEntryServiceBaseImpl {
 	public AssetEntry updateEntry(
 			long groupId, Date createDate, Date modifiedDate, String className,
 			long classPK, String classUuid, long classTypeId,
-			long[] categoryIds, String[] tagNames, boolean visible,
-			Date startDate, Date endDate, Date expirationDate, String mimeType,
-			String title, String description, String summary, String url,
-			String layoutUuid, int height, int width, Double priority)
+			long[] categoryIds, String[] tagNames, boolean listable,
+			boolean visible, Date startDate, Date endDate, Date expirationDate,
+			String mimeType, String title, String description, String summary,
+			String url, String layoutUuid, int height, int width,
+			Double priority)
 		throws PortalException {
 
 		AssetEntryPermission.check(
@@ -158,16 +159,16 @@ public class AssetEntryServiceImpl extends AssetEntryServiceBaseImpl {
 
 		return assetEntryLocalService.updateEntry(
 			getUserId(), groupId, createDate, modifiedDate, className, classPK,
-			classUuid, classTypeId, categoryIds, tagNames, visible, startDate,
-			endDate, expirationDate, mimeType, title, description, summary, url,
-			layoutUuid, height, width, priority);
+			classUuid, classTypeId, categoryIds, tagNames, listable, visible,
+			startDate, endDate, expirationDate, mimeType, title, description,
+			summary, url, layoutUuid, height, width, priority);
 	}
 
 	/**
 	 * @deprecated As of 7.0.0, replaced by {@link #updateEntry(long, Date,
 	 *             Date, String, long, String, long, long[], String[], boolean,
-	 *             Date, Date, Date, String, String, String, String, String,
-	 *             String, int, int, Double)}
+	 *             boolean, Date, Date, Date, String, String, String, String,
+	 *             String, String, int, int, Double)}
 	 */
 	@Deprecated
 	@Override

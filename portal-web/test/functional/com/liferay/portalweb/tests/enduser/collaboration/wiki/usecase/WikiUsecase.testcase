@@ -1,4 +1,5 @@
 <definition component-name="portal-collaboration">
+	<property name="custom.properties" value="default.layout.template.id=1_column" />
 	<property name="testray.main.component.name" value="Wiki" />
 
 	<var name="pageName" value="Wiki Test Page" />
@@ -13,18 +14,20 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="SitePageNavigator#gotoEditPage">
+			<var name="page" value="${pageName}" />
+		</execute>
+
+		<execute macro="Page#editPageLayoutColumn">
+			<var name="columnName" value="1_column" />
+		</execute>
+
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
 			<var name="portletName" value="${portletName}" />
-		</execute>
-
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
-			<var name="portletName" value="Wiki" />
 		</execute>
 	</set-up>
 
@@ -66,6 +69,14 @@
 			<var name="siteName" value="Site Name" />
 		</execute>
 
+		<execute macro="SitePageNavigator#gotoEditPage">
+			<var name="page" value="Staging Test Page" />
+		</execute>
+
+		<execute macro="Page#editPageLayoutColumn">
+			<var name="columnName" value="1_column" />
+		</execute>
+
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Staging Test Page" />
 			<var name="siteName" value="Site Name" />
@@ -73,12 +84,6 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Wiki" />
-		</execute>
-
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
 			<var name="portletName" value="Wiki" />
 		</execute>
 
@@ -101,7 +106,6 @@
 
 		<execute macro="WikiPage#addAttachmentViaPageEdit">
 			<var name="attachmentFileName" value="Document_1.jpg" />
-			<var name="panelHeading" value="Attachments" />
 			<var name="wikiPageTitle" value="Wiki Page Title" />
 		</execute>
 
@@ -109,12 +113,13 @@
 			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesPublishingTools">
+		<execute macro="ProductMenu#gotoSitesPublishing">
 			<var name="portlet" value="Staging" />
 		</execute>
 
 		<execute macro="Staging#activateStagingCP">
 			<var name="siteName" value="Site Name" />
+			<var name="uncheckContent" value="Wiki" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -149,65 +154,8 @@
 		</execute>
 	</command>
 
-	<command name="AddPageWithCustomContentHeading" priority="4">
-		<execute macro="WikiNavigator#gotoAllPagesPG" />
-
-		<execute function="Click#makeVisibleClickAt" locator1="Portlet#ICON_PLUS_SIGN" />
-
-		<execute macro="WikiEntry#addPageTitle">
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="WikiEntry#selectPageFormat">
-			<var name="pageFormat" value="Creole" />
-		</execute>
-
-		<execute macro="CKEditor#selectHeading">
-			<var name="format" value="Heading 1" />
-		</execute>
-
-		<execute macro="WikiEntry#addPageContent">
-			<var name="wikiPageContent" value="Page Content Body Header" />
-		</execute>
-
-		<execute macro="CKEditor#typeEnterKey" />
-
-		<execute macro="CKEditor#selectHeading">
-			<var name="format" value="Normal" />
-		</execute>
-
-		<execute macro="WikiEntry#addPageContent">
-			<var name="wikiPageContent" value="Page Content Body" />
-		</execute>
-
-		<execute macro="WikiEntry#publish" />
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoAllPagesPG" />
-
-		<execute macro="WikiTable#viewEntry">
-			<var name="draftStatus" value="Approved" />
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoEntryViaPGTable">
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="WikiPage#viewPageContentBodyHeader">
-			<var name="wikiPageContent" value="Page Content Body Header" />
-		</execute>
-
-		<execute macro="WikiPage#viewPageContentBody">
-			<var name="wikiPageContent" value="Page Content Body" />
-		</execute>
-	</command>
-
 	<command name="ConfigurePortletDisplaySettings" priority="4">
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Wiki Test Page" />
 		</execute>
 
@@ -233,7 +181,7 @@
 			<var name="isPresent" value="NAVIGATION_EMAIL_FROM,NAVIGATION_PAGE_ADDED_EMAIL,NAVIGATION_PAGE_UPDATED_EMAIL,NAVIGATION_RSS" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Wiki Test Page" />
 		</execute>
 
@@ -245,7 +193,7 @@
 			<var name="uncheckSetting" value="ENABLE_COMMENTS,ENABLE_COMMENT_RATINGS,ENABLE_PAGE_RATINGS,ENABLE_RELATED_ASSETS" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Wiki Test Page" />
 		</execute>
 
@@ -349,7 +297,7 @@
 			<var name="wikiPageTitle" value="Wiki Page 1" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Wiki Test Page" />
 		</execute>
 
@@ -364,7 +312,7 @@
 			<var name="wikiPageTitle" value="Wiki Page 1" />
 		</execute>
 
-		<execute macro="WikiPage#viewPageContentBody">
+		<execute macro="WikiEntry#viewPageContentBody">
 			<var name="wikiPageContent" value="Wiki Page Content 1" />
 		</execute>
 
@@ -379,7 +327,7 @@
 			<var name="entryCommentEdit" value="Wiki Page Comment Edited" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Wiki Test Page" />
 		</execute>
 
@@ -413,7 +361,7 @@
 			<var name="wikiPageTitle" value="Wiki Page 1" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Wiki Test Page" />
 		</execute>
 
@@ -428,7 +376,7 @@
 			<var name="wikiPageTitle" value="Wiki Page 1" />
 		</execute>
 
-		<execute macro="WikiPage#viewPageContentBody">
+		<execute macro="WikiEntry#viewPageContentBody">
 			<var name="wikiPageContent" value="Wiki Page Content 1" />
 		</execute>
 
@@ -436,7 +384,7 @@
 			<var name="wikiPageTitle" value="Wiki Page 1" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Wiki Test Page" />
 		</execute>
 
@@ -446,7 +394,7 @@
 			<var name="wikiPageTitle" value="Wiki Page 1" />
 		</execute>
 
-		<execute macro="WikiPage#viewPageContentBody">
+		<execute macro="WikiEntry#viewPageContentBody">
 			<var name="wikiPageContent" value="Wiki Page Content 1" />
 		</execute>
 
@@ -527,7 +475,7 @@
 			<var name="wikiPageContent" value="Wiki FrontPage Content" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -536,7 +484,7 @@
 			<var name="wikiPageTitle" value="FrontPage" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -546,7 +494,7 @@
 			<var name="wikiPageTitle" value="FrontPage" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -558,7 +506,7 @@
 			<var name="entryComment" value="Wiki FrontPage Child Page Comment Body document" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -580,7 +528,7 @@
 	</command>
 
 	<command name="ViewNoWikiXSSviaAddPage" priority="3">
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Wiki Test Page" />
 		</execute>
 
@@ -594,7 +542,7 @@
 	</command>
 
 	<command name="ViewWikiDraftPagesViaBreadcrumb" priority="4">
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -602,7 +550,7 @@
 			<var name="portletName" value="Breadcrumb" />
 		</execute>
 
-		<execute function="AssertClick" locator1="Wiki#NAVIGATION_RECENT_CHANGES" value1="Recent Changes" />
+		<execute function="AssertClick" locator1="WikiTable#NAVIGATION_RECENT_CHANGES" value1="Recent Changes" />
 
 		<execute macro="Breadcrumb#viewPG">
 			<var name="breadcrumbListVisible" value="Wiki Test Page" />
@@ -614,7 +562,7 @@
 			<var name="pathLocator" value="PAGE" />
 		</execute>
 
-		<execute function="AssertClick" locator1="Wiki#NAVIGATION_ALL_PAGES" value1="All Pages" />
+		<execute function="AssertClick" locator1="WikiTable#NAVIGATION_ALL_PAGES" value1="All Pages" />
 
 		<execute macro="Breadcrumb#viewPG">
 			<var name="breadcrumbListVisible" value="Wiki Test Page" />
@@ -626,7 +574,7 @@
 			<var name="pathLocator" value="CURRENT_LOCATION" />
 		</execute>
 
-		<execute function="AssertClick" locator1="Wiki#NAVIGATION_DRAFT_PAGES" value1="Draft Pages" />
+		<execute function="AssertClick" locator1="WikiTable#NAVIGATION_DRAFT_PAGES" value1="Draft Pages" />
 
 		<execute macro="Breadcrumb#viewPG">
 			<var name="breadcrumbListVisible" value="Wiki Test Page" />

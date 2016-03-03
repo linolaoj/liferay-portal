@@ -29,7 +29,7 @@
 	_entry
 	_currentIndex = -1
 >
-	<#if (_currentIndex = -1)>
+	<#if _currentIndex = -1>
 		<#local ddmContentModel = dataFactory.newDDMContentModel(_entry)>
 	<#else>
 		<#local ddmContentModel = dataFactory.newDDMContentModel(_entry, _currentIndex)>
@@ -56,7 +56,7 @@
 	_groupId
 	_parentDLFolderId
 >
-	<#if (_dlFolderDepth <= dataFactory.maxDLFolderDepth)>
+	<#if _dlFolderDepth <= dataFactory.maxDLFolderDepth>
 		<#local dlFolderModels = dataFactory.newDLFolderModels(_groupId, _parentDLFolderId)>
 
 		<#list dlFolderModels as dlFolderModel>
@@ -135,17 +135,21 @@
 >
 	insert into Group_ values (${_groupModel.mvccVersion}, '${_groupModel.uuid}', ${_groupModel.groupId}, ${_groupModel.companyId}, ${_groupModel.creatorUserId}, ${_groupModel.classNameId}, ${_groupModel.classPK}, ${_groupModel.parentGroupId}, ${_groupModel.liveGroupId}, '${_groupModel.treePath}', '${_groupModel.groupKey}', '${_groupModel.name}', '${_groupModel.description}', ${_groupModel.type}, '${_groupModel.typeSettings}', ${_groupModel.manualMembership?string}, ${_groupModel.membershipRestriction}, '${_groupModel.friendlyURL}', ${_groupModel.site?string}, ${_groupModel.remoteStagingGroupCount}, ${_groupModel.inheritContent?string}, ${_groupModel.active?string});
 
+	<@insertResourcePermissions
+		_entry = _groupModel
+	/>
+
 	<#local layoutSetModels = dataFactory.newLayoutSetModels(_groupModel.groupId, _publicPageCount)>
 
 	<#list layoutSetModels as layoutSetModel>
-		insert into LayoutSet values (${layoutSetModel.mvccVersion}, ${layoutSetModel.layoutSetId}, ${layoutSetModel.groupId}, ${layoutSetModel.companyId}, '${dataFactory.getDateString(layoutSetModel.createDate)}', '${dataFactory.getDateString(layoutSetModel.modifiedDate)}', ${layoutSetModel.privateLayout?string}, ${layoutSetModel.logoId}, '${layoutSetModel.themeId}', '${layoutSetModel.colorSchemeId}', '${layoutSetModel.wapThemeId}', '${layoutSetModel.wapColorSchemeId}', '${layoutSetModel.css}', ${layoutSetModel.pageCount}, '${layoutSetModel.settings}', '${layoutSetModel.layoutSetPrototypeUuid}', ${layoutSetModel.layoutSetPrototypeLinkEnabled?string});
+		insert into LayoutSet values (${layoutSetModel.mvccVersion}, ${layoutSetModel.layoutSetId}, ${layoutSetModel.groupId}, ${layoutSetModel.companyId}, '${dataFactory.getDateString(layoutSetModel.createDate)}', '${dataFactory.getDateString(layoutSetModel.modifiedDate)}', ${layoutSetModel.privateLayout?string}, ${layoutSetModel.logoId}, '${layoutSetModel.themeId}', '${layoutSetModel.colorSchemeId}', '${layoutSetModel.css}', ${layoutSetModel.pageCount}, '${layoutSetModel.settings}', '${layoutSetModel.layoutSetPrototypeUuid}', ${layoutSetModel.layoutSetPrototypeLinkEnabled?string});
 	</#list>
 </#macro>
 
 <#macro insertLayout
 	_layoutModel
 >
-	insert into Layout values (${_layoutModel.mvccVersion}, '${_layoutModel.uuid}', ${_layoutModel.plid}, ${_layoutModel.groupId}, ${_layoutModel.companyId}, ${_layoutModel.userId}, '${_layoutModel.userName}', '${dataFactory.getDateString(_layoutModel.createDate)}', '${dataFactory.getDateString(_layoutModel.modifiedDate)}', ${_layoutModel.privateLayout?string}, ${_layoutModel.layoutId}, ${_layoutModel.parentLayoutId}, '${_layoutModel.name}', '${_layoutModel.title}', '${_layoutModel.description}', '${_layoutModel.keywords}', '${_layoutModel.robots}', '${_layoutModel.type}', '${_layoutModel.typeSettings}', ${_layoutModel.hidden?string}, '${_layoutModel.friendlyURL}', ${_layoutModel.iconImageId}, '${_layoutModel.themeId}', '${_layoutModel.colorSchemeId}', '${_layoutModel.wapThemeId}', '${_layoutModel.wapColorSchemeId}', '${_layoutModel.css}', ${_layoutModel.priority}, '${_layoutModel.layoutPrototypeUuid}', ${_layoutModel.layoutPrototypeLinkEnabled?string}, '${_layoutModel.sourcePrototypeLayoutUuid}', '${dataFactory.getDateString(_layoutModel.lastPublishDate)}');
+	insert into Layout values (${_layoutModel.mvccVersion}, '${_layoutModel.uuid}', ${_layoutModel.plid}, ${_layoutModel.groupId}, ${_layoutModel.companyId}, ${_layoutModel.userId}, '${_layoutModel.userName}', '${dataFactory.getDateString(_layoutModel.createDate)}', '${dataFactory.getDateString(_layoutModel.modifiedDate)}', ${_layoutModel.privateLayout?string}, ${_layoutModel.layoutId}, ${_layoutModel.parentLayoutId}, '${_layoutModel.name}', '${_layoutModel.title}', '${_layoutModel.description}', '${_layoutModel.keywords}', '${_layoutModel.robots}', '${_layoutModel.type}', '${_layoutModel.typeSettings}', ${_layoutModel.hidden?string}, '${_layoutModel.friendlyURL}', ${_layoutModel.iconImageId}, '${_layoutModel.themeId}', '${_layoutModel.colorSchemeId}', '${_layoutModel.css}', ${_layoutModel.priority}, '${_layoutModel.layoutPrototypeUuid}', ${_layoutModel.layoutPrototypeLinkEnabled?string}, '${_layoutModel.sourcePrototypeLayoutUuid}', '${dataFactory.getDateString(_layoutModel.lastPublishDate)}');
 
 	<@insertResourcePermissions
 		_entry = _layoutModel
@@ -195,6 +199,10 @@
 	_mbMessageModel
 >
 	insert into MBMessage values ('${_mbMessageModel.uuid}', ${_mbMessageModel.messageId}, ${_mbMessageModel.groupId}, ${_mbMessageModel.companyId}, ${_mbMessageModel.userId}, '${_mbMessageModel.userName}', '${dataFactory.getDateString(_mbMessageModel.createDate)}', '${dataFactory.getDateString(_mbMessageModel.modifiedDate)}', ${_mbMessageModel.classNameId}, ${_mbMessageModel.classPK}, ${_mbMessageModel.categoryId}, ${_mbMessageModel.threadId}, ${_mbMessageModel.rootMessageId}, ${_mbMessageModel.parentMessageId}, '${_mbMessageModel.subject}', '${_mbMessageModel.body}', '${_mbMessageModel.format}', ${_mbMessageModel.anonymous?string}, ${_mbMessageModel.priority}, ${_mbMessageModel.allowPingbacks?string}, ${_mbMessageModel.answer?string}, '${dataFactory.getDateString(_mbMessageModel.lastPublishDate)}', ${_mbMessageModel.status}, ${_mbMessageModel.statusByUserId}, '${_mbMessageModel.statusByUserName}', '${dataFactory.getDateString(_mbMessageModel.statusDate)}');
+
+	<@insertResourcePermissions
+		_entry = _mbMessageModel
+	/>
 
 	<@insertAssetEntry
 		_entry = _mbMessageModel
@@ -250,7 +258,7 @@
 	_groupIds = []
 	_roleIds = []
 >
-	insert into User_ values (${_userModel.mvccVersion}, '${_userModel.uuid}', ${_userModel.userId}, ${_userModel.companyId}, '${dataFactory.getDateString(_userModel.createDate)}', '${dataFactory.getDateString(_userModel.modifiedDate)}', ${_userModel.defaultUser?string}, ${_userModel.contactId}, '${_userModel.password}', ${_userModel.passwordEncrypted?string}, ${_userModel.passwordReset?string}, '${dataFactory.getDateString(_userModel.passwordModifiedDate)}', '${_userModel.digest}', '${_userModel.reminderQueryQuestion}', '${_userModel.reminderQueryAnswer}', ${_userModel.graceLoginCount}, '${_userModel.screenName}', '${_userModel.emailAddress}', ${_userModel.facebookId}, ${_userModel.ldapServerId}, '${_userModel.openId}', ${_userModel.portraitId}, '${_userModel.languageId}', '${_userModel.timeZoneId}', '${_userModel.greeting}', '${_userModel.comments}', '${_userModel.firstName}', '${_userModel.middleName}', '${_userModel.lastName}', '${_userModel.jobTitle}', '${dataFactory.getDateString(_userModel.loginDate)}', '${_userModel.loginIP}', '${dataFactory.getDateString(_userModel.lastLoginDate)}', '${_userModel.lastLoginIP}', '${dataFactory.getDateString(_userModel.lastFailedLoginDate)}', ${_userModel.failedLoginAttempts}, ${_userModel.lockout?string}, '${dataFactory.getDateString(_userModel.lockoutDate)}', ${_userModel.agreedToTermsOfUse?string}, ${_userModel.emailAddressVerified?string}, '${_userModel.status}');
+	insert into User_ values (${_userModel.mvccVersion}, '${_userModel.uuid}', ${_userModel.userId}, ${_userModel.companyId}, '${dataFactory.getDateString(_userModel.createDate)}', '${dataFactory.getDateString(_userModel.modifiedDate)}', ${_userModel.defaultUser?string}, ${_userModel.contactId}, '${_userModel.password}', ${_userModel.passwordEncrypted?string}, ${_userModel.passwordReset?string}, '${dataFactory.getDateString(_userModel.passwordModifiedDate)}', '${_userModel.digest}', '${_userModel.reminderQueryQuestion}', '${_userModel.reminderQueryAnswer}', ${_userModel.graceLoginCount}, '${_userModel.screenName}', '${_userModel.emailAddress}', ${_userModel.facebookId}, '${_userModel.googleUserId}', ${_userModel.ldapServerId}, '${_userModel.openId}', ${_userModel.portraitId}, '${_userModel.languageId}', '${_userModel.timeZoneId}', '${_userModel.greeting}', '${_userModel.comments}', '${_userModel.firstName}', '${_userModel.middleName}', '${_userModel.lastName}', '${_userModel.jobTitle}', '${dataFactory.getDateString(_userModel.loginDate)}', '${_userModel.loginIP}', '${dataFactory.getDateString(_userModel.lastLoginDate)}', '${_userModel.lastLoginIP}', '${dataFactory.getDateString(_userModel.lastFailedLoginDate)}', ${_userModel.failedLoginAttempts}, ${_userModel.lockout?string}, '${dataFactory.getDateString(_userModel.lockoutDate)}', ${_userModel.agreedToTermsOfUse?string}, ${_userModel.emailAddressVerified?string}, '${_userModel.status}');
 
 	<#local contactModel = dataFactory.newContactModel(_userModel)>
 

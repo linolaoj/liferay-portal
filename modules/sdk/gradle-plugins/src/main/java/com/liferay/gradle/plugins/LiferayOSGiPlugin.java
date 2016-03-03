@@ -14,6 +14,7 @@
 
 package com.liferay.gradle.plugins;
 
+import aQute.bnd.header.Parameters;
 import aQute.bnd.osgi.Constants;
 
 import com.liferay.gradle.plugins.extensions.LiferayExtension;
@@ -23,6 +24,7 @@ import com.liferay.gradle.plugins.util.FileUtil;
 import com.liferay.gradle.plugins.util.GradleUtil;
 import com.liferay.gradle.plugins.wsdd.builder.BuildWSDDTask;
 import com.liferay.gradle.plugins.wsdd.builder.WSDDBuilderPlugin;
+import com.liferay.gradle.util.Validator;
 
 import groovy.lang.Closure;
 
@@ -478,6 +480,18 @@ public class LiferayOSGiPlugin extends LiferayJavaPlugin {
 		String bundleSymbolicName = getBundleInstruction(
 			project, Constants.BUNDLE_SYMBOLICNAME);
 
+		if (Validator.isNull(bundleSymbolicName)) {
+			return;
+		}
+
+		Parameters parameters = new Parameters(bundleSymbolicName);
+
+		Set<String> keys = parameters.keySet();
+
+		Iterator<String> iterator = keys.iterator();
+
+		bundleSymbolicName = iterator.next();
+
 		basePluginConvention.setArchivesBaseName(bundleSymbolicName);
 	}
 
@@ -526,10 +540,16 @@ public class LiferayOSGiPlugin extends LiferayJavaPlugin {
 	}
 
 	protected void configureDescription(Project project) {
-		String bundleName = getBundleInstruction(
-			project, Constants.BUNDLE_NAME);
+		String description = getBundleInstruction(
+			project, Constants.BUNDLE_DESCRIPTION);
 
-		project.setDescription(bundleName);
+		if (Validator.isNull(description)) {
+			description = getBundleInstruction(project, Constants.BUNDLE_NAME);
+		}
+
+		if (Validator.isNotNull(description)) {
+			project.setDescription(description);
+		}
 	}
 
 	protected void configureSourceSetMain(Project project) {
@@ -567,7 +587,9 @@ public class LiferayOSGiPlugin extends LiferayJavaPlugin {
 		String bundleVersion = getBundleInstruction(
 			project, Constants.BUNDLE_VERSION);
 
-		project.setVersion(bundleVersion);
+		if (Validator.isNotNull(bundleVersion)) {
+			project.setVersion(bundleVersion);
+		}
 	}
 
 	protected String getBundleInstruction(Project project, String key) {

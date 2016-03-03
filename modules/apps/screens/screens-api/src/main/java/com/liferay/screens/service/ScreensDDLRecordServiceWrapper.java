@@ -16,7 +16,7 @@ package com.liferay.screens.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.service.ServiceWrapper;
+import com.liferay.portal.kernel.service.ServiceWrapper;
 
 /**
  * Provides a wrapper for {@link ScreensDDLRecordService}.
@@ -57,12 +57,14 @@ public class ScreensDDLRecordServiceWrapper implements ScreensDDLRecordService,
 	}
 
 	@Override
-	public int getDDLRecordsCount(long ddlRecordSetId) {
+	public int getDDLRecordsCount(long ddlRecordSetId)
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return _screensDDLRecordService.getDDLRecordsCount(ddlRecordSetId);
 	}
 
 	@Override
-	public int getDDLRecordsCount(long ddlRecordSetId, long userId) {
+	public int getDDLRecordsCount(long ddlRecordSetId, long userId)
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return _screensDDLRecordService.getDDLRecordsCount(ddlRecordSetId,
 			userId);
 	}

@@ -28,12 +28,22 @@ import ${apiPackagePath}.service.${entity.name}LocalServiceUtil;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.LocaleException;
-import com.liferay.portal.exception.NoSuchModelException;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
+import com.liferay.exportimport.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
+import com.liferay.portal.kernel.exception.LocaleException;
+import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ContainerModel;
+import com.liferay.portal.kernel.model.TrashedModel;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.impl.BaseModelImpl;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil;
 import com.liferay.portal.kernel.util.DateUtil;
@@ -41,25 +51,14 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.ContainerModel;
-import com.liferay.portal.model.TrashedModel;
-import com.liferay.portal.model.User;
-import com.liferay.portal.model.impl.BaseModelImpl;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.expando.model.ExpandoBridge;
-import com.liferay.portlet.expando.util.ExpandoBridgeFactoryUtil;
-import com.liferay.portlet.trash.model.TrashEntry;
-import com.liferay.portlet.trash.service.TrashEntryLocalServiceUtil;
-
-import com.liferay.portlet.exportimport.lar.StagedModelType;
+import com.liferay.trash.kernel.model.TrashEntry;
+import com.liferay.trash.kernel.service.TrashEntryLocalServiceUtil;
 
 import java.io.Serializable;
 
@@ -114,7 +113,7 @@ public class ${entity.name}ModelImpl extends BaseModelImpl<${entity.name}> imple
 	<#compress>
 		public static final Object[][] TABLE_COLUMNS = {
 			<#list entity.getRegularColList() as column>
-				<#assign sqlType = serviceBuilder.getSqlType(apiPackagePath + ".model." + entity.getName(), column.getName(), column.getType())>
+				<#assign sqlType = serviceBuilder.getSqlType(entity.getName(), column.getName(), column.getType())>
 
 				{"${column.DBName}", Types.${sqlType}}
 
@@ -128,7 +127,7 @@ public class ${entity.name}ModelImpl extends BaseModelImpl<${entity.name}> imple
 
 		static {
 			<#list entity.getRegularColList() as column>
-				<#assign sqlType = serviceBuilder.getSqlType(apiPackagePath + ".model." + entity.getName(), column.getName(), column.getType())>
+				<#assign sqlType = serviceBuilder.getSqlType(entity.getName(), column.getName(), column.getType())>
 
 				TABLE_COLUMNS_MAP.put("${column.DBName}", Types.${sqlType});
 			</#list>
@@ -196,7 +195,7 @@ public class ${entity.name}ModelImpl extends BaseModelImpl<${entity.name}> imple
 
 		public static final boolean FINDER_CACHE_ENABLED = false;
 	<#else>
-		public static final boolean ENTITY_CACHE_ENABLED = GetterUtil.getBoolean(${propsUtil}.get("value.object.entity.cache.enabled.${packagePath}.model.${entity.name}"),
+		public static final boolean ENTITY_CACHE_ENABLED = GetterUtil.getBoolean(${propsUtil}.get("value.object.entity.cache.enabled.${apiPackagePath}.model.${entity.name}"),
 
 		<#if entity.isCacheEnabled()>
 			true
@@ -206,7 +205,7 @@ public class ${entity.name}ModelImpl extends BaseModelImpl<${entity.name}> imple
 
 		);
 
-		public static final boolean FINDER_CACHE_ENABLED = GetterUtil.getBoolean(${propsUtil}.get("value.object.finder.cache.enabled.${packagePath}.model.${entity.name}"),
+		public static final boolean FINDER_CACHE_ENABLED = GetterUtil.getBoolean(${propsUtil}.get("value.object.finder.cache.enabled.${apiPackagePath}.model.${entity.name}"),
 
 		<#if entity.isCacheEnabled()>
 			true
@@ -227,11 +226,11 @@ public class ${entity.name}ModelImpl extends BaseModelImpl<${entity.name}> imple
 		<#if entity.finderColumnsList?size &gt; 64>
 			public static final boolean COLUMN_BITMASK_ENABLED = false;
 
-			<#assign columnBitmaskEnabled = false >
+			<#assign columnBitmaskEnabled = false>
 		</#if>
 
 		<#if columnBitmaskEnabled>
-			public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(${propsUtil}.get("value.object.column.bitmask.enabled.${packagePath}.model.${entity.name}"), true);
+			public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(${propsUtil}.get("value.object.column.bitmask.enabled.${apiPackagePath}.model.${entity.name}"), true);
 
 			<#assign columnBitmask = 1>
 
@@ -319,7 +318,7 @@ public class ${entity.name}ModelImpl extends BaseModelImpl<${entity.name}> imple
 		</#if>
 	</#list>
 
-	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(${propsUtil}.get("lock.expiration.time.${packagePath}.model.${entity.name}"));
+	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(${propsUtil}.get("lock.expiration.time.${apiPackagePath}.model.${entity.name}"));
 
 	public ${entity.name}ModelImpl() {
 	}
@@ -472,7 +471,7 @@ public class ${entity.name}ModelImpl extends BaseModelImpl<${entity.name}> imple
 
 		@Override
 		public ${column.genericizedType} get${column.methodName}() {
-			<#if column.type == "String" && column.isConvertNull()>
+			<#if (column.type == "String") && column.isConvertNull()>
 				if (_${column.name} == null) {
 					return StringPool.BLANK;
 				}
@@ -681,7 +680,7 @@ public class ${entity.name}ModelImpl extends BaseModelImpl<${entity.name}> imple
 
 		<#if column.isFinderPath() || ((parentPKColumn != "") && (parentPKColumn.name == column.name))>
 			public ${column.type} getOriginal${column.methodName}() {
-				<#if column.type == "String" && column.isConvertNull()>
+				<#if (column.type == "String") && column.isConvertNull()>
 					return GetterUtil.getString(_original${column.methodName});
 				<#else>
 					return _original${column.methodName};

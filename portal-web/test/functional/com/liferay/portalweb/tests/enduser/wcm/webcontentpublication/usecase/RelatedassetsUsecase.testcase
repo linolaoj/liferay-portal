@@ -41,7 +41,7 @@
 			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesPublishingTools">
+		<execute macro="ProductMenu#gotoSitesPublishing">
 			<var name="portlet" value="Staging" />
 		</execute>
 
@@ -86,7 +86,7 @@
 			<var name="webContentTitle" value="Web Content Title 1" />
 		</execute>
 
-		<execute macro="WebContent#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Site Name" />
@@ -143,15 +143,13 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesPages">
+		<execute macro="SitePageNavigator#gotoPages">
 			<var name="page" value="Private Pages" />
 		</execute>
 
 		<execute macro="Page#add">
-			<var name="page" value="Private Pages" />
 			<var name="pageName" value="Private Page Name" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteScopeSelected" value="true" />
+			<var name="sitePagePrivacy" value="Private" />
 		</execute>
 
 		<execute macro="Page#gotoPG">

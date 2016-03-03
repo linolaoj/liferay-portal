@@ -41,7 +41,7 @@
 
 		<execute macro="Organization#addCP">
 			<var name="orgName" value="Organization Staging Organization Web Content Display" />
-			<var name="orgType" value="Regular Organization" />
+			<var name="orgType" value="Organization" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
@@ -57,7 +57,7 @@
 
 		<execute macro="Organization#viewCP">
 			<var name="orgName" value="Organization Staging Organization Web Content Display" />
-			<var name="orgType" value="Regular Organization" />
+			<var name="orgType" value="Organization" />
 		</execute>
 	</command>
 
@@ -328,7 +328,7 @@
 
 		<execute macro="Organization#addCP">
 			<var name="orgName" value="Organization Name 1" />
-			<var name="orgType" value="Regular Organization" />
+			<var name="orgType" value="Organization" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
@@ -342,7 +342,7 @@
 
 		<execute macro="Organization#addCP">
 			<var name="orgName" value="Organization Name 2" />
-			<var name="orgType" value="Regular Organization" />
+			<var name="orgType" value="Organization" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
@@ -374,7 +374,7 @@
 			<then>
 				<execute macro="Organization#addCP">
 					<var name="orgName" value="Suborganization Name ${count}" />
-					<var name="orgType" value="Regular Organization" />
+					<var name="orgType" value="Organization" />
 				</execute>
 
 				<execute macro="ProductMenu#gotoControlPanelUsers">
@@ -421,7 +421,7 @@
 
 		<execute macro="Organization#viewCP">
 			<var name="orgName" value="Organization Name 1" />
-			<var name="orgType" value="Regular Organization" />
+			<var name="orgType" value="Organization" />
 		</execute>
 
 		<execute macro="Navigator#gotoBack" />
@@ -433,7 +433,7 @@
 
 		<execute macro="Organization#viewCP">
 			<var name="orgName" value="Organization Name 2" />
-			<var name="orgType" value="Regular Organization" />
+			<var name="orgType" value="Organization" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
@@ -647,7 +647,7 @@
 
 		<execute macro="Organization#addCP">
 			<var name="orgName" value="Organization Name" />
-			<var name="orgType" value="Regular Organization" />
+			<var name="orgType" value="Organization" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
@@ -784,7 +784,7 @@
 
 		<execute macro="Organization#addCP">
 			<var name="orgName" value="Site Name M" />
-			<var name="orgType" value="Regular Organization" />
+			<var name="orgType" value="Organization" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
@@ -822,7 +822,7 @@
 
 		<execute macro="Organization#addCP">
 			<var name="orgName" value="Organization Site Bravo" />
-			<var name="orgType" value="Regular Organization" />
+			<var name="orgType" value="Organization" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
@@ -891,7 +891,7 @@
 
 		<execute macro="Organization#addCP">
 			<var name="orgName" value="Organization Name" />
-			<var name="orgType" value="Regular Organization" />
+			<var name="orgType" value="Organization" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
@@ -1013,7 +1013,7 @@
 
 		<execute function="Type" locator1="TextInput#REGULAR_EXPRESSION" value1="${atLeastFourCharNoNumbers}" />
 
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+		<execute macro="Button#clickSave" />
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
 			<var name="portlet" value="Users and Organizations" />
@@ -1048,7 +1048,7 @@
 
 		<execute function="Type" locator1="TextInput#REGULAR_EXPRESSION" value1="${atLeastSixCharNumbersPermitted}" />
 
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+		<execute macro="Button#clickSave" />
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
 			<var name="portlet" value="Users and Organizations" />
@@ -1095,7 +1095,7 @@
 
 		<execute function="Type" locator1="TextInput#MINIMUM_NUMBERS" value1="2" />
 
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+		<execute macro="Button#clickSave" />
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
 			<var name="portlet" value="Users and Organizations" />
@@ -1133,6 +1133,8 @@
 	</command>
 
 	<command name="ViewContentInLocationOrganizationSite" priority="4">
+		<property name="custom.properties" value="organizations.types=organization,location${line.separator}organizations.rootable[location]=true${line.separator}organizations.children.types[organization]=organization,location" />
+
 		<execute macro="ProductMenu#gotoControlPanelUsers">
 			<var name="portlet" value="Roles" />
 		</execute>
@@ -1189,7 +1191,11 @@
 
 		<execute macro="Organization#addCP">
 			<var name="orgName" value="North America" />
-			<var name="orgType" value="Regular Organization" />
+			<var name="orgType" value="Organization" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="Organization#addCP">
@@ -1197,6 +1203,10 @@
 			<var name="orgName" value="United States" />
 			<var name="orgParent" value="North America" />
 			<var name="orgType" value="Location" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="Organization#addCP">

@@ -163,8 +163,9 @@
 	</command>
 
 	<command name="EditDDLRecordViaMyWorkflowTasks" priority="5">
-		<description message="This is a use case for LPS-61212." />
 		<property name="portal.acceptance" value="true" />
+
+		<description message="This is a use case for LPS-61212." />
 
 		<execute macro="Navigator#openURL" />
 
@@ -265,7 +266,7 @@
 			<var name="fieldName" value="Text" />
 		</execute>
 
-		<execute macro="DDLRecord#save" />
+		<execute macro="PortletEntry#save" />
 
 		<execute macro="DDLRecord#viewEditPreview">
 			<var name="ddlRecordFieldDataEdit" value="DDL Record Edit" />

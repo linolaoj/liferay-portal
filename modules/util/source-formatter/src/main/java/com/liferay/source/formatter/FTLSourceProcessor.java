@@ -14,14 +14,17 @@
 
 package com.liferay.source.formatter;
 
+import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
+import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
 import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.tools.ToolsUtil;
 
 import java.io.File;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,10 +39,29 @@ public class FTLSourceProcessor extends BaseSourceProcessor {
 		return _INCLUDES;
 	}
 
+	protected void checkIfStatement(
+		String line, String fileName, int lineCount) {
+
+		if ((!line.startsWith("<#elseif ") && !line.startsWith("<#if ")) ||
+			!line.endsWith(">") || line.contains("?")) {
+
+			return;
+		}
+
+		int pos = line.indexOf(StringPool.SPACE);
+
+		String ifClause =
+			"if (" + line.substring(pos + 1, line.length() - 1) + ") {";
+
+		checkIfClauseParentheses(ifClause, fileName, lineCount);
+	}
+
 	@Override
 	protected String doFormat(
 			File file, String fileName, String absolutePath, String content)
 		throws Exception {
+
+		content = StringUtil.replace(content, " >\n", ">\n");
 
 		content = sortLiferayVariables(content);
 
@@ -120,7 +142,7 @@ public class FTLSourceProcessor extends BaseSourceProcessor {
 			}
 		}
 
-		return trimContent(content, false);
+		return formatFTL(fileName, content);
 	}
 
 	@Override
@@ -133,28 +155,85 @@ public class FTLSourceProcessor extends BaseSourceProcessor {
 		return getFileNames(excludes, getIncludes());
 	}
 
+	protected String formatFTL(String fileName, String content)
+		throws Exception {
+
+		StringBundler sb = new StringBundler();
+
+		try (UnsyncBufferedReader unsyncBufferedReader =
+				new UnsyncBufferedReader(new UnsyncStringReader(content))) {
+
+			int lineCount = 0;
+
+			String line = null;
+
+			while ((line = unsyncBufferedReader.readLine()) != null) {
+				lineCount++;
+
+				line = trimLine(line, false);
+
+				String trimmedLine = StringUtil.trimLeading(line);
+
+				if (trimmedLine.startsWith("<#assign ")) {
+					line = formatWhitespace(line, trimmedLine, true);
+
+					line = formatIncorrectSyntax(line, "=[", "= [", false);
+					line = formatIncorrectSyntax(line, "+[", "+ [", false);
+				}
+
+				checkIfStatement(trimmedLine, fileName, lineCount);
+
+				sb.append(line);
+				sb.append("\n");
+			}
+		}
+
+		String newContent = sb.toString();
+
+		if (newContent.endsWith("\n")) {
+			newContent = newContent.substring(0, newContent.length() - 1);
+		}
+
+		return newContent;
+	}
+
 	protected String sortLiferayVariables(String content) {
 		Matcher matcher = _liferayVariablesPattern.matcher(content);
 
-		if (!matcher.find()) {
-			return content;
+		while (matcher.find()) {
+			String match = matcher.group();
+
+			Matcher matcher2 = _liferayVariablePattern.matcher(match);
+
+			String previousVariable = null;
+
+			while (matcher2.find()) {
+				String variable = matcher2.group();
+
+				if (Validator.isNotNull(previousVariable) &&
+					(previousVariable.compareTo(variable) > 0)) {
+
+					String replacement = StringUtil.replaceFirst(
+						match, previousVariable, variable);
+					replacement = StringUtil.replaceLast(
+						replacement, variable, previousVariable);
+
+					return StringUtil.replace(content, match, replacement);
+				}
+
+				previousVariable = variable;
+			}
 		}
 
-		String match = matcher.group();
-
-		String[] lines = StringUtil.splitLines(match);
-
-		Arrays.sort(lines);
-
-		String replacement = StringUtil.merge(lines, "\n") + "\n";
-
-		return StringUtil.replace(content, match, replacement);
+		return content;
 	}
 
 	private static final String[] _INCLUDES = new String[] {"**/*.ftl"};
 
+	private Pattern _liferayVariablePattern = Pattern.compile(
+		"^\t*<#assign liferay_.*>\n", Pattern.MULTILINE);
 	private Pattern _liferayVariablesPattern = Pattern.compile(
-		"(^<#assign liferay_.*>\n)+", Pattern.MULTILINE);
+		"(^\t*<#assign liferay_.*>\n)+", Pattern.MULTILINE);
 	private Pattern _multiParameterTagPattern = Pattern.compile(
 		"\n(\t*)<@.+=.+=.+/>");
 	private Pattern _singleParameterTagPattern = Pattern.compile(

@@ -22,14 +22,24 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import org.gradle.api.Action;
+import org.gradle.api.JavaVersion;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
+import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.DependencySet;
+import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.internal.plugins.osgi.OsgiHelper;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetOutput;
+import org.gradle.api.tasks.TaskContainer;
+import org.gradle.api.tasks.Upload;
+import org.gradle.api.tasks.javadoc.Javadoc;
+import org.gradle.external.javadoc.CoreJavadocOptions;
 
 /**
  * @author Andrea Di Giorgi
@@ -39,15 +49,71 @@ public class MavenPluginBuilderPlugin implements Plugin<Project> {
 	public static final String BUILD_PLUGIN_DESCRIPTOR_TASK_NAME =
 		"buildPluginDescriptor";
 
+	public static final String MAVEN_EMBEDDER_CONFIGURATION_NAME =
+		"mavenEmbedder";
+
 	@Override
 	public void apply(Project project) {
 		GradleUtil.applyPlugin(project, JavaPlugin.class);
 
-		addTaskBuildPluginDescriptor(project);
+		Configuration mavenEmbedderConfiguration =
+			addConfigurationMavenEmbedder(project);
+
+		BuildPluginDescriptorTask buildPluginDescriptorTask =
+			addTaskBuildPluginDescriptor(project, mavenEmbedderConfiguration);
+
+		JavaVersion javaVersion = JavaVersion.current();
+
+		if (javaVersion.isJava8Compatible()) {
+			configureTasksJavadocDisableDoclint(project);
+		}
+
+		configureTasksUpload(project, buildPluginDescriptorTask);
+	}
+
+	protected Configuration addConfigurationMavenEmbedder(
+		final Project project) {
+
+		Configuration configuration = GradleUtil.addConfiguration(
+			project, MAVEN_EMBEDDER_CONFIGURATION_NAME);
+
+		configuration.defaultDependencies(
+			new Action<DependencySet>() {
+
+				@Override
+				public void execute(DependencySet dependencySet) {
+					addDependenciesMavenEmbedder(project);
+				}
+
+			});
+
+		configuration.setDescription(
+			"Configures Maven Embedder for this project.");
+		configuration.setVisible(false);
+
+		return configuration;
+	}
+
+	protected void addDependenciesMavenEmbedder(Project project) {
+		GradleUtil.addDependency(
+			project, MAVEN_EMBEDDER_CONFIGURATION_NAME, "org.apache.maven",
+			"maven-embedder", "3.3.9");
+		GradleUtil.addDependency(
+			project, MAVEN_EMBEDDER_CONFIGURATION_NAME,
+			"org.apache.maven.wagon", "wagon-http", "2.10");
+		GradleUtil.addDependency(
+			project, MAVEN_EMBEDDER_CONFIGURATION_NAME, "org.eclipse.aether",
+			"aether-connector-basic", "1.0.2.v20150114");
+		GradleUtil.addDependency(
+			project, MAVEN_EMBEDDER_CONFIGURATION_NAME, "org.eclipse.aether",
+			"aether-transport-wagon", "1.0.2.v20150114");
+		GradleUtil.addDependency(
+			project, MAVEN_EMBEDDER_CONFIGURATION_NAME, "org.slf4j",
+			"slf4j-simple", "1.7.5");
 	}
 
 	protected BuildPluginDescriptorTask addTaskBuildPluginDescriptor(
-		final Project project) {
+		final Project project, FileCollection mavenEmbedderClasspath) {
 
 		BuildPluginDescriptorTask buildPluginDescriptorTask =
 			GradleUtil.addTask(
@@ -56,12 +122,17 @@ public class MavenPluginBuilderPlugin implements Plugin<Project> {
 
 		buildPluginDescriptorTask.dependsOn(JavaPlugin.COMPILE_JAVA_TASK_NAME);
 
+		final SourceSet sourceSet = GradleUtil.getSourceSet(
+			project, SourceSet.MAIN_SOURCE_SET_NAME);
+
 		buildPluginDescriptorTask.setClassesDir(
 			new Callable<File>() {
 
 				@Override
 				public File call() throws Exception {
-					return getClassesDir(project);
+					SourceSetOutput sourceSetOutput = sourceSet.getOutput();
+
+					return sourceSetOutput.getClassesDir();
 				}
 
 			});
@@ -69,13 +140,15 @@ public class MavenPluginBuilderPlugin implements Plugin<Project> {
 		buildPluginDescriptorTask.setDescription(
 			"Generates the Maven plugin descriptor for the project.");
 		buildPluginDescriptorTask.setGroup(BasePlugin.BUILD_GROUP);
+		buildPluginDescriptorTask.setMavenEmbedderClasspath(
+			mavenEmbedderClasspath);
 
 		buildPluginDescriptorTask.setOutputDir(
 			new Callable<File>() {
 
 				@Override
 				public File call() throws Exception {
-					File resourcesDir = getResourcesDir(project);
+					File resourcesDir = getSrcDir(sourceSet.getResources());
 
 					return new File(resourcesDir, "META-INF/maven");
 				}
@@ -103,11 +176,17 @@ public class MavenPluginBuilderPlugin implements Plugin<Project> {
 			});
 
 		buildPluginDescriptorTask.setPomVersion(
-			new Callable<Object>() {
+			new Callable<String>() {
 
 				@Override
-				public Object call() throws Exception {
-					return project.getVersion();
+				public String call() throws Exception {
+					String version = String.valueOf(project.getVersion());
+
+					if (version.endsWith("-SNAPSHOT")) {
+						version = version.substring(0, version.length() - 9);
+					}
+
+					return version;
 				}
 
 			});
@@ -117,35 +196,63 @@ public class MavenPluginBuilderPlugin implements Plugin<Project> {
 
 				@Override
 				public File call() throws Exception {
-					return getJavaDir(project);
+					return getSrcDir(sourceSet.getJava());
 				}
 
 			});
 
+		Task processResourcesTask = GradleUtil.getTask(
+			project, JavaPlugin.PROCESS_RESOURCES_TASK_NAME);
+
+		processResourcesTask.mustRunAfter(buildPluginDescriptorTask);
+
 		return buildPluginDescriptorTask;
 	}
 
-	protected File getClassesDir(Project project) {
-		SourceSet sourceSet = GradleUtil.getSourceSet(
-			project, SourceSet.MAIN_SOURCE_SET_NAME);
+	protected void configureTaskJavadocDisableDoclint(Javadoc javadoc) {
+		CoreJavadocOptions coreJavadocOptions =
+			(CoreJavadocOptions)javadoc.getOptions();
 
-		SourceSetOutput sourceSetOutput = sourceSet.getOutput();
-
-		return sourceSetOutput.getClassesDir();
+		coreJavadocOptions.addStringOption("Xdoclint:none", "-quiet");
 	}
 
-	protected File getJavaDir(Project project) {
-		SourceSet sourceSet = GradleUtil.getSourceSet(
-			project, SourceSet.MAIN_SOURCE_SET_NAME);
+	protected void configureTasksJavadocDisableDoclint(Project project) {
+		TaskContainer taskContainer = project.getTasks();
 
-		return getSrcDir(sourceSet.getJava());
+		taskContainer.withType(
+			Javadoc.class,
+			new Action<Javadoc>() {
+
+				@Override
+				public void execute(Javadoc javadoc) {
+					configureTaskJavadocDisableDoclint(javadoc);
+				}
+
+			});
 	}
 
-	protected File getResourcesDir(Project project) {
-		SourceSet sourceSet = GradleUtil.getSourceSet(
-			project, SourceSet.MAIN_SOURCE_SET_NAME);
+	protected void configureTasksUpload(
+		Project project,
+		final BuildPluginDescriptorTask buildPluginDescriptorTask) {
 
-		return getSrcDir(sourceSet.getResources());
+		TaskContainer taskContainer = project.getTasks();
+
+		taskContainer.withType(
+			Upload.class,
+			new Action<Upload>() {
+
+				@Override
+				public void execute(Upload upload) {
+					configureTaskUpload(upload, buildPluginDescriptorTask);
+				}
+
+			});
+	}
+
+	protected void configureTaskUpload(
+		Upload upload, BuildPluginDescriptorTask buildPluginDescriptorTask) {
+
+		upload.dependsOn(buildPluginDescriptorTask);
 	}
 
 	protected File getSrcDir(SourceDirectorySet sourceDirectorySet) {

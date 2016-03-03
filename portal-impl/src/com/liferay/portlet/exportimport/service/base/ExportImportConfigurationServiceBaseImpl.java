@@ -14,6 +14,11 @@
 
 package com.liferay.portlet.exportimport.service.base;
 
+import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
+import com.liferay.exportimport.kernel.service.ExportImportConfigurationService;
+import com.liferay.exportimport.kernel.service.persistence.ExportImportConfigurationFinder;
+import com.liferay.exportimport.kernel.service.persistence.ExportImportConfigurationPersistence;
+
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
@@ -21,17 +26,13 @@ import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiService;
-import com.liferay.portal.service.BaseServiceImpl;
-import com.liferay.portal.service.persistence.ClassNamePersistence;
-import com.liferay.portal.service.persistence.UserFinder;
-import com.liferay.portal.service.persistence.UserPersistence;
-import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.kernel.service.BaseServiceImpl;
+import com.liferay.portal.kernel.service.persistence.ClassNamePersistence;
+import com.liferay.portal.kernel.service.persistence.UserFinder;
+import com.liferay.portal.kernel.service.persistence.UserPersistence;
+import com.liferay.portal.kernel.util.PortalUtil;
 
-import com.liferay.portlet.exportimport.model.ExportImportConfiguration;
-import com.liferay.portlet.exportimport.service.ExportImportConfigurationService;
-import com.liferay.portlet.exportimport.service.persistence.ExportImportConfigurationFinder;
-import com.liferay.portlet.exportimport.service.persistence.ExportImportConfigurationPersistence;
-import com.liferay.portlet.trash.service.persistence.TrashEntryPersistence;
+import com.liferay.trash.kernel.service.persistence.TrashEntryPersistence;
 
 import javax.sql.DataSource;
 
@@ -44,7 +45,7 @@ import javax.sql.DataSource;
  *
  * @author Brian Wing Shun Chan
  * @see com.liferay.portlet.exportimport.service.impl.ExportImportConfigurationServiceImpl
- * @see com.liferay.portlet.exportimport.service.ExportImportConfigurationServiceUtil
+ * @see com.liferay.exportimport.kernel.service.ExportImportConfigurationServiceUtil
  * @generated
  */
 public abstract class ExportImportConfigurationServiceBaseImpl
@@ -53,7 +54,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. Always use {@link com.liferay.portlet.exportimport.service.ExportImportConfigurationServiceUtil} to access the export import configuration remote service.
+	 * Never modify or reference this class directly. Always use {@link com.liferay.exportimport.kernel.service.ExportImportConfigurationServiceUtil} to access the export import configuration remote service.
 	 */
 
 	/**
@@ -61,7 +62,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 *
 	 * @return the export import local service
 	 */
-	public com.liferay.portlet.exportimport.service.ExportImportLocalService getExportImportLocalService() {
+	public com.liferay.exportimport.kernel.service.ExportImportLocalService getExportImportLocalService() {
 		return exportImportLocalService;
 	}
 
@@ -71,7 +72,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 * @param exportImportLocalService the export import local service
 	 */
 	public void setExportImportLocalService(
-		com.liferay.portlet.exportimport.service.ExportImportLocalService exportImportLocalService) {
+		com.liferay.exportimport.kernel.service.ExportImportLocalService exportImportLocalService) {
 		this.exportImportLocalService = exportImportLocalService;
 	}
 
@@ -80,7 +81,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 *
 	 * @return the export import remote service
 	 */
-	public com.liferay.portlet.exportimport.service.ExportImportService getExportImportService() {
+	public com.liferay.exportimport.kernel.service.ExportImportService getExportImportService() {
 		return exportImportService;
 	}
 
@@ -90,7 +91,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 * @param exportImportService the export import remote service
 	 */
 	public void setExportImportService(
-		com.liferay.portlet.exportimport.service.ExportImportService exportImportService) {
+		com.liferay.exportimport.kernel.service.ExportImportService exportImportService) {
 		this.exportImportService = exportImportService;
 	}
 
@@ -99,7 +100,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 *
 	 * @return the export import configuration local service
 	 */
-	public com.liferay.portlet.exportimport.service.ExportImportConfigurationLocalService getExportImportConfigurationLocalService() {
+	public com.liferay.exportimport.kernel.service.ExportImportConfigurationLocalService getExportImportConfigurationLocalService() {
 		return exportImportConfigurationLocalService;
 	}
 
@@ -109,7 +110,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 * @param exportImportConfigurationLocalService the export import configuration local service
 	 */
 	public void setExportImportConfigurationLocalService(
-		com.liferay.portlet.exportimport.service.ExportImportConfigurationLocalService exportImportConfigurationLocalService) {
+		com.liferay.exportimport.kernel.service.ExportImportConfigurationLocalService exportImportConfigurationLocalService) {
 		this.exportImportConfigurationLocalService = exportImportConfigurationLocalService;
 	}
 
@@ -175,7 +176,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 *
 	 * @return the staging local service
 	 */
-	public com.liferay.portlet.exportimport.service.StagingLocalService getStagingLocalService() {
+	public com.liferay.exportimport.kernel.service.StagingLocalService getStagingLocalService() {
 		return stagingLocalService;
 	}
 
@@ -185,7 +186,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 * @param stagingLocalService the staging local service
 	 */
 	public void setStagingLocalService(
-		com.liferay.portlet.exportimport.service.StagingLocalService stagingLocalService) {
+		com.liferay.exportimport.kernel.service.StagingLocalService stagingLocalService) {
 		this.stagingLocalService = stagingLocalService;
 	}
 
@@ -194,7 +195,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 *
 	 * @return the staging remote service
 	 */
-	public com.liferay.portlet.exportimport.service.StagingService getStagingService() {
+	public com.liferay.exportimport.kernel.service.StagingService getStagingService() {
 		return stagingService;
 	}
 
@@ -204,7 +205,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 * @param stagingService the staging remote service
 	 */
 	public void setStagingService(
-		com.liferay.portlet.exportimport.service.StagingService stagingService) {
+		com.liferay.exportimport.kernel.service.StagingService stagingService) {
 		this.stagingService = stagingService;
 	}
 
@@ -213,7 +214,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 *
 	 * @return the counter local service
 	 */
-	public com.liferay.counter.service.CounterLocalService getCounterLocalService() {
+	public com.liferay.counter.kernel.service.CounterLocalService getCounterLocalService() {
 		return counterLocalService;
 	}
 
@@ -223,7 +224,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 * @param counterLocalService the counter local service
 	 */
 	public void setCounterLocalService(
-		com.liferay.counter.service.CounterLocalService counterLocalService) {
+		com.liferay.counter.kernel.service.CounterLocalService counterLocalService) {
 		this.counterLocalService = counterLocalService;
 	}
 
@@ -232,7 +233,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 *
 	 * @return the class name local service
 	 */
-	public com.liferay.portal.service.ClassNameLocalService getClassNameLocalService() {
+	public com.liferay.portal.kernel.service.ClassNameLocalService getClassNameLocalService() {
 		return classNameLocalService;
 	}
 
@@ -242,7 +243,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 * @param classNameLocalService the class name local service
 	 */
 	public void setClassNameLocalService(
-		com.liferay.portal.service.ClassNameLocalService classNameLocalService) {
+		com.liferay.portal.kernel.service.ClassNameLocalService classNameLocalService) {
 		this.classNameLocalService = classNameLocalService;
 	}
 
@@ -251,7 +252,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 *
 	 * @return the class name remote service
 	 */
-	public com.liferay.portal.service.ClassNameService getClassNameService() {
+	public com.liferay.portal.kernel.service.ClassNameService getClassNameService() {
 		return classNameService;
 	}
 
@@ -261,7 +262,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 * @param classNameService the class name remote service
 	 */
 	public void setClassNameService(
-		com.liferay.portal.service.ClassNameService classNameService) {
+		com.liferay.portal.kernel.service.ClassNameService classNameService) {
 		this.classNameService = classNameService;
 	}
 
@@ -289,7 +290,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 *
 	 * @return the resource local service
 	 */
-	public com.liferay.portal.service.ResourceLocalService getResourceLocalService() {
+	public com.liferay.portal.kernel.service.ResourceLocalService getResourceLocalService() {
 		return resourceLocalService;
 	}
 
@@ -299,7 +300,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 * @param resourceLocalService the resource local service
 	 */
 	public void setResourceLocalService(
-		com.liferay.portal.service.ResourceLocalService resourceLocalService) {
+		com.liferay.portal.kernel.service.ResourceLocalService resourceLocalService) {
 		this.resourceLocalService = resourceLocalService;
 	}
 
@@ -308,7 +309,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 *
 	 * @return the user local service
 	 */
-	public com.liferay.portal.service.UserLocalService getUserLocalService() {
+	public com.liferay.portal.kernel.service.UserLocalService getUserLocalService() {
 		return userLocalService;
 	}
 
@@ -318,7 +319,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 * @param userLocalService the user local service
 	 */
 	public void setUserLocalService(
-		com.liferay.portal.service.UserLocalService userLocalService) {
+		com.liferay.portal.kernel.service.UserLocalService userLocalService) {
 		this.userLocalService = userLocalService;
 	}
 
@@ -327,7 +328,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 *
 	 * @return the user remote service
 	 */
-	public com.liferay.portal.service.UserService getUserService() {
+	public com.liferay.portal.kernel.service.UserService getUserService() {
 		return userService;
 	}
 
@@ -337,7 +338,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 * @param userService the user remote service
 	 */
 	public void setUserService(
-		com.liferay.portal.service.UserService userService) {
+		com.liferay.portal.kernel.service.UserService userService) {
 		this.userService = userService;
 	}
 
@@ -382,7 +383,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 *
 	 * @return the trash entry local service
 	 */
-	public com.liferay.portlet.trash.service.TrashEntryLocalService getTrashEntryLocalService() {
+	public com.liferay.trash.kernel.service.TrashEntryLocalService getTrashEntryLocalService() {
 		return trashEntryLocalService;
 	}
 
@@ -392,7 +393,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 * @param trashEntryLocalService the trash entry local service
 	 */
 	public void setTrashEntryLocalService(
-		com.liferay.portlet.trash.service.TrashEntryLocalService trashEntryLocalService) {
+		com.liferay.trash.kernel.service.TrashEntryLocalService trashEntryLocalService) {
 		this.trashEntryLocalService = trashEntryLocalService;
 	}
 
@@ -401,7 +402,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 *
 	 * @return the trash entry remote service
 	 */
-	public com.liferay.portlet.trash.service.TrashEntryService getTrashEntryService() {
+	public com.liferay.trash.kernel.service.TrashEntryService getTrashEntryService() {
 		return trashEntryService;
 	}
 
@@ -411,7 +412,7 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 	 * @param trashEntryService the trash entry remote service
 	 */
 	public void setTrashEntryService(
-		com.liferay.portlet.trash.service.TrashEntryService trashEntryService) {
+		com.liferay.trash.kernel.service.TrashEntryService trashEntryService) {
 		this.trashEntryService = trashEntryService;
 	}
 
@@ -482,44 +483,44 @@ public abstract class ExportImportConfigurationServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.portlet.exportimport.service.ExportImportLocalService.class)
-	protected com.liferay.portlet.exportimport.service.ExportImportLocalService exportImportLocalService;
-	@BeanReference(type = com.liferay.portlet.exportimport.service.ExportImportService.class)
-	protected com.liferay.portlet.exportimport.service.ExportImportService exportImportService;
-	@BeanReference(type = com.liferay.portlet.exportimport.service.ExportImportConfigurationLocalService.class)
-	protected com.liferay.portlet.exportimport.service.ExportImportConfigurationLocalService exportImportConfigurationLocalService;
-	@BeanReference(type = com.liferay.portlet.exportimport.service.ExportImportConfigurationService.class)
+	@BeanReference(type = com.liferay.exportimport.kernel.service.ExportImportLocalService.class)
+	protected com.liferay.exportimport.kernel.service.ExportImportLocalService exportImportLocalService;
+	@BeanReference(type = com.liferay.exportimport.kernel.service.ExportImportService.class)
+	protected com.liferay.exportimport.kernel.service.ExportImportService exportImportService;
+	@BeanReference(type = com.liferay.exportimport.kernel.service.ExportImportConfigurationLocalService.class)
+	protected com.liferay.exportimport.kernel.service.ExportImportConfigurationLocalService exportImportConfigurationLocalService;
+	@BeanReference(type = com.liferay.exportimport.kernel.service.ExportImportConfigurationService.class)
 	protected ExportImportConfigurationService exportImportConfigurationService;
 	@BeanReference(type = ExportImportConfigurationPersistence.class)
 	protected ExportImportConfigurationPersistence exportImportConfigurationPersistence;
 	@BeanReference(type = ExportImportConfigurationFinder.class)
 	protected ExportImportConfigurationFinder exportImportConfigurationFinder;
-	@BeanReference(type = com.liferay.portlet.exportimport.service.StagingLocalService.class)
-	protected com.liferay.portlet.exportimport.service.StagingLocalService stagingLocalService;
-	@BeanReference(type = com.liferay.portlet.exportimport.service.StagingService.class)
-	protected com.liferay.portlet.exportimport.service.StagingService stagingService;
-	@BeanReference(type = com.liferay.counter.service.CounterLocalService.class)
-	protected com.liferay.counter.service.CounterLocalService counterLocalService;
-	@BeanReference(type = com.liferay.portal.service.ClassNameLocalService.class)
-	protected com.liferay.portal.service.ClassNameLocalService classNameLocalService;
-	@BeanReference(type = com.liferay.portal.service.ClassNameService.class)
-	protected com.liferay.portal.service.ClassNameService classNameService;
+	@BeanReference(type = com.liferay.exportimport.kernel.service.StagingLocalService.class)
+	protected com.liferay.exportimport.kernel.service.StagingLocalService stagingLocalService;
+	@BeanReference(type = com.liferay.exportimport.kernel.service.StagingService.class)
+	protected com.liferay.exportimport.kernel.service.StagingService stagingService;
+	@BeanReference(type = com.liferay.counter.kernel.service.CounterLocalService.class)
+	protected com.liferay.counter.kernel.service.CounterLocalService counterLocalService;
+	@BeanReference(type = com.liferay.portal.kernel.service.ClassNameLocalService.class)
+	protected com.liferay.portal.kernel.service.ClassNameLocalService classNameLocalService;
+	@BeanReference(type = com.liferay.portal.kernel.service.ClassNameService.class)
+	protected com.liferay.portal.kernel.service.ClassNameService classNameService;
 	@BeanReference(type = ClassNamePersistence.class)
 	protected ClassNamePersistence classNamePersistence;
-	@BeanReference(type = com.liferay.portal.service.ResourceLocalService.class)
-	protected com.liferay.portal.service.ResourceLocalService resourceLocalService;
-	@BeanReference(type = com.liferay.portal.service.UserLocalService.class)
-	protected com.liferay.portal.service.UserLocalService userLocalService;
-	@BeanReference(type = com.liferay.portal.service.UserService.class)
-	protected com.liferay.portal.service.UserService userService;
+	@BeanReference(type = com.liferay.portal.kernel.service.ResourceLocalService.class)
+	protected com.liferay.portal.kernel.service.ResourceLocalService resourceLocalService;
+	@BeanReference(type = com.liferay.portal.kernel.service.UserLocalService.class)
+	protected com.liferay.portal.kernel.service.UserLocalService userLocalService;
+	@BeanReference(type = com.liferay.portal.kernel.service.UserService.class)
+	protected com.liferay.portal.kernel.service.UserService userService;
 	@BeanReference(type = UserPersistence.class)
 	protected UserPersistence userPersistence;
 	@BeanReference(type = UserFinder.class)
 	protected UserFinder userFinder;
-	@BeanReference(type = com.liferay.portlet.trash.service.TrashEntryLocalService.class)
-	protected com.liferay.portlet.trash.service.TrashEntryLocalService trashEntryLocalService;
-	@BeanReference(type = com.liferay.portlet.trash.service.TrashEntryService.class)
-	protected com.liferay.portlet.trash.service.TrashEntryService trashEntryService;
+	@BeanReference(type = com.liferay.trash.kernel.service.TrashEntryLocalService.class)
+	protected com.liferay.trash.kernel.service.TrashEntryLocalService trashEntryLocalService;
+	@BeanReference(type = com.liferay.trash.kernel.service.TrashEntryService.class)
+	protected com.liferay.trash.kernel.service.TrashEntryService trashEntryService;
 	@BeanReference(type = TrashEntryPersistence.class)
 	protected TrashEntryPersistence trashEntryPersistence;
 }

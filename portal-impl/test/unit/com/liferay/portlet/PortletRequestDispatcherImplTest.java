@@ -14,15 +14,16 @@
 
 package com.liferay.portlet;
 
+import com.liferay.portal.kernel.model.Portlet;
+import com.liferay.portal.kernel.model.PortletApp;
 import com.liferay.portal.kernel.servlet.URLEncoder;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.Portlet;
-import com.liferay.portal.model.PortletApp;
 import com.liferay.portal.model.impl.PortletAppImpl;
 import com.liferay.portal.model.impl.PortletImpl;
 import com.liferay.portal.util.PortalImpl;
-import com.liferay.portal.util.PortalUtil;
 
 import java.util.Collections;
 import java.util.Set;
@@ -140,6 +141,11 @@ public class PortletRequestDispatcherImplTest {
 		}
 
 		@Override
+		public String getPortletName() {
+			return RandomTestUtil.randomString();
+		}
+
+		@Override
 		public URLEncoder getURLEncoderInstance() {
 			return null;
 		}
@@ -205,7 +211,7 @@ public class PortletRequestDispatcherImplTest {
 
 	}
 
-	private class TestRequestDispatcher implements RequestDispatcher {
+	private static class TestRequestDispatcher implements RequestDispatcher {
 
 		public void assertPropogatedInformation(
 			HttpServletRequest httpServletRequest) {

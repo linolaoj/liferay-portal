@@ -21,6 +21,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
+import com.liferay.portal.kernel.model.CacheField;
+import com.liferay.portal.kernel.model.ModelHintsUtil;
 import com.liferay.portal.kernel.plugin.Version;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -37,8 +39,6 @@ import com.liferay.portal.kernel.util.StringUtil_IW;
 import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.Validator_IW;
-import com.liferay.portal.model.CacheField;
-import com.liferay.portal.model.ModelHintsUtil;
 import com.liferay.portal.tools.ArgumentsUtil;
 import com.liferay.portal.tools.ToolsUtil;
 import com.liferay.portal.xml.SAXReaderFactory;
@@ -59,8 +59,6 @@ import com.thoughtworks.qdox.model.Type;
 
 import freemarker.ext.beans.BeansWrapper;
 
-import freemarker.log.Logger;
-
 import freemarker.template.TemplateHashModel;
 import freemarker.template.TemplateModelException;
 
@@ -76,6 +74,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -234,7 +233,7 @@ public class ServiceBuilder {
 			String message =
 				"Please set these arguments. Sample values are:\n" +
 				"\n" +
-				"\tservice.api.dir=${basedir}/../portal-service/src\n" +
+				"\tservice.api.dir=${basedir}/../portal-kernel/src\n" +
 				"\tservice.auto.import.default.references=true\n" +
 				"\tservice.auto.namespace.tables=false\n" +
 				"\tservice.bean.locator.util=com.liferay.portal.kernel.bean.PortalBeanLocatorUtil\n" +
@@ -271,7 +270,6 @@ public class ServiceBuilder {
 				"\t-Dservice.tpl.copyright.txt=copyright.txt\n"+
 				"\t-Dservice.tpl.ejb_pk=" + _TPL_ROOT + "ejb_pk.ftl\n"+
 				"\t-Dservice.tpl.exception=" + _TPL_ROOT + "exception.ftl\n"+
-				"\t-Dservice.tpl.export_actionable_dynamic_query=" + _TPL_ROOT + "export_actionable_dynamic_query.ftl\n"+
 				"\t-Dservice.tpl.extended_model=" + _TPL_ROOT + "extended_model.ftl\n"+
 				"\t-Dservice.tpl.extended_model_base_impl=" + _TPL_ROOT + "extended_model_base_impl.ftl\n"+
 				"\t-Dservice.tpl.extended_model_impl=" + _TPL_ROOT + "extended_model_impl.ftl\n"+
@@ -655,23 +653,8 @@ public class ServiceBuilder {
 
 						_removeOldServices(entity);
 
-						if (entity.hasActionableDynamicQuery()) {
-							_createActionableDynamicQuery(entity);
-
-							if (entity.isStagedModel()) {
-								_createExportActionableDynamicQuery(entity);
-							}
-							else {
-								_removeExportActionableDynamicQuery(
-									entity, _serviceOutputPath);
-							}
-						}
-						else {
-							_removeActionableDynamicQuery(
-								entity, _serviceOutputPath);
-							_removeExportActionableDynamicQuery(
-								entity, _serviceOutputPath);
-						}
+						_removeActionableDynamicQuery(entity);
+						_removeExportActionableDynamicQuery(entity);
 
 						if (entity.hasColumns()) {
 							_createHbm(entity);
@@ -1066,6 +1049,18 @@ public class ServiceBuilder {
 			return entity;
 		}
 
+		Set<Entity> entities = new HashSet<>(_ejbList);
+
+		entities.addAll(_entityPool.values());
+
+		for (Entity curEntity : entities) {
+			if (refPackage.equals(curEntity.getApiPackagePath())) {
+				refPackage = curEntity.getPackagePath();
+
+				break;
+			}
+		}
+
 		String refPackageDirName = StringUtil.replace(refPackage, ".", "/");
 
 		String refFileName =
@@ -1221,7 +1216,8 @@ public class ServiceBuilder {
 	}
 
 	public int getMaxLength(String model, String field) {
-		Map<String, String> hints = ModelHintsUtil.getHints(model, field);
+		Map<String, String> hints = ModelHintsUtil.getHints(
+			_apiPackagePath + ".model." + model, field);
 
 		if (hints == null) {
 			return _DEFAULT_COLUMN_MAX_LENGTH;
@@ -1302,6 +1298,30 @@ public class ServiceBuilder {
 		}
 
 		return StringPool.BLANK;
+	}
+
+	public String getPrimitiveType(String type) {
+		if (type.equals("Boolean")) {
+			return "boolean";
+		}
+		else if (type.equals("Double")) {
+			return "double";
+		}
+		else if (type.equals("Float")) {
+			return "float";
+		}
+		else if (type.equals("Integer")) {
+			return "int";
+		}
+		else if (type.equals("Long")) {
+			return "long";
+		}
+		else if (type.equals("Short")) {
+			return "short";
+		}
+		else {
+			return type;
+		}
 	}
 
 	public String getReturnType(JavaMethod method) {
@@ -1650,13 +1670,13 @@ public class ServiceBuilder {
 
 		if (returnTypeGenericsName.contains(
 				"com.liferay.portal.kernel.search.") ||
-			returnTypeGenericsName.contains("com.liferay.portal.model.Theme") ||
+			returnTypeGenericsName.contains("com.liferay.portal.kernel.model.Theme") ||
 			returnTypeGenericsName.contains(
-				"com.liferay.portlet.social.model.SocialActivityDefinition") ||
+				"com.liferay.social.kernel.model.SocialActivityDefinition") ||
 			returnTypeGenericsName.equals("java.util.List<java.lang.Object>") ||
-			returnValueName.equals("com.liferay.portal.model.Lock") ||
+			returnValueName.equals("com.liferay.portal.kernel.lock.model.Lock") ||
 			returnValueName.equals(
-				"com.liferay.portlet.messageboards.model.MBMessageDisplay") ||
+				"com.liferay.message.boards.kernel.model.MBMessageDisplay") ||
 			returnValueName.startsWith("java.io") ||
 			returnValueName.equals("java.util.Map") ||
 			returnValueName.equals("java.util.Properties") ||
@@ -1686,7 +1706,7 @@ public class ServiceBuilder {
 			if (parameterTypeName.equals(
 					"com.liferay.portal.kernel.util.UnicodeProperties") ||
 				parameterTypeName.equals(
-					"com.liferay.portal.theme.ThemeDisplay") ||
+					"com.liferay.portal.kernel.theme.ThemeDisplay") ||
 				parameterTypeName.equals(
 					"com.liferay.portlet.PortletPreferencesImpl") ||
 				parameterTypeName.equals(
@@ -1835,30 +1855,6 @@ public class ServiceBuilder {
 		}
 	}
 
-	private void _createActionableDynamicQuery(Entity entity) throws Exception {
-		File ejbFile = new File(
-			_serviceOutputPath + "/service/persistence/" +
-				entity.getName() + "ActionableDynamicQuery.java");
-
-		if (_osgiModule) {
-			ejbFile.delete();
-
-			return;
-		}
-
-		Map<String, Object> context = _getContext();
-
-		context.put("entity", entity);
-
-		// Content
-
-		String content = _processTemplate(_tplActionableDynamicQuery, context);
-
-		// Write file
-
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
-	}
-
 	private void _createBlobModels(Entity entity) throws Exception {
 		List<EntityColumn> blobList = _getBlobList(entity);
 
@@ -1966,7 +1962,7 @@ public class ServiceBuilder {
 						"package " + _apiPackagePath + ".exception;",
 						"package " + _apiPackagePath + ".exception;",
 						"package " + _apiPackagePath + ".exception;",
-						"com.liferay.portal.exception.NoSuchModelException"
+						"com.liferay.portal.kernel.exception.NoSuchModelException"
 					});
 
 				_write(exceptionFile, content);
@@ -1982,9 +1978,6 @@ public class ServiceBuilder {
 				if (exception.startsWith("NoSuch")) {
 					content = StringUtil.replace(
 						content, "PortalException", "NoSuchModelException");
-					content = StringUtil.replace(
-						content, "kernel.exception.NoSuchModelException",
-						"NoSuchModelException");
 				}
 
 				content = StringUtil.replace(content, "\r\n", "\n");
@@ -2000,41 +1993,24 @@ public class ServiceBuilder {
 					content = StringUtil.replace(
 						content, "PortalException", "NoSuchModelException");
 					content = StringUtil.replace(
-						content, "kernel.exception.NoSuchModelException",
-						"NoSuchModelException");
+						content, "portal.exception.NoSuchModelException",
+						"portal.kernel.exception.NoSuchModelException");
+
+					ToolsUtil.writeFileRaw(
+						exceptionFile, content, _modifiedFileNames);
+				}
+				else if (content.contains(
+							"portal.exception.NoSuchModelException")) {
+
+					content = StringUtil.replace(
+						content, "portal.exception.NoSuchModelException",
+						"portal.kernel.exception.NoSuchModelException");
 
 					ToolsUtil.writeFileRaw(
 						exceptionFile, content, _modifiedFileNames);
 				}
 			}
 		}
-	}
-
-	private void _createExportActionableDynamicQuery(Entity entity)
-		throws Exception {
-
-		File ejbFile = new File(
-			_serviceOutputPath + "/service/persistence/" +
-				entity.getName() + "ExportActionableDynamicQuery.java");
-
-		if (_osgiModule) {
-			ejbFile.delete();
-
-			return;
-		}
-
-		Map<String, Object> context = _getContext();
-
-		context.put("entity", entity);
-
-		// Content
-
-		String content = _processTemplate(
-			_tplExportActionableDynamicQuery, context);
-
-		// Write file
-
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
 	}
 
 	private void _createExtendedModel(Entity entity) throws Exception {
@@ -2437,6 +2413,12 @@ public class ServiceBuilder {
 				_outputPath + "/model/impl/" + superClassValue + ".java");
 
 			for (JavaMethod method : _getMethods(javaClass)) {
+				String methodName = method.getName();
+
+				if (methodName.equals("hasSetModifiedDate")) {
+					continue;
+				}
+
 				methods.remove(method.getDeclarationSignature(false));
 			}
 
@@ -2636,11 +2618,7 @@ public class ServiceBuilder {
 
 		// Content
 
-		Logger.selectLoggerLibrary(Logger.LIBRARY_NONE);
-
 		String content = _processTemplate(_tplPersistenceImpl, context);
-
-		Logger.selectLoggerLibrary(Logger.LIBRARY_AUTO);
 
 		// Write file
 
@@ -3574,14 +3552,16 @@ public class ServiceBuilder {
 			if (Validator.isNotNull(createTableSQL)) {
 				_createSQLTables(sqlFile, createTableSQL, entity, true);
 
-				Path updateSQLFilePath = _getUpdateSQLFilePath();
+				List<Path> updateSQLFilePaths = _getUpdateSQLFilePaths();
 
-				if ((updateSQLFilePath != null) &&
-					Files.exists(updateSQLFilePath)) {
+				for (Path updateSQLFilePath : updateSQLFilePaths) {
+					if ((updateSQLFilePath != null) &&
+						Files.exists(updateSQLFilePath)) {
 
-					_createSQLTables(
-						updateSQLFilePath.toFile(), createTableSQL, entity,
-						false);
+						_createSQLTables(
+							updateSQLFilePath.toFile(), createTableSQL, entity,
+							false);
+					}
 				}
 			}
 		}
@@ -3881,8 +3861,7 @@ public class ServiceBuilder {
 
 			if (colType.equals("String")) {
 				columnLengths[i] = getMaxLength(
-					_packagePath + ".model." + entity.getName(),
-					entityColumn.getName());
+					entity.getName(), entityColumn.getName());
 			}
 		}
 
@@ -4043,8 +4022,7 @@ public class ServiceBuilder {
 					sb.append("TEXT");
 				}
 				else if (colType.equals("String")) {
-					int maxLength = getMaxLength(
-						_packagePath + ".model." + entity.getName(), colName);
+					int maxLength = getMaxLength(entity.getName(), colName);
 
 					if (col.isLocalized()) {
 						maxLength = 4000;
@@ -4159,8 +4137,7 @@ public class ServiceBuilder {
 				sb.append("TEXT");
 			}
 			else if (colType.equals("String")) {
-				int maxLength = getMaxLength(
-					_apiPackagePath + ".model." + entity.getName(), colName);
+				int maxLength = getMaxLength(entity.getName(), colName);
 
 				if (col.isLocalized() && (maxLength < 4000)) {
 					maxLength = 4000;
@@ -4202,7 +4179,7 @@ public class ServiceBuilder {
 			}
 
 			if (colName.equals("mvccVersion")) {
-				sb.append(" default 0");
+				sb.append(" default 0 not null");
 			}
 
 			if (((i + 1) != regularColList.size()) || entity.hasCompoundPK()) {
@@ -4481,9 +4458,19 @@ public class ServiceBuilder {
 		return transients;
 	}
 
-	private Path _getUpdateSQLFilePath() throws IOException {
+	private List<Path> _getUpdateSQLFilePaths() throws IOException {
 		if (!_osgiModule) {
-			return Paths.get(_sqlDirName, "update-6.2.0-7.0.0.sql");
+			final List<Path> updateSQLFilePaths = new ArrayList<>();
+
+			try (DirectoryStream<Path> paths = Files.newDirectoryStream(
+					Paths.get(_sqlDirName), "update-6.2.0-7.0.0*.sql")) {
+
+				for (Path path : paths) {
+					updateSQLFilePaths.add(path);
+				}
+			}
+
+			return updateSQLFilePaths;
 		}
 
 		final AtomicReference<Path> atomicReference = new AtomicReference<>();
@@ -4526,7 +4513,7 @@ public class ServiceBuilder {
 
 			});
 
-		return atomicReference.get();
+		return Arrays.asList(atomicReference.get());
 	}
 
 	private Version _getUpdateSQLFileVersion(Path path) {
@@ -5181,12 +5168,18 @@ public class ServiceBuilder {
 		return lines;
 	}
 
-	private void _removeActionableDynamicQuery(
-		Entity entity, String outputPath) {
-
-		_deleteFile(
-			outputPath + "/service/persistence/" +
+	private void _removeActionableDynamicQuery(Entity entity) {
+		File ejbFile = new File(
+			_oldServiceOutputPath + "/service/persistence/" +
 				entity.getName() + "ActionableDynamicQuery.java");
+
+		ejbFile.delete();
+
+		ejbFile = new File(
+			_serviceOutputPath + "/service/persistence/" +
+				entity.getName() + "ActionableDynamicQuery.java");
+
+		ejbFile.delete();
 	}
 
 	private void _removeBlobModels(Entity entity, String outputPath) {
@@ -5209,12 +5202,18 @@ public class ServiceBuilder {
 				".java");
 	}
 
-	private void _removeExportActionableDynamicQuery(
-		Entity entity, String outputPath) {
-
-		_deleteFile(
-			outputPath + "/service/persistence/" +
+	private void _removeExportActionableDynamicQuery(Entity entity) {
+		File ejbFile = new File(
+			_oldServiceOutputPath + "/service/persistence/" +
 				entity.getName() + "ExportActionableDynamicQuery.java");
+
+		ejbFile.delete();
+
+		ejbFile = new File(
+			_serviceOutputPath + "/service/persistence/" +
+				entity.getName() + "ExportActionableDynamicQuery.java");
+
+		ejbFile.delete();
 	}
 
 	private void _removeExtendedModel(Entity entity, String outputPath) {
@@ -5260,10 +5259,8 @@ public class ServiceBuilder {
 			return;
 		}
 
-		_removeActionableDynamicQuery(entity, _oldServiceOutputPath);
 		_removeBlobModels(entity, _oldServiceOutputPath);
 		_removeEJBPK(entity, _oldServiceOutputPath);
-		_removeExportActionableDynamicQuery(entity, _oldServiceOutputPath);
 		_removeExtendedModel(entity, _oldServiceOutputPath);
 		_removeFinder(entity, _oldServiceOutputPath);
 		_removeFinderUtil(entity, _oldServiceOutputPath);
@@ -5479,16 +5476,12 @@ public class ServiceBuilder {
 	private String _targetEntityName;
 	private String _testDirName;
 	private String _testOutputPath;
-	private String _tplActionableDynamicQuery =
-		_TPL_ROOT + "actionable_dynamic_query.ftl";
 	private String _tplBadAliasNames = _TPL_ROOT + "bad_alias_names.txt";
 	private String _tplBadColumnNames = _TPL_ROOT + "bad_column_names.txt";
 	private String _tplBadTableNames = _TPL_ROOT + "bad_table_names.txt";
 	private String _tplBlobModel = _TPL_ROOT + "blob_model.ftl";
 	private String _tplEjbPk = _TPL_ROOT + "ejb_pk.ftl";
 	private String _tplException = _TPL_ROOT + "exception.ftl";
-	private String _tplExportActionableDynamicQuery =
-		_TPL_ROOT + "export_actionable_dynamic_query.ftl";
 	private String _tplExtendedModel = _TPL_ROOT + "extended_model.ftl";
 	private String _tplExtendedModelBaseImpl =
 		_TPL_ROOT + "extended_model_base_impl.ftl";

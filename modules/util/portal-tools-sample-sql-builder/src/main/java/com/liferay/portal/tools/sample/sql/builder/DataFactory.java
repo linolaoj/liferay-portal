@@ -14,10 +14,32 @@
 
 package com.liferay.portal.tools.sample.sql.builder;
 
+import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetCategoryConstants;
+import com.liferay.asset.kernel.model.AssetCategoryModel;
+import com.liferay.asset.kernel.model.AssetEntryModel;
+import com.liferay.asset.kernel.model.AssetTag;
+import com.liferay.asset.kernel.model.AssetTagModel;
+import com.liferay.asset.kernel.model.AssetTagStatsModel;
+import com.liferay.asset.kernel.model.AssetVocabulary;
+import com.liferay.asset.kernel.model.AssetVocabularyModel;
+import com.liferay.blogs.kernel.model.BlogsEntry;
+import com.liferay.blogs.kernel.model.BlogsEntryModel;
+import com.liferay.blogs.kernel.model.BlogsStatsUserModel;
 import com.liferay.blogs.web.constants.BlogsPortletKeys;
-import com.liferay.counter.model.Counter;
-import com.liferay.counter.model.CounterModel;
+import com.liferay.counter.kernel.model.Counter;
+import com.liferay.counter.kernel.model.CounterModel;
 import com.liferay.counter.model.impl.CounterModelImpl;
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.model.DLFileEntryConstants;
+import com.liferay.document.library.kernel.model.DLFileEntryMetadata;
+import com.liferay.document.library.kernel.model.DLFileEntryMetadataModel;
+import com.liferay.document.library.kernel.model.DLFileEntryModel;
+import com.liferay.document.library.kernel.model.DLFileEntryTypeConstants;
+import com.liferay.document.library.kernel.model.DLFileEntryTypeModel;
+import com.liferay.document.library.kernel.model.DLFileVersionModel;
+import com.liferay.document.library.kernel.model.DLFolder;
+import com.liferay.document.library.kernel.model.DLFolderModel;
 import com.liferay.document.library.web.constants.DLPortletKeys;
 import com.liferay.dynamic.data.lists.constants.DDLPortletKeys;
 import com.liferay.dynamic.data.lists.model.DDLRecordConstants;
@@ -61,11 +83,55 @@ import com.liferay.journal.model.impl.JournalArticleResourceModelImpl;
 import com.liferay.journal.model.impl.JournalContentSearchModelImpl;
 import com.liferay.journal.social.JournalActivityKeys;
 import com.liferay.login.web.constants.LoginPortletKeys;
+import com.liferay.message.boards.kernel.model.MBCategory;
+import com.liferay.message.boards.kernel.model.MBCategoryConstants;
+import com.liferay.message.boards.kernel.model.MBCategoryModel;
+import com.liferay.message.boards.kernel.model.MBDiscussion;
+import com.liferay.message.boards.kernel.model.MBDiscussionModel;
+import com.liferay.message.boards.kernel.model.MBMailingListModel;
+import com.liferay.message.boards.kernel.model.MBMessage;
+import com.liferay.message.boards.kernel.model.MBMessageConstants;
+import com.liferay.message.boards.kernel.model.MBMessageModel;
+import com.liferay.message.boards.kernel.model.MBStatsUserModel;
+import com.liferay.message.boards.kernel.model.MBThread;
+import com.liferay.message.boards.kernel.model.MBThreadFlagModel;
+import com.liferay.message.boards.kernel.model.MBThreadModel;
 import com.liferay.message.boards.web.constants.MBPortletKeys;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
 import com.liferay.portal.kernel.metadata.RawMetadataProcessor;
+import com.liferay.portal.kernel.model.AccountModel;
+import com.liferay.portal.kernel.model.ClassNameModel;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.CompanyModel;
+import com.liferay.portal.kernel.model.ContactConstants;
+import com.liferay.portal.kernel.model.ContactModel;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.GroupModel;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.LayoutFriendlyURLModel;
+import com.liferay.portal.kernel.model.LayoutModel;
+import com.liferay.portal.kernel.model.LayoutSetModel;
+import com.liferay.portal.kernel.model.LayoutTypePortletConstants;
+import com.liferay.portal.kernel.model.ModelHintsUtil;
+import com.liferay.portal.kernel.model.PortletConstants;
+import com.liferay.portal.kernel.model.PortletPreferencesModel;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.ResourcePermission;
+import com.liferay.portal.kernel.model.ResourcePermissionModel;
+import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.RoleConstants;
+import com.liferay.portal.kernel.model.RoleModel;
+import com.liferay.portal.kernel.model.SubscriptionConstants;
+import com.liferay.portal.kernel.model.SubscriptionModel;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserModel;
+import com.liferay.portal.kernel.model.VirtualHostModel;
+import com.liferay.portal.kernel.portlet.PortletPreferencesFactory;
 import com.liferay.portal.kernel.security.auth.FullNameGenerator;
 import com.liferay.portal.kernel.security.auth.FullNameGeneratorFactory;
+import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.ContentTypes;
@@ -73,6 +139,7 @@ import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.IntegerWrapper;
+import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -80,35 +147,6 @@ import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.model.AccountModel;
-import com.liferay.portal.model.ClassNameModel;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.CompanyModel;
-import com.liferay.portal.model.ContactConstants;
-import com.liferay.portal.model.ContactModel;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.GroupConstants;
-import com.liferay.portal.model.GroupModel;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.LayoutConstants;
-import com.liferay.portal.model.LayoutFriendlyURLModel;
-import com.liferay.portal.model.LayoutModel;
-import com.liferay.portal.model.LayoutSetModel;
-import com.liferay.portal.model.LayoutTypePortletConstants;
-import com.liferay.portal.model.ModelHintsUtil;
-import com.liferay.portal.model.PortletConstants;
-import com.liferay.portal.model.PortletPreferencesModel;
-import com.liferay.portal.model.ResourceConstants;
-import com.liferay.portal.model.ResourcePermission;
-import com.liferay.portal.model.ResourcePermissionModel;
-import com.liferay.portal.model.Role;
-import com.liferay.portal.model.RoleConstants;
-import com.liferay.portal.model.RoleModel;
-import com.liferay.portal.model.SubscriptionConstants;
-import com.liferay.portal.model.SubscriptionModel;
-import com.liferay.portal.model.User;
-import com.liferay.portal.model.UserModel;
-import com.liferay.portal.model.VirtualHostModel;
 import com.liferay.portal.model.impl.AccountModelImpl;
 import com.liferay.portal.model.impl.ClassNameModelImpl;
 import com.liferay.portal.model.impl.CompanyModelImpl;
@@ -123,61 +161,23 @@ import com.liferay.portal.model.impl.RoleModelImpl;
 import com.liferay.portal.model.impl.SubscriptionModelImpl;
 import com.liferay.portal.model.impl.UserModelImpl;
 import com.liferay.portal.model.impl.VirtualHostModelImpl;
-import com.liferay.portal.service.permission.PortletPermissionUtil;
-import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.PortletPreferencesFactory;
 import com.liferay.portlet.PortletPreferencesFactoryImpl;
 import com.liferay.portlet.PortletPreferencesImpl;
-import com.liferay.portlet.asset.model.AssetCategory;
-import com.liferay.portlet.asset.model.AssetCategoryConstants;
-import com.liferay.portlet.asset.model.AssetCategoryModel;
-import com.liferay.portlet.asset.model.AssetEntryModel;
-import com.liferay.portlet.asset.model.AssetTag;
-import com.liferay.portlet.asset.model.AssetTagModel;
-import com.liferay.portlet.asset.model.AssetTagStatsModel;
-import com.liferay.portlet.asset.model.AssetVocabulary;
-import com.liferay.portlet.asset.model.AssetVocabularyModel;
 import com.liferay.portlet.asset.model.impl.AssetCategoryModelImpl;
 import com.liferay.portlet.asset.model.impl.AssetEntryModelImpl;
 import com.liferay.portlet.asset.model.impl.AssetTagModelImpl;
 import com.liferay.portlet.asset.model.impl.AssetTagStatsModelImpl;
 import com.liferay.portlet.asset.model.impl.AssetVocabularyModelImpl;
-import com.liferay.portlet.blogs.model.BlogsEntry;
-import com.liferay.portlet.blogs.model.BlogsEntryModel;
-import com.liferay.portlet.blogs.model.BlogsStatsUserModel;
 import com.liferay.portlet.blogs.model.impl.BlogsEntryModelImpl;
 import com.liferay.portlet.blogs.model.impl.BlogsStatsUserModelImpl;
 import com.liferay.portlet.blogs.social.BlogsActivityKeys;
-import com.liferay.portlet.documentlibrary.model.DLFileEntry;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryConstants;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryMetadataModel;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryModel;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryTypeConstants;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryTypeModel;
-import com.liferay.portlet.documentlibrary.model.DLFileVersionModel;
-import com.liferay.portlet.documentlibrary.model.DLFolder;
-import com.liferay.portlet.documentlibrary.model.DLFolderModel;
 import com.liferay.portlet.documentlibrary.model.impl.DLFileEntryMetadataModelImpl;
 import com.liferay.portlet.documentlibrary.model.impl.DLFileEntryModelImpl;
 import com.liferay.portlet.documentlibrary.model.impl.DLFileEntryTypeModelImpl;
 import com.liferay.portlet.documentlibrary.model.impl.DLFileVersionModelImpl;
 import com.liferay.portlet.documentlibrary.model.impl.DLFolderModelImpl;
 import com.liferay.portlet.documentlibrary.social.DLActivityKeys;
-import com.liferay.portlet.messageboards.model.MBCategory;
-import com.liferay.portlet.messageboards.model.MBCategoryConstants;
-import com.liferay.portlet.messageboards.model.MBCategoryModel;
-import com.liferay.portlet.messageboards.model.MBDiscussion;
-import com.liferay.portlet.messageboards.model.MBDiscussionModel;
-import com.liferay.portlet.messageboards.model.MBMailingListModel;
-import com.liferay.portlet.messageboards.model.MBMessage;
-import com.liferay.portlet.messageboards.model.MBMessageConstants;
-import com.liferay.portlet.messageboards.model.MBMessageModel;
-import com.liferay.portlet.messageboards.model.MBStatsUserModel;
-import com.liferay.portlet.messageboards.model.MBThread;
-import com.liferay.portlet.messageboards.model.MBThreadFlagModel;
-import com.liferay.portlet.messageboards.model.MBThreadModel;
 import com.liferay.portlet.messageboards.model.impl.MBCategoryModelImpl;
 import com.liferay.portlet.messageboards.model.impl.MBDiscussionModelImpl;
 import com.liferay.portlet.messageboards.model.impl.MBMailingListModelImpl;
@@ -186,10 +186,10 @@ import com.liferay.portlet.messageboards.model.impl.MBStatsUserModelImpl;
 import com.liferay.portlet.messageboards.model.impl.MBThreadFlagModelImpl;
 import com.liferay.portlet.messageboards.model.impl.MBThreadModelImpl;
 import com.liferay.portlet.messageboards.social.MBActivityKeys;
-import com.liferay.portlet.social.model.SocialActivity;
-import com.liferay.portlet.social.model.SocialActivityConstants;
-import com.liferay.portlet.social.model.SocialActivityModel;
 import com.liferay.portlet.social.model.impl.SocialActivityModelImpl;
+import com.liferay.social.kernel.model.SocialActivity;
+import com.liferay.social.kernel.model.SocialActivityConstants;
+import com.liferay.social.kernel.model.SocialActivityModel;
 import com.liferay.util.SimpleCounter;
 import com.liferay.wiki.constants.WikiPortletKeys;
 import com.liferay.wiki.model.WikiNode;
@@ -1687,15 +1687,10 @@ public class DataFactory {
 	public List<PortletPreferencesModel>
 		newJournalPortletPreferencesModels(long plid) {
 
-		List<PortletPreferencesModel> portletPreferencesModels =
-			new ArrayList<>(1);
-
-		portletPreferencesModels.add(
+		return Collections.singletonList(
 			newPortletPreferencesModel(
 				plid, JournalPortletKeys.JOURNAL,
 				PortletConstants.DEFAULT_PREFERENCES));
-
-		return portletPreferencesModels;
 	}
 
 	public LayoutFriendlyURLModel newLayoutFriendlyURLModel(
@@ -2105,16 +2100,11 @@ public class DataFactory {
 		AssetVocabularyModel assetVocabularyModel) {
 
 		if (assetVocabularyModel.getUserId() == _defaultUserId) {
-			List<ResourcePermissionModel> resourcePermissionModels =
-				new ArrayList<>(1);
-
-			resourcePermissionModels.add(
+			return Collections.singletonList(
 				newResourcePermissionModel(
 					AssetVocabulary.class.getName(),
 					String.valueOf(assetVocabularyModel.getVocabularyId()),
 					_ownerRoleModel.getRoleId(), _defaultUserId));
-
-			return resourcePermissionModels;
 		}
 
 		return newResourcePermissionModels(
@@ -2134,31 +2124,21 @@ public class DataFactory {
 	public List<ResourcePermissionModel> newResourcePermissionModels(
 		DDLRecordSetModel ddlRecordSetModel) {
 
-		List<ResourcePermissionModel> resourcePermissionModels =
-			new ArrayList<>(1);
-
-		resourcePermissionModels.add(
+		return Collections.singletonList(
 			newResourcePermissionModel(
 				DDLRecordSet.class.getName(),
 				String.valueOf(ddlRecordSetModel.getRecordSetId()),
 				_ownerRoleModel.getRoleId(), _defaultUserId));
-
-		return resourcePermissionModels;
 	}
 
 	public List<ResourcePermissionModel> newResourcePermissionModels(
 		DDMStructureModel ddmStructureModel) {
 
-		List<ResourcePermissionModel> resourcePermissionModels =
-			new ArrayList<>(1);
-
-		resourcePermissionModels.add(
+		return Collections.singletonList(
 			newResourcePermissionModel(
 				DDMStructure.class.getName(),
 				String.valueOf(ddmStructureModel.getStructureId()),
 				_ownerRoleModel.getRoleId(), _defaultUserId));
-
-		return resourcePermissionModels;
 	}
 
 	public List<ResourcePermissionModel> newResourcePermissionModels(
@@ -2178,6 +2158,15 @@ public class DataFactory {
 	}
 
 	public List<ResourcePermissionModel> newResourcePermissionModels(
+		GroupModel groupModel) {
+
+		return Collections.singletonList(
+			newResourcePermissionModel(
+				Group.class.getName(), String.valueOf(groupModel.getGroupId()),
+				_ownerRoleModel.getRoleId(), _sampleUserId));
+	}
+
+	public List<ResourcePermissionModel> newResourcePermissionModels(
 		JournalArticleResourceModel journalArticleResourceModel) {
 
 		return newResourcePermissionModels(
@@ -2190,8 +2179,7 @@ public class DataFactory {
 		LayoutModel layoutModel) {
 
 		return newResourcePermissionModels(
-			Layout.class.getName(), String.valueOf(layoutModel.getPlid()),
-			_sampleUserId);
+			Layout.class.getName(), String.valueOf(layoutModel.getPlid()), 0);
 	}
 
 	public List<ResourcePermissionModel> newResourcePermissionModels(
@@ -2205,9 +2193,11 @@ public class DataFactory {
 	public List<ResourcePermissionModel> newResourcePermissionModels(
 		MBMessageModel mbMessageModel) {
 
-		return newResourcePermissionModels(
-			MBMessage.class.getName(),
-			String.valueOf(mbMessageModel.getMessageId()), _sampleUserId);
+		return Collections.singletonList(
+			newResourcePermissionModel(
+				MBMessage.class.getName(),
+				String.valueOf(mbMessageModel.getMessageId()),
+				_ownerRoleModel.getRoleId(), _sampleUserId));
 	}
 
 	public List<ResourcePermissionModel> newResourcePermissionModels(
@@ -2230,10 +2220,28 @@ public class DataFactory {
 	}
 
 	public List<ResourcePermissionModel> newResourcePermissionModels(
+		RoleModel roleModel) {
+
+		return Collections.singletonList(
+			newResourcePermissionModel(
+				Role.class.getName(), String.valueOf(roleModel.getRoleId()),
+				_ownerRoleModel.getRoleId(), _sampleUserId));
+	}
+
+	public List<ResourcePermissionModel> newResourcePermissionModels(
 		String name, long primKey) {
 
 		return newResourcePermissionModels(
 			name, String.valueOf(primKey), _sampleUserId);
+	}
+
+	public List<ResourcePermissionModel> newResourcePermissionModels(
+		UserModel userModel) {
+
+		return Collections.singletonList(
+			newResourcePermissionModel(
+				User.class.getName(), String.valueOf(userModel.getUserId()),
+				_ownerRoleModel.getRoleId(), userModel.getUserId()));
 	}
 
 	public List<ResourcePermissionModel> newResourcePermissionModels(
@@ -2747,7 +2755,7 @@ public class DataFactory {
 		ddmTemplateModel.setMode(DDMTemplateConstants.TEMPLATE_MODE_CREATE);
 		ddmTemplateModel.setLanguage(TemplateConstants.LANG_TYPE_FTL);
 		ddmTemplateModel.setScript("${content.getData()}");
-		ddmTemplateModel.setCacheable(false);
+		ddmTemplateModel.setCacheable(true);
 		ddmTemplateModel.setSmallImage(false);
 		ddmTemplateModel.setLastPublishDate(nextFutureDate());
 
@@ -2850,8 +2858,6 @@ public class DataFactory {
 		layoutSetModel.setPrivateLayout(privateLayout);
 		layoutSetModel.setThemeId("classic");
 		layoutSetModel.setColorSchemeId("01");
-		layoutSetModel.setWapThemeId("mobile");
-		layoutSetModel.setWapColorSchemeId("01");
 		layoutSetModel.setPageCount(pageCount);
 
 		return layoutSetModel;

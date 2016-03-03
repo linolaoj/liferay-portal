@@ -28,6 +28,7 @@ import com.liferay.gradle.plugins.soy.SoyPlugin;
 import com.liferay.gradle.plugins.tasks.DirectDeployTask;
 import com.liferay.gradle.plugins.test.integration.TestIntegrationPlugin;
 import com.liferay.gradle.plugins.tld.formatter.TLDFormatterPlugin;
+import com.liferay.gradle.plugins.tlddoc.builder.TLDDocBuilderPlugin;
 import com.liferay.gradle.plugins.util.FileUtil;
 import com.liferay.gradle.plugins.util.GradleUtil;
 import com.liferay.gradle.plugins.whip.WhipPlugin;
@@ -172,8 +173,8 @@ public class LiferayJavaPlugin implements Plugin<Project> {
 			project, PORTAL_CONFIGURATION_NAME, "javax.servlet",
 			"javax.servlet-api", "3.0.1");
 		GradleUtil.addDependency(
-			project, PORTAL_CONFIGURATION_NAME, "javax.servlet.jsp", "jsp-api",
-			"2.1");
+			project, PORTAL_CONFIGURATION_NAME, "javax.servlet.jsp",
+			"javax.servlet.jsp-api", "2.3.1");
 
 		AppServer appServer = liferayExtension.getAppServer();
 
@@ -251,6 +252,7 @@ public class LiferayJavaPlugin implements Plugin<Project> {
 		GradleUtil.applyPlugin(project, SourceFormatterDefaultsPlugin.class);
 		GradleUtil.applyPlugin(project, SourceFormatterPlugin.class);
 		GradleUtil.applyPlugin(project, SoyPlugin.class);
+		GradleUtil.applyPlugin(project, TLDDocBuilderPlugin.class);
 		GradleUtil.applyPlugin(project, TLDFormatterDefaultsPlugin.class);
 		GradleUtil.applyPlugin(project, TLDFormatterPlugin.class);
 		GradleUtil.applyPlugin(project, TestIntegrationDefaultsPlugin.class);
@@ -287,15 +289,16 @@ public class LiferayJavaPlugin implements Plugin<Project> {
 							ModuleVersionSelector moduleVersionSelector =
 								dependencyResolveDetails.getRequested();
 
-							String group = moduleVersionSelector.getGroup();
 							String version = moduleVersionSelector.getVersion();
 
-							if (group.equals("com.liferay.portal") &&
-								version.equals("default")) {
-
-								dependencyResolveDetails.useVersion(
-									liferayExtension.getPortalVersion());
+							if (!version.equals("default")) {
+								return;
 							}
+
+							version = liferayExtension.getDefaultVersion(
+								moduleVersionSelector);
+
+							dependencyResolveDetails.useVersion(version);
 						}
 
 					});
@@ -445,9 +448,9 @@ public class LiferayJavaPlugin implements Plugin<Project> {
 		final Test test = (Test)GradleUtil.getTask(
 			project, JavaPlugin.TEST_TASK_NAME);
 
-		test.jvmArgs("-Djava.net.preferIPv4Stack=true");
-		test.jvmArgs("-Dliferay.mode=test");
-		test.jvmArgs("-Duser.timezone=GMT");
+		test.jvmArgs(
+			"-Djava.net.preferIPv4Stack=true", "-Dliferay.mode=test",
+			"-Duser.timezone=GMT");
 
 		test.setForkEvery(1L);
 

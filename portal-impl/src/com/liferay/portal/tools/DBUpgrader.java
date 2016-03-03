@@ -23,15 +23,15 @@ import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Release;
+import com.liferay.portal.kernel.model.ReleaseConstants;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
+import com.liferay.portal.kernel.service.ClassNameLocalServiceUtil;
+import com.liferay.portal.kernel.service.ReleaseLocalServiceUtil;
+import com.liferay.portal.kernel.service.ResourceActionLocalServiceUtil;
 import com.liferay.portal.kernel.util.ReleaseInfo;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Time;
-import com.liferay.portal.model.Release;
-import com.liferay.portal.model.ReleaseConstants;
-import com.liferay.portal.service.ClassNameLocalServiceUtil;
-import com.liferay.portal.service.ReleaseLocalServiceUtil;
-import com.liferay.portal.service.ResourceActionLocalServiceUtil;
 import com.liferay.portal.transaction.TransactionsUtil;
 import com.liferay.portal.util.InitUtil;
 import com.liferay.portal.util.PropsValues;
@@ -62,10 +62,12 @@ public class DBUpgrader {
 
 			stopWatch.start();
 
-			InitUtil.initWithSpring(true);
+			InitUtil.initWithSpring(true, false);
 
 			upgrade();
 			verify();
+
+			InitUtil.registerContext();
 
 			Registry registry = RegistryUtil.getRegistry();
 

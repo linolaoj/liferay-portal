@@ -29,11 +29,6 @@
 	<td>Admin Drop Down Button</td>
 </tr>
 <tr>
-	<td>EDIT</td>
-	<td>//*[@data-qa-id='controlMenu']//*[@data-qa-id='edit']</td>
-	<td></td>
-</tr>
-<tr>
 	<td>INFO</td>
 	<td>//*[@data-qa-id='controlMenu']//*[@data-qa-id='info']</td>
 	<td></td>
@@ -51,6 +46,11 @@
 <tr>
 	<td>IMPERSONATE_USER_ICON</td>
 	<td>//li[@id='_145_userAvatar']/a/span[@class='nav-item-label']/b</td>
+	<td></td>
+</tr>
+<tr>
+	<td>HEADER_TITLE</td>
+	<td>//*[@data-qa-id='headerTitle']</td>
 	<td></td>
 </tr>
 <tr>
@@ -85,8 +85,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>ADMIN_SITE_ADMINISTRATION_PAGES</td>
-	<td>//div[contains(@id,'product_menu')]//a[contains(.,'Pages')]</td>
+	<td>ADMIN_SITE_ADMINISTRATION_NAVIGATION</td>
+	<td>//div[contains(@id,'product_menu')]//a[contains(.,'Navigation')]</td>
 	<td>Pages Navigation</td>
 </tr>
 <tr>
