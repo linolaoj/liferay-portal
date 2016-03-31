@@ -367,7 +367,7 @@
 			<var name="fieldName" value="Boolean" />
 		</execute>
 
-		<execute macro="DDLDataDefinition#saveCP" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -381,7 +381,7 @@
 
 		<execute macro="DDLDataDefinition#selectCP" />
 
-		<execute macro="DDLList#saveCP" />
+		<execute macro="DDLList#save" />
 
 		<execute macro="Navigator#openURL" />
 
