@@ -495,7 +495,7 @@ public class DDMStructureLocalServiceImpl
 			}
 		}
 
-		// Structure
+		// Structure - empty commit
 
 		ddmStructurePersistence.remove(structure);
 
