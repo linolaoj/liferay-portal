@@ -40,17 +40,28 @@ import org.osgi.service.component.annotations.Deactivate;
 	service = DDMFormFieldRenderer.class
 )
 public class CheckboxDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
-
+	/**
+	 *Returns the template language used to render.
+	 * 
+	 */
 	@Override
 	public String getTemplateLanguage() {
 		return TemplateConstants.LANG_TYPE_SOY;
 	}
 
+	/**
+	 * Returns the namespace used on the template
+	 * 
+	 */
 	@Override
 	public String getTemplateNamespace() {
 		return "ddm.checkbox";
 	}
 
+	/**
+	 * Returns the template resource
+	 * 
+	 */
 	@Override
 	public TemplateResource getTemplateResource() {
 		return _templateResource;
@@ -66,7 +77,15 @@ public class CheckboxDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 	protected void deactivate() {
 		_templateResource = null;
 	}
-
+	
+	/**
+	 * Returns "checked" if value or predefined value are "true".
+	 * returns blank string otherwise. 
+	 * 
+	 * @param value
+	 * @param predefinedValue
+	 * @return status
+	 */
 	protected String getStatus(String value, String predefinedValue) {
 		String status = StringPool.BLANK;
 
@@ -80,6 +99,14 @@ public class CheckboxDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 		return status;
 	}
 
+	/**
+	 * Add some extra info to template like "showAsSwitcher" 
+	 * and "status"
+	 *
+	 * @param template the template to be populated
+	 * @param ddmFormField
+	 * @param ddmFormFieldRenderingContext
+	 */
 	@Override
 	protected void populateOptionalContext(
 		Template template, DDMFormField ddmFormField,

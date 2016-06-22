@@ -34,6 +34,12 @@ import org.osgi.service.component.annotations.Component;
 public class CheckboxDDMFormFieldValueAccessor
 	implements DDMFormFieldValueAccessor<Boolean> {
 
+	/**
+	 * Returns true if the checkbox was checked, returns false otherwise.
+	 * 
+	 * @param ddmFormFieldValue
+	 * @param locale the locale used to retrieve the value
+	 */
 	@Override
 	public Boolean getValue(
 		DDMFormFieldValue ddmFormFieldValue, Locale locale) {

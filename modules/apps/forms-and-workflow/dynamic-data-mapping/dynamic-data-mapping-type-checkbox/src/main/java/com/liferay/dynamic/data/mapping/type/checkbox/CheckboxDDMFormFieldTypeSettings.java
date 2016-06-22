@@ -69,6 +69,9 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 public interface CheckboxDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
 
+	/**
+	 * Returns the predifined value of the checkbox.
+	 */
 	@DDMFormField(
 		dataType = "boolean", label = "%predefined-value",
 		properties = {"showAsSwitcher=true"}, type = "checkbox"
@@ -76,16 +79,28 @@ public interface CheckboxDDMFormFieldTypeSettings
 	@Override
 	public LocalizedValue predefinedValue();
 
+	/**
+	 * Returns true if the field is repeatable,
+	 * returns false otherwise.
+	 */
 	@DDMFormField(visibilityExpression = "FALSE")
 	@Override
 	public boolean repeatable();
 
+	/**
+	 * Returns true if the checkbox is configured to show as a switcher,
+	 * returns false otherwise.
+	 * 
+	 */
 	@DDMFormField(
 		dataType = "boolean", label = "%show-as-a-switcher",
 		properties = {"showAsSwitcher=true"}, type = "checkbox"
 	)
 	public boolean showAsSwitcher();
 
+	/**
+	 * Returns a DDMFormFieldValidation
+	 */
 	@DDMFormField(visibilityExpression = "FALSE")
 	@Override
 	public DDMFormFieldValidation validation();

@@ -28,6 +28,17 @@ import org.osgi.service.component.annotations.Component;
 public class CheckboxDDMFormFieldValueRequestParameterRetriever
 	implements DDMFormFieldValueRequestParameterRetriever {
 
+	/**
+	 * Returns "true" if the value of the parameter with name ddmFormFieldParameterName on
+	 * httpServletRequest is true,
+	 * or defaultDDMFormFieldParameterValue is "true" and the request does not have the parameter.
+	 * Returns false otherwise.
+	 * 
+	 * @param httpServletRequest
+	 * @param ddmFormFieldParameterName the name of the parameter
+	 * @param defaultDDMFormFieldParameterValue the default value of the parameter
+	 * @return a string "true" or a string "false" 
+	 */
 	@Override
 	public String get(
 		HttpServletRequest httpServletRequest, String ddmFormFieldParameterName,

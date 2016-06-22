@@ -37,6 +37,10 @@ import org.osgi.service.component.annotations.Component;
 )
 public class CheckboxDDMFormFieldType extends BaseDDMFormFieldType {
 
+	/**
+	 * Returns the CheckboxDDMFormFieldTypeSettings class.
+	 * 
+	 */
 	@Override
 	public Class<? extends DDMFormFieldTypeSettings>
 		getDDMFormFieldTypeSettings() {
@@ -44,6 +48,10 @@ public class CheckboxDDMFormFieldType extends BaseDDMFormFieldType {
 		return CheckboxDDMFormFieldTypeSettings.class;
 	}
 
+	/**
+	 * Returns field type name "checkbox".
+	 * 
+	 */
 	@Override
 	public String getName() {
 		return "checkbox";
