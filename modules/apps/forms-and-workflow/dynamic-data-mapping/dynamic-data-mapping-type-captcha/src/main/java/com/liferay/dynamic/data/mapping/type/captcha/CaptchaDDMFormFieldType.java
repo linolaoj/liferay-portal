@@ -33,6 +33,9 @@ import org.osgi.service.component.annotations.Component;
 )
 public class CaptchaDDMFormFieldType extends BaseDDMFormFieldType {
 
+	/**
+	 * Returns the string "captcha"
+	 */
 	@Override
 	public String getName() {
 		return "captcha";

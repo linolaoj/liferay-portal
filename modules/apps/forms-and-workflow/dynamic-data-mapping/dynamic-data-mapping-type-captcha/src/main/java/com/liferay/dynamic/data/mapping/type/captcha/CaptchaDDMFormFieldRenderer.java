@@ -41,6 +41,14 @@ import org.osgi.service.component.annotations.Component;
 )
 public class CaptchaDDMFormFieldRenderer implements DDMFormFieldRenderer {
 
+	/**
+	 * Returns a String with the content (html) of the captcha 
+	 * with the url of the ddmFormField.
+	 *  
+	 *  @param ddmFormField
+	 *  @param ddmFormFieldRenderingContext
+	 *  @return a string with the captcha content
+	 */
 	@Override
 	public String render(
 			DDMFormField ddmFormField,
