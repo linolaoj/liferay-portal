@@ -35,6 +35,10 @@ import org.osgi.service.component.annotations.Component;
 )
 public class EditorDDMFormFieldType extends BaseDDMFormFieldType {
 
+	/**
+	 * Returns the EditorDDMFormFieldTypeSettings class
+	 * 
+	 */
 	@Override
 	public Class<? extends DDMFormFieldTypeSettings>
 		getDDMFormFieldTypeSettings() {
@@ -42,6 +46,10 @@ public class EditorDDMFormFieldType extends BaseDDMFormFieldType {
 		return EditorDDMFormFieldTypeSettings.class;
 	}
 
+	/**
+	 * Returns "editor"
+	 * 
+	 */
 	@Override
 	public String getName() {
 		return "editor";

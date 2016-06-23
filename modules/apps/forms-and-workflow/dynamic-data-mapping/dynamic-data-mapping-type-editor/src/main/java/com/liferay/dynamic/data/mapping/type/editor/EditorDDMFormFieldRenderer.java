@@ -39,16 +39,28 @@ import org.osgi.service.component.annotations.Deactivate;
 )
 public class EditorDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 
+	/**
+	 * Returns the template used for EditorDDMFormFieldType
+	 * 
+	 */
 	@Override
 	public String getTemplateLanguage() {
 		return TemplateConstants.LANG_TYPE_SOY;
 	}
 
+	/**
+	 * Returns the template namespace
+	 * 
+	 */
 	@Override
 	public String getTemplateNamespace() {
 		return "ddm.editor";
 	}
 
+	/**
+	 * Returns the template resource
+	 * 
+	 */
 	@Override
 	public TemplateResource getTemplateResource() {
 		return _templateResource;
@@ -65,6 +77,13 @@ public class EditorDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 		_templateResource = null;
 	}
 
+	/**
+	 * Add some optional info to the template like "placeholder"
+	 * 
+	 * @param template the template to populate
+	 * @param ddmFormField
+	 * @param ddmFormFieldRenderingContext
+	 */
 	@Override
 	protected void populateOptionalContext(
 		Template template, DDMFormField ddmFormField,

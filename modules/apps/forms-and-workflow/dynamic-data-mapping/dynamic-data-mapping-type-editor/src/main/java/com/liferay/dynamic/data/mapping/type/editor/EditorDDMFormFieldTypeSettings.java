@@ -66,6 +66,10 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 public interface EditorDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
 
+	/**
+	 * Returns the text used as placeholder
+	 * 
+	 */
 	@DDMFormField(
 		dataType = "string", label = "%placeholder-text",
 		properties = {
