@@ -66,12 +66,20 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 public interface DateDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
 
+	/**
+	 * Returns the predefined value of the field
+	 * 
+	 */
 	@DDMFormField(
 		dataType = "string", label = "%predefined-value", type = "date"
 	)
 	@Override
 	public LocalizedValue predefinedValue();
 
+	/**
+	 * Returns a DDMFormFieldValidation
+	 * 
+	 */
 	@DDMFormField(
 		dataType = "ddm-validation", type = "validation",
 		visibilityExpression = "FALSE"

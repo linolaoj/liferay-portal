@@ -37,6 +37,9 @@ import org.osgi.service.component.annotations.Component;
 )
 public class DateDDMFormFieldType extends BaseDDMFormFieldType {
 
+	/**
+	 * Returns the DateDDMFormFieldTypeSettings class
+	 */
 	@Override
 	public Class<? extends DDMFormFieldTypeSettings>
 		getDDMFormFieldTypeSettings() {
@@ -44,6 +47,9 @@ public class DateDDMFormFieldType extends BaseDDMFormFieldType {
 		return DateDDMFormFieldTypeSettings.class;
 	}
 
+	/**
+	 * Returns "date" 
+	 */
 	@Override
 	public String getName() {
 		return "date";

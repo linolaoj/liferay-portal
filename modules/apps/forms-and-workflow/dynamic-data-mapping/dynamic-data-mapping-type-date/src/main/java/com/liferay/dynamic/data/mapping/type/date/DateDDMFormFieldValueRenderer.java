@@ -41,6 +41,12 @@ import org.osgi.service.component.annotations.Component;
 public class DateDDMFormFieldValueRenderer
 	implements DDMFormFieldValueRenderer {
 
+	/**
+	 * Returns a String with a date value according to locale.
+	 * 
+	 * @param ddmFormFieldValue that contains the date
+	 * @param locale used to format the date
+	 */
 	@Override
 	public String render(DDMFormFieldValue ddmFormFieldValue, Locale locale) {
 		Value value = ddmFormFieldValue.getValue();

@@ -38,16 +38,26 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class DateDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 
+	/**
+	 * Returns the template language used for the DateDDMFormFieldType
+	 */
 	@Override
 	public String getTemplateLanguage() {
 		return TemplateConstants.LANG_TYPE_SOY;
 	}
 
+	/**
+	 * Returns the namespace used on the template
+	 */
 	@Override
 	public String getTemplateNamespace() {
 		return "ddm.date";
 	}
 
+	/**
+	 * Returns the template resource
+	 * 
+	 */
 	@Override
 	public TemplateResource getTemplateResource() {
 		return _templateResource;
@@ -63,6 +73,13 @@ public class DateDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 		_templateResource = null;
 	}
 
+	/**
+	 * Adds additional info to template like the displayValue.
+	 * 
+	 * @param template the template to be populated
+	 * @param ddmFormField
+	 * @param ddmFormFieldRenderingContext
+	 */
 	@Override
 	protected void populateOptionalContext(
 		Template template, DDMFormField ddmFormField,
