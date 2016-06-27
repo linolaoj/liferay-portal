@@ -35,6 +35,10 @@ import org.osgi.service.component.annotations.Component;
 )
 public class KeyValueDDMFormFieldType extends BaseDDMFormFieldType {
 
+	/**
+	 * Returns the KeyValueDDMFormFieldTypeSettings class
+	 * 
+	 */
 	@Override
 	public Class<? extends DDMFormFieldTypeSettings>
 		getDDMFormFieldTypeSettings() {
@@ -42,6 +46,10 @@ public class KeyValueDDMFormFieldType extends BaseDDMFormFieldType {
 		return KeyValueDDMFormFieldTypeSettings.class;
 	}
 
+	/**
+	 * Returns the string "key-value"
+	 * 
+	 */
 	@Override
 	public String getName() {
 		return "key-value";

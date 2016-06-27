@@ -39,16 +39,28 @@ import org.osgi.service.component.annotations.Deactivate;
 )
 public class KeyValueDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 
+	/**
+	 * Returns the template language used for KeyValueDDMFormFieldType
+	 * 
+	 */
 	@Override
 	public String getTemplateLanguage() {
 		return TemplateConstants.LANG_TYPE_SOY;
 	}
 
+	/**
+	 * Returns the template namespace
+	 * 
+	 */
 	@Override
 	public String getTemplateNamespace() {
 		return "ddm.key_value";
 	}
 
+	/**
+	 * Returns the template resource
+	 * 
+	 */
 	@Override
 	public TemplateResource getTemplateResource() {
 		return _templateResource;
@@ -65,6 +77,14 @@ public class KeyValueDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 		_templateResource = null;
 	}
 
+	/**
+	 * Populates the template with additional info like 
+	 * displayStyle, placeholder and tooltip.
+	 * 
+	 * @param template the template to be populated
+	 * @param ddmFromField
+	 * @param ddmFormFieldRenderingContext
+	 */
 	@Override
 	protected void populateOptionalContext(
 		Template template, DDMFormField ddmFormField,

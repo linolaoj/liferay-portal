@@ -66,9 +66,17 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 public interface KeyValueDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
 
+	/**
+	 * Returns the placeholder as a localized value 
+	 * 
+	 */
 	@DDMFormField(dataType = "string", label = "%field-tip", type = "text")
 	public LocalizedValue placeholder();
 
+	/**
+	 * Returns the tooltip as a localized value
+	 * 
+	 */
 	@DDMFormField(visibilityExpression = "FALSE")
 	public LocalizedValue tooltip();
 
