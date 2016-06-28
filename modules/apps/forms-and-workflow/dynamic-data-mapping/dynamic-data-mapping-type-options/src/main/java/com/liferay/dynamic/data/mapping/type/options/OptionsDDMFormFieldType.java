@@ -34,6 +34,10 @@ import org.osgi.service.component.annotations.Component;
 )
 public class OptionsDDMFormFieldType extends BaseDDMFormFieldType {
 
+	/**
+	 * Returns "options"
+	 * 
+	 */
 	@Override
 	public String getName() {
 		return "options";

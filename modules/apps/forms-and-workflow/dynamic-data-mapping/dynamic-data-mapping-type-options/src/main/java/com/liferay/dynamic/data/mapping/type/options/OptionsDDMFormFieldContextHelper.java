@@ -47,6 +47,10 @@ public class OptionsDDMFormFieldContextHelper {
 		_locale = locale;
 	}
 
+	/**
+	 * Returns a list with the options (label and value) of the field.
+	 * @return a list of Object
+	 */
 	public List<Object> getOptions() {
 		List<Object> options = new ArrayList<>();
 
@@ -68,6 +72,14 @@ public class OptionsDDMFormFieldContextHelper {
 		return options;
 	}
 
+	/**
+	 * Returns true if optionValue is the value of the option checked
+	 * or if it is the predefined value.
+	 * Returns false otherwise.
+	 * 
+	 * @param optionValue
+	 * @return boolean 
+	 */
 	protected boolean isChecked(String optionValue) {
 		if (Validator.isNull(_value)) {
 			return Objects.equals(_predefinedValue, optionValue);
@@ -76,6 +88,11 @@ public class OptionsDDMFormFieldContextHelper {
 		return Objects.equals(_value, optionValue);
 	}
 
+	/**
+	 * Returns the option associated with the string value
+	 * @param value
+	 * @return a string
+	 */
 	protected String toString(String value) {
 		if (Validator.isNull(value)) {
 			return StringPool.BLANK;

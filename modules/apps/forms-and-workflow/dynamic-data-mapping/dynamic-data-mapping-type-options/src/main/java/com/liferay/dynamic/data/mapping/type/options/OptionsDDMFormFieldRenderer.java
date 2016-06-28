@@ -39,16 +39,28 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class OptionsDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 
+	/**
+	 * Returns the template language used for OptionsDDMFormFieldType
+	 * 
+	 */
 	@Override
 	public String getTemplateLanguage() {
 		return TemplateConstants.LANG_TYPE_SOY;
 	}
 
+	/**
+	 * Returns the template namespace
+	 * 
+	 */
 	@Override
 	public String getTemplateNamespace() {
 		return "ddm.options";
 	}
 
+	/**
+	 * Returns the template resource
+	 * 
+	 */
 	@Override
 	public TemplateResource getTemplateResource() {
 		return _templateResource;
@@ -60,6 +72,13 @@ public class OptionsDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 			"/META-INF/resources/options.soy");
 	}
 
+	/**
+	 * Returns a list of Object representing the options.
+	 * 
+	 * @param ddmFormField
+	 * @param ddmFormFieldRenderingContext
+	 * @return the list of options
+	 */
 	protected List<Object> getOptions(
 		DDMFormField ddmFormField,
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
@@ -74,6 +93,13 @@ public class OptionsDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 		return optionsDDMFormFieldContextHelper.getOptions();
 	}
 
+	/**
+	 * Adds required information to the template like the options.
+	 * 
+	 * @param template the template to be populated
+	 * @param ddmFormField
+	 * @param ddmFormFieldRenderingContext
+	 */
 	@Override
 	protected void populateRequiredContext(
 		Template template, DDMFormField ddmFormField,
