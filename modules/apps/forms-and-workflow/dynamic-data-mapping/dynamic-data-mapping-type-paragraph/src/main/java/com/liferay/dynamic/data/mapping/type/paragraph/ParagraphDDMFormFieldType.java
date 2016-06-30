@@ -37,6 +37,10 @@ import org.osgi.service.component.annotations.Component;
 )
 public class ParagraphDDMFormFieldType extends BaseDDMFormFieldType {
 
+	/**
+	 * Returns the ParagraphDDMFormFieldTypeSettings class
+	 * 
+	 */
 	@Override
 	public Class<? extends DDMFormFieldTypeSettings>
 		getDDMFormFieldTypeSettings() {
@@ -44,6 +48,10 @@ public class ParagraphDDMFormFieldType extends BaseDDMFormFieldType {
 		return ParagraphDDMFormFieldTypeSettings.class;
 	}
 
+	/**
+	 * Returns the string "paragraph"
+	 * 
+	 */
 	@Override
 	public String getName() {
 		return "paragraph";

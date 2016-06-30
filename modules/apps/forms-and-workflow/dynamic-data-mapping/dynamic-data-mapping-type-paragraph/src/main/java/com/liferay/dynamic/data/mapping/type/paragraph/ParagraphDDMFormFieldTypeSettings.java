@@ -67,6 +67,10 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 public interface ParagraphDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
 
+	/**
+	 * Returns the label of the field as a LocalizedValue.
+	 * 
+	 */
 	@DDMFormField(
 		label = "%title", properties = {"placeholder=%enter-a-title"},
 		required = true, type = "key-value"
@@ -74,22 +78,45 @@ public interface ParagraphDDMFormFieldTypeSettings
 	@Override
 	public LocalizedValue label();
 
+	/**
+	 * Returns the predefined value of the field.
+	 * 
+	 */
 	@DDMFormField(visibilityExpression = "FALSE")
 	@Override
 	public LocalizedValue predefinedValue();
 
+	/**
+	 * Returns true if the field is repeatable.
+	 * Returns false otherwise.
+	 * 
+	 */
 	@DDMFormField(visibilityExpression = "FALSE")
 	@Override
 	public boolean repeatable();
 
+	/**
+	 * Returns true if the field is required.
+	 * Returns false otherwise.
+	 * 
+	 */
 	@DDMFormField(visibilityExpression = "FALSE")
 	@Override
 	public boolean required();
 
+	/**
+	 * Returns true if label is visible.
+	 * Returns false otherwise.
+	 * 
+	 */
 	@DDMFormField(visibilityExpression = "FALSE")
 	@Override
 	public boolean showLabel();
 
+	/**
+	 * Returns the text of the paragraph
+	 * 
+	 */
 	@DDMFormField(
 		dataType = "string", label = "%body-text",
 		properties = {"placeholder=%enter-body-text"}, required = true,
@@ -97,10 +124,18 @@ public interface ParagraphDDMFormFieldTypeSettings
 	)
 	public String text();
 
+	/**
+	 * Returns the tip of the field.
+	 * 
+	 */
 	@DDMFormField(visibilityExpression = "FALSE")
 	@Override
 	public LocalizedValue tip();
 
+	/**
+	 * Returns a DDMFormFieldValidation 
+	 * 
+	 */
 	@DDMFormField(
 		dataType = "ddm-validation", type = "validation",
 		visibilityExpression = "FALSE"

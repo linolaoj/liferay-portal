@@ -37,16 +37,28 @@ import org.osgi.service.component.annotations.Deactivate;
 )
 public class ParagraphDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 
+	/**
+	 * Returns the template language used for ParagraphDDMFormFiellType 
+	 * 
+	 */
 	@Override
 	public String getTemplateLanguage() {
 		return TemplateConstants.LANG_TYPE_SOY;
 	}
 
+	/**
+	 * Returns the template namespace
+	 * 
+	 */
 	@Override
 	public String getTemplateNamespace() {
 		return "ddm.paragraph";
 	}
 
+	/**
+	 * Returns the template resource
+	 * 
+	 */
 	@Override
 	public TemplateResource getTemplateResource() {
 		return _templateResource;
@@ -63,6 +75,13 @@ public class ParagraphDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 		_templateResource = null;
 	}
 
+	/**
+	 * Add some additional info to template like the "text" property
+	 *
+	 * @param template the template to be populated
+	 * @param ddmFormField 
+	 * @param ddmFormFieldRenderingContext
+	 */
 	@Override
 	protected void populateOptionalContext(
 		Template template, DDMFormField ddmFormField,
