@@ -610,6 +610,149 @@ ExpandoBridge expandoBridge = ExpandoBridgeFactoryUtil.getExpandoBridge(company.
 
 							<liferay-ui:input-localized cssClass="lfr-input-text" id="<%= randomNamespace + name %>" name='<%= "ExpandoAttribute--" + name + "--" %>' xml="<%= xml %>" />
 						</c:when>
+						
+						<c:when test="<%= type == ExpandoColumnConstants.GEOLOCATION %>">
+						    <style>
+						      /* Always set the map height explicitly to define the size of the div
+						       * element that contains the map. */
+						      #map {
+						        height: 300px;
+						        
+						      }
+						      #pac-input {
+						        background-color: #fff;
+						        font-family: Roboto;
+						        font-size: 15px;
+						        font-weight: 300;
+						        margin-left: 12px;
+						        padding: 0 11px 0 13px;
+						        text-overflow: ellipsis;
+						        width: 300px;
+						      }
+						
+						      #pac-input:focus {
+						        border-color: #4d90fe;
+						      }
+						
+						      .pac-container {
+						        font-family: Roboto;
+						      }
+						     
+						    </style>
+						    
+						      <input id="pac-input" class="controls" type="text"
+						          placeholder="Enter a location">
+						      
+						      <div id="map"></div>
+					
+						   <script>
+						   
+							function getExpandoInput(){
+						   		return $('[name=<%="ExpandoAttribute--" + name + "--" %>]');
+						   	} 
+						   		
+						   	
+							function getExpandoValue(){
+						      	return getExpandoInput().val();
+						    }	
+	
+							function setExpandoValue(location){
+						    	  getExpandoInput().val( JSON.stringify(location));
+						    	  
+						    }
+							
+						   function initMap() {
+						     
+								var position = {lat: -33.8688, lng: 151.2195};
+								var expandoValue = getExpandoValue();
+  	 
+								if(expandoValue) {
+									position = JSON.parse(expandoValue);
+								}
+
+								var map = new google.maps.Map(document.getElementById('map'), {
+									center: position,
+									clickableIcons: true,
+									zoom: 13
+								});
+
+								var marker = new google.maps.Marker({
+									position: position,
+									map: map,
+									draggable: true,
+									animation: google.maps.Animation.DROP
+								});
+
+
+								marker.addListener('dragend', function() {
+									infowindow.close();
+									map.setCenter(marker.getPosition());
+									setExpandoValue(marker.getPosition());
+								});
+
+    							var input = (document.getElementById('pac-input'));
+   
+    							map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+    
+								var autocomplete = new google.maps.places.Autocomplete(input);
+								autocomplete.bindTo('bounds', map);
+
+								var infowindow = new google.maps.InfoWindow();
+  
+
+								autocomplete.addListener('place_changed', function() {
+     
+									infowindow.close();
+									
+									marker.setVisible(false);
+									
+									var place = autocomplete.getPlace();
+									
+									if (!place.geometry) {
+									  console.info("Autocomplete's returned place contains no geometry");
+									  return;
+									}
+
+									var location = {
+											lat : place.geometry.location.lat(),
+											lng : place.geometry.location.lng()
+											}
+
+									setExpandoValue(location);
+     
+									// If the place has a geometry, then present it on a map.
+									if (place.geometry.viewport) {
+									  map.fitBounds(place.geometry.viewport);
+									} else {
+									  map.setCenter(place.geometry.location);
+									  map.setZoom(17);  // Why 17? Because it looks good.
+									}
+      
+									marker.setPosition(place.geometry.location);
+									marker.setVisible(true);
+
+									var address = '';
+									if (place.address_components) {
+									  address = [
+									    (place.address_components[0] && place.address_components[0].short_name || ''),
+									    (place.address_components[1] && place.address_components[1].short_name || ''),
+									    (place.address_components[2] && place.address_components[2].short_name || '')
+									  ].join(' ');
+									}
+									
+									infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
+									infowindow.open(map, marker);
+    							});
+						           
+						 }
+						    </script>
+						    <script src="https://maps.googleapis.com/maps/api/js?libraries=places&callback=initMap"
+						        async defer></script>
+							
+							<input type="hidden" name='<%="ExpandoAttribute--" + name + "--" %>'>
+							
+						</c:when>
+						
 						<c:otherwise>
 
 							<%
