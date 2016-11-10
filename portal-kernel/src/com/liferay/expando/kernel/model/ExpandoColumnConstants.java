@@ -70,7 +70,7 @@ public class ExpandoColumnConstants {
 	public static final int GEOLOCATION = 21;
 
 	public static final String GEOLOCATION_LABEL =
-		"custom.field.java.lang.String.geolocation";
+		"custom.field.geolocation";
 
 	public static final String INDEX_TYPE = "index-type";
 
