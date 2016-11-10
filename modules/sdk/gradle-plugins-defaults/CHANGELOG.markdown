@@ -587,6 +587,60 @@ version, update the `npm-shrinkwrap.json` and `package.json` files accordingly.
 - [LPS-68935]: Set the Maven description to the project description when
 publishing.
 
+## 1.2.75 - 2016-10-26
+
+### Changed
+- [LPS-68917]: Update the [Liferay Gradle Plugins] dependency to version 3.0.26.
+
+## 1.2.76 - 2016-10-27
+
+### Changed
+- [LPS-68980]: Update the [Liferay Gradle Plugins] dependency to version 3.0.27.
+
+## 1.2.77 - 2016-10-28
+
+*No changes.*
+
+## 1.2.78 - 2016-10-31
+
+### Changed
+- [LPS-69013]: Update the [Liferay Gradle Plugins] dependency to version 3.0.29.
+
+## 1.2.79 - 2016-10-31
+
+### Changed
+- [LPS-69013]: Update the [Liferay Gradle Plugins] dependency to version 3.0.30.
+
+## 1.2.80 - 2016-11-01
+
+### Changed
+- [LPS-68293]: Update the [Liferay Gradle Plugins] dependency to version 3.0.31.
+
+## 1.2.81 - 2016-11-01
+
+### Changed
+- [LPS-69026]: Update the [Liferay Gradle Plugins] dependency to version 3.0.32.
+
+## 1.2.82 - 2016-11-02
+
+### Changed
+- [LPS-68293]: Update the [Liferay Gradle Plugins] dependency to version 3.0.33.
+
+## 1.2.83 - 2016-11-03
+
+### Changed
+- [LPS-66853]: Update the [Liferay Gradle Plugins] dependency to version 3.0.34.
+
+## 1.2.84 - 2016-11-03
+
+### Changed
+- [LPS-68298]: Update the [Liferay Gradle Plugins] dependency to version 3.0.35.
+
+## 1.2.85 - 2016-11-04
+
+### Changed
+- [LPS-68298]: Update the [Liferay Gradle Plugins] dependency to version 3.0.36.
+
 [Liferay CDN]: https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public
 [Liferay Gradle Plugins]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins
 [Liferay Gradle Plugins App Javadoc Builder]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins-app-javadoc-builder
@@ -612,7 +666,9 @@ publishing.
 [LPS-68014]: https://issues.liferay.com/browse/LPS-68014
 [LPS-68131]: https://issues.liferay.com/browse/LPS-68131
 [LPS-68230]: https://issues.liferay.com/browse/LPS-68230
+[LPS-68293]: https://issues.liferay.com/browse/LPS-68293
 [LPS-68297]: https://issues.liferay.com/browse/LPS-68297
+[LPS-68298]: https://issues.liferay.com/browse/LPS-68298
 [LPS-68305]: https://issues.liferay.com/browse/LPS-68305
 [LPS-68306]: https://issues.liferay.com/browse/LPS-68306
 [LPS-68334]: https://issues.liferay.com/browse/LPS-68334
@@ -636,6 +692,9 @@ publishing.
 [LPS-68839]: https://issues.liferay.com/browse/LPS-68839
 [LPS-68917]: https://issues.liferay.com/browse/LPS-68917
 [LPS-68935]: https://issues.liferay.com/browse/LPS-68935
+[LPS-68980]: https://issues.liferay.com/browse/LPS-68980
+[LPS-69013]: https://issues.liferay.com/browse/LPS-69013
+[LPS-69026]: https://issues.liferay.com/browse/LPS-69026
 [LRDOCS-2594]: https://issues.liferay.com/browse/LRDOCS-2594
 [LRDOCS-2841]: https://issues.liferay.com/browse/LRDOCS-2841
 [LRDOCS-2981]: https://issues.liferay.com/browse/LRDOCS-2981

@@ -101,6 +101,16 @@ AUI.add(
 						return JSON.stringify(previousContext) !== JSON.stringify(currentFieldSettings.context);
 					},
 
+					hasFocus: function(node) {
+						var instance = this;
+
+						var activeElement = A.one(node || document.activeElement);
+
+						var settingsForm = instance.settingsForm;
+
+						return (settingsForm && settingsForm.hasFocus()) || instance._containsNode(activeElement) || instance._isFieldNode(activeElement);
+					},
+
 					_afterOpenStart: function() {
 						var instance = this;
 
@@ -134,6 +144,21 @@ AUI.add(
 						toolbar.set('field', field);
 					},
 
+					_bindSettingsFormEvents: function() {
+						var instance = this;
+
+						var settingsForm = instance.settingsForm;
+
+						var labelField = settingsForm.getField('label');
+
+						labelField.after(
+							'valueChange',
+							function() {
+								instance.set('title', labelField.getValue());
+							}
+						);
+					},
+
 					_configureSideBar: function() {
 						var instance = this;
 
@@ -150,7 +175,7 @@ AUI.add(
 							}
 						);
 
-						instance._handleEvaluation();
+						instance._bindSettingsFormEvents();
 
 						settingsForm.render();
 
@@ -175,19 +200,10 @@ AUI.add(
 						return toolbar;
 					},
 
-					_handleEvaluation: function() {
+					_isFieldNode: function(node) {
 						var instance = this;
 
-						var settingsForm = instance.settingsForm;
-
-						var evaluator = settingsForm.get('evaluator');
-
-						evaluator.after(
-							'evaluationStarted',
-							function() {
-								instance.set('title', settingsForm.getField('label').getValue());
-							}
-						);
+						return node.ancestorsByClassName('.ddm-form-field-container').size();
 					},
 
 					_loadFieldSettingsForm: function(field) {
@@ -223,11 +239,7 @@ AUI.add(
 					_onClickDocument: function(event) {
 						var instance = this;
 
-						var settingsForm = instance.settingsForm;
-
-						var target = event.target;
-
-						if (instance.get('open') && !instance._containsNode(target) && !settingsForm.hasFocus()) {
+						if (instance.get('open') && !instance.hasFocus(event.target)) {
 							instance.close();
 						}
 					},
@@ -267,8 +279,8 @@ AUI.add(
 					_showLoading: function() {
 						var instance = this;
 
-						var contentBox = instance.get('contentBox');
 						var boundingBox = instance.get('boundingBox');
+						var contentBox = instance.get('contentBox');
 
 						if (!contentBox.one('.loading-icon')) {
 							contentBox.append(TPL_LOADING);
