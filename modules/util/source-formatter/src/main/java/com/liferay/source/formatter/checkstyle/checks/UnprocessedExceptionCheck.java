@@ -19,14 +19,17 @@ import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.source.formatter.checkstyle.util.DetailASTUtil;
+import com.liferay.source.formatter.util.ThreadSafeClassLibrary;
 
 import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.FileContents;
 import com.puppycrawl.tools.checkstyle.api.FileText;
+import com.puppycrawl.tools.checkstyle.api.FullIdent;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 
 import com.thoughtworks.qdox.JavaDocBuilder;
+import com.thoughtworks.qdox.model.DefaultDocletTagFactory;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaPackage;
 import com.thoughtworks.qdox.model.JavaSource;
@@ -190,37 +193,9 @@ public class UnprocessedExceptionCheck extends AbstractCheck {
 	private String _getExceptionClassName(DetailAST parameterDefAST) {
 		DetailAST typeAST = parameterDefAST.findFirstToken(TokenTypes.TYPE);
 
-		DetailAST dotAST = typeAST.findFirstToken(TokenTypes.DOT);
+		FullIdent typeIdent = FullIdent.createFullIdentBelow(typeAST);
 
-		if (dotAST == null) {
-			DetailAST nameAST = typeAST.findFirstToken(TokenTypes.IDENT);
-
-			if (nameAST != null) {
-				return nameAST.getText();
-			}
-
-			return null;
-		}
-
-		String name = StringPool.BLANK;
-
-		while (true) {
-			DetailAST lastChild = dotAST.getLastChild();
-
-			name = StringPool.PERIOD + lastChild.getText() + name;
-
-			DetailAST firstChild = dotAST.getFirstChild();
-
-			if (firstChild.getType() != TokenTypes.DOT) {
-				name = firstChild.getText() + name;
-
-				break;
-			}
-
-			dotAST = firstChild;
-		}
-
-		return name;
+		return typeIdent.getText();
 	}
 
 	private Set<String> _getImportedExceptionClassNames(
@@ -240,7 +215,8 @@ public class UnprocessedExceptionCheck extends AbstractCheck {
 	}
 
 	private JavaDocBuilder _getJavaDocBuilder() {
-		JavaDocBuilder javaDocBuilder = new JavaDocBuilder();
+		JavaDocBuilder javaDocBuilder = new JavaDocBuilder(
+			new DefaultDocletTagFactory(), new ThreadSafeClassLibrary());
 
 		FileContents fileContents = getFileContents();
 
