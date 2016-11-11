@@ -1,3 +1,4 @@
+<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -11,17 +12,8 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+--%>
 
-package com.liferay.shopping.web.internal.portlet.auth;
+<%@ include file="/search/init.jsp" %>
 
-import org.osgi.service.component.annotations.Component;
-
-/**
- * @author Raymond Augé
- */
-@Component(
-	immediate = true, property = {"auth.public.path=/shopping/notify"},
-	service = Object.class
-)
-public class AuthPublicPath {
-}
+<liferay-util:include page="/admin/common/compare_versions.jsp" servletContext="<%= application %>" />
