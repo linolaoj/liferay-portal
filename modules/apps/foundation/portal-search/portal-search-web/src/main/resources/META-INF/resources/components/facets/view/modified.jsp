@@ -40,7 +40,8 @@ int index = 0;
 	<liferay-ui:panel collapsible="<%= true %>" cssClass="<%= cssClass %>" id='<%= randomNamespace + "facetModifiedPanel" %>' markupView="lexicon" persistState="<%= true %>" title="time">
 		<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(facet.getFieldId()) %>" type="hidden" value="<%= fieldParam %>" />
 		<aui:input autocomplete="off" name='<%= HtmlUtil.escapeAttribute(facet.getFieldId()) + "selection" %>' type="hidden" value="<%= fieldParamSelection %>" />
-
+		<aui:input autocomplete="off" name="inputFacetName" type="hidden" value="modified" />
+		
 		<aui:field-wrapper cssClass='<%= randomNamespace + "calendar calendar_" %>' label="" name="<%= HtmlUtil.escapeAttribute(facet.getFieldId()) %>">
 			<ul class="list-unstyled modified">
 				<li class="default facet-value">
@@ -54,8 +55,8 @@ int index = 0;
 
 					Map<String, Object> data = new HashMap<>();
 
-					data.put("value", StringPool.BLANK);
 					data.put("selection", 0);
+					data.put("value", StringPool.BLANK);
 					%>
 
 					<aui:a cssClass="<%= defaultRangeCssClass %>" href="javascript:;">
@@ -73,7 +74,7 @@ int index = 0;
 					index = (i + 1);
 				%>
 
-					<li class="facet-value">
+					<li class="facet-value" name="<%= renderResponse.getNamespace() + "ranger_"+i %>">
 
 						<%
 						String rangeCssClass = "text-default";
@@ -100,6 +101,12 @@ int index = 0;
 							</c:if>
 						</aui:a>
 					</li>
+					
+					<aui:input autocomplete="off"
+							name="<%= "ranger_"+i+"_value" %>"
+							type="hidden"
+							value="<%= HtmlUtil.escape(range) %>"
+						/>
 
 				<%
 				}

@@ -32,9 +32,11 @@ if (dataJSONObject.has("values")) {
 	}
 }
 %>
+
 <liferay-ui:panel-container extended="<%= true %>" id='<%= randomNamespace + "facetAssetEntriesPanelContainer" %>' markupView="lexicon" persistState="<%= true %>">
 	<liferay-ui:panel collapsible="<%= true %>" cssClass="<%= cssClass %>" id='<%= randomNamespace + "facetAssetEntriesPanel" %>' markupView="lexicon" persistState="<%= true %>" title="asset-entries">
 		<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(facet.getFieldId()) %>" type="hidden" value="<%= fieldParam %>" />
+		<aui:input autocomplete="off" name="inputFacetName" type="hidden" value="assetType" />
 
 		<ul class="asset-type list-unstyled">
 			<li class="default facet-value">
@@ -68,7 +70,7 @@ if (dataJSONObject.has("values")) {
 				AssetRendererFactory<?> assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(assetType);
 			%>
 
-				<li class="facet-value">
+				<li class="facet-value" name="<%= renderResponse.getNamespace()+"assetType_" + HtmlUtil.escapeAttribute(assetType) %>">
 					<a class="<%= fieldParam.equals(termCollector.getTerm()) ? "text-primary" : "text-default" %>" data-value="<%= HtmlUtil.escapeAttribute(assetType) %>" href="javascript:;">
 						<%= assetRendererFactory.getTypeName(locale) %>
 
@@ -77,6 +79,12 @@ if (dataJSONObject.has("values")) {
 						</c:if>
 					</a>
 				</li>
+
+				<aui:input autocomplete="off"
+					name="<%= "assetType_" + HtmlUtil.escapeAttribute(assetType) +"_value" %>"
+					type="hidden"
+					value="<%= HtmlUtil.escapeAttribute(assetType) %>"
+				/>
 
 			<%
 			}

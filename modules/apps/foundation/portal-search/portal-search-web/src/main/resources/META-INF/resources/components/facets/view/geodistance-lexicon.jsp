@@ -52,6 +52,7 @@ if (fieldParamSelection.equals("0")) {
 	<liferay-ui:panel collapsible="<%= true %>" cssClass="<%= cssClass %>" id='<%= randomNamespace + "facetGeodistancePanel" %>' markupView="lexicon" persistState="<%= true %>" title="distance">
 			<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(facet1.getFieldId()) %>" type="hidden" value="<%= fieldParam %>" />
 			<aui:input autocomplete="off" name='<%= HtmlUtil.escapeAttribute(facet1.getFieldId()) + "selection" %>' type="hidden" value="<%= fieldParamSelection %>" />
+			<aui:input autocomplete="off" name="inputFacetName" type="hidden" value="geodistance" />
 
 			<aui:field-wrapper cssClass='<%= randomNamespace1 + "calendar calendar_" %>' label="" name="<%= HtmlUtil.escapeAttribute(facet1.getFieldId()) %>">
 				<ul class="list-unstyled modified">
@@ -86,7 +87,7 @@ if (fieldParamSelection.equals("0")) {
 						}
 					%>
 
-						<li class="facet-value">
+						<li class="facet-value" name="<%= renderResponse.getNamespace()+"georange_"+ i %>">
 
 							<%
 							String rangeCssClass = "text-default";
@@ -110,6 +111,11 @@ if (fieldParamSelection.equals("0")) {
 								</c:if>
 							</aui:a>
 						</li>
+
+						<aui:input autocomplete="off"
+							name="<%= "georange_"+i + "_value" %>"
+							type="hidden"
+							value="<%= HtmlUtil.escape(range) %>" />
 
 					<%
 					}

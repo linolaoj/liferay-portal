@@ -55,7 +55,15 @@ else {
 		function(event) {
 			var term = $(event.currentTarget);
 
-			insertParam("city", term.data('value'));
+			var inputFacetName = "<portlet:namespace />inputFacetName";
+			var facetName = $("[name='"+ inputFacetName +"']").val();
+
+			var inputFacetValue = term[0].getAttribute('name')+"_value";
+			var facetValue = $("[name='" + inputFacetValue + "']").val();
+
+			if (facetName && facetValue) {
+				insertParam(facetName, facetValue);
+			}
 		}
 	);
 

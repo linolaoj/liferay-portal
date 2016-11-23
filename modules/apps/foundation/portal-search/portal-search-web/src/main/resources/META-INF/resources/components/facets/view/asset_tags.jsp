@@ -30,6 +30,7 @@ boolean showAssetCount = dataJSONObject.getBoolean("showAssetCount", true);
 <liferay-ui:panel-container extended="<%= true %>" id='<%= randomNamespace + "facetAssetTagsPanelContainer" %>' markupView="lexicon" persistState="<%= true %>">
 	<liferay-ui:panel collapsible="<%= true %>" cssClass="<%= cssClass %>" id='<%= randomNamespace + "facetAssetTagsPanel" %>' markupView="lexicon" persistState="<%= true %>" title="tags">
 		<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(facet.getFieldId()) %>" type="hidden" value="<%= fieldParam %>" />
+		<aui:input autocomplete="off" name="inputFacetName" type="hidden" value="tag" />
 
 		<ul class="<%= (showAssetCount && displayStyle.equals("cloud")) ? "tag-cloud" : "tag-list" %> list-unstyled">
 			<li class="default facet-value">
@@ -88,7 +89,7 @@ boolean showAssetCount = dataJSONObject.getBoolean("showAssetCount", true);
 				}
 			%>
 
-				<li class="facet-value tag-popularity-<%= popularity %>">
+				<li class="facet-value tag-popularity-<%= popularity %>" name="<%= renderResponse.getNamespace()+"facet_tag_"+ i %>">
 					<a class="<%= fieldParam.equals(termCollector.getTerm()) ? "text-primary" : "text-default" %>" data-value="<%= HtmlUtil.escapeAttribute(termCollector.getTerm()) %>" href="javascript:;">
 						<%= HtmlUtil.escape(termCollector.getTerm()) %>
 
@@ -97,6 +98,12 @@ boolean showAssetCount = dataJSONObject.getBoolean("showAssetCount", true);
 						</c:if>
 					</a>
 				</li>
+
+				<aui:input autocomplete="off"
+					name="<%= "facet_tag_"+ i +"_value" %>"
+					type="hidden"
+					value="<%= HtmlUtil.escape(termCollector.getTerm()) %>"
+				/>
 
 			<%
 			}

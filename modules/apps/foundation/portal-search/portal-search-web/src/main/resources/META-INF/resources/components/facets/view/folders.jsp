@@ -33,6 +33,7 @@ SearchContext searchContext = SearchContextFactory.getInstance(request);
 <liferay-ui:panel-container extended="<%= true %>" id='<%= randomNamespace + "facetFoldersPanelContainer" %>' markupView="lexicon" persistState="<%= true %>">
 	<liferay-ui:panel collapsible="<%= true %>" cssClass="<%= cssClass %>" id='<%= randomNamespace + "facetFoldersPanel" %>' markupView="lexicon" persistState="<%= true %>" title="distance">
 		<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(facet.getFieldId()) %>" type="hidden" value="<%= fieldParam %>" />
+		<aui:input autocomplete="off" name="inputFacetName" type="hidden" value="folderId" />
 
 		<ul class="folders list-unstyled">
 			<li class="default facet-value">
@@ -69,7 +70,7 @@ SearchContext searchContext = SearchContextFactory.getInstance(request);
 				}
 			%>
 
-				<li class="facet-value">
+				<li class="facet-value" name="<%= renderResponse.getNamespace()+"folder_"+curFolderId %>">
 					<a class="<%= (folderId == curFolderId) ? "text-primary" : "text-default" %>" data-value="<%= curFolderId %>" href="javascript:;">
 						<%= HtmlUtil.escape(title.getValue()) %>
 
@@ -78,6 +79,12 @@ SearchContext searchContext = SearchContextFactory.getInstance(request);
 						</c:if>
 					</a>
 				</li>
+
+				<aui:input autocomplete="off"
+					name="<%= "folder_"+curFolderId+"_value" %>"
+					type="hidden"
+					value="<%= HtmlUtil.escapeAttribute(String.valueOf(curFolderId)) %>"
+				/>
 
 			<%
 			}

@@ -32,12 +32,12 @@ ScopeSearchFacetDisplayContext scopeSearchFacetDisplayContext = new ScopeSearchF
 		<liferay-ui:panel-container extended="<%= true %>" id='<%= randomNamespace + "facetScopePanelContainer" %>' markupView="lexicon" persistState="<%= true %>">
 			<liferay-ui:panel collapsible="<%= true %>" cssClass="<%= cssClass %>" id='<%= randomNamespace + "facetScopePanel" %>' markupView="lexicon" persistState="<%= true %>" title="sites">
 				<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(scopeSearchFacetDisplayContext.getFieldParamInputName()) %>" type="hidden" value="<%= scopeSearchFacetDisplayContext.getFieldParamInputValue() %>" />
+				<aui:input autocomplete="off" name="inputFacetName" type="hidden" value="groupId" />
 
 					<%
 					List<ScopeSearchFacetTermDisplayContext> scopeSearchFacetTermDisplayContexts = scopeSearchFacetDisplayContext.getTermDisplayContexts();
 
 					for (ScopeSearchFacetTermDisplayContext scopeSearchFacetTermDisplayContext : scopeSearchFacetTermDisplayContexts) {
-
 						String checkBoxText = scopeSearchFacetTermDisplayContext.getDescriptiveName();
 
 						if (scopeSearchFacetTermDisplayContext.isShowCount()) {
@@ -45,7 +45,15 @@ ScopeSearchFacetDisplayContext scopeSearchFacetDisplayContext = new ScopeSearchF
 						}
 					%>
 
-						<aui:input cssClass="facet-value" label='<%= checkBoxText %>' name="<%= HtmlUtil.escape(scopeSearchFacetTermDisplayContext.getDescriptiveName()) %>" type="checkbox" />
+						<aui:input cssClass="facet-value" label='<%= checkBoxText %>'
+							name="<%= HtmlUtil.escape(scopeSearchFacetTermDisplayContext.getDescriptiveName()) %>" type="checkbox"
+						/>
+
+						<aui:input autocomplete="off"
+							name="<%= HtmlUtil.escape(scopeSearchFacetTermDisplayContext.getDescriptiveName()) + "_value" %>"
+							type="hidden"
+							value="<%= scopeSearchFacetTermDisplayContext.getGroupId() %>"
+						/>
 
 					<%
 					}

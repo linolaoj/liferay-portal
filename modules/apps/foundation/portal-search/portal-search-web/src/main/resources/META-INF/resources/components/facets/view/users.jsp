@@ -27,6 +27,7 @@
 	<liferay-ui:panel-container extended="<%= true %>" id='<%= randomNamespace + "facetUserPanelContainer" %>' markupView="lexicon" persistState="<%= true %>">
 		<liferay-ui:panel collapsible="<%= true %>" cssClass="<%= cssClass %>" id='<%= randomNamespace + "facetUserPanel" %>' markupView="lexicon" persistState="<%= true %>" title="users">
 			<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(facet.getFieldId()) %>" type="hidden" value="<%= fieldParam %>" />
+			<aui:input autocomplete="off" name="inputFacetName" type="hidden" value="user" />
 
 			<%
 			String userName = GetterUtil.getString(fieldParam);
@@ -47,7 +48,13 @@
 				}
 			%>
 
-				<aui:input cssClass="facet-value" label='<%= checkBoxText %>' name="<%= HtmlUtil.escape(curUserName) %>" type="checkbox" />
+				<aui:input cssClass="facet-value" label="<%= checkBoxText %>" name="<%= HtmlUtil.escape(curUserName) %>" type="checkbox" />
+
+				<aui:input autocomplete="off"
+					name="<%= HtmlUtil.escape(curUserName) +"_value" %>"
+					type="hidden"
+					value="<%= HtmlUtil.escapeAttribute(String.valueOf(curUserName)) %>"
+				/>
 
 			<%
 			}
