@@ -327,7 +327,7 @@ public class ExpandoValueLocalServiceImpl
 
 		value.setCompanyId(table.getCompanyId());
 		value.setColumnId(column.getColumnId());
-		value.setGeloLocation(data);
+		value.setGeoloLocation(data);
 
 		return expandoValueLocalService.addValue(
 			table.getClassNameId(), table.getTableId(), column.getColumnId(),

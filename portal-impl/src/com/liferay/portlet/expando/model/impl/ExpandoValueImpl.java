@@ -418,7 +418,7 @@ public class ExpandoValueImpl extends ExpandoValueBaseImpl {
 	}
 
 	@Override
-	public void setGeloLocation(JSONObject data) throws PortalException {
+	public void setGeoloLocation(JSONObject data) throws PortalException {
 		validate(ExpandoColumnConstants.GEOLOCATION);
 
 		setData(data.toJSONString());
