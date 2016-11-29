@@ -14,6 +14,7 @@
  */
 --%>
 
+<%@taglib uri="http://liferay.com/tld/map" prefix="liferay-map" %>
 <%@taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
 <%@ include file="/init.jsp" %>
