@@ -25,9 +25,12 @@ int frequencyThreshold = dataJSONObject.getInt("frequencyThreshold");
 int maxTerms = dataJSONObject.getInt("maxTerms", 10);
 boolean showAssetCount = dataJSONObject.getBoolean("showAssetCount", true);
 
-Indexer<?> indexer = FolderSearcher.getInstance();
+if (Validator.isNull(fieldParam)) {
+	fieldParam = String.valueOf(0);
+}
 
-SearchContext searchContext = SearchContextFactory.getInstance(request);
+FolderSearchFacetDisplayContext folderSearchFacetDisplayContext =
+	new FolderSearchFacetDisplayContext(facet, fieldParam, frequencyThreshold, maxTerms, showAssetCount, DLFolderLocalServiceUtil.getService());
 %>
 
 <div class="panel panel-default">
@@ -47,41 +50,22 @@ SearchContext searchContext = SearchContextFactory.getInstance(request);
 				</li>
 
 				<%
-				long folderId = GetterUtil.getLong(fieldParam);
+				List<FolderSearchFacetTermDisplayContext> folderSearchFacetTermDisplayContexts = folderSearchFacetDisplayContext.getTermDisplayContexts();
 
-				for (int i = 0; i < termCollectors.size(); i++) {
-					TermCollector termCollector = termCollectors.get(i);
-
-					long curFolderId = GetterUtil.getLong(termCollector.getTerm());
-
-					if (curFolderId == 0) {
-						continue;
-					}
-
-					searchContext.setFolderIds(new long[] {curFolderId});
-					searchContext.setKeywords(StringPool.BLANK);
-
-					Hits results = indexer.search(searchContext);
-
-					if (results.getLength() == 0) {
-						continue;
-					}
-
-					Document document = results.doc(0);
-
-					Field title = document.getField(Field.TITLE);
-
-					if (((maxTerms > 0) && (i >= maxTerms)) || ((frequencyThreshold > 0) && (frequencyThreshold > termCollector.getFrequency()))) {
-						break;
-					}
+				for (FolderSearchFacetTermDisplayContext folderSearchFacetTermDisplayContext : folderSearchFacetTermDisplayContexts) {
+					long curFolderId = folderSearchFacetTermDisplayContext.getFolderId();
+					String descriptiveName = HtmlUtil.escape(folderSearchFacetTermDisplayContext.getDescriptiveName());
+					boolean isShowCount = folderSearchFacetTermDisplayContext.isShowCount();
+					int frequency = folderSearchFacetTermDisplayContext.getCount();
+					boolean isSelected = folderSearchFacetTermDisplayContext.isSelected();
 				%>
 
 					<li class="facet-value">
-						<a class="<%= (folderId == curFolderId) ? "text-primary" : "text-default" %>" data-value="<%= curFolderId %>" href="javascript:;">
-							<%= HtmlUtil.escape(title.getValue()) %>
+						<a class="<%= isSelected ? "text-primary" : "text-default" %>" data-value="<%= curFolderId %>" href="javascript:;">
+							<%= descriptiveName %>
 
-							<c:if test="<%= showAssetCount %>">
-								<span class="frequency">(<%= termCollector.getFrequency() %>)</span>
+							<c:if test="<%= isShowCount %>">
+								<span class="frequency">(<%= frequency %>)</span>
 							</c:if>
 						</a>
 					</li>
