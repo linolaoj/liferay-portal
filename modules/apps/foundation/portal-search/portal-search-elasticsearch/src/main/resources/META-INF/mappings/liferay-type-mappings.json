@@ -1,6 +1,19 @@
 {
 	"LiferayDocumentType": {
 		"dynamic_templates": [
+
+			 {
+ 							"template_ddm_geolocation": {
+ 											"mapping": {
+ 															"index": "not_analyzed",
+							 	"lat_lon": true,
+ 															"store": "true",
+ 															"type": "geo_point"
+ 											},
+ 											"match": "ddm_geolocation_*"
+ 							}
+						},
+
 			{
 				"template_long_sortable": {
 					"mapping": {

@@ -68,8 +68,8 @@ public class SearchResultsMapGeolocationUtil {
 		jObj.put("lat", lat);
 		jObj.put("lng", lng);
 
-		jObj.put("title", summary.getHighlightedTitle());
 		jObj.put("summary", summary.getHighlightedContent());
+		jObj.put("title", summary.getHighlightedTitle());
 
 		return jObj;
 	}
@@ -78,7 +78,9 @@ public class SearchResultsMapGeolocationUtil {
 		Set<String> keys = document.getFields().keySet();
 
 		for (String key : keys) {
-			if (key.contains("__geolocation_en_US")) {
+			if (key.contains("__geolocation_en_US") ||
+				key.startsWith("ddm_geolocation_")) {
+
 				return key;
 			}
 		}
