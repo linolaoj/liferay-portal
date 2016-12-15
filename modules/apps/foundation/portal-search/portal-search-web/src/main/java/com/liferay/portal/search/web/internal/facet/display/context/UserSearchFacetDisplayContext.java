@@ -56,8 +56,12 @@ public class UserSearchFacetDisplayContext {
 			FacetCollector facetCollector = _facet.getFacetCollector();
 
 			List<TermCollector> termCollectors =
-				facetCollector.getTermCollectors();
-
+					Collections.<TermCollector>emptyList();
+			
+			if (facetCollector != null) {
+				termCollectors = facetCollector.getTermCollectors();
+			}
+			
 			if (termCollectors.isEmpty()) {
 				return getEmptySearchResultTermDisplayContexts();
 			}
