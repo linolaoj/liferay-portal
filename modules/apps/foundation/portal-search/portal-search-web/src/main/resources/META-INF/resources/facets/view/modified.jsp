@@ -34,6 +34,14 @@ Date toDate = PortalUtil.getDate(toMonth, toDay, toYear);
 JSONArray rangesJSONArray = dataJSONObject.getJSONArray("ranges");
 
 int index = 0;
+
+ModifiedSearchFacetDisplayBuilder modifiedSearchFacetDisplayBuilder = new ModifiedSearchFacetDisplayBuilder();
+modifiedSearchFacetDisplayBuilder.setFacet(facet);
+modifiedSearchFacetDisplayBuilder.setFieldParam(fieldParamSelection);
+modifiedSearchFacetDisplayBuilder.setRangesJSONArray(rangesJSONArray);
+
+ModifiedSearchFacetDisplayContext modifiedSearchFacetDisplayContext = modifiedSearchFacetDisplayBuilder.build();
+
 %>
 
 <div class="panel panel-default">
@@ -71,13 +79,7 @@ int index = 0;
 					</li>
 
 					<%
-					for (int i = 0; i < rangesJSONArray.length(); i++) {
-						JSONObject rangesJSONObject = rangesJSONArray.getJSONObject(i);
-
-						String label = HtmlUtil.escape(rangesJSONObject.getString("label"));
-						String range = rangesJSONObject.getString("range");
-
-						index = (i + 1);
+					for(ModifiedSearchFacetFieldDisplayContext modifiedSearchFacetFieldDisplayContext: modifiedSearchFacetDisplayContext.getModifiedSearchFacetFieldDisplayContexts()) {
 					%>
 
 						<li class="facet-value">
@@ -85,26 +87,14 @@ int index = 0;
 							<%
 							String rangeCssClass = "text-default";
 
-							if (fieldParamSelection.equals(String.valueOf(index))) {
+							if (modifiedSearchFacetFieldDisplayContext.isSelected()) {
 								rangeCssClass = "text-primary";
 							}
-
-							data = new HashMap<>();
-
-							data.put("selection", index);
-							data.put("value", HtmlUtil.escape(range));
 							%>
 
-							<aui:a cssClass="<%= rangeCssClass %>" data="<%= data %>" href="javascript:;">
-								<liferay-ui:message key="<%= label %>" />
-
-								<%
-								TermCollector termCollector = facetCollector.getTermCollector(range);
-								%>
-
-								<c:if test="<%= termCollector != null %>">
-									<span class="frequency">(<%= termCollector.getFrequency() %>)</span>
-								</c:if>
+							<aui:a cssClass="<%= rangeCssClass %>" data="<%= modifiedSearchFacetFieldDisplayContext.getData() %>" href="javascript:;">
+								<liferay-ui:message key="<%= modifiedSearchFacetFieldDisplayContext.getLabel() %>" />
+								<span class="frequency">(<%= modifiedSearchFacetFieldDisplayContext.getFrequency() %>)</span>
 							</aui:a>
 						</li>
 
