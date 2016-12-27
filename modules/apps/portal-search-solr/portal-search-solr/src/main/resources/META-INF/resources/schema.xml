@@ -572,6 +572,7 @@
 		<dynamicField docValues="true" indexed="true" multiValued="false" name="*_sortable" stored="true" type="string" />
 		<dynamicField indexed="true" multiValued="true" name="assetCategoryTitles*" stored="true" termPositions="true" termVectors="true" type="text" />
 		<dynamicField indexed="true" multiValued="true" name="expando__*" stored="true" type="text" />
+		<dynamicField indexed="true" multiValued="true" name="geolocation_expando_*" stored="true" type="location" />
 		<dynamicField indexed="true" multiValued="true" name="ddm__keyword__*" stored="true" type="string" />
 		<dynamicField indexed="true" multiValued="true" name="*_ar" stored="true" termOffsets="true" termPositions="true" termVectors="true" type="text_ar" />
 		<dynamicField indexed="true" multiValued="true" name="*_ar_BH" stored="true" termOffsets="true" termPositions="true" termVectors="true" type="text_ar" />

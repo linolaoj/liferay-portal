@@ -2,6 +2,16 @@
 	"LiferayDocumentType": {
 		"dynamic_templates": [
 			{
+				"template_geo_point_expando": {
+					"mapping": {
+						"lat_lon": true,
+						"store": "true",
+						"type": "geo_point"
+					},
+					"match": "geolocation_expando_*"
+				}
+			},
+			{
 				"template_long_sortable": {
 					"mapping": {
 						"index": "not_analyzed",
