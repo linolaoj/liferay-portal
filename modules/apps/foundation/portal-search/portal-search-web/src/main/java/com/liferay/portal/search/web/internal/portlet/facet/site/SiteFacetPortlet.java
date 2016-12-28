@@ -15,6 +15,8 @@
 package com.liferay.portal.search.web.internal.portlet.facet.site;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.search.SearchContext;
@@ -27,6 +29,8 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.web.facet.SearchFacet;
 import com.liferay.portal.search.web.internal.display.context.ThemeDisplaySupplier;
 import com.liferay.portal.search.web.internal.facet.ScopeSearchFacet;
@@ -98,14 +102,20 @@ public class SiteFacetPortlet
 
 		ThemeDisplay themeDisplay = getThemeDisplay(renderRequest);
 
-		// SEE com.liferay.portal.search.web.facet.BaseSearchFacet._toFacetConfiguration(JSONObject)
 		PortletPreferences preferences = getPortletPreferences(
 			themeDisplay, portletId);
+		
+		JSONObject dataJSONObject = getDataJSONObject(preferences);
+		
 		SearchFacet searchFacet = new ScopeSearchFacet();
 		long companyId = themeDisplay.getCompanyId();
 		FacetConfiguration facetConfiguration =
 			searchFacet.getDefaultConfiguration(companyId);
-
+		
+		if(dataJSONObject != null) {
+			facetConfiguration.setDataJSONObject(dataJSONObject);
+		}
+		
 		OriginalHttpServletRequestSupplier originalHttpServletRequestSupplier =
 			portletOriginalServletRequestSupplierFactory.get(renderRequest);
 
@@ -136,6 +146,24 @@ public class SiteFacetPortlet
 		super.render(renderRequest, renderResponse);
 	}
 
+	private JSONObject getDataJSONObject(PortletPreferences preferences) {
+
+		try {
+			String data = 
+				preferences.getValue("scopeSearchFacetConfiguration", ""); 
+
+			if(Validator.isBlank(data)){
+				return null;
+			}
+			
+			return JSONFactoryUtil.createJSONObject(data);
+			
+		} 
+		catch (JSONException e) {
+			return null;
+		}
+	}
+	
 	private SiteFacetPortletDisplayContext buildDisplayContext(
 		RenderRequest renderRequest, PortletSharedSearchResult result) {
 
@@ -143,20 +171,25 @@ public class SiteFacetPortlet
 
 		ThemeDisplay themeDisplay = getThemeDisplay(renderRequest);
 
-		// SEE com.liferay.portal.search.web.facet.BaseSearchFacet._toFacetConfiguration(JSONObject)
 		PortletPreferences preferences = renderRequest.getPreferences();
-		long companyId = themeDisplay.getCompanyId();
-		FacetConfiguration facetConfiguration =
-			searchFacet.getDefaultConfiguration(companyId);
+		
+		JSONObject dataJSONObject = getDataJSONObject(preferences);
 
-		JSONObject dataJSONObject = facetConfiguration.getData();
-
+		if(dataJSONObject == null) {
+			long companyId = themeDisplay.getCompanyId();
+			FacetConfiguration facetConfiguration =
+				searchFacet.getDefaultConfiguration(companyId);
+			
+			dataJSONObject = facetConfiguration.getData();
+		}
+		
 		Facet facet = result.getFacet(searchFacet.getFieldName());
 		String fieldParam = getFieldParam(renderRequest);
 		Locale locale = themeDisplay.getLocale();
 		int countThreshold = dataJSONObject.getInt("frequencyThreshold");
 		int maxTerms = dataJSONObject.getInt("maxTerms");
-		boolean showFrequencies = dataJSONObject.getBoolean("showAssetCount", true);
+		boolean showFrequencies = 
+			dataJSONObject.getBoolean("showAssetCount", true);
 
 		ScopeSearchFacetDisplayContext scopeSearchFacetDisplayContext =
 			new ScopeSearchFacetDisplayContext(
