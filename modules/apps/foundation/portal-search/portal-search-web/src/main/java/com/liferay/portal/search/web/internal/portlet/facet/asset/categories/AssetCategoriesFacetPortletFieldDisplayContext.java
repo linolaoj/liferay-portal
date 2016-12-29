@@ -1,0 +1,82 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+package com.liferay.portal.search.web.internal.portlet.facet.asset.categories;
+
+import java.io.Serializable;
+
+import java.util.Locale;
+
+/**
+ * @author Lino Alves
+ */
+public class AssetCategoriesFacetPortletFieldDisplayContext
+	implements Serializable {
+
+	public long getAssetCategoryId() {
+		return _assetCategoryId;
+	}
+
+	public int getFrequency() {
+		return _frequency;
+	}
+
+	public Locale getLocale() {
+		return _locale;
+	}
+
+	public int getPopularity() {
+		return _popularity;
+	}
+
+	public String getTitle() {
+		return _title;
+	}
+
+	public boolean isSelected() {
+		return _isSelected;
+	}
+
+	public void setAssetCategoryId(long assetCategoryId) {
+		_assetCategoryId = assetCategoryId;
+	}
+
+	public void setFrequency(int frequency) {
+		_frequency = frequency;
+	}
+
+	public void setIsSelected(boolean isSelected) {
+		_isSelected = isSelected;
+	}
+
+	public void setLocale(Locale locale) {
+		_locale = locale;
+	}
+
+	public void setPopularity(int popularity) {
+		_popularity = popularity;
+	}
+
+	public void setTitle(String title) {
+		_title = title;
+	}
+
+	private long _assetCategoryId;
+	private int _frequency;
+	private boolean _isSelected;
+	private Locale _locale;
+	private int _popularity;
+	private String _title;
+
+}
