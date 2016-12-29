@@ -51,6 +51,10 @@ public class AssetCategoriesSearchFacetDisplayContext implements Serializable {
 		return _maxTerms;
 	}
 
+	public boolean isNothingSelected() {
+		return _nothingSelected;
+	}
+	
 	public boolean isRenderNothing() {
 		return ListUtil.isEmpty(_assetCategoriesSearchFacetFieldDisplayContext);
 	}
@@ -86,6 +90,10 @@ public class AssetCategoriesSearchFacetDisplayContext implements Serializable {
 		_maxTerms = maxTerms;
 	}
 
+	public void setNothingSelected(boolean nothingSelected) {
+		_nothingSelected = nothingSelected;
+	}
+	
 	public void setShowAssetCount(boolean showAssetCount) {
 		_showAssetCount = showAssetCount;
 	}
@@ -97,5 +105,6 @@ public class AssetCategoriesSearchFacetDisplayContext implements Serializable {
 	private String _fieldParam;
 	private int _frequencyThreshold;
 	private int _maxTerms;
+	private boolean _nothingSelected;
 	private boolean _showAssetCount;
 }

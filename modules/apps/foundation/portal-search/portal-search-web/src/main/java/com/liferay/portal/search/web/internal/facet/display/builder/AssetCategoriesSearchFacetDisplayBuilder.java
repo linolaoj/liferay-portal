@@ -57,6 +57,8 @@ public class AssetCategoriesSearchFacetDisplayBuilder {
 		assetCategoriesSearchFacetDisplayContext.
 		setAssetCategoriesSearchFacetFieldDisplayContexts(buildFields());
 
+		assetCategoriesSearchFacetDisplayContext.setNothingSelected(_nothingSelected);
+		
 		return assetCategoriesSearchFacetDisplayContext;
 	}
 
@@ -159,10 +161,16 @@ public class AssetCategoriesSearchFacetDisplayBuilder {
 
 					continue;
 				}
-
+				
+				boolean selected = _fieldParam.equals(termCollector.getTerm());
+				
+				if(selected) {
+					_nothingSelected = false;
+				}
+				
 				AssetCategoriesSearchFacetFieldDisplayContext
 				assetCategoriesSearchFacetFieldDisplayContext = buildField(
-					popularity, _fieldParam.equals(termCollector.getTerm()),
+					popularity, selected,
 					curAssetCategory, termCollector.getFrequency());
 
 				assetCategoriesSearchFacetFieldDisplayContexts.add(
@@ -253,5 +261,6 @@ public class AssetCategoriesSearchFacetDisplayBuilder {
 	private int _maxTerms;
 	private PermissionChecker _permissionChecker;
 	private boolean _showAssetCount;
+	private boolean _nothingSelected;
 
 }
