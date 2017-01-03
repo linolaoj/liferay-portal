@@ -20,7 +20,7 @@ package com.liferay.portal.search.web.internal.portlet.facet.asset.categories;
 public class AssetCategoriesFacetPortletKeys {
 
 	public static final String CONFIGURATION_JSP_PATH =
-			"/search/portlet/facet/assetCategories/configuration.jsp";
+			"/search/portlet/facet/asset_categories/configuration.jsp";
 
 		public static final String CSS_CLASS_WRAPPER = "portlet-asset-categories-facet";
 

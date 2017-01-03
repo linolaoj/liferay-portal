@@ -30,6 +30,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.search.SearchContext;
@@ -42,6 +44,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.web.facet.SearchFacet;
 import com.liferay.portal.search.web.internal.display.context.PortletRequestThemeDisplaySupplier;
 import com.liferay.portal.search.web.internal.display.context.ThemeDisplaySupplier;
@@ -98,13 +101,19 @@ public class AssetCategoriesFacetPortlet
 
 		ThemeDisplay themeDisplay = getThemeDisplay(renderRequest);
 
-		// SEE com.liferay.portal.search.web.facet.BaseSearchFacet._toFacetConfiguration(JSONObject)
 		PortletPreferences preferences = getPortletPreferences(
 			themeDisplay, portletId);
+		
+		JSONObject dataJSONObject = getDataJSONObject(preferences);
+		
 		SearchFacet searchFacet = new AssetCategoriesSearchFacet();
 		long companyId = themeDisplay.getCompanyId();
 		FacetConfiguration facetConfiguration =
 			searchFacet.getDefaultConfiguration(companyId);
+		
+		if(dataJSONObject != null) {
+			facetConfiguration.setDataJSONObject(dataJSONObject);
+		}
 
 		OriginalHttpServletRequestSupplier originalHttpServletRequestSupplier =
 	 		portletOriginalServletRequestSupplierFactory.get(renderRequest);
@@ -152,14 +161,17 @@ public class AssetCategoriesFacetPortlet
 
 		ThemeDisplay themeDisplay = getThemeDisplay(renderRequest);
 
-		// SEE com.liferay.portal.search.web.facet.BaseSearchFacet._toFacetConfiguration(JSONObject)
 		PortletPreferences preferences = renderRequest.getPreferences();
-		long companyId = themeDisplay.getCompanyId();
-		FacetConfiguration facetConfiguration =
-			searchFacet.getDefaultConfiguration(companyId);
-
-		JSONObject dataJSONObject = facetConfiguration.getData();
-
+		
+		JSONObject dataJSONObject = getDataJSONObject(preferences);
+		
+		if(dataJSONObject == null) {
+			long companyId = themeDisplay.getCompanyId();
+			FacetConfiguration facetConfiguration =
+				searchFacet.getDefaultConfiguration(companyId);
+	
+			dataJSONObject = facetConfiguration.getData();
+		}
 		Facet facet = result.getFacet(searchFacet.getFieldName());
 		String fieldParam = getFieldParam(renderRequest);
 		Locale locale = themeDisplay.getLocale();
@@ -258,6 +270,24 @@ public class AssetCategoriesFacetPortlet
 			return fieldDisplayContexts;
 	}
 
+	private JSONObject getDataJSONObject(PortletPreferences preferences) {
+		 
+ 		try {
+ 			String data = 
+ 				preferences.getValue("assetCategoriesSearchFacetConfiguration", ""); 
+ 
+ 			if(Validator.isBlank(data)){
+ 				return null;
+ 			}
+ 			
+ 			return JSONFactoryUtil.createJSONObject(data);
+ 			
+ 		} 
+ 		catch (JSONException e) {
+ 			return null;
+ 		}
+	}
+	
 	protected ThemeDisplay getThemeDisplay(RenderRequest renderRequest) {
 		ThemeDisplaySupplier themeDisplaySupplier =
 			new PortletRequestThemeDisplaySupplier(renderRequest);
