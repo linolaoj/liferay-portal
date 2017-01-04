@@ -40,6 +40,18 @@ public class AssetTagsSearchFacetDisplayContext {
 		_showFrequencies = showFrequencies;
 	}
 
+	public String getDisplayStyle() {
+	return _displayStyle;
+	}
+	
+	public String getFacetLabel() {
+		if(_facet != null &&
+				_facet.getFacetConfiguration() != null) {
+			return _facet.getFacetConfiguration().getLabel();
+		}
+		return "";
+	}
+	
 	public String getFieldParamInputName() {
 		return _facet.getFieldId();
 	}
