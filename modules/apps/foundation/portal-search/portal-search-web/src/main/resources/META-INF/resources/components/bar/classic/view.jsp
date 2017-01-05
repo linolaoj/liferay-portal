@@ -29,6 +29,10 @@ boolean scopeEverything = (groupId == 0);
 
 String format = ParamUtil.getString(request, SearchPortletParameterNames.FORMAT);
 
+String autoCompleteURL  = portletPreferences.getValue("autoCompleteURL", StringPool.BLANK);
+
+boolean autoCompleteEnable = (autoCompleteURL != StringPool.BLANK);
+
 com.liferay.portal.search.web.internal.search.bar.classic.portlet.SearchBarClassicDisplayContext context =
 	new com.liferay.portal.search.web.internal.search.bar.classic.portlet.SearchBarClassicDisplayContext(request, portletPreferences);
 %>
@@ -83,26 +87,33 @@ com.liferay.portal.search.web.internal.search.bar.classic.portlet.SearchBarClass
 <aui:script use="aui-base,aui-request,autocomplete,autocomplete-filters,autocomplete-highlighters">
 	var A = AUI();
 
-	A.io.request(
-		'<%= renderRequest.getContextPath() %>' + '/components/bar/classic/demo.json',
-		{
-			dataType: 'json',
-			method: 'GET',
-			on: {
-				success: function(event, status, xhr) {
-					var response = this.get('responseData');
-
-					new A.AutoCompleteList(
-						{
-							inputNode: '.search-bar-classic-input',
-							resultFilters: 'phraseMatch',
-							resultHighlighter: 'phraseMatch',
-							resultTextLocator: 'name',
-							source: response.data
-						}
-					).render();
+	function initAutoComplete() { 
+		A.io.request(
+			'<%= renderRequest.getContextPath() %>' + '/components/bar/classic/demo.json',
+			{
+				dataType: 'json',
+				method: 'GET',
+				on: {
+					success: function(event, status, xhr) {
+						var response = this.get('responseData');
+	
+						new A.AutoCompleteList(
+							{
+								inputNode: '.search-bar-classic-input',
+								resultFilters: 'phraseMatch',
+								resultHighlighter: 'phraseMatch',
+								resultTextLocator: 'name',
+								source: response.data
+							}
+						).render();
+					}
 				}
 			}
-		}
-	);
+		);
+	}
+	
+	if(<%=autoCompleteEnable%>) {
+		initAutoComplete();
+	}
+	
 </aui:script>

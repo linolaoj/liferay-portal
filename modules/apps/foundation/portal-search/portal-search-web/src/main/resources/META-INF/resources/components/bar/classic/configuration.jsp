@@ -36,6 +36,8 @@ page import="com.liferay.portal.kernel.util.Validator" %>
 SearchDisplayContext searchDisplayContext = SearchDisplayContextFactoryUtil.create(renderRequest, renderResponse, portletPreferences);
 
 String destination = portletPreferences.getValue("destination", StringPool.BLANK);
+
+String autoCompleteURL = portletPreferences.getValue("autoCompleteURL", StringPool.BLANK);
 %>
 
 <liferay-portlet:actionURL portletConfiguration="<%= true %>" var="configurationActionURL" />
@@ -47,6 +49,8 @@ String destination = portletPreferences.getValue("destination", StringPool.BLANK
 		<div class="container-fluid-1280">
 			<aui:fieldset>
 				<aui:input label="destination-page" name="preferences--destination--" value="<%= destination %>" />
+				
+				<aui:input label="auto-complete-url" name="preferences--autoCompleteURL--" value="<%= autoCompleteURL %>" />
 
 				<aui:select label="scope" name="preferences--searchScope--" value="<%= searchDisplayContext.getSearchScopePreferenceString() %>">
 					<aui:option label="this-site" value="" />
