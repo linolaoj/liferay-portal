@@ -15,7 +15,6 @@
 package com.liferay.portal.search.web.internal.portlet.facet.tag;
 
 import java.io.IOException;
-import java.util.Locale;
 import java.util.Optional;
 
 import javax.portlet.Portlet;
@@ -27,6 +26,8 @@ import javax.portlet.RenderResponse;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.search.SearchContext;
@@ -38,6 +39,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.web.facet.SearchFacet;
 import com.liferay.portal.search.web.internal.display.context.PortletRequestThemeDisplaySupplier;
 import com.liferay.portal.search.web.internal.display.context.ThemeDisplaySupplier;
@@ -95,6 +97,8 @@ public class AssetTagsFacetPortlet extends MVCPortlet implements SearchAwarePort
 		PortletPreferences preferences = getPortletPreferences(
 			themeDisplay, portletId);
 		
+		JSONObject dataJSONObject = getDataJSONObject(preferences);
+		
 		SearchFacet searchFacet = new AssetTagsSearchFacet();
 		
 		long companyId = themeDisplay.getCompanyId();
@@ -102,6 +106,10 @@ public class AssetTagsFacetPortlet extends MVCPortlet implements SearchAwarePort
 		FacetConfiguration facetConfiguration =
 			searchFacet.getDefaultConfiguration(companyId);
 
+		if(dataJSONObject != null) {
+			facetConfiguration.setDataJSONObject(dataJSONObject);
+		}
+		
 		OriginalHttpServletRequestSupplier originalHttpServletRequestSupplier =
 			portletOriginalServletRequestSupplierFactory.get(renderRequest);
 
@@ -135,6 +143,24 @@ public class AssetTagsFacetPortlet extends MVCPortlet implements SearchAwarePort
 		super.render(renderRequest, renderResponse);
 	}
 
+	protected JSONObject getDataJSONObject(PortletPreferences preferences) {
+
+		try {
+			String data = 
+				preferences.getValue("assetTagsSearchFacetConfiguration", ""); 
+
+			if(Validator.isBlank(data)){
+				return null;
+			}
+			
+			return JSONFactoryUtil.createJSONObject(data);
+			
+		} 
+		catch (JSONException e) {
+			return null;
+		}
+	}
+	
 	protected void addFacet(
 			SearchBuilder searchBuilder, FacetConfiguration facetConfiguration,
 			SearchContext searchContext) {
@@ -196,21 +222,25 @@ public class AssetTagsFacetPortlet extends MVCPortlet implements SearchAwarePort
 	}
 	
 	
-	private AssetTagsSearchFacetDisplayContext buildDisplayContext(
+	protected AssetTagsSearchFacetDisplayContext buildDisplayContext(
 			RenderRequest renderRequest, PortletSharedSearchResult result) {
 
 			SearchFacet searchFacet = new AssetTagsSearchFacet();
 
 			ThemeDisplay themeDisplay = getThemeDisplay(renderRequest);
 
-			// SEE com.liferay.portal.search.web.facet.BaseSearchFacet._toFacetConfiguration(JSONObject)
 			PortletPreferences preferences = renderRequest.getPreferences();
-			long companyId = themeDisplay.getCompanyId();
-			FacetConfiguration facetConfiguration =
-				searchFacet.getDefaultConfiguration(companyId);
-
-			JSONObject dataJSONObject = facetConfiguration.getData();
-
+			
+			JSONObject dataJSONObject = getDataJSONObject(preferences);
+			
+			if(dataJSONObject == null) {
+				long companyId = themeDisplay.getCompanyId();
+				FacetConfiguration facetConfiguration =
+						searchFacet.getDefaultConfiguration(companyId);
+				
+				dataJSONObject = facetConfiguration.getData();
+			}
+			
 			Facet facet = result.getFacet(searchFacet.getFieldName());
 			String fieldParam = getFieldParam(renderRequest);
 			
