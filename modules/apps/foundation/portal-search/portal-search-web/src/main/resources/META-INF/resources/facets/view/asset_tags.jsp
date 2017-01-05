@@ -34,7 +34,7 @@ com.liferay.portal.search.web.internal.facet.display.context.AssetTagsSearchFace
 
 			<div class="panel-body">
 				<div class="asset-tags <%= cssClass %>" data-facetFieldName="<%= HtmlUtil.escapeAttribute(facet.getFieldId()) %>" id="<%= randomNamespace %>facet">
-					<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(assetTagsSearchFacetDisplayContext.getFieldParamInputName()) %>" type="hidden" value="<%= assetTagsSearchFacetDisplayContext.getFieldParamInputValue() %>" />
+					<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(assetTagsSearchFacetDisplayContext.getParamName()) %>" type="hidden" value="<%= assetTagsSearchFacetDisplayContext.getParamValue() %>" />
 
 					<ul class="<%= assetTagsSearchFacetDisplayContext.isCloudWithCount() ? "tag-cloud" : "tag-list" %> list-unstyled">
 						<li class="default facet-value">
@@ -51,7 +51,7 @@ com.liferay.portal.search.web.internal.facet.display.context.AssetTagsSearchFace
 								<a class="<%= assetTagsSearchFacetTermDisplayContext.isSelected() ? "text-primary" : "text-default" %>" data-value="<%= HtmlUtil.escapeAttribute(assetTagsSearchFacetTermDisplayContext.getValue()) %>" href="javascript:;">
 									<%= HtmlUtil.escape(assetTagsSearchFacetTermDisplayContext.getDisplayName()) %>
 
-									<c:if test="<%= assetTagsSearchFacetTermDisplayContext.isShowFrequency() %>">
+									<c:if test="<%= assetTagsSearchFacetTermDisplayContext.isFrequencyVisible() %>">
 										<span class="frequency">(<%= assetTagsSearchFacetTermDisplayContext.getFrequency() %>)</span>
 									</c:if>
 								</a>
