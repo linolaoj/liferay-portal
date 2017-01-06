@@ -19,17 +19,6 @@ package com.liferay.portal.search.web.internal.facet.display.context;
  */
 public class AssetTagsSearchFacetTermDisplayContext {
 
-	public AssetTagsSearchFacetTermDisplayContext(
-		String value, int frequency, int popularity, boolean selected,
-		boolean showFrequency) {
-
-		_value = value;
-		_frequency = frequency;
-		_popularity = popularity;
-		_selected = selected;
-		_showFrequency = showFrequency;
-	}
-
 	public String getDisplayName() {
 		return _value;
 	}
@@ -50,14 +39,34 @@ public class AssetTagsSearchFacetTermDisplayContext {
 		return _selected;
 	}
 
-	public boolean isShowFrequency() {
-		return _showFrequency;
+	public boolean isFrequencyVisible() {
+		return _frequencyVisible;
+	}
+	
+	public void setFrequency(int frequency) {
+		_frequency = frequency;
 	}
 
-	private final int _frequency;
-	private final int _popularity;
-	private final boolean _selected;
-	private final boolean _showFrequency;
-	private final String _value;
+	public void setPopularity(int popularity) {
+		_popularity = popularity;
+	}
+
+	public void setSelected(boolean selected) {
+		_selected = selected;
+	}
+
+	public void setFrequencyVisible(boolean frequencyVisible) {
+		_frequencyVisible = frequencyVisible;
+	}
+
+	public void setValue(String value) {
+		_value = value;
+	}
+
+	private int _frequency;
+	private int _popularity;
+	private boolean _selected;
+	private boolean _frequencyVisible;
+	private String _value;
 
 }
