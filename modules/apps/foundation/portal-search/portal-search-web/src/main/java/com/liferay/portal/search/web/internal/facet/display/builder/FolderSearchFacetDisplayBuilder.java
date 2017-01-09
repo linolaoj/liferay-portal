@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.web.internal.facet.display.builder;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,7 +33,7 @@ import com.liferay.portal.search.web.internal.facet.display.context.FolderTitleL
 /**
  * @author Lino Alves
  */
-public class FolderSearchFacetDisplayBuilder {
+public class FolderSearchFacetDisplayBuilder implements Serializable {
 
 	public FolderSearchFacetDisplayContext build() throws SearchException {
 		FolderSearchFacetDisplayContext folderSearchFacetDisplayContext =

@@ -14,12 +14,13 @@
 
 package com.liferay.portal.search.web.internal.facet.display.context;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author Lino Alves
  */
-public class FolderSearchFacetDisplayContext {
+public class FolderSearchFacetDisplayContext implements Serializable {
 
 	public String getParamName() {
 		return _paramName;

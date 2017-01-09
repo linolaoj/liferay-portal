@@ -14,12 +14,14 @@
 
 package com.liferay.portal.search.web.internal.facet.display.context;
 
+import java.io.Serializable;
+
 import com.liferay.portal.kernel.exception.PortalException;
 
 /**
  * @author Lino Alves
  */
-public class FolderSearchFacetTermDisplayContext {
+public class FolderSearchFacetTermDisplayContext implements Serializable {
 
 	public String getDisplayName() throws PortalException {
 		return _displayName;
