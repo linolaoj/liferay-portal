@@ -17,13 +17,23 @@
 <%@ include file="/facets/init.jsp" %>
 
 <%
-com.liferay.portal.search.web.internal.facet.display.context.FolderSearchFacetDisplayContext folderSearchFacetDisplayContext = new com.liferay.portal.search.web.internal.facet.display.context.FolderSearchFacetDisplayContext(facet, fieldParam, dataJSONObject.getInt("frequencyThreshold"), dataJSONObject.getInt("maxTerms", 10), dataJSONObject.getBoolean("showAssetCount", true), new com.liferay.portal.search.web.internal.facet.display.context.FolderTitleLookupImpl(request));
+com.liferay.portal.search.web.internal.facet.display.builder.FolderSearchFacetDisplayBuilder folderSearchFacetDisplayBuilder = new com.liferay.portal.search.web.internal.facet.display.builder.FolderSearchFacetDisplayBuilder();
+
+folderSearchFacetDisplayBuilder.setFacet(facet);
+folderSearchFacetDisplayBuilder.setFolderTitleLookup(new com.liferay.portal.search.web.internal.facet.display.context.FolderTitleLookupImpl(request));
+folderSearchFacetDisplayBuilder.setFrequenciesVisible(dataJSONObject.getBoolean("showAssetCount", true));
+folderSearchFacetDisplayBuilder.setFrequencyThreshold(dataJSONObject.getInt("frequencyThreshold"));
+folderSearchFacetDisplayBuilder.setMaxTerms(dataJSONObject.getInt("maxTerms", 10));
+folderSearchFacetDisplayBuilder.setParamName(facet.getFieldId());
+folderSearchFacetDisplayBuilder.setParamValue(fieldParam);
+
+com.liferay.portal.search.web.internal.facet.display.context.FolderSearchFacetDisplayContext folderSearchFacetDisplayContext = folderSearchFacetDisplayBuilder.build();
 %>
 
 <c:choose>
 	<c:when test="<%= folderSearchFacetDisplayContext.isRenderNothing() %>">
-		<c:if test="<%= folderSearchFacetDisplayContext.getFieldParamInputValue() != null %>">
-			<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(folderSearchFacetDisplayContext.getFieldParamInputName()) %>" type="hidden" value="<%= folderSearchFacetDisplayContext.getFieldParamInputValue() %>" />
+		<c:if test="<%= folderSearchFacetDisplayContext.getParamValue() != null %>">
+			<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(folderSearchFacetDisplayContext.getParamName()) %>" type="hidden" value="<%= folderSearchFacetDisplayContext.getParamValue() %>" />
 		</c:if>
 	</c:when>
 	<c:otherwise>
@@ -36,7 +46,7 @@ com.liferay.portal.search.web.internal.facet.display.context.FolderSearchFacetDi
 
 			<div class="panel-body">
 				<div class="<%= cssClass %>" data-facetFieldName="<%= HtmlUtil.escapeAttribute(facet.getFieldId()) %>" id="<%= randomNamespace %>facet">
-					<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(folderSearchFacetDisplayContext.getFieldParamInputName()) %>" type="hidden" value="<%= folderSearchFacetDisplayContext.getFieldParamInputValue() %>" />
+					<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(folderSearchFacetDisplayContext.getParamName()) %>" type="hidden" value="<%= folderSearchFacetDisplayContext.getParamValue() %>" />
 
 					<ul class="folders list-unstyled">
 						<li class="default facet-value">
@@ -53,7 +63,7 @@ com.liferay.portal.search.web.internal.facet.display.context.FolderSearchFacetDi
 								<a class="<%= folderSearchFacetTermDisplayContext.isSelected() ? "text-primary" : "text-default" %>" data-value="<%= folderSearchFacetTermDisplayContext.getFolderId() %>" href="javascript:;">
 									<%= HtmlUtil.escape(folderSearchFacetTermDisplayContext.getDisplayName()) %>
 
-									<c:if test="<%= folderSearchFacetTermDisplayContext.isShowFrequency() %>">
+									<c:if test="<%= folderSearchFacetTermDisplayContext.isFrequencyVisible() %>">
 										<span class="frequency">(<%= folderSearchFacetTermDisplayContext.getFrequency() %>)</span>
 									</c:if>
 								</a>
