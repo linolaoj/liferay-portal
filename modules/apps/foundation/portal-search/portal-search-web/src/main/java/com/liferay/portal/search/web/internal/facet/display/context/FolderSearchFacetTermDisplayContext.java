@@ -21,17 +21,6 @@ import com.liferay.portal.kernel.exception.PortalException;
  */
 public class FolderSearchFacetTermDisplayContext {
 
-	public FolderSearchFacetTermDisplayContext(
-		long folderId, String displayName, boolean selected, int frequency,
-		boolean showFrequency) {
-
-		_folderId = folderId;
-		_displayName = displayName;
-		_selected = selected;
-		_frequency = frequency;
-		_showFrequency = showFrequency;
-	}
-
 	public String getDisplayName() throws PortalException {
 		return _displayName;
 	}
@@ -48,14 +37,33 @@ public class FolderSearchFacetTermDisplayContext {
 		return _selected;
 	}
 
-	public boolean isShowFrequency() {
-		return _showFrequency;
+	public boolean isFrequencyVisible() {
+		return _frequencyVisible;
 	}
 
-	private final String _displayName;
-	private final long _folderId;
-	private final int _frequency;
-	private final boolean _selected;
-	private final boolean _showFrequency;
+	public void setFolderId(Long folderId) {
+		_folderId = folderId;
+	}
 
+	public void setDisplayName(String displayName) {
+		_displayName = displayName;
+	}
+
+	public void setSelected(boolean selected) {
+		_selected = selected;
+	}
+
+	public void setFrequency(int frequency) {
+		_frequency = frequency;
+	}
+
+	public void setFrequencyVisible(boolean frequencyVisible) {
+		_frequencyVisible = frequencyVisible;
+	}
+
+	private String _displayName;
+	private long _folderId;
+	private int _frequency;
+	private boolean _selected;
+	private boolean _frequencyVisible;
 }
