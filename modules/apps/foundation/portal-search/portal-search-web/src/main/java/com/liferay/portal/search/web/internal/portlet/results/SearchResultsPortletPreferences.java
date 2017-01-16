@@ -14,23 +14,21 @@
 
 package com.liferay.portal.search.web.internal.portlet.results;
 
+import com.liferay.portal.search.web.internal.display.context.SearchResultPreferences;
+
 /**
- * @author André de Oliveira
+ * @author Lino Alves
  */
-public class SearchResultsPortletKeys {
+public interface SearchResultsPortletPreferences extends SearchResultPreferences{
+	
+	public static final boolean DEFAULT_DISPLAY_AS_FORM = true;
 
-	public static final String CONFIGURATION_JSP_PATH =
-		"/search/portlet/results/SearchResultsPortlet_configuration.jsp";
-
-	public static final String CSS_CLASS_WRAPPER = "portlet-search-results";
-
-	public static final String DISPLAY_NAME = "Search Results";
-
-	public static final String PORTLET_NAME =
-		"com_liferay_portal_search_web_internal_portlet_results_" +
-			"SearchResultsPortlet";
-
-	public static final String VIEW_TEMPLATE =
-		"/search/portlet/results/SearchResultsPortlet_view.jsp";
+	public static final boolean DEFAULT_VIEW_IN_CONTEXT = true;
+	
+	public static final String PREFERENCE_DISPLAY_AS_FORM =
+		"displayAsForm";
+	
+	public static final String PREFERENCE_VIEW_IN_CONTEXT =
+		"viewInContext";
 
 }

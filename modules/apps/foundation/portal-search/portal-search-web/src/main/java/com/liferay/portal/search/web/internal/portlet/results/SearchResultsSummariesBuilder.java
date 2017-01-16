@@ -32,7 +32,9 @@ import com.liferay.portal.search.web.internal.result.display.context.SearchResul
 import com.liferay.portal.search.web.internal.results.data.SearchResultsData;
 
 import java.util.List;
+import java.util.Optional;
 
+import javax.portlet.PortletPreferences;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -89,13 +91,16 @@ public class SearchResultsSummariesBuilder {
 			new SearchResultSummaryDisplayBuilder();
 
 		// TODO
-
+		
 		boolean highlightEnabled = true;
 
 		PortletURLFactory portletURLFactory = new PortletURLFactoryImpl(
 			renderRequest, renderResponse);
 
 		PortletURL portletURL = portletURLFactory.getPortletURL();
+
+		Optional<PortletPreferences> portletPreferences = 
+			getPortletPreferences(renderRequest);
 
 		HttpServletRequestSupplier httpServletRequestSupplier =
 			new LiferayPortletHttpServletRequestSupplier(renderRequest);
@@ -122,29 +127,23 @@ public class SearchResultsSummariesBuilder {
 		searchResultSummaryDisplayBuilder.setRequest(httpServletRequest);
 		searchResultSummaryDisplayBuilder.setResourceActions(_resourceActions);
 		searchResultSummaryDisplayBuilder.setSearchResultPreferences(
-			getSearchResultPreferences());
+			getSearchResultPreferences(portletPreferences));
 		searchResultSummaryDisplayBuilder.setThemeDisplay(themeDisplay);
 
 		return searchResultSummaryDisplayBuilder.build();
 	}
+	
+	protected Optional<PortletPreferences> getPortletPreferences(
+			RenderRequest renderRequest) {
 
-	protected SearchResultPreferences getSearchResultPreferences() {
+			return Optional.ofNullable(renderRequest.getPreferences());
+	}
 
-		// TODO Portlet Preferences
+	protected SearchResultPreferences getSearchResultPreferences(
+		Optional<PortletPreferences> portletPreferences) {
 
-		return new SearchResultPreferences() {
+		return new SearchResultsPortletPreferencesImpl(portletPreferences);
 
-			@Override
-			public boolean isDisplayResultsInDocumentForm() {
-				return true;
-			}
-
-			@Override
-			public boolean isViewInContext() {
-				return true;
-			}
-
-		};
 	}
 
 	protected ThemeDisplay getThemeDisplay(RenderRequest renderRequest) {

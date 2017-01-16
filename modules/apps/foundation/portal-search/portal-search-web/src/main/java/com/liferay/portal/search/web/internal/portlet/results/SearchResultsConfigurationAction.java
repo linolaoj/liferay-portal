@@ -14,23 +14,26 @@
 
 package com.liferay.portal.search.web.internal.portlet.results;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.osgi.service.component.annotations.Component;
+
+import com.liferay.portal.kernel.portlet.ConfigurationAction;
+import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
+
 /**
- * @author André de Oliveira
+ * @author Lino Alves
  */
-public class SearchResultsPortletKeys {
+@Component(
+	immediate = true,
+	property = {"javax.portlet.name=" + SearchResultsPortletKeys.PORTLET_NAME},
+	service = ConfigurationAction.class
+)
+public class SearchResultsConfigurationAction 
+	extends DefaultConfigurationAction {
 
-	public static final String CONFIGURATION_JSP_PATH =
-		"/search/portlet/results/SearchResultsPortlet_configuration.jsp";
-
-	public static final String CSS_CLASS_WRAPPER = "portlet-search-results";
-
-	public static final String DISPLAY_NAME = "Search Results";
-
-	public static final String PORTLET_NAME =
-		"com_liferay_portal_search_web_internal_portlet_results_" +
-			"SearchResultsPortlet";
-
-	public static final String VIEW_TEMPLATE =
-		"/search/portlet/results/SearchResultsPortlet_view.jsp";
-
+	@Override
+	public String getJspPath(HttpServletRequest request) {
+		return SearchResultsPortletKeys.CONFIGURATION_JSP_PATH;
+	}
 }
