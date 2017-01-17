@@ -67,6 +67,8 @@ public class UserSearchFacetDisplayContext implements Serializable {
 			userSearchFacetTermDisplayContexts;
 	}
 
+	public static final String ATTRIBUTE = "UserSearchFacetDisplayContext";
+	
 	private boolean _nothingSelected;
 	private String _paramName;
 	private String _paramValue;

@@ -14,7 +14,6 @@
 
 package com.liferay.portal.search.web.internal.portlet.facet.user;
 
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.Facet;
@@ -23,13 +22,12 @@ import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.search.web.facet.SearchFacet;
 import com.liferay.portal.search.web.internal.display.context.PortletRequestThemeDisplaySupplier;
 import com.liferay.portal.search.web.internal.display.context.ThemeDisplaySupplier;
-import com.liferay.portal.search.web.internal.facet.UserSearchFacet;
 import com.liferay.portal.search.web.internal.facet.display.builder.UserSearchFacetDisplayBuilder;
 import com.liferay.portal.search.web.internal.facet.display.context.UserSearchFacetDisplayContext;
 import com.liferay.portal.search.web.internal.facet.display.context.UserSearchFacetTermDisplayContext;
+import com.liferay.portal.search.web.internal.portlet.facet.type.TypeFacetPortletPreferences;
 import com.liferay.portal.search.web.internal.preferences.PortletPreferencesLookup;
 import com.liferay.portal.search.web.internal.request.helper.OriginalHttpServletRequestSupplier;
 import com.liferay.portal.search.web.internal.request.helper.PortletOriginalServletRequestSupplierFactory;
@@ -93,25 +91,37 @@ public class UserFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 		SearchParametersBuilder searchParametersBuilder,
 		RenderRequest renderRequest, String portletId,
 		SearchContext searchContext) {
+		
+		UserFacetPortletPreferences userFacetPortletPreferences =
+				getPortletPreferences(renderRequest, portletId);
 
-		ThemeDisplay themeDisplay = getThemeDisplay(renderRequest);
-
-		Optional<PortletPreferences> preferences = getPortletPreferences(
-			renderRequest, portletId);
-
-		SearchFacet searchFacet = new UserSearchFacet();
-
-		long companyId = themeDisplay.getCompanyId();
-
-		FacetConfiguration facetConfiguration =
-			searchFacet.getDefaultConfiguration(companyId);
-
+		String paramName = userFacetPortletPreferences.getParamName();
+		
 		OriginalHttpServletRequestSupplier originalHttpServletRequestSupplier =
 			portletOriginalServletRequestSupplierFactory.get(renderRequest);
 
-		setUsers(searchContext, getUsers(originalHttpServletRequestSupplier));
+		Optional<String> paramValue = getUserParamValue(
+				originalHttpServletRequestSupplier, paramName);
+		
+		setUsers(searchContext, paramValue);
+		
+		searchBuilder.addFacet(
+			buildFacet(userFacetPortletPreferences, searchContext));
+	}
 
-		addFacet(searchBuilder, facetConfiguration, searchContext);
+	private Facet buildFacet(
+		UserFacetPortletPreferences userFacetPortletPreferences, 
+		SearchContext searchContext) {
+	
+		UserFacetBuilder userFacetBuilder = new UserFacetBuilder();
+		
+		userFacetBuilder.setFrequencyThreshold(
+			userFacetPortletPreferences.getFrequencyThreshold());
+		userFacetBuilder.setMaxTerms(
+			userFacetPortletPreferences.getMaxTerms());
+		userFacetBuilder.setSearchContext(searchContext);
+		
+		return userFacetBuilder.build();
 	}
 
 	@Override
@@ -122,12 +132,12 @@ public class UserFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 		PortletSharedSearchResult portletSharedSearchResult =
 			portletSharedSearchHelper.search(renderRequest, renderResponse);
 
-		UserFacetPortletDisplayContext userFacetPortletDisplayContext =
+		UserSearchFacetDisplayContext userSearchFacetDisplayContext =
 			buildDisplayContext(renderRequest, portletSharedSearchResult);
 
 		renderRequest.setAttribute(
-			UserFacetPortletDisplayContext.ATTRIBUTE,
-			userFacetPortletDisplayContext);
+			UserSearchFacetDisplayContext.ATTRIBUTE,
+			userSearchFacetDisplayContext);
 
 		super.render(renderRequest, renderResponse);
 	}
@@ -143,125 +153,64 @@ public class UserFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 		searchBuilder.addFacet(facet);
 	}
 
-	protected UserFacetPortletDisplayContext buildDisplayContext(
+	protected UserSearchFacetDisplayContext buildDisplayContext(
 		RenderRequest renderRequest, PortletSharedSearchResult result) {
 
-		SearchFacet searchFacet = new UserSearchFacet();
+		Facet facet = result.getFacet(UserFacetConstants.FIELD_NAME);
+		
+		UserFacetConfiguration userFacetConfiguration =
+			new UserFacetConfigurationImpl(facet.getFacetConfiguration());
+			
 
-		ThemeDisplay themeDisplay = getThemeDisplay(renderRequest);
+		int frequencyThreshold = userFacetConfiguration.getFrequencyThreshold();
+		int maxTerms = userFacetConfiguration.getMaxTerms();
+		
+		UserFacetPortletPreferences userFacetPortletPreferences = 
+			new UserFacetPortletPreferencesImpl(getPortletPreferences(renderRequest));
+		
+		boolean showFrequencies = userFacetPortletPreferences.isFrequenciesVisible();
 
-		PortletPreferences preferences = renderRequest.getPreferences();
+		String paramName = userFacetPortletPreferences.getParamName();
 
-		long companyId = themeDisplay.getCompanyId();
-
-		FacetConfiguration facetConfiguration =
-			searchFacet.getDefaultConfiguration(companyId);
-
-		JSONObject dataJSONObject = facetConfiguration.getData();
-
-		Facet facet = result.getFacet(searchFacet.getFieldName());
-		String fieldParam = getFieldParam(renderRequest);
-
-		int countThreshold = dataJSONObject.getInt("frequencyThreshold");
-		int maxTerms = dataJSONObject.getInt("maxTerms");
-		boolean showFrequencies = dataJSONObject.getBoolean(
-			"showAssetCount", true);
-
+		String fieldParam = getFieldParam(renderRequest, paramName);
+		
 		UserSearchFacetDisplayBuilder userSearchFacetDisplayBuilder =
 			new UserSearchFacetDisplayBuilder();
 
 		userSearchFacetDisplayBuilder.setFacet(facet);
 		userSearchFacetDisplayBuilder.setFrequenciesVisible(showFrequencies);
-		userSearchFacetDisplayBuilder.setFrequencyThreshold(countThreshold);
+		userSearchFacetDisplayBuilder.setFrequencyThreshold(frequencyThreshold);
 		userSearchFacetDisplayBuilder.setMaxTerms(maxTerms);
-		userSearchFacetDisplayBuilder.setParamName(_PARAM);
+		userSearchFacetDisplayBuilder.setParamName(paramName);
 		userSearchFacetDisplayBuilder.setParamValue(fieldParam);
 
 		UserSearchFacetDisplayContext userSearchFacetDisplayContext =
 			userSearchFacetDisplayBuilder.build();
 
-		return buildDisplayContext(fieldParam, userSearchFacetDisplayContext);
+		return userSearchFacetDisplayContext;
 	}
 
-	protected UserFacetPortletDisplayContext buildDisplayContext(
-		String fieldParam,
-		UserSearchFacetDisplayContext userSearchFacetDisplayContext) {
-
-		UserFacetPortletDisplayContext userFacetPortletDisplayContext =
-			new UserFacetPortletDisplayContext();
-
-		List<UserFacetPortletTermDisplayContext> termDisplayContexts =
-			buildTermDisplayContexts(
-				userSearchFacetDisplayContext.getTermDisplayContexts());
-
-		userFacetPortletDisplayContext.setTerms(termDisplayContexts);
-
-		boolean renderNothing = termDisplayContexts.isEmpty();
-
-		boolean nothingSelected =
-			userSearchFacetDisplayContext.isNothingSelected();
-
-		userFacetPortletDisplayContext.setFieldParamInputName(_PARAM);
-		userFacetPortletDisplayContext.setFieldParamInputValue(fieldParam);
-		userFacetPortletDisplayContext.setRenderNothing(renderNothing);
-		userFacetPortletDisplayContext.setNothingSelected(nothingSelected);
-
-		return userFacetPortletDisplayContext;
+	protected Optional<PortletPreferences> getPortletPreferences(
+		RenderRequest renderRequest) {
+		return Optional.of(renderRequest.getPreferences());
 	}
 
-	protected List<UserFacetPortletTermDisplayContext> buildTermDisplayContexts(
-		List<UserSearchFacetTermDisplayContext>
-			userSearchFacetTermDisplayContexts) {
-
-		List<UserFacetPortletTermDisplayContext> termDisplayContexts =
-			new ArrayList<>();
-
-		for (UserSearchFacetTermDisplayContext
-				userSearchFacetTermDisplayContext :
-					userSearchFacetTermDisplayContexts) {
-
-			termDisplayContexts.add(
-				getTermDisplayContext(userSearchFacetTermDisplayContext));
-		}
-
-		return termDisplayContexts;
-	}
-
-	protected String getFieldParam(RenderRequest renderRequest) {
+	protected String getFieldParam(RenderRequest renderRequest, String paramName) {
 		OriginalHttpServletRequestSupplier originalHttpServletRequestSupplier =
 			portletOriginalServletRequestSupplierFactory.get(renderRequest);
 
 		Optional<String> paramValue = getUserParamValue(
-			originalHttpServletRequestSupplier);
+			originalHttpServletRequestSupplier, paramName);
 
 		return paramValue.orElse(StringPool.BLANK);
 	}
 
-	protected Optional<PortletPreferences> getPortletPreferences(
+	protected UserFacetPortletPreferences getPortletPreferences(
 		RenderRequest renderRequest, String portletId) {
 
-		return portletPreferencesLookup.getPortletPreferences(
-			renderRequest, portletId);
-	}
-
-	protected UserFacetPortletTermDisplayContext getTermDisplayContext(
-		UserSearchFacetTermDisplayContext userSearchFacetTermDisplayContext) {
-
-		UserFacetPortletTermDisplayContext termDisplayContext =
-			new UserFacetPortletTermDisplayContext();
-
-		termDisplayContext.setTerm(
-			userSearchFacetTermDisplayContext.getUserName());
-		termDisplayContext.setFrequency(
-			userSearchFacetTermDisplayContext.getFrequency());
-		termDisplayContext.setFrequencyVisible(
-			userSearchFacetTermDisplayContext.isFrequencyVisible());
-		termDisplayContext.setSelected(
-			userSearchFacetTermDisplayContext.isSelected());
-		termDisplayContext.setValue(
-			userSearchFacetTermDisplayContext.getUserName());
-
-		return termDisplayContext;
+		return new UserFacetPortletPreferencesImpl(
+				portletPreferencesLookup.getPortletPreferences(
+					renderRequest, portletId));
 	}
 
 	protected ThemeDisplay getThemeDisplay(RenderRequest renderRequest) {
@@ -272,25 +221,16 @@ public class UserFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 	}
 
 	protected Optional<String> getUserParamValue(
-		OriginalHttpServletRequestSupplier originalHttpServletRequestSupplier) {
+		OriginalHttpServletRequestSupplier originalHttpServletRequestSupplier, String paramName) {
 
 		String paramValue = ParamUtil.getString(
-			originalHttpServletRequestSupplier.get(), _PARAM);
+			originalHttpServletRequestSupplier.get(), paramName);
 
 		if (paramValue.isEmpty()) {
 			return Optional.empty();
 		}
 
 		return Optional.of(paramValue);
-	}
-
-	protected Optional<String> getUsers(
-		OriginalHttpServletRequestSupplier originalHttpServletRequestSupplier) {
-
-		Optional<String> paramValue = getUserParamValue(
-			originalHttpServletRequestSupplier);
-
-		return paramValue;
 	}
 
 	protected void setUsers(
@@ -309,7 +249,5 @@ public class UserFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 
 	@Reference
 	protected PortletSharedSearchHelper portletSharedSearchHelper;
-
-	private static final String _PARAM = "userName";
 
 }

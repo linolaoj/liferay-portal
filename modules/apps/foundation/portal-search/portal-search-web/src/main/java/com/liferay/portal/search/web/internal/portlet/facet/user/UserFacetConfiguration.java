@@ -11,26 +11,22 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-
 package com.liferay.portal.search.web.internal.portlet.facet.user;
 
 /**
  * @author Lino Alves
  */
-public class UserFacetPortletKeys {
+public interface UserFacetConfiguration {
 
-	public static final String CONFIGURATION_JSP_PATH =
-		"/search/portlet/facet/user/UserFacetPortlet_configuration.jsp";
+	public static final int DEFAULT_FREQUENCY_THRESHOLD = 1;
 
-	public static final String CSS_CLASS_WRAPPER = "portlet-user-facet";
+	public static final int DEFAULT_MAX_TERMS = 10;
 
-	public static final String DISPLAY_NAME = "User Facet";
+	public int getFrequencyThreshold();
 
-	public static final String PORTLET_NAME =
-		"com_liferay_portal_search_web_internal_portlet_facet_user_" +
-			"UserFacetPortlet";
+	public int getMaxTerms();
 
-	public static final String VIEW_TEMPLATE =
-		"/search/portlet/facet/user/UserFacetPortlet_view.jsp";
+	public void setFrequencyThreshold(int frequencyThreshold);
 
+	public void setMaxTerms(int maxTerms);
 }

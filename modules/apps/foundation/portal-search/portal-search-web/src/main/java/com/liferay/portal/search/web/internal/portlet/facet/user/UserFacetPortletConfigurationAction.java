@@ -14,23 +14,27 @@
 
 package com.liferay.portal.search.web.internal.portlet.facet.user;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.osgi.service.component.annotations.Component;
+
+import com.liferay.portal.kernel.portlet.ConfigurationAction;
+import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
+
 /**
  * @author Lino Alves
  */
-public class UserFacetPortletKeys {
+@Component(
+	immediate = true,
+	property = {"javax.portlet.name=" + UserFacetPortletKeys.PORTLET_NAME},
+	service = ConfigurationAction.class
+)
+public class UserFacetPortletConfigurationAction
+	extends DefaultConfigurationAction {
 
-	public static final String CONFIGURATION_JSP_PATH =
-		"/search/portlet/facet/user/UserFacetPortlet_configuration.jsp";
-
-	public static final String CSS_CLASS_WRAPPER = "portlet-user-facet";
-
-	public static final String DISPLAY_NAME = "User Facet";
-
-	public static final String PORTLET_NAME =
-		"com_liferay_portal_search_web_internal_portlet_facet_user_" +
-			"UserFacetPortlet";
-
-	public static final String VIEW_TEMPLATE =
-		"/search/portlet/facet/user/UserFacetPortlet_view.jsp";
+	@Override
+	public String getJspPath(HttpServletRequest request) {
+		return UserFacetPortletKeys.CONFIGURATION_JSP_PATH;
+	}
 
 }

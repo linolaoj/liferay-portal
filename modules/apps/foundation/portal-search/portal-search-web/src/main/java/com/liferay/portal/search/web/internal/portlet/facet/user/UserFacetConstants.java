@@ -14,23 +14,13 @@
 
 package com.liferay.portal.search.web.internal.portlet.facet.user;
 
+import com.liferay.portal.kernel.search.Field;
+
 /**
  * @author Lino Alves
  */
-public class UserFacetPortletKeys {
+public class UserFacetConstants {
 
-	public static final String CONFIGURATION_JSP_PATH =
-		"/search/portlet/facet/user/UserFacetPortlet_configuration.jsp";
-
-	public static final String CSS_CLASS_WRAPPER = "portlet-user-facet";
-
-	public static final String DISPLAY_NAME = "User Facet";
-
-	public static final String PORTLET_NAME =
-		"com_liferay_portal_search_web_internal_portlet_facet_user_" +
-			"UserFacetPortlet";
-
-	public static final String VIEW_TEMPLATE =
-		"/search/portlet/facet/user/UserFacetPortlet_view.jsp";
-
+	public static final String FIELD_NAME = Field.USER_NAME; 
+	
 }

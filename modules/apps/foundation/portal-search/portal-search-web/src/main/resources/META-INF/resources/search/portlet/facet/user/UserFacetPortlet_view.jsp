@@ -15,114 +15,169 @@
 --%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
+<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %>
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.portal.kernel.util.HtmlUtil" %>
-<%@ page import="com.liferay.portal.search.web.internal.portlet.facet.user.UserFacetPortletDisplayContext" %>
-<%@ page import="com.liferay.portal.search.web.internal.portlet.facet.user.UserFacetPortletTermDisplayContext" %>
+<%@ page import="com.liferay.portal.kernel.util.StringPool" %>
+<%@ page import="com.liferay.portal.search.web.internal.facet.display.context.UserSearchFacetDisplayContext" %>
+<%@ page import="com.liferay.portal.search.web.internal.facet.display.context.UserSearchFacetTermDisplayContext" %>
 <%@ page import="com.liferay.portal.search.web.internal.util.NamespaceUtil" %>
 
+<portlet:defineObjects />
+
+<style>
+	.facet-checkbox-label {
+		display: block;
+	}
+</style>
+
 <%
-UserFacetPortletDisplayContext userFacetPortletDisplayContext = (UserFacetPortletDisplayContext)java.util.Objects.requireNonNull(request.getAttribute(UserFacetPortletDisplayContext.ATTRIBUTE));
+UserSearchFacetDisplayContext userSearchFacetDisplayContext = (UserSearchFacetDisplayContext)java.util.Objects.requireNonNull(request.getAttribute(UserSearchFacetDisplayContext.ATTRIBUTE));
 
 String namespace = NamespaceUtil.randomNamespace("portlet_search_facet_user", request);
 
 String cssClassFacetTerm = "facet-term-" + namespace;
 
-String paramName = userFacetPortletDisplayContext.getFieldParamInputName();
+String paramName = userSearchFacetDisplayContext.getParamName();
 %>
 
 <c:choose>
-	<c:when test="<%= userFacetPortletDisplayContext.isRenderNothing() %>">
-		<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(userFacetPortletDisplayContext.getFieldParamInputName()) %>" type="hidden" value="<%= userFacetPortletDisplayContext.getFieldParamInputValue() %>" />
+	<c:when test="<%= userSearchFacetDisplayContext.isRenderNothing() %>">
+		<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(userSearchFacetDisplayContext.getParamName()) %>" type="hidden" value="<%= userSearchFacetDisplayContext.getParamValue() %>" />
 	</c:when>
 	<c:otherwise>
 		<liferay-ui:panel-container extended="true" id='<%= namespace + "facetUserPanelContainer" %>' markupView="lexicon" persistState="true">
 			<liferay-ui:panel collapsible="true" cssClass="search-facet" id='<%= namespace + "facetUserPanel" %>' markupView="lexicon" persistState="true" title="users">
-				<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(userFacetPortletDisplayContext.getFieldParamInputName()) %>" type="hidden" value="<%= userFacetPortletDisplayContext.getFieldParamInputValue() %>" />
-
-				<c:if test="<%= !userFacetPortletDisplayContext.isNothingSelected() %>">
-					<p><a class="text-default" data-value="0" href="javascript:;"><liferay-ui:message key="facet-portlet-clear" /></a></p>
-				</c:if>
-
-				<%
-				int i = 1;
-
-				for (UserFacetPortletTermDisplayContext userFacetPortletTermDisplayContext : userFacetPortletDisplayContext.getTermDisplayContexts()) {
-					String termName = "term_" + i++;
-				%>
-
-					<aui:input autocomplete="off"
-						name='<%= termName + "_value" %>'
-						type="hidden"
-						value="<%= userFacetPortletTermDisplayContext.getValue() %>"
-					/>
-
-					<aui:input
-						checked="<%= userFacetPortletTermDisplayContext.isSelected() %>"
-						cssClass="<%= cssClassFacetTerm %>"
-						label="TODO inline above!"
-						name="<%= termName %>"
-						type="checkbox"
-					>
-						<span style="font-size: small; color: black;"><%= HtmlUtil.escape(userFacetPortletTermDisplayContext.getTerm()) %></span>
-						<c:if test="<%= userFacetPortletTermDisplayContext.isFrequencyVisible() %>">
-							<span style="font-size: x-small; color: gray;">&nbsp;(<%= userFacetPortletTermDisplayContext.getFrequency() %>)</span>
-						</c:if>
-					</aui:input>
-
-				<%
-				}
-				%>
-
+				<aui:form method="post" name="userFacetForm">
+					<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(userSearchFacetDisplayContext.getParamName()) %>" type="hidden" value="<%= userSearchFacetDisplayContext.getParamValue() %>" />
+	
+					<c:if test="<%= !userSearchFacetDisplayContext.isNothingSelected() %>">
+						<aui:a cssClass="text-default" href="javascript:;" onClick='<%= namespace + "_clearFacet('" + userSearchFacetDisplayContext.getParamName() + "');" %>'>
+							<liferay-ui:message key="portlet.type-facet.clear" />
+						</aui:a>
+					</c:if>
+	
+					<aui:fieldset>
+						<ul class="list-unstyled">
+							<%
+							int i = 1;
+			
+							for (UserSearchFacetTermDisplayContext userSearchFacetTermDisplayContext : userSearchFacetDisplayContext.getTermDisplayContexts()) {
+								String termName = "term_" + i++;
+							%>
+								
+								<li class="facet-value">
+									<label class="facet-checkbox-label" for="<portlet:namespace /><%= termName %>">
+									<input
+										class="<%= cssClassFacetTerm %>"
+										data-term-id="<%= userSearchFacetTermDisplayContext.getUserName() %>"
+										id="<portlet:namespace /><%= termName %>"
+										name="<portlet:namespace /><%= termName %>"
+										onChange='<%= renderResponse.getNamespace() + "_applyFacet(event);" %>'
+										type="checkbox"
+										<%= userSearchFacetTermDisplayContext.isSelected() ? "checked" : StringPool.BLANK %>
+									/>
+									<span class="term-name">
+										<%= HtmlUtil.escape(userSearchFacetTermDisplayContext.getUserName()) %>
+									</span>
+									<c:if test="<%= userSearchFacetTermDisplayContext.isFrequencyVisible() %>">
+										<small class="term-count">
+											(<%= userSearchFacetTermDisplayContext.getFrequency() %>)
+										</small>
+									</c:if>
+									
+									<aui:input autocomplete="off"
+										name='<%= termName + "_value" %>'
+										type="hidden"
+										value="<%= userSearchFacetTermDisplayContext.getUserName() %>"
+									/>
+								</li>
+							<%
+							}
+							%>
+						</ul>
+					</aui:fieldset>
+				</aui:form>
 			</liferay-ui:panel>
 		</liferay-ui:panel-container>
 	</c:otherwise>
 </c:choose>
 
-<aui:script sandbox="<%= true %>">
-	$('<%= "." + cssClassFacetTerm %>').on(
-		'click',
-		function(event) {
-			var term = $(event.currentTarget);
+<aui:script>
+	function <%= namespace %>_removeParameters(key, parameterArray) {
+		key = encodeURI(key);
 
-			var inputName = term[0].getAttribute('name') + "_value";
-			var input = $("[name='" + inputName + "']");
-			var inputVal = input.val();
+		var newParameters = [];
 
-			<%= namespace %>_insertParam("<%= paramName %>", inputVal);
-		}
-	);
+		AUI.$.each(
+			parameterArray,
+			function(index, item) {
+				var itemSplit = item.split('=');
 
-	function <%= namespace %>_insertParam(key, value) {
+				if (itemSplit) {
+					if (itemSplit[0] != key) {
+						newParameters.push(item);
+					}
+				}
+			}
+		);
+
+		return newParameters;
+	}
+
+	function <%= namespace %>_addParameter(key, value, parameterArray) {
 		key = encodeURI(key);
 		value = encodeURI(value);
 
-		var kvp = document.location.search.substr(1).split('&');
+		parameterArray[parameterArray.length] = [key, value].join('=');
 
-		var i = kvp.length;
-		var x;
-
-		while (i--) {
-			x = kvp[i].split('=');
-
-			if (x[0]==key) {
-				x[1] = value;
-
-				kvp[i] = x.join('=');
-
-				break;
-			}
-		}
-
-		if (i<0) {
-			kvp[kvp.length] = [key,value].join('=');
-		}
-
-		//this will reload the page, it's likely better to store this until finished
-
-		document.location.search = kvp.join('&');
+		return parameterArray;
 	}
+
+	function <%= namespace %>_clearFacet(facetName) {
+		var parameterArray = document.location.search.substr(1).split('&');
+
+		var newParameters = <%= namespace %>_removeParameters(facetName, parameterArray);
+
+		document.location.search = newParameters.join('&');
+	}
+
+	Liferay.provide(
+		window,
+		'<portlet:namespace />_applyFacet',
+		function(event) {
+			var form = event.currentTarget.form;
+
+			if (form) {
+				var formCheckboxes = $('#' + form.id + ' input.' + '<%= cssClassFacetTerm %>');
+
+				var selectedFacets = [];
+
+				formCheckboxes.each(
+					function(index, value) {
+						if (value.checked) {
+							var termId = value.getAttribute('data-term-id');
+
+							selectedFacets.push(termId);
+						}
+					}
+				);
+
+				var key = '<%= userSearchFacetDisplayContext.getParamName() %>';
+
+				var parameterArray = document.location.search.substr(1).split('&');
+
+				var newParameters = <%= namespace %>_removeParameters(key, parameterArray);
+
+				if (selectedFacets.length > 0) {
+					newParameters = <%= namespace %>_addParameter(key, selectedFacets.join(','), newParameters);
+				}
+
+				document.location.search = newParameters.join('&');
+			}
+		},
+		['aui-base']
+	);
 </aui:script>

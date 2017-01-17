@@ -17,20 +17,27 @@ package com.liferay.portal.search.web.internal.portlet.facet.user;
 /**
  * @author Lino Alves
  */
-public class UserFacetPortletKeys {
+public interface UserFacetPortletPreferences {
 
-	public static final String CONFIGURATION_JSP_PATH =
-		"/search/portlet/facet/user/UserFacetPortlet_configuration.jsp";
+	public static final boolean DEFAULT_FREQUENCIES_VISIBLE = true;
+	
+	public static final String DEFAULT_PARAM_NAME = "userName";
 
-	public static final String CSS_CLASS_WRAPPER = "portlet-user-facet";
+	public static final String PREFERENCE_FREQUENCIES_VISIBLE =
+		"frequenciesVisible";
 
-	public static final String DISPLAY_NAME = "User Facet";
+	public static final String PREFERENCE_FREQUENCY_THRESHOLD =
+		"frequencyThreshold";
 
-	public static final String PORTLET_NAME =
-		"com_liferay_portal_search_web_internal_portlet_facet_user_" +
-			"UserFacetPortlet";
+	public static final String PREFERENCE_MAX_TERMS = "maxTerms";
+	
+	public static final String PREFERENCE_PARAM_NAME = "paramName";
 
-	public static final String VIEW_TEMPLATE =
-		"/search/portlet/facet/user/UserFacetPortlet_view.jsp";
+	public int getFrequencyThreshold();
 
+	public int getMaxTerms();
+
+	public String getParamName();
+	
+	public boolean isFrequenciesVisible();
 }
