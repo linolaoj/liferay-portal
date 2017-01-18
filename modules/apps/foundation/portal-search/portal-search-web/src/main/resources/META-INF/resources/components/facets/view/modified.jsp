@@ -33,171 +33,158 @@ Date toDate = PortalUtil.getDate(toMonth, toDay, toYear);
 
 JSONArray rangesJSONArray = dataJSONObject.getJSONArray("ranges");
 
-int index = 0;
+int index = rangesJSONArray.length();
+%>
+
+<%
+com.liferay.portal.search.web.internal.facet.display.builder.ModifiedSearchFacetDisplayBuilder modifiedSearchFacetDisplayBuilder = new com.liferay.portal.search.web.internal.facet.display.builder.ModifiedSearchFacetDisplayBuilder(); 
+
+modifiedSearchFacetDisplayBuilder.setFacet(facet);
+modifiedSearchFacetDisplayBuilder.setParamName(facet.getFieldId());
+modifiedSearchFacetDisplayBuilder.setParamValue(fieldParam);
+modifiedSearchFacetDisplayBuilder.setParamSelection(fieldParamSelection);
+modifiedSearchFacetDisplayBuilder.setRangesJSONArray(rangesJSONArray);
+modifiedSearchFacetDisplayBuilder.setFormDay(fromDay);
+modifiedSearchFacetDisplayBuilder.setFormMonth(fromMonth);
+modifiedSearchFacetDisplayBuilder.setFormYear(fromYear);
+modifiedSearchFacetDisplayBuilder.setToDay(toDay);
+modifiedSearchFacetDisplayBuilder.setToMonth(toMonth);
+modifiedSearchFacetDisplayBuilder.setToYear(toYear);
+modifiedSearchFacetDisplayBuilder.setTimeZone(timeZone);
+modifiedSearchFacetDisplayBuilder.setLocale(locale);
+
+com.liferay.portal.search.web.internal.facet.display.context.ModifiedSearchFacetDisplayContext modifiedSearchFacetDisplayContext = modifiedSearchFacetDisplayBuilder.build();
+
+com.liferay.portal.search.web.internal.facet.display.context.ModifiedSearchFacetTermDisplayContext defaultTermDisplayContext = modifiedSearchFacetDisplayContext.getDefaultTermDisplayContext();
+
+com.liferay.portal.search.web.internal.facet.display.context.ModifiedSearchFacetTermDisplayContext customRangeTermDisplayContext = modifiedSearchFacetDisplayContext.getCustomRangeTermDisplayContext();
+
+com.liferay.portal.search.web.internal.facet.display.context.CalendarRangeSearchFacetTermDisplayContext calendarRangeTermDisplayContext = modifiedSearchFacetDisplayContext.getCalendarRangeTermDisplayContext();
+
 %>
 
 <liferay-ui:panel-container extended="<%= true %>" id='<%= randomNamespace + "facetModifiedPanelContainer" %>' markupView="lexicon" persistState="<%= true %>">
 	<liferay-ui:panel collapsible="<%= true %>" cssClass="<%= cssClass %>" id='<%= randomNamespace + "facetModifiedPanel" %>' markupView="lexicon" persistState="<%= true %>" title="time">
-		<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(facet.getFieldId()) %>" type="hidden" value="<%= fieldParam %>" />
-		<aui:input autocomplete="off" name='<%= HtmlUtil.escapeAttribute(facet.getFieldId()) + "selection" %>' type="hidden" value="<%= fieldParamSelection %>" />
-		<aui:input autocomplete="off" name="inputFacetName" type="hidden" value="modified" />
-
-		<aui:field-wrapper cssClass='<%= randomNamespace + "calendar calendar_" %>' label="" name="<%= HtmlUtil.escapeAttribute(facet.getFieldId()) %>">
-			<ul class="list-unstyled modified">
-				<li class="default facet-value">
-
-					<%
-					String defaultRangeCssClass = "text-default";
-
-					if (fieldParamSelection.equals("0")) {
-						defaultRangeCssClass = "text-primary";
-					}
-
-					Map<String, Object> data = new HashMap<>();
-
-					data.put("selection", 0);
-					data.put("value", StringPool.BLANK);
-					%>
-
-					<aui:a cssClass="<%= defaultRangeCssClass %>" href="javascript:;">
-						<liferay-ui:message key="<%= HtmlUtil.escape(facetConfiguration.getLabel()) %>" />
-					</aui:a>
-				</li>
-
-				<%
-				for (int i = 0; i < rangesJSONArray.length(); i++) {
-					JSONObject rangesJSONObject = rangesJSONArray.getJSONObject(i);
-
-					String label = HtmlUtil.escape(rangesJSONObject.getString("label"));
-					String range = rangesJSONObject.getString("range");
-
-					index = (i + 1);
-				%>
-
-					<li class="facet-value" name="<%= renderResponse.getNamespace() + "ranger_"+i %>">
-
+		<aui:form method="post" name="fm">
+			<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(modifiedSearchFacetDisplayContext.getParamName()) %>" type="hidden" value="<%= modifiedSearchFacetDisplayContext.getParamValue() %>" />
+			<aui:input autocomplete="off" name='<%= HtmlUtil.escapeAttribute(modifiedSearchFacetDisplayContext.getParamName()) + "selection" %>' type="hidden" value="<%= modifiedSearchFacetDisplayContext.getParamValue() %>" />
+			<aui:input autocomplete="off" name="inputFacetName" type="hidden" value="modified" />
+	
+			<aui:field-wrapper cssClass='<%= randomNamespace + "calendar calendar_" %>' label="" name="<%= HtmlUtil.escapeAttribute(modifiedSearchFacetDisplayContext.getParamName()) %>">
+				<ul class="list-unstyled modified">
+					<li class="default facet-value">
+	
 						<%
-						String rangeCssClass = "text-default";
-
-						if (fieldParamSelection.equals(String.valueOf(index))) {
-							rangeCssClass = "text-primary";
+						String defaultRangeCssClass = "text-default";
+	
+						if (defaultTermDisplayContext.isSelected()) {
+							defaultRangeCssClass = "text-primary";
 						}
-
-						data = new HashMap<>();
-
-						data.put("selection", index);
-						data.put("value", HtmlUtil.escape(range));
 						%>
-
-						<aui:a cssClass="<%= rangeCssClass %>" data="<%= data %>" href="javascript:;">
-							<liferay-ui:message key="<%= label %>" />
-
-							<%
-							TermCollector termCollector = facetCollector.getTermCollector(range);
-							%>
-
-							<c:if test="<%= termCollector != null %>">
-								<span class="frequency">(<%= termCollector.getFrequency() %>)</span>
-							</c:if>
+	
+						<aui:a cssClass="<%= defaultRangeCssClass %>" href="javascript:;">
+							<liferay-ui:message key="<%= HtmlUtil.escape(defaultTermDisplayContext.getLabel()) %>" />
 						</aui:a>
 					</li>
-
-					<aui:input autocomplete="off"
-						name="<%= "ranger_"+i+"_value" %>"
-						type="hidden"
-						value="<%= HtmlUtil.escape(range) %>"
-					/>
-
-				<%
-				}
-				%>
-
-				<li class="facet-value">
-
+	
 					<%
-					String customRangeCssClass = randomNamespace + "custom-range-toggle";
-
-					if (fieldParamSelection.equals(String.valueOf(index + 1))) {
-						customRangeCssClass += " text-primary";
-					}
-					else {
-						customRangeCssClass += " text-default";
-					}
-
-					TermCollector termCollector = null;
-
-					if (fieldParamSelection.equals(String.valueOf(index + 1))) {
-						termCollector = facetCollector.getTermCollector(fieldParam);
+					int i = 0;
+					for (com.liferay.portal.search.web.internal.facet.display.context.ModifiedSearchFacetTermDisplayContext modifiedSearchFacetTermDisplayContext : 
+						modifiedSearchFacetDisplayContext.getTermDisplayContexts()) {
+					%>
+	
+						<li class="facet-value" name="<%= renderResponse.getNamespace() + "ranger_"+i %>">
+	
+							<%
+							String rangeCssClass = "text-default";
+	
+							if (modifiedSearchFacetTermDisplayContext.isSelected()) {
+								rangeCssClass = "text-primary";
+							}
+	
+							%>
+	
+							<aui:a cssClass="<%= rangeCssClass %>" data="<%= modifiedSearchFacetTermDisplayContext.getData() %>" href="javascript:;">
+								<liferay-ui:message key="<%= modifiedSearchFacetTermDisplayContext.getLabel() %>" />
+								
+								<span class="frequency">(<%= modifiedSearchFacetTermDisplayContext.getFrequency() %>)</span>
+							</aui:a>
+						</li>
+	
+						<aui:input autocomplete="off"
+							name="<%= "ranger_"+i+"_value" %>"
+							type="hidden"
+							value="<%= modifiedSearchFacetTermDisplayContext.getRange() %>"
+						/>
+	
+					<%
+						i = i + 1;
 					}
 					%>
-
-					<aui:a cssClass="<%= customRangeCssClass %>" href="javascript:;">
-						<liferay-ui:message key="custom-range" />&hellip;
-
-						<c:if test="<%= termCollector != null %>">
-							<span class="frequency">(<%= termCollector.getFrequency() %>)</span>
-						</c:if>
-					</aui:a>
-				</li>
-
-				<%
-				Calendar fromCalendar = CalendarFactoryUtil.getCalendar(timeZone, locale);
-
-				if (Validator.isNotNull(fromDate)) {
-					fromCalendar.setTime(fromDate);
-				}
-				else {
-					fromCalendar.add(Calendar.DATE, -1);
-				}
-
-				Calendar toCalendar = CalendarFactoryUtil.getCalendar(timeZone, locale);
-
-				if (Validator.isNotNull(toDate)) {
-					toCalendar.setTime(toDate);
-				}
-				%>
-
-				<div class="<%= !fieldParamSelection.equals(String.valueOf(index + 1)) ? "hide" : StringPool.BLANK %> modified-custom-range" id="<%= randomNamespace %>customRange">
-					<div class="col-md-6" id="<%= randomNamespace %>customRangeFrom">
-						<aui:field-wrapper label="from">
-							<liferay-ui:input-date
-								dayParam='<%= HtmlUtil.escapeJS(facet.getFieldId()) + "dayFrom" %>'
-								dayValue="<%= fromCalendar.get(Calendar.DATE) %>"
-								disabled="<%= false %>"
-								firstDayOfWeek="<%= fromCalendar.getFirstDayOfWeek() - 1 %>"
-								monthParam='<%= HtmlUtil.escapeJS(facet.getFieldId()) + "monthFrom" %>'
-								monthValue="<%= fromCalendar.get(Calendar.MONTH) %>"
-								name='<%= HtmlUtil.escapeJS(facet.getFieldId()) + "from" %>'
-								yearParam='<%= HtmlUtil.escapeJS(facet.getFieldId()) + "yearFrom" %>'
-								yearValue="<%= fromCalendar.get(Calendar.YEAR) %>"
-							/>
-						</aui:field-wrapper>
+	
+					<li class="facet-value">
+	
+						<%
+						String customRangeCssClass = randomNamespace + "custom-range-toggle";
+	
+						if (customRangeTermDisplayContext.isSelected()) {
+							customRangeCssClass += " text-primary";
+						}
+						else {
+							customRangeCssClass += " text-default";
+						}
+	
+						%>
+	
+						<aui:a cssClass="<%= customRangeCssClass %>" href="javascript:;">
+							<liferay-ui:message key="custom-range" />&hellip;
+	
+							<span class="frequency">(<%= customRangeTermDisplayContext.getFrequency() %>)</span>
+						</aui:a>
+					</li>
+	
+					<div class="<%= !calendarRangeTermDisplayContext.isSelected() ? "hide" : StringPool.BLANK %> modified-custom-range" id="<%= randomNamespace %>customRange">
+						<div class="col-md-6" id="<%= randomNamespace %>customRangeFrom">
+							<aui:field-wrapper label="from">
+								<liferay-ui:input-date
+									dayParam='<%= calendarRangeTermDisplayContext.getFromDayParam() %>'
+									dayValue="<%= calendarRangeTermDisplayContext.getFromDayValue() %>"
+									disabled="<%= false %>"
+									firstDayOfWeek="<%= calendarRangeTermDisplayContext.getFromFirstDayOfWeek() %>"
+									monthParam='<%= calendarRangeTermDisplayContext.getFromMonthParam() %>'
+									monthValue="<%= calendarRangeTermDisplayContext.getFromMonthValue() %>"
+									name='<%= calendarRangeTermDisplayContext.getFromName() %>'
+									yearParam='<%= calendarRangeTermDisplayContext.getFromYearParam() %>'
+									yearValue="<%= calendarRangeTermDisplayContext.getFromYearValue() %>"
+								/>
+							</aui:field-wrapper>
+						</div>
+	
+						<div class="col-md-6" id="<%= randomNamespace %>customRangeTo">
+							<aui:field-wrapper label="to">
+								<liferay-ui:input-date
+									dayParam='<%= calendarRangeTermDisplayContext.getToDayParam() %>'
+									dayValue="<%= calendarRangeTermDisplayContext.getFromDayValue() %>"
+									disabled="<%= false %>"
+									firstDayOfWeek="<%= calendarRangeTermDisplayContext.getToFirstDayOfWeek() %>"
+									monthParam='<%= calendarRangeTermDisplayContext.getToMonthParam() %>'
+									monthValue="<%= calendarRangeTermDisplayContext.getToMonthValue() %>"
+									name='<%= calendarRangeTermDisplayContext.getToName() %>'
+									yearParam='<%= calendarRangeTermDisplayContext.getToYearParam() %>'
+									yearValue="<%= calendarRangeTermDisplayContext.getToYearValue() %>"
+								/>
+							</aui:field-wrapper>
+						</div>
+	
+						<%
+						String taglibSearchCustomRange = "window['" + renderResponse.getNamespace() + HtmlUtil.escapeJS(facet.getFieldId()) + "searchCustomRange'](" + (index + 1) + ");";
+						%>
+	
+						<aui:button disabled="<%= (!calendarRangeTermDisplayContext.isFromBeforeTo()) %>" name="searchCustomRangeButton" onClick="<%= taglibSearchCustomRange %>" value="search" />
 					</div>
-
-					<div class="col-md-6" id="<%= randomNamespace %>customRangeTo">
-						<aui:field-wrapper label="to">
-							<liferay-ui:input-date
-								dayParam='<%= HtmlUtil.escapeJS(facet.getFieldId()) + "dayTo" %>'
-								dayValue="<%= toCalendar.get(Calendar.DATE) %>"
-								disabled="<%= false %>"
-								firstDayOfWeek="<%= toCalendar.getFirstDayOfWeek() - 1 %>"
-								monthParam='<%= HtmlUtil.escapeJS(facet.getFieldId()) + "monthTo" %>'
-								monthValue="<%= toCalendar.get(Calendar.MONTH) %>"
-								name='<%= HtmlUtil.escapeJS(facet.getFieldId()) + "to" %>'
-								yearParam='<%= HtmlUtil.escapeJS(facet.getFieldId()) + "yearTo" %>'
-								yearValue="<%= toCalendar.get(Calendar.YEAR) %>"
-							/>
-						</aui:field-wrapper>
-					</div>
-
-					<%
-					String taglibSearchCustomRange = "window['" + renderResponse.getNamespace() + HtmlUtil.escapeJS(facet.getFieldId()) + "searchCustomRange'](" + (index + 1) + ");";
-					%>
-
-					<aui:button disabled="<%= (toCalendar.getTimeInMillis() < fromCalendar.getTimeInMillis()) %>" name="searchCustomRangeButton" onClick="<%= taglibSearchCustomRange %>" value="search" />
-				</div>
-			</ul>
-		</aui:field-wrapper>
+				</ul>
+			</aui:field-wrapper>
+		</aui:form>	
 	</liferay-ui:panel>
 </liferay-ui:panel-container>
 
