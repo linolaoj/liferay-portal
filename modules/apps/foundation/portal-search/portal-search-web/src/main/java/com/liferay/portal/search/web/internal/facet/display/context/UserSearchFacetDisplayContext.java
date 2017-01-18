@@ -23,6 +23,8 @@ import java.util.List;
  */
 public class UserSearchFacetDisplayContext implements Serializable {
 
+	public static final String ATTRIBUTE = "UserSearchFacetDisplayContext";
+
 	public String getParamName() {
 		return _paramName;
 	}
