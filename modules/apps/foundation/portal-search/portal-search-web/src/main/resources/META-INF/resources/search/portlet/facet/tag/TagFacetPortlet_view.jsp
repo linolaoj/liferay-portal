@@ -53,10 +53,6 @@ String cssClassFacetTerm = "facet-term-" + namespace;
 				<aui:form method="post" name="assetTagsFacetForm">
 					<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(assetTagsSearchFacetDisplayContext.getParamName()) %>" type="hidden" value="<%= assetTagsSearchFacetDisplayContext.getParamValue() %>" />
 
-					<c:if test="<%= !assetTagsSearchFacetDisplayContext.isNothingSelected() %>">
-						<aui:a cssClass="text-default" href="javascript:;" onClick='<%= namespace + "_clearFacet('" + assetTagsSearchFacetDisplayContext.getParamName() + "');" %>'><liferay-ui:message key="portlet.tag-facet.clear" /></aui:a>
-					</c:if>
-
 					<aui:fieldset>
 						<ul class="<%= assetTagsSearchFacetDisplayContext.isCloudWithCount() ? "tag-cloud" : "tag-list" %> list-unstyled">
 
@@ -97,6 +93,10 @@ String cssClassFacetTerm = "facet-term-" + namespace;
 
 						</ul>
 					</aui:fieldset>
+					
+					<c:if test="<%= !assetTagsSearchFacetDisplayContext.isNothingSelected() %>">
+						<aui:a cssClass="text-default" href="javascript:;" onClick='<%= namespace + "_clearFacet('" + assetTagsSearchFacetDisplayContext.getParamName() + "');" %>'><small><liferay-ui:message key="portlet.tag-facet.clear" /></small></aui:a>
+					</c:if>
 				</aui:form>
 			</liferay-ui:panel>
 		</liferay-ui:panel-container>
@@ -146,22 +146,37 @@ String cssClassFacetTerm = "facet-term-" + namespace;
 		window,
 		'<portlet:namespace />_applyFacet',
 		function(event) {
+			var SINGLE_SELECTION = true;
+		
 			var form = event.currentTarget.form;
 
 			if (form) {
-				var formCheckboxes = $('#' + form.id + ' input.' + '<%= cssClassFacetTerm %>');
-
 				var selectedFacets = [];
 
-				formCheckboxes.each(
-					function(index, value) {
-						if (value.checked) {
-							var termId = value.getAttribute('data-term-id');
-
-							selectedFacets.push(termId);
-						}
+				if (SINGLE_SELECTION) {
+					var checkbox = $('#' + event.currentTarget.name);
+					
+					var checked = checkbox.prop('checked');
+					
+					if (checked) {
+						var termId = event.currentTarget.getAttribute('data-term-id');
+						
+						selectedFacets.push(termId);
 					}
-				);
+				} 
+				else {
+					var formCheckboxes = $('#' + form.id + ' input.' + '<%= cssClassFacetTerm %>');
+
+					formCheckboxes.each(
+						function(index, value) {
+							if (value.checked) {
+								var termId = value.getAttribute('data-term-id');
+	
+								selectedFacets.push(termId);
+							}
+						}
+					);
+				}
 
 				var key = '<%= assetTagsSearchFacetDisplayContext.getParamName() %>';
 
