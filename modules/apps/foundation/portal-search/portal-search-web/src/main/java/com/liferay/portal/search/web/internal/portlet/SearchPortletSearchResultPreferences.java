@@ -14,11 +14,9 @@
 
 package com.liferay.portal.search.web.internal.portlet;
 
-import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.search.web.internal.display.context.SearchResultPreferences;
-import com.liferay.portal.search.web.internal.display.context.ThemeDisplaySupplier;
+import com.liferay.portal.search.web.internal.document.DocumentFormChecker;
 
 import javax.portlet.PortletPreferences;
 
@@ -30,10 +28,10 @@ public class SearchPortletSearchResultPreferences
 
 	public SearchPortletSearchResultPreferences(
 		PortletPreferences portletPreferences,
-		ThemeDisplaySupplier themeDisplaySupplier) {
+		DocumentFormChecker documentFormChecker) {
 
 		_portletPreferences = portletPreferences;
-		_themeDisplaySupplier = themeDisplaySupplier;
+		_documentFormChecker = documentFormChecker;
 	}
 
 	@Override
@@ -42,15 +40,12 @@ public class SearchPortletSearchResultPreferences
 			return _displayResultsInDocumentForm;
 		}
 
-		_displayResultsInDocumentForm = GetterUtil.getBoolean(
-			_portletPreferences.getValue("displayResultsInDocumentForm", null));
-
-		ThemeDisplay themeDisplay = getThemeDisplay();
-
-		PermissionChecker permissionChecker =
-			themeDisplay.getPermissionChecker();
-
-		if (!permissionChecker.isCompanyAdmin()) {
+		if (_documentFormChecker.canDisplayResultsInDocumentForm()) {
+			_displayResultsInDocumentForm = GetterUtil.getBoolean(
+				_portletPreferences.getValue(
+					"displayResultsInDocumentForm", null));
+		}
+		else {
 			_displayResultsInDocumentForm = false;
 		}
 
@@ -69,13 +64,9 @@ public class SearchPortletSearchResultPreferences
 		return _viewInContext;
 	}
 
-	protected ThemeDisplay getThemeDisplay() {
-		return _themeDisplaySupplier.getThemeDisplay();
-	}
-
 	private Boolean _displayResultsInDocumentForm;
+	private final DocumentFormChecker _documentFormChecker;
 	private final PortletPreferences _portletPreferences;
-	private final ThemeDisplaySupplier _themeDisplaySupplier;
 	private Boolean _viewInContext;
 
 }
