@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -57,7 +58,7 @@ public class DefaultSearchPageConfigurator {
 	@Activate
 	protected void activate() throws Exception {
 		long companyId = portal.getDefaultCompanyId();
-
+		
 		long groupId = getGuestGroupId(companyId);
 
 		if (isPagePresent(groupId)) {
@@ -141,6 +142,11 @@ public class DefaultSearchPageConfigurator {
 		return false;
 	}
 
+	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
+    protected void setModuleServiceLifecycle(
+        ModuleServiceLifecycle moduleServiceLifecycle) {
+    }
+	
 	@Reference
 	protected ExportImportConfigurationLocalService
 		exportImportConfigurationLocalService;
