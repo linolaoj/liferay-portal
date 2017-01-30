@@ -39,6 +39,8 @@ com.liferay.portal.search.web.internal.portlet.facet.site.SiteFacetPortletPrefer
 
 	<div class="portlet-configuration-body-content">
 		<div class="container-fluid-1280">
+			<aui:input label="portlet.site-facet.configuration.site-parameter-name" name="<%= PortletPreferencesJspUtil.getInputName(siteFacetPortletPreferences.PREFERENCE_PARAM_NAME) %>" value="<%= siteFacetPortletPreferences.getParamName() %>" />
+		
 			<aui:input label="max-terms" name="<%= PortletPreferencesJspUtil.getInputName(SiteFacetPortletPreferences.PREFERENCE_MAX_TERMS) %>" value="<%= siteFacetPortletPreferences.getMaxTerms() %>" />
 
 			<aui:input label="frequency-threshold" name="<%= PortletPreferencesJspUtil.getInputName(SiteFacetPortletPreferences.PREFERENCE_FREQUENCY_THRESHOLD) %>" value="<%= siteFacetPortletPreferences.getFrequencyThreshold() %>" />

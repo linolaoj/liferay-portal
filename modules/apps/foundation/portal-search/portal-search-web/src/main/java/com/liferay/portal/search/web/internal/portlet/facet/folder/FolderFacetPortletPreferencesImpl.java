@@ -48,6 +48,13 @@ public class FolderFacetPortletPreferencesImpl
 	}
 
 	@Override
+	public String getParamName() {
+		return _portletPreferencesHelper.getString(
+			FolderFacetPortletPreferences.PREFERENCE_PARAM_NAME,
+			FolderFacetPortletPreferences.DEFAULT_PARAM_NAME);
+	}
+	
+	@Override
 	public boolean isFrequenciesVisible() {
 		return _portletPreferencesHelper.getBoolean(
 			FolderFacetPortletPreferences.PREFERENCE_FREQUENCIES_VISIBLE,

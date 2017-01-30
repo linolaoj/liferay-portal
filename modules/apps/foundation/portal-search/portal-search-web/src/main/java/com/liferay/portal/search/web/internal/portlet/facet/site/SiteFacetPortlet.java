@@ -133,7 +133,11 @@ public class SiteFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 		Facet facet = portletSharedSearchResult.getFacet(
 			ScopeFacetConstants.FIELD_NAME);
 
-		String paramName = _PARAM;
+		SiteFacetPortletPreferences siteFacetPortletConfiguration =
+				new SiteFacetPortletPreferencesImpl(
+						portletSharedSearch.getPortletPreferences(renderRequest));
+
+		String paramName = siteFacetPortletConfiguration.getParamName();
 
 		Optional<String[]> paramValuesOptional =
 			portletSharedSearch.getParameterValues(paramName, renderRequest);
@@ -153,10 +157,6 @@ public class SiteFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 
 		int countThreshold = siteFacetConfiguration.getFrequencyThreshold();
 		int maxTerms = siteFacetConfiguration.getMaxTerms();
-
-		SiteFacetPortletPreferences siteFacetPortletConfiguration =
-			new SiteFacetPortletPreferencesImpl(
-				portletSharedSearch.getPortletPreferences(renderRequest));
 
 		boolean frequenciesVisible =
 			siteFacetPortletConfiguration.isFrequenciesVisible();
@@ -213,7 +213,7 @@ public class SiteFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 		SiteFacetPortletPreferences siteFacetPortletPreferences,
 		PortletSharedSearchSettings portletSharedSearchSettings) {
 
-		String paramName = _PARAM;
+		String paramName = siteFacetPortletPreferences.getParamName();
 
 		Optional<String[]> paramValuesOptional =
 			portletSharedSearchSettings.getParameterValues(paramName);
@@ -262,7 +262,5 @@ public class SiteFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 
 	@Reference
 	protected PortletSharedSearch portletSharedSearch;
-
-	private static final String _PARAM = "site";
 
 }

@@ -55,6 +55,13 @@ public class TagFacetPortletPreferencesImpl
 	}
 
 	@Override
+	public String getParamName() {
+		return _portletPreferencesHelper.getString(
+			TagFacetPortletPreferences.PREFERENCE_PARAM_NAME,
+			TagFacetPortletPreferences.DEFAULT_PARAM_NAME);
+	}
+	
+	@Override
 	public boolean isFrequenciesVisible() {
 		return _portletPreferencesHelper.getBoolean(
 			TagFacetPortletPreferences.PREFERENCE_FREQUENCIES_VISIBLE,

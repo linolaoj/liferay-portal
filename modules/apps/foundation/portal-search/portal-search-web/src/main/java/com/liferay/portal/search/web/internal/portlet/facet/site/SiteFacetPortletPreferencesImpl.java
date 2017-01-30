@@ -48,6 +48,13 @@ public class SiteFacetPortletPreferencesImpl
 	}
 
 	@Override
+	public String getParamName() {
+		return _portletPreferencesHelper.getString(
+			SiteFacetPortletPreferences.PREFERENCE_PARAM_NAME,
+			SiteFacetPortletPreferences.DEFAULT_PARAM_NAME);
+	}
+	
+	@Override
 	public boolean isFrequenciesVisible() {
 		return _portletPreferencesHelper.getBoolean(
 			SiteFacetPortletPreferences.PREFERENCE_FREQUENCIES_VISIBLE,

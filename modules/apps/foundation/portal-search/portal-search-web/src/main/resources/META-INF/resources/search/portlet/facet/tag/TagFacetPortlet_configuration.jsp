@@ -39,6 +39,8 @@ com.liferay.portal.search.web.internal.portlet.facet.tag.TagFacetPortletPreferen
 
 	<div class="portlet-configuration-body-content">
 		<div class="container-fluid-1280">
+			<aui:input label="portlet.tag-facet.configuration.tag-parameter-name" name="<%= PortletPreferencesJspUtil.getInputName(tagFacetPortletPreferences.PREFERENCE_PARAM_NAME) %>" value="<%= tagFacetPortletPreferences.getParamName() %>" />
+			
 			<aui:select label="display-style" name="<%= PortletPreferencesJspUtil.getInputName(TagFacetPortletPreferences.PREFERENCE_DISPLAY_STYLE) %>">
 				<aui:option label="cloud" selected='<%= tagFacetPortletPreferences.getDisplayStyle().equals("cloud") %>' />
 				<aui:option label="list" selected='<%= tagFacetPortletPreferences.getDisplayStyle().equals("list") %>' />

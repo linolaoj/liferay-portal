@@ -129,7 +129,11 @@ public class TagFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 		Facet facet = portletSharedSearchResult.getFacet(
 			AssetTagsFacetConstants.FIELD_NAME);
 
-		String paramName = _PARAM;
+		TagFacetPortletPreferences tagFacetPortletPreferences =
+				new TagFacetPortletPreferencesImpl(
+						portletSharedSearch.getPortletPreferences(renderRequest));
+		
+		String paramName = tagFacetPortletPreferences.getParamName();
 
 		Optional<String[]> paramValuesOptional =
 			portletSharedSearch.getParameterValues(paramName, renderRequest);
@@ -143,10 +147,6 @@ public class TagFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 		int frequencyThreshold =
 			assetTagsFacetConfiguration.getFrequencyThreshold();
 		int maxTerms = assetTagsFacetConfiguration.getMaxTerms();
-
-		TagFacetPortletPreferences tagFacetPortletPreferences =
-			new TagFacetPortletPreferencesImpl(
-				portletSharedSearch.getPortletPreferences(renderRequest));
 
 		boolean frequenciesVisible =
 			tagFacetPortletPreferences.isFrequenciesVisible();
@@ -162,7 +162,8 @@ public class TagFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 		assetTagsSearchFacetDisplayBuilder.setFrequencyThreshold(
 			frequencyThreshold);
 		assetTagsSearchFacetDisplayBuilder.setMaxTerms(maxTerms);
-		assetTagsSearchFacetDisplayBuilder.setParamName(_PARAM);
+		assetTagsSearchFacetDisplayBuilder.setParamName(
+			tagFacetPortletPreferences.getParamName());
 
 		tagsOptional.ifPresent(
 			assetTagsSearchFacetDisplayBuilder::setParamValues);
@@ -177,7 +178,7 @@ public class TagFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 		TagFacetPortletPreferences tagFacetPortletPreferences,
 		PortletSharedSearchSettings portletSharedSearchSettings) {
 
-		String paramName = _PARAM;
+		String paramName = tagFacetPortletPreferences.getParamName();
 
 		Optional<String[]> paramValuesOptional =
 			portletSharedSearchSettings.getParameterValues(paramName);
@@ -196,7 +197,5 @@ public class TagFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 
 	@Reference
 	protected PortletSharedSearch portletSharedSearch;
-
-	private static final String _PARAM = "tag";
 
 }

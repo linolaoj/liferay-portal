@@ -31,11 +31,17 @@ public interface TagFacetPortletPreferences {
 
 	public static final String PREFERENCE_MAX_TERMS = "maxTerms";
 
+	public static final String PREFERENCE_PARAM_NAME = "paramName";
+
+	public static final String DEFAULT_PARAM_NAME = "tag";
+
 	public String getDisplayStyle();
 
 	public int getFrequencyThreshold();
 
 	public int getMaxTerms();
+	
+	public String getParamName();
 
 	public boolean isFrequenciesVisible();
 

@@ -141,7 +141,7 @@ public class FolderFacetPortlet
 			new FolderFacetPortletPreferencesImpl(
 				portletSharedSearch.getPortletPreferences(renderRequest));
 
-		String paramName = _PARAM;
+		String paramName = folderFacetPortletPreferences.getParamName();
 
 		Optional<String[]> paramValuesOptional =
 			portletSharedSearch.getParameterValues(paramName, renderRequest);
@@ -175,7 +175,7 @@ public class FolderFacetPortlet
 		FolderFacetPortletPreferences folderFacetPortletPreferences,
 		PortletSharedSearchSettings portletSharedSearchSettings) {
 
-		String paramName = _PARAM;
+		String paramName = folderFacetPortletPreferences.getParamName();;
 
 		Optional<String[]> paramValuesOptional =
 			portletSharedSearchSettings.getParameterValues(paramName);
@@ -194,7 +194,5 @@ public class FolderFacetPortlet
 
 	@Reference
 	protected PortletSharedSearch portletSharedSearch;
-
-	private static final String _PARAM = "folder";
 
 }
