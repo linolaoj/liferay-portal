@@ -32,6 +32,7 @@ import com.liferay.portal.search.web.portletsharedsearch.SearchAwarePortlet;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -138,7 +139,8 @@ public class SiteFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 		Optional<String[]> paramValuesOptional =
 			portletSharedSearch.getParameterValues(paramName, renderRequest);
 
-		// TODO Multiple checked checkboxes
+		Optional<List<String>> sitesOptional = paramValuesOptional.map(
+				Arrays::asList);
 
 		String paramValue = paramValuesOptional.map(
 			a -> a[0]).orElse(StringPool.BLANK);
@@ -184,6 +186,9 @@ public class SiteFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 		siteFacetPortletDisplayContext.setParamValue(paramValue);
 		siteFacetPortletDisplayContext.setRenderNothing(renderNothing);
 
+		sitesOptional.ifPresent(
+				siteFacetPortletDisplayContext::setParamValues);
+		
 		return siteFacetPortletDisplayContext;
 	}
 

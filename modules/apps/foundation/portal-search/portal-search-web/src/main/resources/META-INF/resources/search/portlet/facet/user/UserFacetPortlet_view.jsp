@@ -108,7 +108,6 @@ String cssClassFacetTerm = "facet-term-" + namespace;
 		</liferay-ui:panel-container>
 	</c:otherwise>
 </c:choose>
-
 <aui:script>
 	function <%= namespace %>_removeParameters(key, parameterArray) {
 		key = encodeURI(key);
@@ -155,9 +154,9 @@ String cssClassFacetTerm = "facet-term-" + namespace;
 			var form = event.currentTarget.form;
 
 			if (form) {
-				var formCheckboxes = $('#' + form.id + ' input.' + '<%= cssClassFacetTerm %>');
-
 				var selectedFacets = [];
+
+				var formCheckboxes = $('#' + form.id + ' input.' + '<%= cssClassFacetTerm %>');
 
 				formCheckboxes.each(
 					function(index, value) {
@@ -175,8 +174,8 @@ String cssClassFacetTerm = "facet-term-" + namespace;
 
 				var newParameters = <%= namespace %>_removeParameters(key, parameterArray);
 
-				if (selectedFacets.length > 0) {
-					newParameters = <%= namespace %>_addParameter(key, selectedFacets.join(','), newParameters);
+				for (var i = 0; i < selectedFacets.length; i++) {
+					newParameters = <%= namespace %>_addParameter(key, selectedFacets[i], newParameters);
 				}
 
 				document.location.search = newParameters.join('&');

@@ -27,7 +27,8 @@ import com.liferay.portal.search.web.portletsharedsearch.PortletSharedSearchSett
 import com.liferay.portal.search.web.portletsharedsearch.SearchAwarePortlet;
 
 import java.io.IOException;
-
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import javax.portlet.Portlet;
@@ -138,10 +139,8 @@ public class UserFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 		Optional<String[]> paramValuesOptional =
 			portletSharedSearch.getParameterValues(paramName, renderRequest);
 
-		// TODO Multiple checked checkboxes
-
-		String paramValue = paramValuesOptional.map(
-			a -> a[0]).orElse(StringPool.BLANK);
+		Optional<List<String>> usersOptional = paramValuesOptional.map(
+				Arrays::asList);
 
 		UserSearchFacetDisplayBuilder userSearchFacetDisplayBuilder =
 			new UserSearchFacetDisplayBuilder();
@@ -154,8 +153,10 @@ public class UserFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 		userSearchFacetDisplayBuilder.setMaxTerms(
 			userFacetConfiguration.getMaxTerms());
 		userSearchFacetDisplayBuilder.setParamName(paramName);
-		userSearchFacetDisplayBuilder.setParamValue(paramValue);
 
+		usersOptional.ifPresent(
+				userSearchFacetDisplayBuilder::setParamValues);
+		
 		UserSearchFacetDisplayContext userSearchFacetDisplayContext =
 			userSearchFacetDisplayBuilder.build();
 

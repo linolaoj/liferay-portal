@@ -30,7 +30,8 @@ import com.liferay.portal.search.web.portletsharedsearch.PortletSharedSearchSett
 import com.liferay.portal.search.web.portletsharedsearch.SearchAwarePortlet;
 
 import java.io.IOException;
-
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import javax.portlet.Portlet;
@@ -154,7 +155,8 @@ public class CategoryFacetPortlet
 		Optional<String[]> paramValuesOptional =
 			portletSharedSearch.getParameterValues(paramName, renderRequest);
 
-		// TODO Multiple checked checkboxes
+		Optional<List<String>> categoriesOptional = paramValuesOptional.map(
+				Arrays::asList);
 
 		String paramValue = paramValuesOptional.map(
 			a -> a[0]).orElse(StringPool.BLANK);
@@ -170,7 +172,6 @@ public class CategoryFacetPortlet
 		assetCategoriesSearchFacetDisplayBuilder.setPermissionChecker(
 			themeDisplay.getPermissionChecker());
 		assetCategoriesSearchFacetDisplayBuilder.setParamName(paramName);
-		assetCategoriesSearchFacetDisplayBuilder.setParamValue(paramValue);
 		assetCategoriesSearchFacetDisplayBuilder.setLocale(
 			themeDisplay.getLocale());
 		assetCategoriesSearchFacetDisplayBuilder.setDisplayStyle(displayStyle);
@@ -179,6 +180,9 @@ public class CategoryFacetPortlet
 		assetCategoriesSearchFacetDisplayBuilder.setMaxTerms(maxTerms);
 		assetCategoriesSearchFacetDisplayBuilder.setFrequenciesVisible(
 			frequenciesVisible);
+		
+		categoriesOptional.ifPresent(
+				assetCategoriesSearchFacetDisplayBuilder::setParamValues);
 
 		try {
 			return assetCategoriesSearchFacetDisplayBuilder.build();

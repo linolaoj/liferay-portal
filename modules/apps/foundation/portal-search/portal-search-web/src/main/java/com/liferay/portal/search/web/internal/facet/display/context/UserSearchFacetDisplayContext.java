@@ -32,6 +32,10 @@ public class UserSearchFacetDisplayContext implements Serializable {
 	public String getParamValue() {
 		return _paramValue;
 	}
+	
+	public List<String> getParamValues() {
+		return _paramValues;
+	}
 
 	public List<UserSearchFacetTermDisplayContext> getTermDisplayContexts() {
 		return _userSearchFacetTermDisplayContexts;
@@ -56,6 +60,10 @@ public class UserSearchFacetDisplayContext implements Serializable {
 	public void setParamValue(String paramValue) {
 		_paramValue = paramValue;
 	}
+	
+	public void setParamValues(List<String> paramValues) {
+		_paramValues = paramValues;
+	}
 
 	public void setRenderNothing(boolean renderNothing) {
 		_renderNothing = renderNothing;
@@ -72,6 +80,7 @@ public class UserSearchFacetDisplayContext implements Serializable {
 	private boolean _nothingSelected;
 	private String _paramName;
 	private String _paramValue;
+	private List<String> _paramValues;
 	private boolean _renderNothing;
 	private List<UserSearchFacetTermDisplayContext>
 		_userSearchFacetTermDisplayContexts;

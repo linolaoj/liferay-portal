@@ -18,15 +18,17 @@ import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.web.internal.facet.display.context.FolderSearchFacetDisplayContext;
 import com.liferay.portal.search.web.internal.facet.display.context.FolderSearchFacetTermDisplayContext;
 import com.liferay.portal.search.web.internal.facet.display.context.FolderTitleLookup;
-import com.liferay.portal.search.web.internal.util.StringUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Lino Alves
@@ -38,15 +40,10 @@ public class FolderSearchFacetDisplayBuilder {
 			new FolderSearchFacetDisplayContext();
 
 		folderSearchFacetDisplayContext.setParamName(_paramName);
-		folderSearchFacetDisplayContext.setParamValue(_paramValue);
+		folderSearchFacetDisplayContext.setParamValue(getFirstParamValue());
+		folderSearchFacetDisplayContext.setParamValues(_paramValues);
 
-		_folderId = getFolderId(_paramValue);
-
-		boolean nothingSelected = false;
-
-		if (Validator.isBlank(_paramValue)) {
-			nothingSelected = true;
-		}
+		boolean nothingSelected = isNothingSelected();
 
 		folderSearchFacetDisplayContext.setNothingSelected(nothingSelected);
 
@@ -87,7 +84,17 @@ public class FolderSearchFacetDisplayBuilder {
 	}
 
 	public void setParamValue(String paramValue) {
-		_paramValue = paramValue;
+		paramValue = StringUtil.trim(Objects.requireNonNull(paramValue));
+
+		if (paramValue.isEmpty()) {
+			return;
+		}
+
+		_paramValues = Collections.singletonList(paramValue);
+	}
+	
+	public void setParamValues(List<String> paramValues) {
+		_paramValues = paramValues;
 	}
 
 	protected FolderSearchFacetTermDisplayContext buildTermDisplayContext(
@@ -102,16 +109,12 @@ public class FolderSearchFacetDisplayBuilder {
 		String title = _folderTitleLookup.getFolderTitle(curFolderId);
 
 		if (title == null) {
-			title = StringUtil.concat("[", curFolderId, "]");
+			title = "[" + curFolderId + "]";
 		}
 
 		int frequency = termCollector.getFrequency();
 
-		boolean selected = false;
-
-		if ((_folderId != null) && _folderId.equals(curFolderId)) {
-			selected = true;
-		}
+		boolean selected = isSelected(String.valueOf(curFolderId));
 
 		FolderSearchFacetTermDisplayContext
 			folderSearchFacetTermDisplayContext =
@@ -168,12 +171,13 @@ public class FolderSearchFacetDisplayBuilder {
 
 	protected List<FolderSearchFacetTermDisplayContext>
 		getEmptySearchResultTermDisplayContexts() {
-
-		if (_folderId == null) {
+		
+		if (_paramValues.isEmpty()) {
 			return Collections.emptyList();
 		}
 
-		String title = _folderTitleLookup.getFolderTitle(_folderId);
+		long folderId = Long.parseLong(_paramValues.get(0));
+		String title = _folderTitleLookup.getFolderTitle(folderId);
 
 		if (title == null) {
 			return Collections.emptyList();
@@ -184,7 +188,7 @@ public class FolderSearchFacetDisplayBuilder {
 				new FolderSearchFacetTermDisplayContext();
 
 		folderSearchFacetTermDisplayContext.setDisplayName(title);
-		folderSearchFacetTermDisplayContext.setFolderId(_folderId);
+		folderSearchFacetTermDisplayContext.setFolderId(folderId);
 		folderSearchFacetTermDisplayContext.setSelected(true);
 		folderSearchFacetTermDisplayContext.setFrequency(0);
 		folderSearchFacetTermDisplayContext.setFrequencyVisible(
@@ -203,6 +207,14 @@ public class FolderSearchFacetDisplayBuilder {
 		return folderId;
 	}
 
+	protected String getFirstParamValue() {
+		if (_paramValues.isEmpty()) {
+			return StringPool.BLANK;
+		}
+
+		return _paramValues.get(0);
+	}
+	
 	protected List<TermCollector> getTermsCollectors() {
 		FacetCollector facetCollector = _facet.getFacetCollector();
 
@@ -212,14 +224,29 @@ public class FolderSearchFacetDisplayBuilder {
 
 		return facetCollector.getTermCollectors();
 	}
+	
+	protected boolean isNothingSelected() {
+		if (_paramValues.isEmpty()) {
+			return true;
+		}
+
+		return false;
+	}
+	
+	protected boolean isSelected(String value) {
+		if (_paramValues.contains(value)) {
+			return true;
+		}
+
+		return false;
+	}
 
 	private Facet _facet;
-	private Long _folderId;
 	private FolderTitleLookup _folderTitleLookup;
 	private boolean _frequenciesVisible;
 	private int _frequencyThreshold;
 	private int _maxTerms;
 	private String _paramName;
-	private String _paramValue;
+	private List<String> _paramValues = Collections.emptyList();
 
 }

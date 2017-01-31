@@ -18,6 +18,8 @@ import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.web.internal.facet.display.context.UserSearchFacetDisplayContext;
 import com.liferay.portal.search.web.internal.facet.display.context.UserSearchFacetTermDisplayContext;
@@ -25,6 +27,7 @@ import com.liferay.portal.search.web.internal.facet.display.context.UserSearchFa
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author André de Oliveira
@@ -36,13 +39,10 @@ public class UserSearchFacetDisplayBuilder {
 			new UserSearchFacetDisplayContext();
 
 		userSearchFacetDisplayContext.setParamName(_paramName);
-		userSearchFacetDisplayContext.setParamValue(_paramValue);
+		userSearchFacetDisplayContext.setParamValue(getFirstParamValue());
+		userSearchFacetDisplayContext.setParamValues(_paramValues);
 
-		boolean nothingSelected = false;
-
-		if (Validator.isBlank(_paramValue)) {
-			nothingSelected = true;
-		}
+		boolean nothingSelected = isNothingSelected();
 
 		userSearchFacetDisplayContext.setNothingSelected(nothingSelected);
 
@@ -79,11 +79,21 @@ public class UserSearchFacetDisplayBuilder {
 	}
 
 	public void setParamValue(String paramValue) {
-		_paramValue = paramValue;
+		paramValue = StringUtil.trim(Objects.requireNonNull(paramValue));
+
+		if (paramValue.isEmpty()) {
+			return;
+		}
+
+		_paramValues = Collections.singletonList(paramValue);
+	}
+	
+	public void setParamValues(List<String> paramValues) {
+		_paramValues = paramValues;
 	}
 
 	protected UserSearchFacetTermDisplayContext buildTermDisplayContext(
-		String selection, TermCollector termCollector) {
+		TermCollector termCollector) {
 
 		UserSearchFacetTermDisplayContext userSearchFacetTermDisplayContext =
 			new UserSearchFacetTermDisplayContext();
@@ -95,7 +105,7 @@ public class UserSearchFacetDisplayBuilder {
 
 		String term = GetterUtil.getString(termCollector.getTerm());
 
-		userSearchFacetTermDisplayContext.setSelected(selection.equals(term));
+		userSearchFacetTermDisplayContext.setSelected(isSelected(term));
 		userSearchFacetTermDisplayContext.setUserName(term);
 
 		return userSearchFacetTermDisplayContext;
@@ -112,8 +122,6 @@ public class UserSearchFacetDisplayBuilder {
 			userSearchFacetTermDisplayContexts = new ArrayList<>(
 				termCollectors.size());
 
-		String userName = GetterUtil.getString(_paramValue);
-
 		for (int i = 0; i < termCollectors.size(); i++) {
 			TermCollector termCollector = termCollectors.get(i);
 
@@ -125,7 +133,7 @@ public class UserSearchFacetDisplayBuilder {
 			}
 
 			userSearchFacetTermDisplayContexts.add(
-				buildTermDisplayContext(userName, termCollector));
+				buildTermDisplayContext(termCollector));
 		}
 
 		return userSearchFacetTermDisplayContexts;
@@ -134,7 +142,7 @@ public class UserSearchFacetDisplayBuilder {
 	protected List<UserSearchFacetTermDisplayContext>
 		getEmptyTermDisplayContexts() {
 
-		if (Validator.isBlank(_paramValue)) {
+		if (_paramValues.isEmpty()) {
 			return Collections.emptyList();
 		}
 
@@ -145,11 +153,19 @@ public class UserSearchFacetDisplayBuilder {
 		userSearchFacetTermDisplayContext.setFrequencyVisible(
 			_frequenciesVisible);
 		userSearchFacetTermDisplayContext.setSelected(true);
-		userSearchFacetTermDisplayContext.setUserName(_paramValue);
+		userSearchFacetTermDisplayContext.setUserName(_paramValues.get(0));
 
 		return Collections.singletonList(userSearchFacetTermDisplayContext);
 	}
 
+	protected String getFirstParamValue() {
+		if (_paramValues.isEmpty()) {
+			return StringPool.BLANK;
+		}
+
+		return _paramValues.get(0);
+	}
+	
 	protected List<TermCollector> getTermCollectors() {
 		FacetCollector facetCollector = _facet.getFacetCollector();
 
@@ -160,11 +176,43 @@ public class UserSearchFacetDisplayBuilder {
 		return facetCollector.getTermCollectors();
 	}
 
+	protected boolean isNothingSelected() {
+		if (_paramValues.isEmpty()) {
+			return true;
+		}
+
+		return false;
+	}
+
+	protected boolean isRenderNothing() {
+		if (!_paramValues.isEmpty()) {
+			return false;
+		}
+
+		FacetCollector facetCollector = _facet.getFacetCollector();
+
+		List<TermCollector> termCollectors = facetCollector.getTermCollectors();
+
+		if (!termCollectors.isEmpty()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	protected boolean isSelected(String value) {
+		if (_paramValues.contains(value)) {
+			return true;
+		}
+
+		return false;
+	}
+	
 	private Facet _facet;
 	private boolean _frequenciesVisible;
 	private int _frequencyThreshold;
 	private int _maxTerms;
 	private String _paramName;
-	private String _paramValue;
+	private List<String> _paramValues = Collections.emptyList();
 
 }

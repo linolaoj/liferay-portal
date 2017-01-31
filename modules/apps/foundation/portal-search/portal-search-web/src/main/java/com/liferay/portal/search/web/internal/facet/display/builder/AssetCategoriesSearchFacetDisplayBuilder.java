@@ -24,6 +24,8 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.web.internal.facet.display.context.AssetCategoriesSearchFacetDisplayContext;
 import com.liferay.portal.search.web.internal.facet.display.context.AssetCategoriesSearchFacetTermDisplayContext;
@@ -35,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * @author Lino Alves
@@ -50,7 +53,8 @@ public class AssetCategoriesSearchFacetDisplayBuilder implements Serializable {
 
 		assetCategoriesSearchFacetDisplayContext.setDisplayStyle(_displayStyle);
 		assetCategoriesSearchFacetDisplayContext.setParamName(_paramName);
-		assetCategoriesSearchFacetDisplayContext.setParamValue(_paramValue);
+		assetCategoriesSearchFacetDisplayContext.setParamValue(getFirstParamValue());
+		assetCategoriesSearchFacetDisplayContext.setParamValues(_paramValues);
 
 		assetCategoriesSearchFacetDisplayContext.setTermDisplayContexts(
 			buildTermDisplayContexts());
@@ -61,7 +65,7 @@ public class AssetCategoriesSearchFacetDisplayBuilder implements Serializable {
 		assetCategoriesSearchFacetDisplayContext.setRenderNothing(
 			renderNothing);
 
-		boolean nothingSelected = Validator.isNull(_paramValue);
+		boolean nothingSelected = isNothingSelected();
 
 		assetCategoriesSearchFacetDisplayContext.setNothingSelected(
 			nothingSelected);
@@ -172,7 +176,7 @@ public class AssetCategoriesSearchFacetDisplayBuilder implements Serializable {
 					continue;
 				}
 
-				boolean selected = _paramValue.equals(termCollector.getTerm());
+				boolean selected = isSelected(termCollector.getTerm());
 
 				AssetCategoriesSearchFacetTermDisplayContext
 					assetCategoriesSearchFacetTermDisplayContext =
@@ -208,8 +212,12 @@ public class AssetCategoriesSearchFacetDisplayBuilder implements Serializable {
 		return _maxTerms;
 	}
 
-	public String getParamValue() {
-		return _paramValue;
+	protected String getFirstParamValue() {
+		if (_paramValues.isEmpty()) {
+			return StringPool.BLANK;
+		}
+
+		return _paramValues.get(0);
 	}
 
 	public PermissionChecker getPermissionChecker() {
@@ -226,6 +234,38 @@ public class AssetCategoriesSearchFacetDisplayBuilder implements Serializable {
 
 	public boolean isShowAssetCount() {
 		return _frequenciesVisible;
+	}
+	
+	protected boolean isNothingSelected() {
+		if (_paramValues.isEmpty()) {
+			return true;
+		}
+
+		return false;
+	}
+
+	protected boolean isRenderNothing() {
+		if (!_paramValues.isEmpty()) {
+			return false;
+		}
+
+		FacetCollector facetCollector = _facet.getFacetCollector();
+
+		List<TermCollector> termCollectors = facetCollector.getTermCollectors();
+
+		if (!termCollectors.isEmpty()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	protected boolean isSelected(String value) {
+		if (_paramValues.contains(value)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public void setDisplayStyle(String displayStyle) {
@@ -257,7 +297,17 @@ public class AssetCategoriesSearchFacetDisplayBuilder implements Serializable {
 	}
 
 	public void setParamValue(String paramValue) {
-		_paramValue = paramValue;
+		paramValue = StringUtil.trim(Objects.requireNonNull(paramValue));
+
+		if (paramValue.isEmpty()) {
+			return;
+		}
+
+		_paramValues = Collections.singletonList(paramValue);
+	}
+
+	public void setParamValues(List<String> paramValues) {
+		_paramValues = paramValues;
 	}
 
 	public void setPermissionChecker(PermissionChecker permissionChecker) {
@@ -271,7 +321,7 @@ public class AssetCategoriesSearchFacetDisplayBuilder implements Serializable {
 	private Locale _locale;
 	private int _maxTerms;
 	private String _paramName;
-	private String _paramValue;
+	private List<String> _paramValues = Collections.emptyList();
 	private PermissionChecker _permissionChecker;
 
 }

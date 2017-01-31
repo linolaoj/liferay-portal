@@ -16,6 +16,7 @@ package com.liferay.portal.search.web.internal.portlet.facet.site;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author André de Oliveira
@@ -32,6 +33,10 @@ public class SiteFacetPortletDisplayContext {
 		return _fieldParamInputValue;
 	}
 
+	public List<String> getParamValues() {
+		return _paramValues;
+	}
+	
 	public Collection<SiteFacetPortletTermDisplayContext>
 		getTermDisplayContexts() {
 
@@ -58,6 +63,10 @@ public class SiteFacetPortletDisplayContext {
 		_fieldParamInputValue = fieldParamInputValue;
 	}
 
+	public void setParamValues(List<String> paramValues) {
+		_paramValues = paramValues;
+	}
+	
 	public void setRenderNothing(boolean renderNothing) {
 		_renderNothing = renderNothing;
 	}
@@ -71,6 +80,7 @@ public class SiteFacetPortletDisplayContext {
 	private String _fieldParamInputName;
 	private String _fieldParamInputValue;
 	private boolean _nothingSelected;
+	private List<String> _paramValues;
 	private boolean _renderNothing;
 	private Collection<SiteFacetPortletTermDisplayContext>
 		_termDisplayContexts = Collections.emptyList();

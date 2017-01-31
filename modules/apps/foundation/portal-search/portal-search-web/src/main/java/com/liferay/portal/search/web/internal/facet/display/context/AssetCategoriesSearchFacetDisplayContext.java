@@ -38,6 +38,10 @@ public class AssetCategoriesSearchFacetDisplayContext implements Serializable {
 		return _paramValue;
 	}
 
+	public List<String> getParamValues() {
+		return _paramValues;
+	}
+	
 	public List<AssetCategoriesSearchFacetTermDisplayContext>
 		getTermDisplayContexts() {
 
@@ -68,6 +72,10 @@ public class AssetCategoriesSearchFacetDisplayContext implements Serializable {
 		_paramValue = paramValue;
 	}
 
+	public void setParamValues(List<String> paramValues) {
+		_paramValues = paramValues;
+	}
+	
 	public void setRenderNothing(boolean renderNothing) {
 		_renderNothing = renderNothing;
 	}
@@ -86,6 +94,7 @@ public class AssetCategoriesSearchFacetDisplayContext implements Serializable {
 	private boolean _nothingSelected;
 	private String _paramName;
 	private String _paramValue;
+	private List<String> _paramValues;
 	private boolean _renderNothing;
 
 }
