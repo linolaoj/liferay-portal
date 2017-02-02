@@ -20,6 +20,10 @@ import java.util.Optional;
  * @author André de Oliveira
  */
 public interface SearchContainerOptions {
+	
+	public Optional<Integer> getDelta();
+	
+	public Optional<String> getDeltaParameterName();
 
 	public Optional<Integer> getStartPage();
 

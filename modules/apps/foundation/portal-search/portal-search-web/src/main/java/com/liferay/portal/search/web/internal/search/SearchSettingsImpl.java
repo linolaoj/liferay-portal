@@ -37,6 +37,16 @@ public class SearchSettingsImpl
 	}
 
 	@Override
+	public Optional<Integer> getDelta() {
+		return Optional.ofNullable(_delta);
+	}
+	
+	@Override
+	public Optional<String> getDeltaParameterName() {
+		return Optional.ofNullable(_deltaParameterName);
+	}
+	
+	@Override
 	public QueryConfig getQueryConfig() {
 		return _searchContext.getQueryConfig();
 	}
@@ -57,6 +67,16 @@ public class SearchSettingsImpl
 	}
 
 	@Override
+	public void setDelta(int delta) {
+		_delta = delta;
+	}
+
+	@Override
+	public void setDeltaParameterName(String deltaParameterName) {
+		_deltaParameterName = deltaParameterName;
+	}
+	
+	@Override
 	public void setKeywords(String keywords) {
 		_searchContext.setKeywords(keywords);
 	}
@@ -71,8 +91,10 @@ public class SearchSettingsImpl
 		_startPageParameterName = startPageParamName;
 	}
 
+	private Integer _delta;
+	private String _deltaParameterName;
 	private final SearchContext _searchContext;
 	private Integer _startPage;
 	private String _startPageParameterName;
-
+	
 }

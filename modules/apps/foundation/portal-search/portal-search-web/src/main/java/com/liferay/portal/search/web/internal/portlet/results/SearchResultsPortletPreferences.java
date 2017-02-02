@@ -14,11 +14,17 @@
 
 package com.liferay.portal.search.web.internal.portlet.results;
 
+import com.liferay.portal.kernel.dao.search.SearchContainer;
+
 /**
  * @author Lino Alves
  */
 public interface SearchResultsPortletPreferences {
 
+	public static final String PREFERENCE_VIEW_IN_CONTEXT = "viewInContext";
+
+	public static final String DEFAULT_DELTA_PARAMETER_NAME = "deltastart";
+	
 	public static final boolean DEFAULT_DISPLAY_IN_DOCUMENT_FORM = false;
 
 	public static final boolean DEFAULT_HIGHLIGHT_ENABLED = true;
@@ -27,6 +33,11 @@ public interface SearchResultsPortletPreferences {
 
 	public static final boolean DEFAULT_VIEW_IN_CONTEXT = true;
 
+	public static final String PREFERENCE_DELTA = "delta";
+
+	public static final String PREFERENCE_DELTA_PARAMETER_NAME =
+		"deltaParameterName";
+	
 	public static final String PREFERENCE_DISPLAY_IN_DOCUMENT_FORM =
 		"displayInDocumentForm";
 
@@ -36,8 +47,12 @@ public interface SearchResultsPortletPreferences {
 	public static final String PREFERENCE_START_PAGE_PARAMETER_NAME =
 		"startPageParameterName";
 
-	public static final String PREFERENCE_VIEW_IN_CONTEXT = "viewInContext";
+	public static final int DEFAULT_DELTA = SearchContainer.DEFAULT_DELTA;
 
+	public int getDelta();
+	
+	public String getDeltaParameterName();
+	
 	public String getStartPageParameterName();
 
 	public boolean isDisplayInDocumentForm();

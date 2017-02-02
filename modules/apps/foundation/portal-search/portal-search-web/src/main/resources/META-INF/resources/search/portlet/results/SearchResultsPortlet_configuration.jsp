@@ -39,6 +39,10 @@ com.liferay.portal.search.web.internal.portlet.results.SearchResultsPortletPrefe
 
 	<div class="portlet-configuration-body-content">
 		<div class="container-fluid-1280">
+			<aui:input label="portlet.search-results.delta" name="<%= PortletPreferencesJspUtil.getInputName(SearchResultsPortletPreferences.PREFERENCE_DELTA) %>" type="text" value="<%= searchResultsPortletPreferences.getDelta() %>" />
+			
+			<aui:input label="portlet.search-results.delta-parameter-name" name="<%= PortletPreferencesJspUtil.getInputName(SearchResultsPortletPreferences.PREFERENCE_DELTA_PARAMETER_NAME) %>" type="text" value="<%= searchResultsPortletPreferences.getDeltaParameterName() %>" />
+			
 			<aui:input label="portlet.search-results.enable-highlights" name="<%= PortletPreferencesJspUtil.getInputName(SearchResultsPortletPreferences.PREFERENCE_HIGHLIGHT_ENABLED) %>" type="checkbox" value="<%= searchResultsPortletPreferences.isHighlightEnabled() %>" />
 
 			<aui:input label="portlet.search-results.view-in-context" name="<%= PortletPreferencesJspUtil.getInputName(SearchResultsPortletPreferences.PREFERENCE_VIEW_IN_CONTEXT) %>" type="checkbox" value="<%= searchResultsPortletPreferences.isViewInContext() %>" />

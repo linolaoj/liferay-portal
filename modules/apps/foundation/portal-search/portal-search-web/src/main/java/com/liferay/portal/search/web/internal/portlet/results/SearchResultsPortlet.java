@@ -126,7 +126,7 @@ public class SearchResultsPortlet
 		List<Document> documents = searchResponse.getDocuments();
 
 		int startPage = searchResponse.getStartPage();
-
+		
 		searchResultsDisplayContext.setDocuments(documents);
 		searchResultsDisplayContext.setStartPage(startPage);
 
@@ -134,6 +134,13 @@ public class SearchResultsPortlet
 			new SearchResultsPortletPreferencesImpl(
 				portletSharedSearchResponse.getPortletPreferences(
 					renderRequest));
+
+		String deltaParameterName =
+			searchResultsPortletPreferences.getDeltaParameterName();
+		
+		int delta = getDelta(
+			portletSharedSearchResponse, 
+			searchResultsPortletPreferences, renderRequest);
 
 		String startPageParameterName =
 			searchResultsPortletPreferences.getStartPageParameterName();
@@ -156,15 +163,16 @@ public class SearchResultsPortlet
 
 		searchResultsDisplayContext.setSearchContainer(
 			buildSearchContainer(
-				documents, totalHits, startPage, startPageParameterName,
-				renderRequest));
+				documents, totalHits, startPage, startPageParameterName,	 
+				delta, deltaParameterName, renderRequest));
 
 		return searchResultsDisplayContext;
 	}
 
 	protected SearchContainer<Document> buildSearchContainer(
-			List<Document> documents, int totalHits, int startPage,
-			String startPageParameterName, RenderRequest renderRequest)
+			List<Document> documents, int totalHits, 
+			int startPage, String startPageParameterName,
+			int delta, String deltaParameterName, RenderRequest renderRequest)
 		throws PortletException {
 
 		PortletRequest portletRequest = renderRequest;
@@ -172,7 +180,6 @@ public class SearchResultsPortlet
 		DisplayTerms searchTerms = null;
 		String curParam = startPageParameterName;
 		int cur = startPage;
-		int delta = SearchContainer.DEFAULT_DELTA;
 		PortletURL iteratorURL = cleanPortletURL(
 			renderRequest, startPageParameterName);
 		List<String> headerNames = null;
@@ -182,7 +189,9 @@ public class SearchResultsPortlet
 		SearchContainer<Document> searchContainer = new SearchContainer<>(
 			portletRequest, displayTerms, searchTerms, curParam, cur, delta,
 			iteratorURL, headerNames, emptyResultsMessage, cssClass);
-
+		
+		searchContainer.setDeltaParam(deltaParameterName);
+		
 		searchContainer.setResults(documents);
 		searchContainer.setTotal(totalHits);
 
@@ -224,6 +233,39 @@ public class SearchResultsPortlet
 		return new SearchContainerPortletURL(urlString);
 	}
 
+	protected int getDelta(
+			PortletSharedSearchSettings portletSharedSearchSettings, 
+			SearchResultsPortletPreferences searchResultsPortletPreferences) {
+		
+		String deltaParameterName =
+			searchResultsPortletPreferences.getDeltaParameterName();
+		
+		Optional<String[]> deltaStringOptional = 
+				portletSharedSearchSettings.getParameterValues(deltaParameterName);
+		
+		Optional<Integer> deltaOptional = 
+			deltaStringOptional.map(deltaString -> Integer.parseInt(deltaString[0]));
+		
+		return deltaOptional.orElse(searchResultsPortletPreferences.getDelta());
+	}
+	
+	protected int getDelta(
+			PortletSharedSearchResponse portletSharedSearchResponse, 
+			SearchResultsPortletPreferences searchResultsPortletPreferences,
+			RenderRequest renderRequest) {
+			
+			String deltaParameterName =
+				searchResultsPortletPreferences.getDeltaParameterName();
+			
+			Optional<String[]> deltaStringOptional = 
+				portletSharedSearchResponse.getParameterValues(deltaParameterName, renderRequest);
+			
+			Optional<Integer> deltaOptional = 
+				deltaStringOptional.map(deltaString -> Integer.parseInt(deltaString[0]));
+			
+			return deltaOptional.orElse(searchResultsPortletPreferences.getDelta());
+		}
+	
 	protected void highlight(
 		SearchResultsPortletPreferences searchResultsPortletPreferences,
 		PortletSharedSearchSettings portletSharedSearchSettings) {
@@ -239,7 +281,7 @@ public class SearchResultsPortlet
 	protected void paginate(
 		SearchResultsPortletPreferences searchResultsPortletPreferences,
 		PortletSharedSearchSettings portletSharedSearchSettings) {
-
+		
 		String startPageParameterName =
 			searchResultsPortletPreferences.getStartPageParameterName();
 
@@ -253,6 +295,11 @@ public class SearchResultsPortlet
 			startPageParameterValueOptional.map(Integer::valueOf);
 
 		startPageOptional.ifPresent(portletSharedSearchSettings::setStartPage);
+		
+		int delta = getDelta(
+			portletSharedSearchSettings, searchResultsPortletPreferences);
+		
+		portletSharedSearchSettings.setDelta(delta);
 	}
 
 	@Reference

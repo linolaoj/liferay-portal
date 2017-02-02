@@ -34,6 +34,20 @@ public class SearchResultsPortletPreferencesImpl
 	}
 
 	@Override
+	public int getDelta() {
+		return _portletPreferencesHelper.getInteger(
+			SearchResultsPortletPreferences.PREFERENCE_DELTA,
+			SearchResultsPortletPreferences.DEFAULT_DELTA);
+	}
+	
+	@Override
+	public String getDeltaParameterName() {
+		return _portletPreferencesHelper.getString(
+			SearchResultsPortletPreferences.PREFERENCE_DELTA_PARAMETER_NAME,
+			SearchResultsPortletPreferences.DEFAULT_DELTA_PARAMETER_NAME);
+	}
+	
+	@Override
 	public String getStartPageParameterName() {
 		return _portletPreferencesHelper.getString(
 			SearchResultsPortletPreferences.

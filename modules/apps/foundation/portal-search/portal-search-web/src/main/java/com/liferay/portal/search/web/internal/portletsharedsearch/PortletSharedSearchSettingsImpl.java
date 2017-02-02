@@ -87,6 +87,16 @@ public class PortletSharedSearchSettingsImpl
 	}
 
 	@Override
+	public void setDelta(int delta) {
+		_searchSettings.setDelta(delta);
+	}
+	
+	@Override
+	public void setDeltaParameterName(String deltaParameterName) {
+		_searchSettings.setDeltaParameterName(deltaParameterName);
+	}
+	
+	@Override
 	public void setKeywords(String keywords) {
 		_searchSettings.setKeywords(keywords);
 	}

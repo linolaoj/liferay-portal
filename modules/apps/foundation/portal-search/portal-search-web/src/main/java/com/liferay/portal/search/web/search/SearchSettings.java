@@ -31,6 +31,10 @@ public interface SearchSettings {
 	public QueryConfig getQueryConfig();
 
 	public SearchContext getSearchContext();
+	
+	public void setDelta(int delta);
+	
+	public void setDeltaParameterName(String deltaParameterName);
 
 	public void setKeywords(String keywords);
 

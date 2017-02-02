@@ -115,14 +115,17 @@ public class PortletSharedSearchImpl implements PortletSharedSearch {
 
 		Optional<Integer> startPageOptional =
 			searchContainerOptions.getStartPage();
-
+		
 		PortletRequest portletRequest = renderRequest;
 		DisplayTerms displayTerms = null;
 		DisplayTerms searchTerms = null;
 		String curParam = startPageParameterNameOptional.orElse(
 			SearchContainer.DEFAULT_CUR_PARAM);
 		int cur = startPageOptional.orElse(0);
-		int delta = SearchContainer.DEFAULT_DELTA;
+		
+		int delta  = searchContainerOptions.getDelta().orElse(
+			SearchContainer.DEFAULT_DELTA); 
+		
 		PortletURL iteratorURL = new SearchContainerPortletURL(
 			portletSharedURLHelper.getURLString(renderRequest));
 		List<String> headerNames = null;
@@ -181,7 +184,7 @@ public class PortletSharedSearchImpl implements PortletSharedSearch {
 		return new PortletSharedSearchResponseImpl(
 			searchResponse, portletSharedRequestHelper);
 	}
-
+	
 	protected Stream<Portlet> getExplicitlyAddedPortlets(
 		ThemeDisplay themeDisplay) {
 
