@@ -14,6 +14,8 @@
 
 package com.liferay.portal.search.web.internal.util;
 
+import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -24,6 +26,73 @@ import java.util.Optional;
  */
 public class SearchStringUtil {
 
+	public static String concat(Object obj, Object concat) {
+		String s1 = StringPool.NULL;
+
+		if (obj != null) {
+			s1 = obj.toString();
+		}
+
+		String s2 = StringPool.NULL;
+
+		if (concat != null) {
+			s2 = concat.toString();
+		}
+
+		if (s1.length() == 0) {
+			return s2;
+		}
+
+		if (s2.length() == 0) {
+			return s1;
+		}
+
+		return s1.concat(s2);
+	}
+
+	public static String concat(Object obj1, Object obj2, Object... objArray) {
+		StringBundler sb = new StringBundler(2 + objArray.length);
+
+		sb.append(obj1);
+		sb.append(obj2);
+
+		for (Object obj : objArray) {
+			sb.append(obj);
+		}
+
+		return sb.toString();
+	}
+
+	public static String concat(String s, String concat) {
+		if (s == null) {
+			s = StringPool.NULL;
+		}
+
+		if (concat == null) {
+			concat = StringPool.NULL;
+		}
+
+		if (s.length() == 0) {
+			return concat;
+		}
+
+		if (concat.length() == 0) {
+			return s;
+		}
+
+		return s.concat(concat);
+	}
+
+	public static String concat(String s1, String s2, String... stringArray) {
+		StringBundler sb = new StringBundler(2 + stringArray.length);
+
+		sb.append(s1);
+		sb.append(s2);
+		sb.append(stringArray);
+
+		return sb.toString();
+	}
+
 	public static Optional<String> maybe(String s) {
 		s = StringUtil.trim(s);
 
@@ -32,6 +101,18 @@ public class SearchStringUtil {
 		}
 
 		return Optional.of(s);
+	}
+
+	public static Optional<String[]> maybe(String[] texts) {
+		if (texts == null) {
+			return Optional.empty();
+		}
+
+		if (texts.length == 0) {
+			return Optional.empty();
+		}
+
+		return Optional.of(texts);
 	}
 
 }
