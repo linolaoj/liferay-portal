@@ -102,7 +102,7 @@ com.liferay.portal.kernel.dao.search.SearchContainer<Document> searchContainer1 
 
 <liferay-ui:search-container
 	emptyResultsMessage='<%= LanguageUtil.format(request, "no-results-were-found-that-matched-the-keywords-x", "<strong>" + HtmlUtil.escape(searchResultsDisplayContext.getKeywords()) + "</strong>", false) %>'
-	id="search"
+	id="<%= renderResponse.getNamespace() + "search" %>"
 	searchContainer="<%= searchContainer1 %>"
 >
 	<liferay-ui:search-container-row
@@ -179,6 +179,55 @@ com.liferay.portal.kernel.dao.search.SearchContainer<Document> searchContainer1 
 					/>
 				</h6>
 			</c:if>
+			<c:if test="<%= searchResultSummaryDisplayContext.isDocumentFormVisible() %>">
+				<h6 class="expand-details text-default"><a href="javascript:;"><liferay-ui:message key="details" />...</a></h6>
+		
+				<div class="hide table-details table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>
+									<liferay-ui:message key="key" />
+								</th>
+								<th>
+									<liferay-ui:message key="value" />
+								</th>
+							</tr>
+						</thead>
+		
+						<tbody>
+		
+							<%
+							for (com.liferay.portal.search.web.internal.result.display.context.SearchResultFieldDisplayContext searchResultFieldDisplayContext : searchResultSummaryDisplayContext.getDocumentFormFieldDisplayContexts()) {
+							%>
+		
+								<tr>
+									<td>
+										<strong><%= HtmlUtil.escape(searchResultFieldDisplayContext.getName()) %></strong>
+		
+										<br />
+		
+										<em>
+											<liferay-ui:message key="array" /> = <%= searchResultFieldDisplayContext.isArray() %>, <liferay-ui:message key="boost" /> = <%= searchResultFieldDisplayContext.getBoost() %>,<br />
+		
+											<liferay-ui:message key="numeric" /> = <%= searchResultFieldDisplayContext.isNumeric() %>, <liferay-ui:message key="tokenized" /> = <%= searchResultFieldDisplayContext.isTokenized() %>
+										</em>
+									</td>
+									<td>
+										<code>
+											<%= searchResultFieldDisplayContext.getValuesToString() %>
+										</code>
+									</td>
+								</tr>
+		
+							<%
+							}
+							%>
+		
+						</tbody>
+					</table>
+				</div>
+			</c:if>
 		</liferay-ui:search-container-column-text>
 	</liferay-ui:search-container-row>
 
@@ -186,3 +235,14 @@ com.liferay.portal.kernel.dao.search.SearchContainer<Document> searchContainer1 
 		<liferay-ui:search-iterator displayStyle="descriptive" markupView="lexicon" type="more" />
 	</aui:form>
 </liferay-ui:search-container>
+<aui:script use="aui-base">
+	A.one('#<portlet:namespace />search').delegate(
+		'click',
+		function(event) {
+			var currentTarget = event.currentTarget;
+
+			currentTarget.siblings('.table-details').toggleClass('hide');
+		},
+		'.expand-details'
+	);
+</aui:script>
