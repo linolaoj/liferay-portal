@@ -25,7 +25,6 @@
 <%@ page import="com.liferay.portal.kernel.util.StringPool" %>
 <%@ page import="com.liferay.portal.search.web.internal.facet.display.context.UserSearchFacetDisplayContext" %>
 <%@ page import="com.liferay.portal.search.web.internal.facet.display.context.UserSearchFacetTermDisplayContext" %>
-<%@ page import="com.liferay.portal.search.web.internal.util.NamespaceUtil" %>
 
 <portlet:defineObjects />
 
@@ -38,9 +37,7 @@
 <%
 UserSearchFacetDisplayContext userSearchFacetDisplayContext = (UserSearchFacetDisplayContext)java.util.Objects.requireNonNull(request.getAttribute(UserSearchFacetDisplayContext.ATTRIBUTE));
 
-String namespace = NamespaceUtil.randomNamespace("portlet_search_facet_user", request);
-
-String cssClassFacetTerm = "facet-term-" + namespace;
+String cssClassFacetTerm = "facet-term-" + renderResponse.getNamespace();
 %>
 
 <c:choose>
@@ -48,8 +45,8 @@ String cssClassFacetTerm = "facet-term-" + namespace;
 		<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(userSearchFacetDisplayContext.getParamName()) %>" type="hidden" value="<%= userSearchFacetDisplayContext.getParamValue() %>" />
 	</c:when>
 	<c:otherwise>
-		<liferay-ui:panel-container extended="true" id='<%= namespace + "facetUserPanelContainer" %>' markupView="lexicon" persistState="true">
-			<liferay-ui:panel collapsible="true" cssClass="search-facet" id='<%= namespace + "facetUserPanel" %>' markupView="lexicon" persistState="true" title="portlet.user-facet.title">
+		<liferay-ui:panel-container extended="true" id='<%= renderResponse.getNamespace() + "facetUserPanelContainer" %>' markupView="lexicon" persistState="true">
+			<liferay-ui:panel collapsible="true" cssClass="search-facet" id='<%= renderResponse.getNamespace() + "facetUserPanel" %>' markupView="lexicon" persistState="true" title="portlet.user-facet.title">
 				<aui:form method="post" name="userFacetForm">
 					<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(userSearchFacetDisplayContext.getParamName()) %>" type="hidden" value="<%= userSearchFacetDisplayContext.getParamValue() %>" />
 
@@ -70,7 +67,7 @@ String cssClassFacetTerm = "facet-term-" + namespace;
 										data-term-id="<%= userSearchFacetTermDisplayContext.getUserName() %>"
 										id="<portlet:namespace /><%= termName %>"
 										name="<portlet:namespace /><%= termName %>"
-										onChange='<%= renderResponse.getNamespace() + "_applyFacet(event);" %>'
+										onChange="<portlet:namespace />_applyFacet(event);"
 										type="checkbox"
 										<%= userSearchFacetTermDisplayContext.isSelected() ? "checked" : StringPool.BLANK %>
 									/>
@@ -99,7 +96,7 @@ String cssClassFacetTerm = "facet-term-" + namespace;
 					</aui:fieldset>
 
 					<c:if test="<%= !userSearchFacetDisplayContext.isNothingSelected() %>">
-						<aui:a cssClass="text-default" href="javascript:;" onClick='<%= namespace + "_clearFacet('" + userSearchFacetDisplayContext.getParamName() + "');" %>'>
+						<aui:a cssClass="text-default" href="javascript:;" onClick='<%= renderResponse.getNamespace() + "_clearFacet('" + userSearchFacetDisplayContext.getParamName() + "');" %>'>
 							<small><liferay-ui:message key="portlet.user-facet.clear" /></small>
 						</aui:a>
 					</c:if>
@@ -110,7 +107,7 @@ String cssClassFacetTerm = "facet-term-" + namespace;
 </c:choose>
 
 <aui:script>
-	function <%= namespace %>_removeParameters(key, parameterArray) {
+	function <portlet:namespace />_removeParameters(key, parameterArray) {
 		key = encodeURI(key);
 
 		var newParameters = [];
@@ -131,7 +128,7 @@ String cssClassFacetTerm = "facet-term-" + namespace;
 		return newParameters;
 	}
 
-	function <%= namespace %>_addParameter(key, value, parameterArray) {
+	function <portlet:namespace />_addParameter(key, value, parameterArray) {
 		key = encodeURI(key);
 		value = encodeURI(value);
 
@@ -140,10 +137,10 @@ String cssClassFacetTerm = "facet-term-" + namespace;
 		return parameterArray;
 	}
 
-	function <%= namespace %>_clearFacet(facetName) {
+	function <portlet:namespace />_clearFacet(facetName) {
 		var parameterArray = document.location.search.substr(1).split('&');
 
-		var newParameters = <%= namespace %>_removeParameters(facetName, parameterArray);
+		var newParameters = <portlet:namespace />_removeParameters(facetName, parameterArray);
 
 		document.location.search = newParameters.join('&');
 	}
@@ -173,10 +170,10 @@ String cssClassFacetTerm = "facet-term-" + namespace;
 
 				var parameterArray = document.location.search.substr(1).split('&');
 
-				var newParameters = <%= namespace %>_removeParameters(key, parameterArray);
+				var newParameters = <portlet:namespace />_removeParameters(key, parameterArray);
 
 				if (selectedFacets.length > 0) {
-					newParameters = <%= namespace %>_addParameter(key, selectedFacets.join(','), newParameters);
+					newParameters = <portlet:namespace />_addParameter(key, selectedFacets.join(','), newParameters);
 				}
 
 				document.location.search = newParameters.join('&');
