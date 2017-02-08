@@ -741,6 +741,12 @@ public abstract class BaseDDMTestCase extends PowerMockito {
 		);
 
 		when(
+			LocaleUtil.fromLanguageId("es_ES")
+		).thenReturn(
+			LocaleUtil.SPAIN
+		);
+
+		when(
 			LocaleUtil.getDefault()
 		).thenReturn(
 			LocaleUtil.US
@@ -756,6 +762,12 @@ public abstract class BaseDDMTestCase extends PowerMockito {
 			LocaleUtil.toLanguageId(LocaleUtil.BRAZIL)
 		).thenReturn(
 			"pt_BR"
+		);
+
+		when(
+			LocaleUtil.toLanguageId(LocaleUtil.SPAIN)
+		).thenReturn(
+			"es_ES"
 		);
 
 		when(
@@ -858,6 +870,12 @@ public abstract class BaseDDMTestCase extends PowerMockito {
 
 		when(
 			language.getAvailableLocales()
+		).thenReturn(
+			availableLocales
+		);
+
+		when(
+			language.getAvailableLocales(Matchers.anyLong())
 		).thenReturn(
 			availableLocales
 		);
