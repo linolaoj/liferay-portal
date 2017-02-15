@@ -21,9 +21,12 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactory;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
+import com.liferay.portal.kernel.util.Localization;
+import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.util.LocalizationImpl;
 
 import java.text.SimpleDateFormat;
 
@@ -55,11 +58,13 @@ public class DocumentFixture {
 
 	public void setUp() {
 		setUpFastDateFormatFactoryUtil();
+		setUpLocalizationUtil();
 		setUpPropsUtil();
 	}
 
 	public void tearDown() {
 		tearDownFastDateFormatFactoryUtil();
+		tearDownLocalizationUtil();
 		tearDownPropsUtil();
 	}
 
@@ -91,6 +96,14 @@ public class DocumentFixture {
 			fastDateFormatFactory);
 	}
 
+	protected void setUpLocalizationUtil() {
+		_localization = LocalizationUtil.getLocalization();
+
+		LocalizationUtil localizationUtil = new LocalizationUtil();
+
+		localizationUtil.setLocalization(new LocalizationImpl());
+	}
+
 	protected void setUpPropsUtil() {
 		_props = PropsUtil.getProps();
 
@@ -115,6 +128,8 @@ public class DocumentFixture {
 		mockProperty(
 			PropsKeys.INDEX_SEARCH_QUERY_SUGGESTION_SCORES_THRESHOLD, "0");
 		mockProperty(PropsKeys.INDEX_SEARCH_SCORING_ENABLED, "true");
+		mockProperty(
+			PropsKeys.INDEX_SORTABLE_TEXT_FIELDS_TRUNCATED_LENGTH, "255");
 
 		PropsUtil.setProps(props);
 	}
@@ -129,6 +144,14 @@ public class DocumentFixture {
 		_fastDateFormatFactory = null;
 	}
 
+	protected void tearDownLocalizationUtil() {
+		LocalizationUtil localizationUtil = new LocalizationUtil();
+
+		localizationUtil.setLocalization(_localization);
+
+		_localization = null;
+	}
+
 	protected void tearDownPropsUtil() {
 		PropsUtil.setProps(_props);
 
@@ -140,6 +163,7 @@ public class DocumentFixture {
 	protected Props props;
 
 	private FastDateFormatFactory _fastDateFormatFactory;
+	private Localization _localization;
 	private Props _props;
 
 }
