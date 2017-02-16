@@ -120,3 +120,54 @@
 		</div>
 	</c:if>
 </liferay-ui:search-container-column-text>
+
+<%
+com.liferay.portal.kernel.json.JSONArray queryTermsJSONArray = com.liferay.portal.kernel.json.JSONFactoryUtil.createJSONArray();
+
+for (String queryTerm : searchDisplayContext.getQueryTerms()) {
+	queryTermsJSONArray.put(queryTerm);
+}
+
+String[] keywords = StringUtil.split(searchDisplayContext.getKeywords(), StringPool.SPACE);
+
+for (String keyword : keywords) {
+	queryTermsJSONArray.put(keyword);
+}
+%>
+
+<aui:script>
+var queryTerms = <%= queryTermsJSONArray.toString() %>;
+
+var categories = AUI.$('.asset-category');
+
+var tags = AUI.$('.taglib-asset-tags-summary .badge');
+
+function containsAny(text, keySet) {
+	for (var i in keySet) {
+		var key = keySet[i].toLowerCase();
+
+		if (text.indexOf(key) >= 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function highlight(assets, queryTerms) {
+	for (var i = 0 ; i < assets.length ; i++) {
+		var assetText = assets[i].text;
+		assetText = assetText.toLowerCase();
+
+		var highlight = containsAny(assetText, queryTerms);
+
+		if (highlight) {
+			AUI.$(assets[i]).addClass("highlight");
+		}
+
+	}
+}
+<% if(searchDisplayContext.isHighlightEnabled()) { %>
+	highlight(categories, queryTerms);
+	highlight(tags, queryTerms);
+<%} %>
+</aui:script>
