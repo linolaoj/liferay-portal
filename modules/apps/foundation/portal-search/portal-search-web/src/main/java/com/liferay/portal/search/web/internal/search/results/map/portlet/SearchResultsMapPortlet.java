@@ -98,6 +98,17 @@ public class SearchResultsMapPortlet extends MVCPortlet {
 		SearchResultsMapDisplayContext searchResultsMapDisplayContext =
 			new SearchResultsMapDisplayContext(keywords, mapMarkersJSON);
 
+		SearchResultsMapPortletPreferences searchResultsMapPortletPreferences =
+			new SearchResultsMapPortletPreferencesImpl(
+				portletSharedSearchResponse.getPortletPreferences(
+					renderRequest));
+
+		double latitude = searchResultsMapPortletPreferences.getLatitude();
+		double longitude = searchResultsMapPortletPreferences.getLongitude();
+
+		searchResultsMapDisplayContext.setDefaultLatitude(latitude);
+		searchResultsMapDisplayContext.setDefaultLongitude(longitude);
+
 		return searchResultsMapDisplayContext;
 	}
 

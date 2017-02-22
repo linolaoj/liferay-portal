@@ -30,6 +30,14 @@ public class SearchResultsMapDisplayContext implements Serializable {
 		_mapMarkersJSON = mapMarkersJSON;
 	}
 
+	public double getDefaultLatitude() {
+		return _latitude;
+	}
+
+	public double getDefaultLongitude() {
+		return _longitude;
+	}
+
 	public String getKeywords() {
 		return _keywords;
 	}
@@ -38,7 +46,17 @@ public class SearchResultsMapDisplayContext implements Serializable {
 		return _mapMarkersJSON;
 	}
 
+	public void setDefaultLatitude(double latitude) {
+		_latitude = latitude;
+	}
+
+	public void setDefaultLongitude(double longitude) {
+		_longitude = longitude;
+	}
+
 	private final String _keywords;
+	private double _latitude;
+	private double _longitude;
 	private final String _mapMarkersJSON;
 
 }

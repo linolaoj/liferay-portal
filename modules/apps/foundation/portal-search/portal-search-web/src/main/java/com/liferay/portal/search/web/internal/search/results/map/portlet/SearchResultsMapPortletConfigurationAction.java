@@ -14,23 +14,27 @@
 
 package com.liferay.portal.search.web.internal.search.results.map.portlet;
 
+import com.liferay.portal.kernel.portlet.ConfigurationAction;
+import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.osgi.service.component.annotations.Component;
+
 /**
- * @author André de Oliveira
-*/
-public class SearchResultsMapPortletKeys {
+ * @author Lino Alves
+ */
+@Component(
+	immediate = true,
+	property = {"javax.portlet.name=" + SearchResultsMapPortletKeys.PORTLET_NAME},
+	service = ConfigurationAction.class
+)
+public class SearchResultsMapPortletConfigurationAction
+	extends DefaultConfigurationAction {
 
-	public static final String CONFIGURATION_JSP_PATH =
-		"/search/results/map/SearchResultsMapPortlet_configuration.jsp";
-
-	public static final String CSS_CLASS_WRAPPER = "portlet-search-results-map";
-
-	public static final String DISPLAY_NAME = "PoC: Results Map";
-
-	public static final String PORTLET_NAME =
-		"com_liferay_portal_search_web_search_results_map_portlet_" +
-			"SearchResultsMapPortlet";
-
-	public static final String VIEW_TEMPLATE =
-		"/search/results/map/SearchResultsMapPortlet_view.jsp";
+	@Override
+	public String getJspPath(HttpServletRequest request) {
+		return SearchResultsMapPortletKeys.CONFIGURATION_JSP_PATH;
+	}
 
 }

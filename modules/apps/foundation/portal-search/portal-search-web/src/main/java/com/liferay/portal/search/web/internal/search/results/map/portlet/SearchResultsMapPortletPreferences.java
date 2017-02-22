@@ -15,22 +15,20 @@
 package com.liferay.portal.search.web.internal.search.results.map.portlet;
 
 /**
- * @author André de Oliveira
-*/
-public class SearchResultsMapPortletKeys {
+ * @author Lino Alves
+ */
+public interface SearchResultsMapPortletPreferences {
 
-	public static final String CONFIGURATION_JSP_PATH =
-		"/search/results/map/SearchResultsMapPortlet_configuration.jsp";
+	public static final double DEFAULT_LATITUDE = 0;
 
-	public static final String CSS_CLASS_WRAPPER = "portlet-search-results-map";
+	public static final double DEFAULT_LONGITUDE = 0;
 
-	public static final String DISPLAY_NAME = "PoC: Results Map";
+	public static final String PREFERENCE_LATITUDE = "latitude";
 
-	public static final String PORTLET_NAME =
-		"com_liferay_portal_search_web_search_results_map_portlet_" +
-			"SearchResultsMapPortlet";
+	public static final String PREFERENCE_LONGITUDE = "longitude";
 
-	public static final String VIEW_TEMPLATE =
-		"/search/results/map/SearchResultsMapPortlet_view.jsp";
+	public double getLatitude();
+
+	public double getLongitude();
 
 }

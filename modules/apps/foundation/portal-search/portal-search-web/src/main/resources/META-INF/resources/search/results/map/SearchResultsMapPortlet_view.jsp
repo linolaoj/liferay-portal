@@ -31,8 +31,9 @@ SearchResultsMapDisplayContext searchResultsMapDisplayContext = (SearchResultsMa
 	type="text/javascript"> </script>
 
 <script>
-	var ____lat = 42.359849;
-	var ____lng = -71.0586345;
+
+	var ____lat = <%= searchResultsMapDisplayContext.getDefaultLatitude() %> ;
+	var ____lng = <%= searchResultsMapDisplayContext.getDefaultLongitude() %> ;
 
 	var map;
 	var panorama;
@@ -112,6 +113,24 @@ SearchResultsMapDisplayContext searchResultsMapDisplayContext = (SearchResultsMa
 		panorama.setVisible(true);
 	}
 
-	initialize();
+	var nullCoordinates = (____lat === 0) && (____lng === 0);
 
+	if (nullCoordinates && navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(
+			function(position) {
+
+				____lat = position.coords.latitude;
+				____lng = position.coords.longitude;
+
+				initialize();
+			},
+			function(error) {
+				if (error.code == error.PERMISSION_DENIED)
+					initialize();
+				}
+		);
+	}
+	else {
+		initialize();
+	}
 </script>
