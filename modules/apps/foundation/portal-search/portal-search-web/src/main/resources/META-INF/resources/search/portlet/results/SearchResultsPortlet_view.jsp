@@ -33,6 +33,13 @@
 SearchResultsDisplayContext searchResultsDisplayContext = (SearchResultsDisplayContext)java.util.Objects.requireNonNull(request.getAttribute(SearchResultsDisplayContext.ATTRIBUTE));
 
 com.liferay.portal.kernel.dao.search.SearchContainer<Document> searchContainer1 = searchResultsDisplayContext.getSearchContainer();
+
+boolean nothingToShow = searchResultsDisplayContext.getKeywords().isEmpty();
+
+if(nothingToShow) {
+	renderRequest.setAttribute(com.liferay.portal.util.WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, Boolean.FALSE);
+	return;
+}
 %>
 
 <style>
