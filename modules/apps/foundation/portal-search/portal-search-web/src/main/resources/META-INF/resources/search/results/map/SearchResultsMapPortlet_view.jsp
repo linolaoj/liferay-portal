@@ -14,6 +14,7 @@
  */
 --%>
 
+<%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
 <%@ page import="com.liferay.portal.search.web.internal.search.results.map.portlet.SearchResultsMapDisplayContext" %>
@@ -88,7 +89,7 @@ SearchResultsMapDisplayContext searchResultsMapDisplayContext = (SearchResultsMa
 	function createInfoWindow(marker, title, summary) {
 		var contentStr = '<div id="allInfo" style="width:250px;">' +
 				'<div> <h2>' + title + '</h2></div><p>' + summary +
-				'<p><input type="button" value="Go to Street View" onClick="streetView(\'' + marker.position + '\')"></input>' +
+				'<p><input type="button" value="<liferay-ui:message key="go-to-street-view" />" onClick="streetView(\'' + marker.position + '\')"></input>' +
 				'</div>';
 
 		google.maps.event.addListener(marker, 'click', function() {
