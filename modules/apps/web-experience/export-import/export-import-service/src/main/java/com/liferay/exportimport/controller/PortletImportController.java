@@ -980,6 +980,13 @@ public class PortletImportController implements ImportController {
 
 		Map<String, String[]> parameterMap =
 			(Map<String, String[]>)settingsMap.get("parameterMap");
+
+		if (!parameterMap.containsKey(PortletDataHandlerKeys.PERMISSIONS)) {
+			parameterMap.put(
+				PortletDataHandlerKeys.PERMISSIONS,
+				new String[] {Boolean.TRUE.toString()});
+		}
+
 		String portletId = MapUtil.getString(settingsMap, "portletId");
 		long targetPlid = MapUtil.getLong(settingsMap, "targetPlid");
 		long targetGroupId = MapUtil.getLong(settingsMap, "targetGroupId");
