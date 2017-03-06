@@ -37,6 +37,7 @@ import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.LocalizationUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
@@ -109,7 +110,7 @@ public class PermissionImporter {
 
 		String xml = portletDataContext.getZipEntryAsString(
 			ExportImportPathUtil.getSourceRootPath(portletDataContext) +
-				"/portlet-data-permissions.xml");
+				"/portlet.xml");
 
 		if (xml == null) {
 			return;
@@ -119,14 +120,13 @@ public class PermissionImporter {
 
 		Element rootElement = document.getRootElement();
 
-		List<Element> portletDataElements = rootElement.elements(
-			"portlet-data");
+		List<Element> portletDataElements = rootElement.elements("portlet");
 
 		for (Element portletDataElement : portletDataElements) {
 			String resourceName = portletDataElement.attributeValue(
-				"resource-name");
+				"root-portlet-id");
 			long resourcePK = GetterUtil.getLong(
-				portletDataElement.attributeValue("resource-pk"));
+				portletDataElement.attributeValue("portlet-id"));
 
 			List<KeyValuePair> permissions = new ArrayList<>();
 
@@ -134,11 +134,18 @@ public class PermissionImporter {
 				"permissions");
 
 			for (Element permissionsElement : permissionsElements) {
-				String roleName = permissionsElement.attributeValue(
-					"role-name");
-				String actions = permissionsElement.attributeValue("actions");
+				String roleName = permissionsElement.attributeValue("name");
+				List<Element> actionKeys = portletDataElement.elements(
+					"action-key");
 
-				KeyValuePair permission = new KeyValuePair(roleName, actions);
+				StringBundler actions = new StringBundler();
+
+				for (Element actionkey : actionKeys) {
+					actions.append(actionkey.getText()).append(",");
+				}
+
+				KeyValuePair permission = new KeyValuePair(
+					roleName, actions.toString());
 
 				permissions.add(permission);
 			}
