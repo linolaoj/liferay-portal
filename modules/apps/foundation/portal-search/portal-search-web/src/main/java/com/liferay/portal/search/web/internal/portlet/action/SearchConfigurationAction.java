@@ -84,8 +84,9 @@ public class SearchConfigurationAction extends DefaultConfigurationAction {
 
 		jsonObject.put("facets", facetsJSONArray);
 
-		setPreference(
-			actionRequest, "searchConfiguration", jsonObject.toString());
+		String s = jsonObject.toString();
+
+		setPreference(actionRequest, "searchConfiguration", s);
 
 		super.processAction(portletConfig, actionRequest, actionResponse);
 	}
