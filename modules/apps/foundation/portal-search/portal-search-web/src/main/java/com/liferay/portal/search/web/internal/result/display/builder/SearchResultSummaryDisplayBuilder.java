@@ -73,9 +73,7 @@ public class SearchResultSummaryDisplayBuilder {
 		AssetRenderer<?> assetRenderer = null;
 
 		if (assetRendererFactory != null) {
-			Indexer indexer = IndexerRegistryUtil.getIndexer(className);
-
-			if (indexer == null) {
+			if (getIndexer(className) == null) {
 				long resourcePrimKey = GetterUtil.getLong(
 					_document.get(Field.ROOT_ENTRY_CLASS_PK));
 
@@ -116,6 +114,10 @@ public class SearchResultSummaryDisplayBuilder {
 
 	public void setHighlightEnabled(boolean highlightEnabled) {
 		_highlightEnabled = highlightEnabled;
+	}
+
+	public void setIndexer(Indexer indexer) {
+		_indexer = indexer;
 	}
 
 	public void setLanguage(Language language) {
@@ -298,13 +300,21 @@ public class SearchResultSummaryDisplayBuilder {
 		return assetEntry.getUserId();
 	}
 
+	protected Indexer getIndexer(String className) {
+		if (_indexer != null) {
+			return _indexer;
+		}
+
+		return IndexerRegistryUtil.getIndexer(className);
+	}
+
 	protected Summary getSummary(
 			String className, AssetRenderer<?> assetRenderer)
 		throws SearchException {
 
 		Summary summary = null;
 
-		Indexer indexer = IndexerRegistryUtil.getIndexer(className);
+		Indexer indexer = getIndexer(className);
 
 		if (indexer != null) {
 			String snippet = _document.get(Field.SNIPPET);
@@ -399,6 +409,7 @@ public class SearchResultSummaryDisplayBuilder {
 	private String _currentURL;
 	private Document _document;
 	private boolean _highlightEnabled;
+	private Indexer _indexer;
 	private Language _language;
 	private Locale _locale;
 	private PortletURLFactory _portletURLFactory;
