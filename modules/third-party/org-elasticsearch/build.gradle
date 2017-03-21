@@ -8,7 +8,7 @@ sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
 
 dependencies {
-	compile group: "org.elasticsearch", name: "elasticsearch", optional, transitive: false, version: "2.2.0"
+	compile group: "org.elasticsearch", name: "elasticsearch", optional, transitive: false, version: "2.4.0"
 }
 
 patch {
