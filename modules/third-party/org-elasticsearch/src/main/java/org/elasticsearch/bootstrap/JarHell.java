@@ -210,7 +210,10 @@ public class JarHell {
                 if (clazz.equals("org.joda.time.base.BaseDateTime")) {
                     return; // apparently this is intentional... clean this up
                 }
-                throw new IllegalStateException("jar hell!" + System.lineSeparator() +
+                if (clazz.equals("org.osgi.service.component.annotations.Activate")) {
+                    return;
+                }
+                throw new IllegalStateException("jar what!" + System.lineSeparator() +
                         "class: " + clazz + System.lineSeparator() +
                         "jar1: " + previous + System.lineSeparator() +
                         "jar2: " + jarpath);
