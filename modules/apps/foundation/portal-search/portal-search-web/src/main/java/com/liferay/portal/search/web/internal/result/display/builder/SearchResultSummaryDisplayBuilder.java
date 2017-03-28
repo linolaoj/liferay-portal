@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistry;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Summary;
@@ -73,11 +74,15 @@ public class SearchResultSummaryDisplayBuilder {
 		AssetRenderer<?> assetRenderer = null;
 
 		if (assetRendererFactory != null) {
-			long resourcePrimKey = GetterUtil.getLong(
-				_document.get(Field.ROOT_ENTRY_CLASS_PK));
+			Indexer indexer = getIndexer(className);
 
-			if (resourcePrimKey > 0) {
-				classPK = resourcePrimKey;
+			if (indexer == null) {
+				long resourcePrimKey = GetterUtil.getLong(
+					_document.get(Field.ROOT_ENTRY_CLASS_PK));
+
+				if (resourcePrimKey > 0) {
+					classPK = resourcePrimKey;
+				}
 			}
 
 			assetRenderer = assetRendererFactory.getAssetRenderer(classPK);
@@ -112,6 +117,10 @@ public class SearchResultSummaryDisplayBuilder {
 
 	public void setHighlightEnabled(boolean highlightEnabled) {
 		_highlightEnabled = highlightEnabled;
+	}
+
+	public void setIndexerRegistry(IndexerRegistry indexerRegistry) {
+		_indexerRegistry = indexerRegistry;
 	}
 
 	public void setLanguage(Language language) {
@@ -294,13 +303,21 @@ public class SearchResultSummaryDisplayBuilder {
 		return assetEntry.getUserId();
 	}
 
+	protected Indexer<Object> getIndexer(String className) {
+		if (_indexerRegistry != null) {
+			return _indexerRegistry.getIndexer(className);
+		}
+
+		return IndexerRegistryUtil.getIndexer(className);
+	}
+
 	protected Summary getSummary(
 			String className, AssetRenderer<?> assetRenderer)
 		throws SearchException {
 
 		Summary summary = null;
 
-		Indexer indexer = IndexerRegistryUtil.getIndexer(className);
+		Indexer indexer = getIndexer(className);
 
 		if (indexer != null) {
 			String snippet = _document.get(Field.SNIPPET);
@@ -395,6 +412,7 @@ public class SearchResultSummaryDisplayBuilder {
 	private String _currentURL;
 	private Document _document;
 	private boolean _highlightEnabled;
+	private IndexerRegistry _indexerRegistry;
 	private Language _language;
 	private Locale _locale;
 	private PortletURLFactory _portletURLFactory;
