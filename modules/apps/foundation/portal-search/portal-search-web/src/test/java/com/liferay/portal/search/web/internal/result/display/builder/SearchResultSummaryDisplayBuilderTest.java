@@ -156,8 +156,12 @@ public class SearchResultSummaryDisplayBuilderTest {
 
 		LocaleThreadLocal.setThemeDisplayLocale(Locale.US);
 
-		addAssetEntry(rootEntryClassPK, rootUserId);
-		addAssetEntry(entryClassPK, userId);
+		AssetEntry rootAssetEntry = setUpAssetEntry(
+			rootEntryClassPK, rootUserId);
+
+		setUpTagsPresent(rootAssetEntry);
+
+		setUpAssetEntry(entryClassPK, userId);
 
 		Document document = createMBMessageDocument(
 			titleAnswer, contentAnswer, entryClassPK, rootEntryClassPK, userId);
@@ -171,6 +175,13 @@ public class SearchResultSummaryDisplayBuilderTest {
 		);
 
 		setUpIndexerRegistry(_MB_MESSAGE_CLASS_NAME, new MBMessageIndexer());
+
+		setUpAssetRendererFactory(entryClassPK, assetRenderer);
+		setUpAssetRendererFactory(rootEntryClassPK, rootAssetRenderer);
+
+		String rootURLDownload = RandomTestUtil.randomString();
+
+		setUpURLDownload(rootAssetRenderer, rootURLDownload);
 
 		SearchDisplayContext searchDisplayContext = createSearchDisplayContext(
 			requestKeywords, renderRequest);
@@ -202,18 +213,47 @@ public class SearchResultSummaryDisplayBuilderTest {
 		SearchResultSummaryDisplayContext searchResultSummaryDisplayContext =
 			searchResultSummaryDisplayBuilder.build();
 
-		Assert.assertEquals(
-			userId, searchResultSummaryDisplayContext.getAssetEntryUserId());
+		assertAssetRendererURLDownloadVisible(
+			rootURLDownload, searchResultSummaryDisplayContext);
+
+		assertTagsVisible(rootEntryClassPK, searchResultSummaryDisplayContext);
+
+		assertUserPortraitVisible(userId, searchResultSummaryDisplayContext);
 	}
 
-	protected void addAssetEntry(long classPK, long userId) {
-		Mockito.doReturn(
-			new AssetEntryMock(userId)
-		).when(
-			assetEntryLocalService
-		).fetchEntry(
-			_MB_MESSAGE_CLASS_NAME, classPK
-		);
+	protected void assertAssetRendererURLDownloadVisible(
+		String urlDownload,
+		SearchResultSummaryDisplayContext searchResultSummaryDisplayContext) {
+
+		Assert.assertTrue(
+			searchResultSummaryDisplayContext.
+				isAssetRendererURLDownloadVisible());
+
+		Assert.assertEquals(
+			urlDownload,
+			searchResultSummaryDisplayContext.getAssetRendererURLDownload());
+	}
+
+	protected void assertTagsVisible(
+		long entryClassPK,
+		SearchResultSummaryDisplayContext searchResultSummaryDisplayContext) {
+
+		Assert.assertTrue(
+			searchResultSummaryDisplayContext.isAssetCategoriesOrTagsVisible());
+
+		Assert.assertEquals(
+			entryClassPK, searchResultSummaryDisplayContext.getClassPK());
+	}
+
+	protected void assertUserPortraitVisible(
+		long userId,
+		SearchResultSummaryDisplayContext searchResultSummaryDisplayContext) {
+
+		Assert.assertTrue(
+			searchResultSummaryDisplayContext.isUserPortraitVisible());
+
+		Assert.assertEquals(
+			userId, searchResultSummaryDisplayContext.getAssetEntryUserId());
 	}
 
 	protected JSONArray createJSONArray() {
@@ -397,6 +437,20 @@ public class SearchResultSummaryDisplayBuilderTest {
 		return permissionChecker;
 	}
 
+	protected AssetEntry setUpAssetEntry(long classPK, long userId) {
+		AssetEntry assetEntry = new AssetEntryMock(userId);
+
+		Mockito.doReturn(
+			assetEntry
+		).when(
+			assetEntryLocalService
+		).fetchEntry(
+			_MB_MESSAGE_CLASS_NAME, classPK
+		);
+
+		return assetEntry;
+	}
+
 	protected void setUpAssetEntryLocalService() throws Exception {
 		assetEntryLocalService = PowerMockito.mock(
 			AssetEntryLocalService.class);
@@ -440,6 +494,19 @@ public class SearchResultSummaryDisplayBuilderTest {
 				}
 
 			}
+		);
+	}
+
+	protected void setUpAssetRendererFactory(
+			long entryClassPK, AssetRenderer<?> assetRenderer)
+		throws Exception {
+
+		Mockito.doReturn(
+			assetRenderer
+		).when(
+			assetRendererFactory
+		).getAssetRenderer(
+			entryClassPK
 		);
 	}
 
@@ -598,12 +665,29 @@ public class SearchResultSummaryDisplayBuilderTest {
 		_resourceActions = PowerMockito.mock(ResourceActions.class);
 	}
 
+	protected void setUpTagsPresent(AssetEntry assetEntry) {
+		AssetEntryMock assetEntryMock = (AssetEntryMock)assetEntry;
+
+		assetEntryMock.tagNames = new String[] {RandomTestUtil.randomString()};
+	}
+
+	protected void setUpURLDownload(
+		AssetRenderer<?> assetRenderer, String urlDownload) {
+
+		Mockito.doReturn(
+			urlDownload
+		).when(
+			assetRenderer
+		).getURLDownload(
+			_themeDisplay
+		);
+	}
+
 	@Mock
 	protected AssetEntryLocalService assetEntryLocalService;
 
 	@Mock
-	@SuppressWarnings("rawtypes")
-	protected AssetRenderer assetRenderer;
+	protected AssetRenderer<?> assetRenderer;
 
 	@Mock
 	protected AssetRendererFactory<?> assetRendererFactory;
@@ -625,6 +709,9 @@ public class SearchResultSummaryDisplayBuilderTest {
 
 	@Mock
 	protected RenderRequest renderRequest;
+
+	@Mock
+	protected AssetRenderer<?> rootAssetRenderer;
 
 	protected class AssetEntryMock extends AssetEntryBaseImpl {
 
@@ -654,13 +741,15 @@ public class SearchResultSummaryDisplayBuilderTest {
 
 		@Override
 		public String[] getTagNames() {
-			return new String[0];
+			return tagNames;
 		}
 
 		@Override
 		public List<AssetTag> getTags() {
 			return Collections.emptyList();
 		}
+
+		protected String[] tagNames = new String[0];
 
 	}
 
