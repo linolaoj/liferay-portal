@@ -82,8 +82,6 @@ import javax.portlet.RenderResponse;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.ArrayUtils;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -172,6 +170,8 @@ public class SearchResultSummaryDisplayBuilderTest {
 			"false"
 		);
 
+		setUpIndexerRegistry(_MB_MESSAGE_CLASS_NAME, new MBMessageIndexer());
+
 		SearchDisplayContext searchDisplayContext = createSearchDisplayContext(
 			requestKeywords, renderRequest);
 
@@ -184,7 +184,7 @@ public class SearchResultSummaryDisplayBuilderTest {
 		searchResultSummaryDisplayBuilder.setDocument(document);
 		searchResultSummaryDisplayBuilder.setHighlightEnabled(
 			searchDisplayContext.isHighlightEnabled());
-		searchResultSummaryDisplayBuilder.setIndexer(new MBMessageIndexer());
+		searchResultSummaryDisplayBuilder.setIndexerRegistry(indexerRegistry);
 		searchResultSummaryDisplayBuilder.setLanguage(new LanguageImpl());
 		searchResultSummaryDisplayBuilder.setLocale(Locale.US);
 		searchResultSummaryDisplayBuilder.setPortletURLFactory(
@@ -489,6 +489,16 @@ public class SearchResultSummaryDisplayBuilderTest {
 		httpUtil.setHttp(_http);
 	}
 
+	protected void setUpIndexerRegistry(String className, Indexer<?> indexer) {
+		Mockito.doReturn(
+			indexer
+		).when(
+			indexerRegistry
+		).getIndexer(
+			className
+		);
+	}
+
 	protected void setUpPermissionChecker() {
 		_permissionChecker = mockOmniadminPermissionChecker();
 
@@ -608,6 +618,9 @@ public class SearchResultSummaryDisplayBuilderTest {
 	protected HttpServletRequest httpServletRequest;
 
 	@Mock
+	protected IndexerRegistry indexerRegistry;
+
+	@Mock
 	protected PortletURLFactory portletURLFactory;
 
 	@Mock
@@ -636,12 +649,12 @@ public class SearchResultSummaryDisplayBuilderTest {
 
 		@Override
 		public long[] getCategoryIds() {
-			return ArrayUtils.EMPTY_LONG_ARRAY;
+			return new long[0];
 		}
 
 		@Override
 		public String[] getTagNames() {
-			return ArrayUtils.EMPTY_STRING_ARRAY;
+			return new String[0];
 		}
 
 		@Override
