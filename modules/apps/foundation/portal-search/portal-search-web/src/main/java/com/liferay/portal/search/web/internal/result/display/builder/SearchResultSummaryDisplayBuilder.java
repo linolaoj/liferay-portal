@@ -74,15 +74,11 @@ public class SearchResultSummaryDisplayBuilder {
 		AssetRenderer<?> assetRenderer = null;
 
 		if (assetRendererFactory != null) {
-			Indexer indexer = getIndexer(className);
+			long resourcePrimKey = GetterUtil.getLong(
+				_document.get(Field.ROOT_ENTRY_CLASS_PK));
 
-			if (indexer == null) {
-				long resourcePrimKey = GetterUtil.getLong(
-					_document.get(Field.ROOT_ENTRY_CLASS_PK));
-
-				if (resourcePrimKey > 0) {
-					classPK = resourcePrimKey;
-				}
+			if (resourcePrimKey > 0) {
+				classPK = resourcePrimKey;
 			}
 
 			assetRenderer = assetRendererFactory.getAssetRenderer(classPK);
