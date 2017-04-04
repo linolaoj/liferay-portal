@@ -158,6 +158,8 @@ public class PermissionExportImportTest {
 			PortletDataContext.class, "getCompanyId");
 		final Method getGroupIdMethod = ReflectionTestUtil.getMethod(
 			PortletDataContext.class, "getGroupId");
+		final Method getPermissionsMethod = ReflectionTestUtil.getMethod(
+			PortletDataContext.class, "getPermissions");
 
 		PortletDataContext portletDataContext =
 			(PortletDataContext)ProxyUtil.newProxyInstance(
@@ -176,6 +178,10 @@ public class PermissionExportImportTest {
 
 						if (method.equals(getGroupIdMethod)) {
 							return exportGroup.getGroupId();
+						}
+
+						if (method.equals(getPermissionsMethod)) {
+							return new HashMap<>();
 						}
 
 						throw new UnsupportedOperationException();
