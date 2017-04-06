@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistry;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Summary;
@@ -65,19 +66,28 @@ public class SearchResultSummaryDisplayBuilder {
 	public SearchResultSummaryDisplayContext build() throws Exception {
 		String className = _document.get(Field.ENTRY_CLASS_NAME);
 		long classPK = GetterUtil.getLong(_document.get(Field.ENTRY_CLASS_PK));
+		long rootClassPK = GetterUtil.getLong(
+			_document.get(Field.ROOT_ENTRY_CLASS_PK));
 
 		AssetRendererFactory<?> assetRendererFactory =
 			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
 				className);
 
 		AssetRenderer<?> assetRenderer = null;
+		AssetRenderer<?> rootAssetRenderer = null;
 
 		if (assetRendererFactory != null) {
-			long resourcePrimKey = GetterUtil.getLong(
-				_document.get(Field.ROOT_ENTRY_CLASS_PK));
+			Indexer indexer = getIndexer(className);
 
-			if (resourcePrimKey > 0) {
-				classPK = resourcePrimKey;
+			if (indexer == null) {
+				if (rootClassPK > 0) {
+					classPK = rootClassPK;
+				}
+			}
+
+			if (rootClassPK > 0) {
+				rootAssetRenderer = assetRendererFactory.getAssetRenderer(
+					rootClassPK);
 			}
 
 			assetRenderer = assetRendererFactory.getAssetRenderer(classPK);
@@ -93,7 +103,9 @@ public class SearchResultSummaryDisplayBuilder {
 			return null;
 		}
 
-		return build(summary, className, classPK, assetRenderer, viewURL);
+		return build(
+			summary, className, classPK, rootClassPK, assetRenderer,
+			rootAssetRenderer, viewURL);
 	}
 
 	public void setAssetEntryLocalService(
@@ -112,6 +124,10 @@ public class SearchResultSummaryDisplayBuilder {
 
 	public void setHighlightEnabled(boolean highlightEnabled) {
 		_highlightEnabled = highlightEnabled;
+	}
+
+	public void setIndexerRegistry(IndexerRegistry indexerRegistry) {
+		_indexerRegistry = indexerRegistry;
 	}
 
 	public void setLanguage(Language language) {
@@ -157,8 +173,9 @@ public class SearchResultSummaryDisplayBuilder {
 	}
 
 	protected SearchResultSummaryDisplayContext build(
-			Summary summary, String className, long classPK,
-			AssetRenderer<?> assetRenderer, String viewURL)
+			Summary summary, String className, long classPK, long rootClassPK,
+			AssetRenderer<?> assetRenderer, AssetRenderer<?> rootAssetRenderer,
+			String viewURL)
 		throws PortletException {
 
 		SearchResultSummaryDisplayContext searchResultSummaryDisplayContext =
@@ -166,6 +183,13 @@ public class SearchResultSummaryDisplayBuilder {
 
 		AssetEntry assetEntry = _assetEntryLocalService.fetchEntry(
 			className, classPK);
+
+		AssetEntry rootAssetEntry = null;
+
+		if (rootClassPK > 0) {
+			rootAssetEntry = _assetEntryLocalService.fetchEntry(
+				className, rootClassPK);
+		}
 
 		if (assetEntry != null) {
 			searchResultSummaryDisplayContext.setAssetEntryUserId(
@@ -178,12 +202,15 @@ public class SearchResultSummaryDisplayBuilder {
 		searchResultSummaryDisplayContext.setHighlightedTitle(
 			summary.getHighlightedTitle());
 
-		if (hasAssetRendererURLDownload(assetRenderer)) {
-			searchResultSummaryDisplayContext.setAssetRendererURLDownload(
-				assetRenderer.getURLDownload(_themeDisplay));
-			searchResultSummaryDisplayContext.
-				setAssetRendererURLDownloadVisible(true);
-			searchResultSummaryDisplayContext.setTitle(summary.getTitle());
+		if (hasAssetRendererURLDownload(rootAssetRenderer)) {
+			setUpURLDownload(
+				rootAssetRenderer, summary.getTitle(),
+				searchResultSummaryDisplayContext);
+		}
+		else if (hasAssetRendererURLDownload(assetRenderer)) {
+			setUpURLDownload(
+				assetRenderer, summary.getTitle(),
+				searchResultSummaryDisplayContext);
 		}
 
 		searchResultSummaryDisplayContext.setModelResource(
@@ -210,17 +237,13 @@ public class SearchResultSummaryDisplayBuilder {
 			searchResultSummaryDisplayContext.setContentVisible(true);
 		}
 
-		if (hasAssetCategoriesOrTags(assetEntry)) {
-			searchResultSummaryDisplayContext.setClassName(className);
-			searchResultSummaryDisplayContext.setClassPK(classPK);
-			searchResultSummaryDisplayContext.setAssetCategoriesOrTagsVisible(
-				true);
-			searchResultSummaryDisplayContext.setFieldAssetCategoryIds(
-				Field.ASSET_CATEGORY_IDS);
-			searchResultSummaryDisplayContext.setFieldAssetTagNames(
-				Field.ASSET_TAG_NAMES);
-			searchResultSummaryDisplayContext.setPortletURL(
-				_portletURLFactory.getPortletURL());
+		if (hasAssetCategoriesOrTags(rootAssetEntry)) {
+			setUpCategoriesAndTags(
+				className, rootClassPK, searchResultSummaryDisplayContext);
+		}
+		else if (hasAssetCategoriesOrTags(assetEntry)) {
+			setUpCategoriesAndTags(
+				className, classPK, searchResultSummaryDisplayContext);
 		}
 
 		if (_searchResultPreferences.isDisplayResultsInDocumentForm()) {
@@ -294,13 +317,21 @@ public class SearchResultSummaryDisplayBuilder {
 		return assetEntry.getUserId();
 	}
 
+	protected Indexer<Object> getIndexer(String className) {
+		if (_indexerRegistry != null) {
+			return _indexerRegistry.getIndexer(className);
+		}
+
+		return IndexerRegistryUtil.getIndexer(className);
+	}
+
 	protected Summary getSummary(
 			String className, AssetRenderer<?> assetRenderer)
 		throws SearchException {
 
 		Summary summary = null;
 
-		Indexer indexer = IndexerRegistryUtil.getIndexer(className);
+		Indexer indexer = getIndexer(className);
 
 		if (indexer != null) {
 			String snippet = _document.get(Field.SNIPPET);
@@ -391,10 +422,34 @@ public class SearchResultSummaryDisplayBuilder {
 		return false;
 	}
 
+	protected void setUpCategoriesAndTags(
+			String className, long classPK,
+			SearchResultSummaryDisplayContext displayContext)
+		throws PortletException {
+
+		displayContext.setClassName(className);
+		displayContext.setClassPK(classPK);
+		displayContext.setAssetCategoriesOrTagsVisible(true);
+		displayContext.setFieldAssetCategoryIds(Field.ASSET_CATEGORY_IDS);
+		displayContext.setFieldAssetTagNames(Field.ASSET_TAG_NAMES);
+		displayContext.setPortletURL(_portletURLFactory.getPortletURL());
+	}
+
+	protected void setUpURLDownload(
+		AssetRenderer<?> assetRenderer, String title,
+		SearchResultSummaryDisplayContext displayContext) {
+
+		displayContext.setAssetRendererURLDownload(
+			assetRenderer.getURLDownload(_themeDisplay));
+		displayContext.setAssetRendererURLDownloadVisible(true);
+		displayContext.setTitle(title);
+	}
+
 	private AssetEntryLocalService _assetEntryLocalService;
 	private String _currentURL;
 	private Document _document;
 	private boolean _highlightEnabled;
+	private IndexerRegistry _indexerRegistry;
 	private Language _language;
 	private Locale _locale;
 	private PortletURLFactory _portletURLFactory;
