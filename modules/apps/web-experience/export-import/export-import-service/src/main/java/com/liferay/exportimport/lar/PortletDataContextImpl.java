@@ -384,6 +384,14 @@ public class PortletDataContextImpl implements PortletDataContext {
 			getPrimaryKeyString(resourceName, resourcePK), permissions);
 	}
 
+	public void addPermissions(
+		String resourceName, String resourcePK,
+		List<KeyValuePair> permissions) {
+
+		_permissionsMap.put(
+			getPrimaryKeyString(resourceName, resourcePK), permissions);
+	}
+
 	@Override
 	public void addPortalPermissions() {
 		addPermissions(PortletKeys.PORTAL, getCompanyId());
