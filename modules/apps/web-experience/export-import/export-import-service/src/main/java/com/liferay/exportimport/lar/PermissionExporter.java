@@ -30,7 +30,6 @@ import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
 import com.liferay.portal.kernel.util.CharPool;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -38,6 +37,9 @@ import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 
+import java.io.Serializable;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -77,13 +79,12 @@ public class PermissionExporter {
 				entry.getKey(), CharPool.POUND);
 
 			String resourceName = permissionParts[0];
-			long resourcePK = GetterUtil.getLong(permissionParts[1]);
+			String resourcePK = permissionParts[1];
 
 			Element portletDataElement = rootElement.addElement("portlet-data");
 
 			portletDataElement.addAttribute("resource-name", resourceName);
-			portletDataElement.addAttribute(
-				"resource-pk", String.valueOf(resourcePK));
+			portletDataElement.addAttribute("resource-pk", resourcePK);
 
 			List<KeyValuePair> permissions = entry.getValue();
 
@@ -142,6 +143,8 @@ public class PermissionExporter {
 				portletDataContext.getCompanyId(), resourceName,
 				resourcePrimKey, actionIds);
 
+		List<KeyValuePair> permissions = new ArrayList<>();
+
 		for (Map.Entry<Long, Set<String>> entry : roleToActionIds.entrySet()) {
 			long roleId = entry.getKey();
 
@@ -180,7 +183,28 @@ public class PermissionExporter {
 
 				actionKeyElement.addText(actionId);
 			}
+
+			KeyValuePair permission = new KeyValuePair(
+				roleName, StringUtil.merge(availableActionIds));
+
+			permissions.add(permission);
 		}
+
+		portletDataContext.getPermissions().put(
+			PortletDataContextPermissionHelper.getPrimaryKeyString(
+				resourceName, resourcePrimKey),
+			permissions);
+	}
+
+	protected static class PortletDataContextPermissionHelper {
+
+		protected static String getPrimaryKeyString(
+			String className, Serializable primaryKey) {
+
+			return className.concat(
+				StringPool.POUND).concat(String.valueOf(primaryKey));
+		}
+
 	}
 
 	private PermissionExporter() {
