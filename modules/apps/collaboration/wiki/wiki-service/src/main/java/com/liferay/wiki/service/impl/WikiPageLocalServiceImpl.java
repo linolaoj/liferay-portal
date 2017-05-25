@@ -85,6 +85,7 @@ import com.liferay.trash.kernel.exception.RestoreEntryException;
 import com.liferay.trash.kernel.exception.TrashEntryException;
 import com.liferay.trash.kernel.model.TrashEntry;
 import com.liferay.trash.kernel.model.TrashVersion;
+import com.liferay.wiki.configuration.WikiGroupServiceConfiguration;
 import com.liferay.wiki.configuration.WikiGroupServiceOverriddenConfiguration;
 import com.liferay.wiki.constants.WikiConstants;
 import com.liferay.wiki.constants.WikiPortletKeys;
@@ -181,7 +182,11 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 		title = StringUtil.replace(
 			title, CharPool.NO_BREAK_SPACE, CharPool.SPACE);
 
-		validate(title, nodeId, content, format);
+		String frontPageName = wikiGroupServiceConfiguration.frontPageName();
+
+		if (!StringUtil.equals(frontPageName, title) || (version != 1.0)) {
+			validate(title, nodeId, content, format);
+		}
 
 		long resourcePrimKey =
 			wikiPageResourceLocalService.getPageResourcePrimKey(
@@ -3323,6 +3328,9 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 
 	@ServiceReference(type = WikiEngineRenderer.class)
 	protected WikiEngineRenderer wikiEngineRenderer;
+
+	@ServiceReference(type = WikiGroupServiceConfiguration.class)
+	protected WikiGroupServiceConfiguration wikiGroupServiceConfiguration;
 
 	@ServiceReference(type = WikiPageTitleValidator.class)
 	protected WikiPageTitleValidator wikiPageTitleValidator;
