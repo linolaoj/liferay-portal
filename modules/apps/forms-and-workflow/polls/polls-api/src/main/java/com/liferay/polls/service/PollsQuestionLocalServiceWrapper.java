@@ -150,9 +150,10 @@ public class PollsQuestionLocalServiceWrapper
 	}
 
 	@Override
-	public void deleteQuestion(com.liferay.polls.model.PollsQuestion question)
+	public com.liferay.polls.model.PollsQuestion deleteQuestion(
+		com.liferay.polls.model.PollsQuestion question)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		_pollsQuestionLocalService.deleteQuestion(question);
+		return _pollsQuestionLocalService.deleteQuestion(question);
 	}
 
 	@Override

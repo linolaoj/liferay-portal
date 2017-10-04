@@ -150,10 +150,10 @@ public class PollsQuestionLocalServiceUtil {
 		getService().deleteQuestion(questionId);
 	}
 
-	public static void deleteQuestion(
+	public static com.liferay.polls.model.PollsQuestion deleteQuestion(
 		com.liferay.polls.model.PollsQuestion question)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteQuestion(question);
+		return getService().deleteQuestion(question);
 	}
 
 	public static void deleteQuestions(long groupId)
