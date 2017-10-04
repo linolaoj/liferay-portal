@@ -45,8 +45,6 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 
-import java.io.Serializable;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -255,23 +253,19 @@ public class PollsQuestionLocalServiceImpl
 		OrderByComparator<PollsQuestion> orderByComparator) {
 
 		try {
-			Hits hits = search(companyId, groupIds, keywords, start, end);
+			Hits hits = searchIndexer(
+				companyId, groupIds, keywords, start, end, orderByComparator);
 
 			List<PollsQuestion> pollsQuestions = new ArrayList<>(
 				hits.getLength());
-
-			Set<Serializable> questionIds = new HashSet<>();
 
 			for (Document document : hits.getDocs()) {
 				Long questionId = Long.parseLong(
 					document.get(Field.ENTRY_CLASS_PK));
 
-				questionIds.add(questionId);
+				pollsQuestions.add(
+					pollsQuestionPersistence.fetchByPrimaryKey(questionId));
 			}
-
-			pollsQuestions.addAll(
-				pollsQuestionPersistence.fetchByPrimaryKeys(
-					questionIds).values());
 
 			return pollsQuestions;
 		}
@@ -398,13 +392,13 @@ public class PollsQuestionLocalServiceImpl
 		throws PortalException {
 
 		return buildSearchContext(
-			companyId, groupIds, keywords, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS);
+			companyId, groupIds, keywords, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+			null);
 	}
 
 	protected SearchContext buildSearchContext(
 			long companyId, long[] groupIds, String keywords, int start,
-			int end)
+			int end, OrderByComparator<PollsQuestion> orderByComparator)
 		throws PortalException {
 
 		SearchContext searchContext = new SearchContext();
@@ -419,21 +413,32 @@ public class PollsQuestionLocalServiceImpl
 		searchContext.setGroupIds(groupIds);
 		searchContext.setStart(start);
 
-		searchContext.setSorts(new Sort(Field.CREATE_DATE, true));
+		if (orderByComparator != null) {
+			searchContext.setSorts(getSortFromComparator(orderByComparator));
+		}
 
 		return searchContext;
 	}
 
-	protected Hits search(
+	protected Sort getSortFromComparator(
+		OrderByComparator<PollsQuestion> orderByComparator) {
+
+		String[] fields = orderByComparator.getOrderByFields();
+		boolean reverse = !orderByComparator.isAscending();
+
+		return new Sort(fields[0], reverse);
+	}
+
+	protected Hits searchIndexer(
 			long companyId, long[] groupIds, String keywords, int start,
-			int end)
+			int end, OrderByComparator<PollsQuestion> orderByComparator)
 		throws PortalException {
 
 		Indexer<PollsQuestion> indexer = IndexerRegistryUtil.getIndexer(
 			PollsQuestion.class.getName());
 
 		SearchContext searchContext = buildSearchContext(
-			companyId, groupIds, keywords, start, end);
+			companyId, groupIds, keywords, start, end, orderByComparator);
 
 		return indexer.search(searchContext);
 	}
