@@ -79,6 +79,7 @@ public interface PollsQuestionLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public PollsQuestion addPollsQuestion(PollsQuestion pollsQuestion);
 
+	@Indexable(type = IndexableType.REINDEX)
 	public PollsQuestion addQuestion(long userId,
 		Map<Locale, java.lang.String> titleMap,
 		Map<Locale, java.lang.String> descriptionMap, int expirationDateMonth,
@@ -140,8 +141,9 @@ public interface PollsQuestionLocalService extends BaseLocalService,
 
 	public void deleteQuestion(long questionId) throws PortalException;
 
+	@Indexable(type = IndexableType.DELETE)
 	@SystemEvent(action = SystemEventConstants.ACTION_SKIP, type = SystemEventConstants.TYPE_DELETE)
-	public void deleteQuestion(PollsQuestion question)
+	public PollsQuestion deleteQuestion(PollsQuestion question)
 		throws PortalException;
 
 	public void deleteQuestions(long groupId) throws PortalException;
@@ -353,6 +355,7 @@ public interface PollsQuestionLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public PollsQuestion updatePollsQuestion(PollsQuestion pollsQuestion);
 
+	@Indexable(type = IndexableType.REINDEX)
 	public PollsQuestion updateQuestion(long userId, long questionId,
 		Map<Locale, java.lang.String> titleMap,
 		Map<Locale, java.lang.String> descriptionMap, int expirationDateMonth,
