@@ -27,6 +27,15 @@ calendarBooking = RecurrenceUtil.getCalendarBookingInstance(calendarBooking, ins
 
 Calendar calendar = calendarBooking.getCalendar();
 
+boolean viewPermission = true;
+
+if (!CalendarPermission.contains(
+		themeDisplay.getPermissionChecker(), calendarBooking.getCalendarId(),
+		CalendarActionKeys.VIEW_BOOKING_DETAILS)) {
+
+	viewPermission = false;
+}
+
 long startTime = calendarBooking.getStartTime();
 
 java.util.Calendar startTimeJCalendar = JCalendarUtil.getJCalendar(startTime, userTimeZone);
@@ -46,114 +55,116 @@ AssetEntry layoutAssetEntry = AssetEntryLocalServiceUtil.getEntry(CalendarBookin
 			title="<%= calendarBooking.getTitle(locale) %>"
 		/>
 
-		<aui:fieldset markupView="lexicon">
-			<dl class="property-list">
-				<dt>
-					<liferay-ui:message key="status" />:
-				</dt>
-				<dd>
-					<aui:workflow-status markupView="lexicon" model="<%= CalendarBooking.class %>" showHelpMessage="<%= false %>" showIcon="<%= false %>" showLabel="<%= false %>" status="<%= calendarBooking.getStatus() %>" />
-				</dd>
-				<dt>
-					<liferay-ui:message key="starts" />:
-				</dt>
-				<dd>
-					<%= dateFormatLongDate.format(startTimeJCalendar.getTime()) + ", " + dateFormatTime.format(startTimeJCalendar.getTime()) %>
-				</dd>
-				<dt>
-					<liferay-ui:message key="ends" />:
-				</dt>
-				<dd>
-					<%= dateFormatLongDate.format(endTimeJCalendar.getTime()) + ", " + dateFormatTime.format(endTimeJCalendar.getTime()) %>
-				</dd>
-
-				<%
-				List<CalendarBooking> childCalendarBookings = calendarBooking.getChildCalendarBookings();
-				%>
-
-				<c:if test="<%= !childCalendarBookings.isEmpty() %>">
+		<c:if test="viewPermission">
+			<aui:fieldset markupView="lexicon">
+				<dl class="property-list">
 					<dt>
-						<liferay-ui:message key="resources" />:
+						<liferay-ui:message key="status" />:
 					</dt>
 					<dd>
-
-						<%
-						List<String> calendarResourcesNames = new ArrayList<String>();
-
-						for (CalendarBooking childCalendarBooking : childCalendarBookings) {
-							CalendarResource calendarResource = childCalendarBooking.getCalendarResource();
-
-							calendarResourcesNames.add(calendarResource.getName(locale));
-						}
-						%>
-
-						<%= HtmlUtil.escape(StringUtil.merge(calendarResourcesNames, ", ")) %>
+						<aui:workflow-status markupView="lexicon" model="<%= CalendarBooking.class %>" showHelpMessage="<%= false %>" showIcon="<%= false %>" showLabel="<%= false %>" status="<%= calendarBooking.getStatus() %>" />
 					</dd>
-				</c:if>
-
-				<c:if test="<%= Validator.isNotNull(calendarBooking.getLocation()) %>">
 					<dt>
-						<liferay-ui:message key="location" />:
+						<liferay-ui:message key="starts" />:
 					</dt>
 					<dd>
-						<span class="location"><%= HtmlUtil.escape(calendarBooking.getLocation()) %></span>
+						<%= dateFormatLongDate.format(startTimeJCalendar.getTime()) + ", " + dateFormatTime.format(startTimeJCalendar.getTime()) %>
 					</dd>
-				</c:if>
-
-				<c:if test="<%= Validator.isNotNull(calendarBooking.getRecurrence()) %>">
 					<dt>
-						<liferay-ui:message key="repeat" />:
+						<liferay-ui:message key="ends" />:
 					</dt>
 					<dd>
-						<span id="<portlet:namespace />recurrenceSummary"></span>
+						<%= dateFormatLongDate.format(endTimeJCalendar.getTime()) + ", " + dateFormatTime.format(endTimeJCalendar.getTime()) %>
 					</dd>
-				</c:if>
-			</dl>
 
-			<liferay-expando:custom-attributes-available className="<%= CalendarBooking.class.getName() %>">
-				<liferay-expando:custom-attribute-list
-					className="<%= CalendarBooking.class.getName() %>"
-					classPK="<%= calendarBooking.getCalendarBookingId() %>"
-					editable="<%= false %>"
-					label="<%= true %>"
-				/>
-			</liferay-expando:custom-attributes-available>
+					<%
+					List<CalendarBooking> childCalendarBookings = calendarBooking.getChildCalendarBookings();
+					%>
 
-			<p>
-				<%= calendarBooking.getDescription(locale) %>
-			</p>
+					<c:if test="<%= !childCalendarBookings.isEmpty() %>">
+						<dt>
+							<liferay-ui:message key="resources" />:
+						</dt>
+						<dd>
 
-			<div class="entry-categories">
-				<liferay-asset:asset-categories-summary
-					className="<%= CalendarBooking.class.getName() %>"
-					classPK="<%= calendarBooking.getCalendarBookingId() %>"
-				/>
-			</div>
+							<%
+							List<String> calendarResourcesNames = new ArrayList<String>();
 
-			<div class="entry-tags">
-				<liferay-asset:asset-tags-summary
-					className="<%= CalendarBooking.class.getName() %>"
-					classPK="<%= calendarBooking.getCalendarBookingId() %>"
-					message="tags"
-				/>
-			</div>
+							for (CalendarBooking childCalendarBooking : childCalendarBookings) {
+								CalendarResource calendarResource = childCalendarBooking.getCalendarResource();
 
-			<div class="entry-links">
-				<liferay-asset:asset-links
-					assetEntryId="<%= layoutAssetEntry.getEntryId() %>"
-				/>
-			</div>
+								calendarResourcesNames.add(calendarResource.getName(locale));
+							}
+							%>
 
-			<c:if test="<%= calendar.isEnableRatings() %>">
-				<div class="entry-ratings">
-					<liferay-ui:ratings
+							<%= HtmlUtil.escape(StringUtil.merge(calendarResourcesNames, ", ")) %>
+						</dd>
+					</c:if>
+
+					<c:if test="<%= Validator.isNotNull(calendarBooking.getLocation()) %>">
+						<dt>
+							<liferay-ui:message key="location" />:
+						</dt>
+						<dd>
+							<span class="location"><%= HtmlUtil.escape(calendarBooking.getLocation()) %></span>
+						</dd>
+					</c:if>
+
+					<c:if test="<%= Validator.isNotNull(calendarBooking.getRecurrence()) %>">
+						<dt>
+							<liferay-ui:message key="repeat" />:
+						</dt>
+						<dd>
+							<span id="<portlet:namespace />recurrenceSummary"></span>
+						</dd>
+					</c:if>
+				</dl>
+
+				<liferay-expando:custom-attributes-available className="<%= CalendarBooking.class.getName() %>">
+					<liferay-expando:custom-attribute-list
 						className="<%= CalendarBooking.class.getName() %>"
 						classPK="<%= calendarBooking.getCalendarBookingId() %>"
-						inTrash="<%= calendarBooking.isInTrash() %>"
+						editable="<%= false %>"
+						label="<%= true %>"
+					/>
+				</liferay-expando:custom-attributes-available>
+
+				<p>
+					<%= calendarBooking.getDescription(locale) %>
+				</p>
+
+				<div class="entry-categories">
+					<liferay-asset:asset-categories-summary
+						className="<%= CalendarBooking.class.getName() %>"
+						classPK="<%= calendarBooking.getCalendarBookingId() %>"
 					/>
 				</div>
-			</c:if>
-		</aui:fieldset>
+
+				<div class="entry-tags">
+					<liferay-asset:asset-tags-summary
+						className="<%= CalendarBooking.class.getName() %>"
+						classPK="<%= calendarBooking.getCalendarBookingId() %>"
+						message="tags"
+					/>
+				</div>
+
+				<div class="entry-links">
+					<liferay-asset:asset-links
+						assetEntryId="<%= layoutAssetEntry.getEntryId() %>"
+					/>
+				</div>
+
+				<c:if test="<%= calendar.isEnableRatings() %>">
+					<div class="entry-ratings">
+						<liferay-ui:ratings
+							className="<%= CalendarBooking.class.getName() %>"
+							classPK="<%= calendarBooking.getCalendarBookingId() %>"
+							inTrash="<%= calendarBooking.isInTrash() %>"
+						/>
+					</div>
+				</c:if>
+			</aui:fieldset>
+		</c:if>
 
 		<c:if test="<%= calendar.isEnableComments() %>">
 			<liferay-ui:panel-container extended="<%= false %>" id="calendarBookingPanelContainer" persistState="<%= true %>">
