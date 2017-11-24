@@ -113,7 +113,7 @@ renderResponse.setTitle((workflowDefinition == null) ? LanguageUtil.get(request,
 			<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
 			<aui:input name="name" type="hidden" value="<%= name %>" />
 			<aui:input name="version" type="hidden" value="<%= version %>" />
-			<aui:input name="content" type="hidden" value="<%= content %>" />
+			<aui:input name="content" type="hidden" value="<%= HtmlUtil.escape(content) %>" />
 			<aui:input name="successMessage" type="hidden" value='<%= active ? LanguageUtil.get(request, "workflow-updated-successfully") : LanguageUtil.get(request, "workflow-published-successfully") %>' />
 
 			<div class="card-horizontal main-content-card">
@@ -175,7 +175,18 @@ renderResponse.setTitle((workflowDefinition == null) ? LanguageUtil.get(request,
 	var editorContentElement = A.one('#<portlet:namespace />content');
 
 	if (editorContentElement) {
-		contentEditor.set(STR_VALUE, editorContentElement.val());
+
+		var escapedContent = editorContentElement.val();
+
+		var content = $.parseHTML(escapedContent)[0];
+
+		var text = '';
+
+		if (content && content.data) {
+			text = content.data;
+		}
+
+		contentEditor.set(STR_VALUE, text);
 	}
 
 	var uploadFile = $('#<portlet:namespace />upload');
