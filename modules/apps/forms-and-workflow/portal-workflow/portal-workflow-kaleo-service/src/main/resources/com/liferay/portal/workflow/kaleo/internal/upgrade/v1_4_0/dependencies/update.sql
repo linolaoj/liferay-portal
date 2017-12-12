@@ -20,6 +20,53 @@ create table KaleoDefinitionVersion (
 	status INTEGER
 );
 
+drop table KaleoTaskForm;
+
+create table KaleoTaskForm (
+	kaleoTaskFormId LONG not null primary key,
+	groupId LONG,
+	companyId LONG,
+	userId LONG,
+	userName STRING,
+	createDate DATE null,
+	modifiedDate DATE null,
+	kaleoDefinitionVersionId LONG,
+	kaleoNodeId LONG,
+	kaleoTaskId LONG,
+	kaleoTaskName VARCHAR(200),
+	name VARCHAR(200) null,
+	description TEXT null,
+	formCompanyId LONG,
+	formDefinition TEXT null, 
+	formGroupId LONG, 
+	formId LONG,
+	formUuid STRING,
+	metadata TEXT null,
+	priority INTEGER
+);
+
+drop table KaleoTaskFormInstance;
+
+create table KaleoTaskFormInstance (
+	kaleoTaskFormInstanceId LONG not null primary key,
+	groupId LONG,
+	companyId LONG,
+	userId LONG,
+	userName STRING,
+	createDate DATE null,
+	modifiedDate DATE null,
+	kaleoDefinitionVersionId LONG,
+	kaleoInstanceId LONG,
+	kaleoTaskId LONG,
+	kaleoTaskInstanceTokenId LONG,
+	kaleoTaskFormId LONG,
+	formValues TEXT null,
+	formValueEntryGroupId LONG,
+	formValueEntryId LONG,
+	formValueEntryUuid STRING,
+	metadata TEXT null,
+);
+
 create unique index IX_AE02DCC on KaleoDefinitionVersion (companyId, name[$COLUMN_LENGTH:200$], version[$COLUMN_LENGTH:75$]);
 
 alter table KaleoAction add kaleoDefinitionVersionId LONG null;
@@ -33,8 +80,8 @@ alter table KaleoNotificationRecipient add kaleoDefinitionVersionId LONG null;
 alter table KaleoTask add kaleoDefinitionVersionId LONG null;
 alter table KaleoTaskAssignment add kaleoDefinitionVersionId LONG null;
 alter table KaleoTaskAssignmentInstance add kaleoDefinitionVersionId LONG null;
-alter table KaleoTaskForm add kaleoDefinitionVersionId LONG null;
-alter table KaleoTaskFormInstance add kaleoDefinitionVersionId LONG null;
+--alter table KaleoTaskForm add kaleoDefinitionVersionId LONG null;
+--alter table KaleoTaskFormInstance add kaleoDefinitionVersionId LONG null;
 alter table KaleoTaskInstanceToken add kaleoDefinitionVersionId LONG null;
 alter table KaleoTimer add kaleoDefinitionVersionId LONG null;
 alter table KaleoTimerInstanceToken add kaleoDefinitionVersionId LONG null;
