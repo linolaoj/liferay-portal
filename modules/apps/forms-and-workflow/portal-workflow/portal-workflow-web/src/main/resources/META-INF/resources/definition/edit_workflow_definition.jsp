@@ -86,13 +86,46 @@ renderResponse.setTitle((workflowDefinition == null) ? LanguageUtil.get(request,
 				<liferay-ui:tabs cssClass="navbar-no-collapse" names="details,revision-history" refresh="<%= false %>" type="tabs">
 					<liferay-ui:section>
 						<div class="sidebar-body">
-							<h3 class="version">
-								<liferay-ui:message key="version" /> <%= workflowDefinition.getVersion() %>
-							</h3>
 
-							<aui:model-context bean="<%= workflowDefinition %>" model="<%= WorkflowDefinition.class %>" />
+							<%
+							String userName = workflowDefinitionDisplayContext.getUserName(workflowDefinition);
+							%>
 
-							<aui:workflow-status model="<%= WorkflowDefinition.class %>" status="<%= WorkflowConstants.STATUS_APPROVED %>" />
+							<div class="card-row-padded created-date">
+								<div>
+									<span>
+										<liferay-ui:message key="created" />
+									</span>
+								</div>
+
+								<span class="lfr-card-modified-by-text">
+									<liferay-ui:message arguments="<%= new String[] {dateFormatTime.format(workflowDefinitionDisplayContext.getCreatedDate(workflowDefinition)), userName} %>" key="x-by-x" translateArguments="<%= false %>" />
+								</span>
+							</div>
+
+							<div class="card-row-padded last-modified">
+								<div>
+									<span>
+										<liferay-ui:message key="last-modified" />
+									</span>
+								</div>
+
+								<span class="lfr-card-modified-by-text">
+									<liferay-ui:message arguments="<%= new String[] {dateFormatTime.format(workflowDefinition.getModifiedDate()), userName} %>" key="x-by-x" translateArguments="<%= false %>" />
+								</span>
+							</div>
+
+							<div class="card-row-padded">
+								<div>
+									<span>
+										<liferay-ui:message key="total-modifications" />
+									</span>
+								</div>
+
+								<span class="lfr-card-modified-by-text">
+									<liferay-ui:message arguments='<%= new String[] {workflowDefinitionDisplayContext.getWorkflowDefinitionCount(workflowDefinition) + ""} %>' key="x-revisions" translateArguments="<%= false %>" />
+								</span>
+							</div>
 						</div>
 					</liferay-ui:section>
 
