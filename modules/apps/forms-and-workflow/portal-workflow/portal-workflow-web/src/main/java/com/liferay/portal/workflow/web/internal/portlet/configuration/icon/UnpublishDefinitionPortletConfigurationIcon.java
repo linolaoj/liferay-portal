@@ -19,6 +19,8 @@ import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigura
 import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIcon;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
+import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.workflow.WorkflowDefinition;
 import com.liferay.portal.workflow.web.internal.constants.WorkflowPortletKeys;
 
 import java.util.ResourceBundle;
@@ -81,7 +83,17 @@ public class UnpublishDefinitionPortletConfigurationIcon
 
 	@Override
 	public boolean isShow(PortletRequest portletRequest) {
-		return true;
+		WorkflowDefinition workflowDefinition =
+			(WorkflowDefinition)portletRequest.getAttribute(
+				WebKeys.WORKFLOW_DEFINITION);
+
+		boolean published = false;
+
+		if ((workflowDefinition != null) && workflowDefinition.isActive()) {
+			published = true;
+		}
+
+		return published;
 	}
 
 	@Reference(
