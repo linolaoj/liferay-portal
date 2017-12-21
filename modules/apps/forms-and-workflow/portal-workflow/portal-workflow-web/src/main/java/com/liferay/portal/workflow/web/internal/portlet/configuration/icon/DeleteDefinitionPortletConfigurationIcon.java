@@ -58,7 +58,8 @@ public class DeleteDefinitionPortletConfigurationIcon
 		PortletRequest portletRequest, PortletResponse portletResponse) {
 
 		String confirmMessage = LanguageUtil.get(
-			getLocale(portletRequest), "are-you-sure-you-want-to-delete-this");
+			_resourceBundleLoader.loadResourceBundle(getLocale(portletRequest)),
+			"delete-workflow-question");
 
 		return "if (!confirm('" + confirmMessage + "')) { return false; }";
 	}

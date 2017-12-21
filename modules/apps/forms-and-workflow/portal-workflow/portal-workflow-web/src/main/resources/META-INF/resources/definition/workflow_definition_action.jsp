@@ -73,7 +73,7 @@ WorkflowDefinition workflowDefinition = (WorkflowDefinition)row.getObject();
 			/>
 		</c:when>
 		<c:otherwise>
-			<liferay-ui:icon-delete
+			<liferay-ui:icon-delete confirmation="<%= LanguageUtil.get(request, "delete-workflow-question") %>"
 				url="<%= deleteURL %>"
 			/>
 		</c:otherwise>
