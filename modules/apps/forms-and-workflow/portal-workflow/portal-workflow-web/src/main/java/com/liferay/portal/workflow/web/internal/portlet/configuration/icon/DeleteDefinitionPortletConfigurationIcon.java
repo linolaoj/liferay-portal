@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigura
 import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIcon;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowDefinition;
 import com.liferay.portal.workflow.web.internal.constants.WorkflowPortletKeys;
@@ -57,11 +58,20 @@ public class DeleteDefinitionPortletConfigurationIcon
 	public String getOnClick(
 		PortletRequest portletRequest, PortletResponse portletResponse) {
 
-		String confirmMessage = LanguageUtil.get(
-			_resourceBundleLoader.loadResourceBundle(getLocale(portletRequest)),
-			"delete-workflow-question");
+		String portletId = _portal.getPortletId(portletRequest);
 
-		return "if (!confirm('" + confirmMessage + "')) { return false; }";
+		String portletNamespace = _portal.getPortletNamespace(portletId);
+
+		String deleteURL = getURL(portletRequest, portletResponse);
+
+		StringBundler sb = new StringBundler(4);
+
+		sb.append(portletNamespace);
+		sb.append("confirmDeleteDefinition('");
+		sb.append(deleteURL);
+		sb.append("'); return false;");
+
+		return sb.toString();
 	}
 
 	/**
