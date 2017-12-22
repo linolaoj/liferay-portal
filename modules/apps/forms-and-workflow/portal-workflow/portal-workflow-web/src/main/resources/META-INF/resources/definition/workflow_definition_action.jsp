@@ -73,7 +73,8 @@ WorkflowDefinition workflowDefinition = (WorkflowDefinition)row.getObject();
 			/>
 		</c:when>
 		<c:otherwise>
-			<liferay-ui:icon-delete confirmation="<%= LanguageUtil.get(request, "delete-workflow-question") %>"
+			<liferay-ui:icon message='<%= LanguageUtil.get(request, "delete") %>'
+				onClick="<%= renderResponse.getNamespace() + "confirmDeleteDefinition('" + deleteURL + "');return false;" %>"
 				url="<%= deleteURL %>"
 			/>
 		</c:otherwise>
