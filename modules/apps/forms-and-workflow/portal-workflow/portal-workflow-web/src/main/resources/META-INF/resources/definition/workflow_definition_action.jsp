@@ -55,7 +55,7 @@ WorkflowDefinition workflowDefinition = (WorkflowDefinition)row.getObject();
 		</liferay-portlet:actionURL>
 
 		<liferay-ui:icon
-			message="activate"
+			message="publish"
 			url="<%= restoreWorkflowDefinitionURL %>"
 		/>
 	</c:if>
@@ -68,7 +68,7 @@ WorkflowDefinition workflowDefinition = (WorkflowDefinition)row.getObject();
 
 	<c:choose>
 		<c:when test="<%= workflowDefinition.isActive() %>">
-			<liferay-ui:icon-deactivate
+			<liferay-ui:icon message="<%= LanguageUtil.get(request, "unpublish") %>"
 				url="<%= deleteURL %>"
 			/>
 		</c:when>
