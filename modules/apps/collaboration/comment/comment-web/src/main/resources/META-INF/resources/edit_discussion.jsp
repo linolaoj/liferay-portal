@@ -60,6 +60,7 @@ if (comment instanceof WorkflowableComment) {
 		<aui:input name="p_auth" type="hidden" value="<%= AuthTokenUtil.getToken(request) %>" />
 		<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
 		<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
+		<aui:input name="p_auth" type="hidden" value="<%= AuthTokenUtil.getToken(request) %>" />
 		<aui:input name="commentId" type="hidden" value="<%= commentId %>" />
 		<aui:input name="parentCommentId" type="hidden" value="<%= parentCommentId %>" />
 		<aui:input name="workflowAction" type="hidden" value="<%= String.valueOf(pending ? WorkflowConstants.ACTION_SAVE_DRAFT : WorkflowConstants.ACTION_PUBLISH) %>" />
