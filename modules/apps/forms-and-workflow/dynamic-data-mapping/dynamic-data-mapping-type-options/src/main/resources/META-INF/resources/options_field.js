@@ -313,9 +313,10 @@ AUI.add(
 						var value = instance.getValue();
 
 						if (value.length === 0 || value.length === 1 && value[0].label === '') {
-							instance._setValue([]);
+							value = [];
 						}
 
+						instance._setValue(value);
 					},
 
 					_afterEditableChange: function(event) {
