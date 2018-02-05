@@ -53,7 +53,9 @@ public class DateDDMFormFieldValueRenderer
 				return DateUtil.formatDate("yyyy-MM-dd", valueString, locale);
 			}
 			catch (ParseException pe) {
-				_log.error("Unable to parse date", pe);
+				if (_log.isDebugEnabled()) {
+					_log.debug("Unable to parse date", pe);
+				}
 			}
 		}
 
