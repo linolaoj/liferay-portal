@@ -17,7 +17,6 @@ package com.liferay.dynamic.data.mapping.type.date.internal;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueRenderer;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.DateUtil;
@@ -59,7 +58,7 @@ public class DateDDMFormFieldValueRenderer
 			}
 		}
 
-		return StringPool.BLANK;
+		return valueString;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
