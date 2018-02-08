@@ -242,13 +242,11 @@ AUI.add(
 
 						var value = instance.getValue();
 
-						var itemsFound = value.filter(
-							function(item) {
-								return item.value === option.get('value');
-							}
-						);
+						var optionTextValue = option.get('value');
 
-						if (itemsFound.length > 0) {
+						optionTextValue = optionTextValue.trim();
+
+						if (optionTextValue.length > 0) {
 
 							value.splice(index, 1);
 
