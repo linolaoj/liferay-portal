@@ -18,6 +18,10 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion;
 
+import com.liferay.portal.kernel.util.LocaleUtil;
+
+import java.util.Locale;
+
 /**
  * @author Inácio Nery
  */
@@ -30,6 +34,12 @@ public class KaleoDefinitionVersionTitleComparator
 
 	public KaleoDefinitionVersionTitleComparator(boolean ascending) {
 		_ascending = ascending;
+		_locale = LocaleUtil.getSiteDefault();
+	}
+
+	public KaleoDefinitionVersionTitleComparator(boolean ascending, Locale locale) {
+		_ascending = ascending;
+		_locale = locale;
 	}
 
 	@Override
@@ -71,6 +81,8 @@ public class KaleoDefinitionVersionTitleComparator
 	public boolean isAscending() {
 		return _ascending;
 	}
+
+	private Locale _locale;
 
 	private static final String _ORDER_BY_ASC =
 		"KaleoDefinitionVersion.title ASC";
