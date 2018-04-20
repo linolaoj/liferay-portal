@@ -71,14 +71,15 @@ AUI.add(
 					}
 
 					evaluator.onceAfter(
-							'evaluationEnded',
-							function() {
-								evaluator.set('evaluationDone', true);
-								if (!instance.hasFocus()) {
-									instance.showErrorMessage();
-								}
+						'evaluationEnded',
+						function() {
+							evaluator.set('evaluationDone', true);
+
+							if (!instance.hasFocus()) {
+								instance.showErrorMessage();
 							}
-						);
+						}
+					);
 				}
 				else {
 					instance.showErrorMessage();

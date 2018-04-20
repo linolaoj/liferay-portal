@@ -46,6 +46,7 @@ AUI.add(
 
 						if (instance.get('evaluationDone')) {
 							instance.set('evaluationDone', false);
+
 							return;
 						}
 
