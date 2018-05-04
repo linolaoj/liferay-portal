@@ -263,6 +263,30 @@ AUI.add(
 				}
 			},
 
+			_updateValueConfiguration: function(config) {
+				var instance = this;
+
+				var predefinedValue = instance.getPredefinedValue();
+				var value = instance.getValue();
+
+				if (predefinedValue) {
+					value = predefinedValue;
+				}
+				else {
+					if (Lang.isArray(value)) {
+						value = [];
+					}
+					else if (Lang.isObject(value)) {
+						value = {};
+					}
+					else {
+						value = '';
+					}
+				}
+
+				config.value = config.context.value = value;
+			},
+
 			_valueRepetitions: function() {
 				var instance = this;
 
