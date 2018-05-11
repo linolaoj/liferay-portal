@@ -108,16 +108,15 @@ AUI.add(
 			try {
 				JSON.parse(value);
 
+				return true;
 			}
 			catch (e) {
 				editorNode.selectText(0, value.length);
 
 				instance.resetField(editorNode);
-
-				return false;
 			}
 
-			return true;
+			return false;
 		};
 
 		DEFAULTS_FORM_VALIDATOR.STRINGS.structureFieldName = Liferay.Language.get('please-enter-only-alphanumeric-characters-or-underscore');
@@ -1710,7 +1709,6 @@ AUI.add(
 					fieldNamespace: {
 						value: 'ddm'
 					}
-
 				},
 
 				EXTENDS: A.FormBuilderField,
