@@ -100,6 +100,25 @@ AUI.add(
 			return !duplicate;
 		};
 
+		DEFAULTS_FORM_VALIDATOR.STRINGS.journalArticlePredefinedValue = Liferay.Language.get('please-enter-a-json-with-classname-and-classpk-from-web-content');
+
+		DEFAULTS_FORM_VALIDATOR.RULES.journalArticlePredefinedValue = function(value, editorNode) {
+			var instance = this;
+
+			try {
+				JSON.parse(value);
+
+				return true;
+			}
+			catch (e) {
+				editorNode.selectText(0, value.length);
+
+				instance.resetField(editorNode);
+			}
+
+			return false;
+		};
+
 		DEFAULTS_FORM_VALIDATOR.STRINGS.structureFieldName = Liferay.Language.get('please-enter-only-alphanumeric-characters-or-underscore');
 
 		DEFAULTS_FORM_VALIDATOR.RULES.structureFieldName = function(value) {
@@ -1711,6 +1730,31 @@ AUI.add(
 								attributeName: 'style',
 								editor: new A.TextAreaCellEditor(),
 								name: Liferay.Language.get('style')
+							}
+						);
+
+						model.forEach(
+							function(item, index, collection) {
+								var attributeName = item.attributeName;
+
+								if (attributeName === 'predefinedValue') {
+									collection[index] = {
+										attributeName: attributeName,
+										editor: new A.TextAreaCellEditor(
+											{
+												validator: {
+													rules: {
+														value: {
+															journalArticlePredefinedValue: true,
+															required: false
+														}
+													}
+												}
+											}
+										),
+										name: Liferay.Language.get('predefined-value')
+									};
+								}
 							}
 						);
 
