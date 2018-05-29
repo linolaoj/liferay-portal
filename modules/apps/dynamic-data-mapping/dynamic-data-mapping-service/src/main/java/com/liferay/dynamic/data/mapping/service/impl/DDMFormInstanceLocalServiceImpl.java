@@ -69,8 +69,6 @@ public class DDMFormInstanceLocalServiceImpl
 			ServiceContext ddmStructureserviceContext)
 		throws PortalException {
 
-		Locale defaultLocale = getDDMFormDefaultLocale(ddmStructureId);
-
 		DDMStructure ddmStructure = null;
 
 		if (ddmStructureId > 0) {
@@ -89,6 +87,8 @@ public class DDMFormInstanceLocalServiceImpl
 
 			ddmStructureId = ddmStructure.getStructureId();
 		}
+
+		Locale defaultLocale = getDDMFormDefaultLocale(ddmStructureId);
 
 		validate(ddmStructureId, nameMap, settingsDDMFormValues, defaultLocale);
 
@@ -444,10 +444,6 @@ public class DDMFormInstanceLocalServiceImpl
 			DDMFormInstance ddmFormInstance)
 		throws PortalException {
 
-		Locale defaultLocale = getDDMFormDefaultLocale(ddmStructureId);
-
-		validate(ddmStructureId, nameMap, settingsDDMFormValues, defaultLocale);
-
 		long oldDDMStructureId = ddmFormInstance.getStructureId();
 
 		if (ddmStructureId <= 0) {
@@ -464,6 +460,10 @@ public class DDMFormInstanceLocalServiceImpl
 
 			ddmStructureId = ddmStructure.getStructureId();
 		}
+
+		Locale defaultLocale = getDDMFormDefaultLocale(ddmStructureId);
+
+		validate(ddmStructureId, nameMap, settingsDDMFormValues, defaultLocale);
 
 		User user = userLocalService.getUser(userId);
 
