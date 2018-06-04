@@ -37,6 +37,7 @@ import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -64,12 +65,15 @@ public class DDMFormInstanceLocalServiceImpl
 			DDMFormLayout ddmStructureDDMFormLayout,
 			String ddmStructureStorageType, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap,
-			DDMFormValues settingsDDMFormValues,
-			ServiceContext ddmFormServiceContext,
-			ServiceContext ddmStructureserviceContext)
+			DDMFormValues settingsDDMFormValues, ServiceContext serviceContext)
 		throws PortalException {
 
 		DDMStructure ddmStructure = null;
+
+		ServiceContext ddmStructureserviceContext =
+			ServiceContextFactory.getInstance(
+				DDMStructure.class.getName(),
+				serviceContext.getLiferayPortletRequest());
 
 		if (ddmStructureId > 0) {
 			ddmStructure = ddmStructureLocalService.fetchDDMStructure(
@@ -99,7 +103,7 @@ public class DDMFormInstanceLocalServiceImpl
 		DDMFormInstance ddmFormInstance = ddmFormInstancePersistence.create(
 			ddmFormInstanceId);
 
-		ddmFormInstance.setUuid(ddmFormServiceContext.getUuid());
+		ddmFormInstance.setUuid(serviceContext.getUuid());
 		ddmFormInstance.setGroupId(groupId);
 		ddmFormInstance.setCompanyId(user.getCompanyId());
 		ddmFormInstance.setUserId(user.getUserId());
@@ -115,26 +119,26 @@ public class DDMFormInstanceLocalServiceImpl
 			ddmFormInstancePersistence.update(ddmFormInstance);
 
 		updateWorkflowDefinitionLink(
-			ddmFormInstance, settingsDDMFormValues, ddmFormServiceContext);
+			ddmFormInstance, settingsDDMFormValues, serviceContext);
 
-		if (ddmFormServiceContext.isAddGroupPermissions() ||
-			ddmFormServiceContext.isAddGuestPermissions()) {
+		if (serviceContext.isAddGroupPermissions() ||
+			serviceContext.isAddGuestPermissions()) {
 
 			addFormInstanceResources(
-				ddmFormInstance, ddmFormServiceContext.isAddGroupPermissions(),
-				ddmFormServiceContext.isAddGuestPermissions());
+				ddmFormInstance, serviceContext.isAddGroupPermissions(),
+				serviceContext.isAddGuestPermissions());
 		}
 		else {
 			addFormInstanceResources(
-				ddmFormInstance, ddmFormServiceContext.getGroupPermissions(),
-				ddmFormServiceContext.getGuestPermissions());
+				ddmFormInstance, serviceContext.getGroupPermissions(),
+				serviceContext.getGuestPermissions());
 		}
 
 		long structureVersionId = getStructureVersionId(ddmStructureId);
 
 		addFormInstanceVersion(
 			structureVersionId, user, ddmFormInstance, _VERSION_DEFAULT,
-			ddmFormServiceContext);
+			serviceContext);
 
 		return updatedDDMFormInstance;
 	}
@@ -149,7 +153,7 @@ public class DDMFormInstanceLocalServiceImpl
 
 		return addFormInstance(
 			userId, groupId, ddmStructureId, 0, null, null, null, null, nameMap,
-			descriptionMap, settingsDDMFormValues, ddmFormServiceContext, null);
+			descriptionMap, settingsDDMFormValues, ddmFormServiceContext);
 	}
 
 	@Override

@@ -47,9 +47,7 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 			DDMFormLayout ddmStructureDDMFormLayout,
 			String ddmStructureStorageType, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap,
-			DDMFormValues settingsDDMFormValues,
-			ServiceContext ddmFormServiceContext,
-			ServiceContext ddmStructureserviceContext)
+			DDMFormValues settingsDDMFormValues, ServiceContext serviceContext)
 		throws PortalException {
 
 		_portletResourcePermission.check(
@@ -59,8 +57,7 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 			getUserId(), groupId, ddmStructureId, ddmStructureClassNameId,
 			ddmStructureKey, ddmStructureDDMForm, ddmStructureDDMFormLayout,
 			ddmStructureStorageType, nameMap, descriptionMap,
-			settingsDDMFormValues, ddmFormServiceContext,
-			ddmStructureserviceContext);
+			settingsDDMFormValues, serviceContext);
 	}
 
 	@Override
