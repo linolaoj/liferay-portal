@@ -57,6 +57,10 @@ import com.liferay.portal.kernel.util.MethodKey;
 public class DDMFormInstanceServiceHttp {
 	public static com.liferay.dynamic.data.mapping.model.DDMFormInstance addFormInstance(
 		HttpPrincipal httpPrincipal, long groupId, long ddmStructureId,
+		long ddmStructureClassNameId, String ddmStructureKey,
+		com.liferay.dynamic.data.mapping.model.DDMForm ddmStructureDDMForm,
+		com.liferay.dynamic.data.mapping.model.DDMFormLayout ddmStructureDDMFormLayout,
+		String ddmStructureStorageType,
 		java.util.Map<java.util.Locale, String> nameMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		com.liferay.dynamic.data.mapping.storage.DDMFormValues settingsDDMFormValues,
@@ -67,7 +71,9 @@ public class DDMFormInstanceServiceHttp {
 					"addFormInstance", _addFormInstanceParameterTypes0);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey, groupId,
-					ddmStructureId, nameMap, descriptionMap,
+					ddmStructureId, ddmStructureClassNameId, ddmStructureKey,
+					ddmStructureDDMForm, ddmStructureDDMFormLayout,
+					ddmStructureStorageType, nameMap, descriptionMap,
 					settingsDDMFormValues, serviceContext);
 
 			Object returnObj = null;
@@ -94,26 +100,18 @@ public class DDMFormInstanceServiceHttp {
 
 	public static com.liferay.dynamic.data.mapping.model.DDMFormInstance addFormInstance(
 		HttpPrincipal httpPrincipal, long groupId, long ddmStructureId,
-		long ddmStructureClassNameId, String ddmStructureKey,
-		com.liferay.dynamic.data.mapping.model.DDMForm ddmStructureDDMForm,
-		com.liferay.dynamic.data.mapping.model.DDMFormLayout ddmStructureDDMFormLayout,
-		String ddmStructureStorageType,
 		java.util.Map<java.util.Locale, String> nameMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		com.liferay.dynamic.data.mapping.storage.DDMFormValues settingsDDMFormValues,
-		com.liferay.portal.kernel.service.ServiceContext ddmFormServiceContext,
-		com.liferay.portal.kernel.service.ServiceContext ddmStructureserviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(DDMFormInstanceServiceUtil.class,
 					"addFormInstance", _addFormInstanceParameterTypes1);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey, groupId,
-					ddmStructureId, ddmStructureClassNameId, ddmStructureKey,
-					ddmStructureDDMForm, ddmStructureDDMFormLayout,
-					ddmStructureStorageType, nameMap, descriptionMap,
-					settingsDDMFormValues, ddmFormServiceContext,
-					ddmStructureserviceContext);
+					ddmStructureId, nameMap, descriptionMap,
+					settingsDDMFormValues, serviceContext);
 
 			Object returnObj = null;
 
@@ -512,17 +510,16 @@ public class DDMFormInstanceServiceHttp {
 
 	private static Log _log = LogFactoryUtil.getLog(DDMFormInstanceServiceHttp.class);
 	private static final Class<?>[] _addFormInstanceParameterTypes0 = new Class[] {
-			long.class, long.class, java.util.Map.class, java.util.Map.class,
-			com.liferay.dynamic.data.mapping.storage.DDMFormValues.class,
-			com.liferay.portal.kernel.service.ServiceContext.class
-		};
-	private static final Class<?>[] _addFormInstanceParameterTypes1 = new Class[] {
 			long.class, long.class, long.class, String.class,
 			com.liferay.dynamic.data.mapping.model.DDMForm.class,
 			com.liferay.dynamic.data.mapping.model.DDMFormLayout.class,
 			String.class, java.util.Map.class, java.util.Map.class,
 			com.liferay.dynamic.data.mapping.storage.DDMFormValues.class,
-			com.liferay.portal.kernel.service.ServiceContext.class,
+			com.liferay.portal.kernel.service.ServiceContext.class
+		};
+	private static final Class<?>[] _addFormInstanceParameterTypes1 = new Class[] {
+			long.class, long.class, java.util.Map.class, java.util.Map.class,
+			com.liferay.dynamic.data.mapping.storage.DDMFormValues.class,
 			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _deleteFormInstanceParameterTypes2 = new Class[] {

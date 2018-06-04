@@ -66,9 +66,8 @@ public interface DDMFormInstanceService extends BaseService {
 		DDMForm ddmStructureDDMForm, DDMFormLayout ddmStructureDDMFormLayout,
 		String ddmStructureStorageType, Map<Locale, String> nameMap,
 		Map<Locale, String> descriptionMap,
-		DDMFormValues settingsDDMFormValues,
-		ServiceContext ddmFormServiceContext,
-		ServiceContext ddmStructureserviceContext) throws PortalException;
+		DDMFormValues settingsDDMFormValues, ServiceContext serviceContext)
+		throws PortalException;
 
 	public DDMFormInstance addFormInstance(long groupId, long ddmStructureId,
 		Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,

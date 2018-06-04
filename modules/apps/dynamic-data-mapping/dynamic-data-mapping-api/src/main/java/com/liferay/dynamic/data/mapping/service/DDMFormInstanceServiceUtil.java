@@ -51,15 +51,13 @@ public class DDMFormInstanceServiceUtil {
 		java.util.Map<java.util.Locale, String> nameMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		com.liferay.dynamic.data.mapping.storage.DDMFormValues settingsDDMFormValues,
-		com.liferay.portal.kernel.service.ServiceContext ddmFormServiceContext,
-		com.liferay.portal.kernel.service.ServiceContext ddmStructureserviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .addFormInstance(groupId, ddmStructureId,
 			ddmStructureClassNameId, ddmStructureKey, ddmStructureDDMForm,
 			ddmStructureDDMFormLayout, ddmStructureStorageType, nameMap,
-			descriptionMap, settingsDDMFormValues, ddmFormServiceContext,
-			ddmStructureserviceContext);
+			descriptionMap, settingsDDMFormValues, serviceContext);
 	}
 
 	public static com.liferay.dynamic.data.mapping.model.DDMFormInstance addFormInstance(
