@@ -109,8 +109,7 @@ public class SaveFormInstanceMVCCommandHelper {
 			_portal.getClassNameId(DDMFormInstance.class),
 			ddmStructure.getStructureKey(), ddmStructure.getDDMForm(),
 			ddmStructure.getDDMFormLayout(), ddmStructure.getStorageType(),
-			nameMap, descriptionMap, settingsDDMFormValues, serviceContext,
-			null);
+			nameMap, descriptionMap, settingsDDMFormValues, serviceContext);
 	}
 
 	protected DDMFormInstance addFormInstance(
@@ -137,12 +136,7 @@ public class SaveFormInstanceMVCCommandHelper {
 
 		long groupId = ParamUtil.getLong(portletRequest, "groupId");
 
-		ServiceContext ddmStructureServiceContext =
-			ServiceContextFactory.getInstance(
-				DDMStructure.class.getName(), portletRequest);
-
-		DDMForm ddmStructureDDMForm = getDDMForm(
-			portletRequest, ddmStructureServiceContext);
+		DDMForm ddmStructureDDMForm = getDDMForm(portletRequest);
 
 		Locale defaultLocale = ddmStructureDDMForm.getDefaultLocale();
 		Set<Locale> availableLocales =
@@ -178,11 +172,10 @@ public class SaveFormInstanceMVCCommandHelper {
 			groupId, 0, _portal.getClassNameId(DDMFormInstance.class),
 			structureKey, ddmStructureDDMForm, ddmStructureDDMFormLayout,
 			storageType, nameMap, descriptionMap, settingsDDMFormValues,
-			serviceContext, ddmStructureServiceContext);
+			serviceContext);
 	}
 
-	protected DDMForm getDDMForm(
-			PortletRequest portletRequest, ServiceContext serviceContext)
+	protected DDMForm getDDMForm(PortletRequest portletRequest)
 		throws PortalException {
 
 		try {
@@ -310,12 +303,7 @@ public class SaveFormInstanceMVCCommandHelper {
 
 		validateRedirectURL(settingsDDMFormValues);
 
-		ServiceContext ddmStructureServiceContext =
-			ServiceContextFactory.getInstance(
-				DDMStructure.class.getName(), portletRequest);
-
-		DDMForm structureDDMForm = getDDMForm(
-			portletRequest, ddmStructureServiceContext);
+		DDMForm structureDDMForm = getDDMForm(portletRequest);
 
 		DDMFormLayout structureDDMFormLayout = getDDMFormLayout(portletRequest);
 
@@ -329,12 +317,11 @@ public class SaveFormInstanceMVCCommandHelper {
 		String name = ParamUtil.getString(portletRequest, "name");
 		String description = ParamUtil.getString(portletRequest, "description");
 
-		ServiceContext ddmFormServiceContext =
-			ServiceContextFactory.getInstance(
-				DDMFormInstance.class.getName(), portletRequest);
+		ServiceContext serviceContext = ServiceContextFactory.getInstance(
+			DDMFormInstance.class.getName(), portletRequest);
 
 		if (ParamUtil.getBoolean(portletRequest, "saveAsDraft")) {
-			ddmFormServiceContext.setAttribute(
+			serviceContext.setAttribute(
 				"status", WorkflowConstants.ACTION_SAVE_DRAFT);
 		}
 
@@ -342,7 +329,7 @@ public class SaveFormInstanceMVCCommandHelper {
 			formInstanceId, 0, structureDDMForm, structureDDMFormLayout,
 			getLocalizedMap(name, availableLocales, defaultLocale),
 			getLocalizedMap(description, availableLocales, defaultLocale),
-			settingsDDMFormValues, ddmFormServiceContext);
+			settingsDDMFormValues, serviceContext);
 	}
 
 	protected DDMFormInstance updateFormInstance(
