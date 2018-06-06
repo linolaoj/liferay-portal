@@ -22,7 +22,9 @@ import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceSettings;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceVersion;
+import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
 import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
 import com.liferay.dynamic.data.mapping.service.base.DDMFormInstanceLocalServiceBaseImpl;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
@@ -126,6 +128,26 @@ public class DDMFormInstanceLocalServiceImpl
 		return addFormInstance(
 			userId, groupId, ddmStructureId, nameMap, descriptionMap,
 			settingsDDMFormValues, serviceContext);
+	}
+
+	@Override
+	public DDMFormInstance addFormInstance(
+			long userId, long groupId, long classNameId, String structureKey,
+			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
+			DDMForm ddmForm, DDMFormLayout ddmFormLayout,
+			DDMFormValues settingsDDMFormValues, String storageType,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		DDMStructure ddmStructure = ddmStructureLocalService.addStructure(
+			userId, groupId, DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID,
+			classNameId, structureKey, nameMap, descriptionMap, ddmForm,
+			ddmFormLayout, storageType, DDMStructureConstants.TYPE_AUTO,
+			serviceContext);
+
+		return addFormInstance(
+			userId, groupId, ddmStructure.getStructureId(), nameMap,
+			descriptionMap, settingsDDMFormValues, serviceContext);
 	}
 
 	@Override
