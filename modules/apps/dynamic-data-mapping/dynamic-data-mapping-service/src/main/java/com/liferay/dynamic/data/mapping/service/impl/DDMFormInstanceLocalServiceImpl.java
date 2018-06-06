@@ -186,6 +186,12 @@ public class DDMFormInstanceLocalServiceImpl
 
 		deleteDDMFormInstance(ddmFormInstance);
 
+		long structureId = ddmFormInstance.getStructureId();
+
+		if (ddmStructureLocalService.fetchDDMStructure(structureId) != null) {
+			ddmStructureLocalService.deleteDDMStructure(structureId);
+		}
+
 		resourceLocalService.deleteResource(
 			ddmFormInstance.getCompanyId(), DDMFormInstance.class.getName(),
 			ResourceConstants.SCOPE_INDIVIDUAL,
