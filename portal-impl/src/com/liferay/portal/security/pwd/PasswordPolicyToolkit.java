@@ -132,31 +132,35 @@ public class PasswordPolicyToolkit extends BasicToolkit {
 					passwordPolicy.getMinAlphanumeric()) {
 
 				throw new UserPasswordException.MustHaveMoreAlphanumeric(
-					userId);
+					passwordPolicy.getMinAlphanumeric());
 			}
 
 			if (getUsageCount(password1, _validatorLowerCaseCharsetArray) <
 					passwordPolicy.getMinLowerCase()) {
 
-				throw new UserPasswordException.MustHaveMoreLowercase(userId);
+				throw new UserPasswordException.MustHaveMoreLowercase(
+					passwordPolicy.getMinLowerCase());
 			}
 
 			if (getUsageCount(password1, _validatorNumbersCharsetArray) <
 					passwordPolicy.getMinNumbers()) {
 
-				throw new UserPasswordException.MustHaveMoreNumbers(userId);
+				throw new UserPasswordException.MustHaveMoreNumbers(
+					passwordPolicy.getMinNumbers());
 			}
 
 			if (getUsageCount(password1, _validatorSymbolsCharsetArray) <
 					passwordPolicy.getMinSymbols()) {
 
-				throw new UserPasswordException.MustHaveMoreSymbols(userId);
+				throw new UserPasswordException.MustHaveMoreSymbols(
+					passwordPolicy.getMinSymbols());
 			}
 
 			if (getUsageCount(password1, _validatorUpperCaseCharsetArray) <
 					passwordPolicy.getMinUpperCase()) {
 
-				throw new UserPasswordException.MustHaveMoreUppercase(userId);
+				throw new UserPasswordException.MustHaveMoreUppercase(
+					passwordPolicy.getMinUpperCase());
 			}
 
 			String regex = passwordPolicy.getRegex();
