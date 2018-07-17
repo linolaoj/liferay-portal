@@ -155,8 +155,8 @@ public class UserPasswordException extends PortalException {
 		public MustHaveMoreAlphanumeric(long minAlphanumeric) {
 			super(
 				String.format(
-					"Password must have at least %s alphanumeric " +
-						"characters", minAlphanumeric));
+					"Password must have at least %s alphanumeric characters",
+					minAlphanumeric));
 
 			this.minAlphanumeric = minAlphanumeric;
 		}
@@ -170,8 +170,8 @@ public class UserPasswordException extends PortalException {
 		public MustHaveMoreLowercase(long minLowercase) {
 			super(
 				String.format(
-					"Password must have at least %s lowercase " +
-						"characters", minLowercase));
+					"Password must have at least %s lowercase characters",
+					minLowercase));
 
 			this.minLowercase = minLowercase;
 		}
@@ -185,8 +185,8 @@ public class UserPasswordException extends PortalException {
 		public MustHaveMoreNumbers(long minNumbers) {
 			super(
 				String.format(
-					"Passwordmust have at least %s number " +
-						"characters", minNumbers));
+					"Passwordmust have at least %s number characters",
+					minNumbers));
 
 			this.minNumbers = minNumbers;
 		}
@@ -200,8 +200,8 @@ public class UserPasswordException extends PortalException {
 		public MustHaveMoreSymbols(long minSymbols) {
 			super(
 				String.format(
-					"Password must have at least %s symbol " +
-						"characters", minSymbols));
+					"Password must have at least %s symbol characters",
+					minSymbols));
 
 			this.minSymbols = minSymbols;
 		}
@@ -215,8 +215,8 @@ public class UserPasswordException extends PortalException {
 		public MustHaveMoreUppercase(long minUppercase) {
 			super(
 				String.format(
-					"Password must have at least %s uppercase " +
-						"characters", minUppercase));
+					"Password must have at least %s uppercase characters",
+					minUppercase));
 
 			this.minUppercase = minUppercase;
 		}
