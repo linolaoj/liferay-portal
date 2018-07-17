@@ -207,7 +207,8 @@ public class PasswordPolicyToolkit extends BasicToolkit {
 		else if (!PasswordTrackerLocalServiceUtil.isValidPassword(
 					userId, password1)) {
 
-			throw new UserPasswordException.MustNotBeRecentlyUsed(userId);
+				throw new UserPasswordException.MustNotBeRecentlyUsed(userId);
+			}
 		}
 	}
 
