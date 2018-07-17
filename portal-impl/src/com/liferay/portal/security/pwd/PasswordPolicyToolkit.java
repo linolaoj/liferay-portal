@@ -128,18 +128,39 @@ public class PasswordPolicyToolkit extends BasicToolkit {
 					userId, passwordPolicy.getMinLength());
 			}
 
-			if ((getUsageCount(password1, _validatorAlphanumericCharsetArray) <
-					passwordPolicy.getMinAlphanumeric()) ||
-				(getUsageCount(password1, _validatorLowerCaseCharsetArray) <
-					passwordPolicy.getMinLowerCase()) ||
-				(getUsageCount(password1, _validatorNumbersCharsetArray) <
-					passwordPolicy.getMinNumbers()) ||
-				(getUsageCount(password1, _validatorSymbolsCharsetArray) <
-					passwordPolicy.getMinSymbols()) ||
-				(getUsageCount(password1, _validatorUpperCaseCharsetArray) <
-					passwordPolicy.getMinUpperCase())) {
+			if (getUsageCount(password1, _validatorAlphanumericCharsetArray) <
+					passwordPolicy.getMinAlphanumeric()) {
 
-				throw new UserPasswordException.MustNotBeTrivial(userId);
+				throw new UserPasswordException.MustHaveMoreAlphanumeric(
+					passwordPolicy.getMinAlphanumeric());
+			}
+
+			if (getUsageCount(password1, _validatorLowerCaseCharsetArray) <
+					passwordPolicy.getMinLowerCase()) {
+
+				throw new UserPasswordException.MustHaveMoreLowercase(
+					passwordPolicy.getMinLowerCase());
+			}
+
+			if (getUsageCount(password1, _validatorNumbersCharsetArray) <
+					passwordPolicy.getMinNumbers()) {
+
+				throw new UserPasswordException.MustHaveMoreNumbers(
+					passwordPolicy.getMinNumbers());
+			}
+
+			if (getUsageCount(password1, _validatorSymbolsCharsetArray) <
+					passwordPolicy.getMinSymbols()) {
+
+				throw new UserPasswordException.MustHaveMoreSymbols(
+					passwordPolicy.getMinSymbols());
+			}
+
+			if (getUsageCount(password1, _validatorUpperCaseCharsetArray) <
+					passwordPolicy.getMinUpperCase()) {
+
+				throw new UserPasswordException.MustHaveMoreUppercase(
+					passwordPolicy.getMinUpperCase());
 			}
 
 			String regex = passwordPolicy.getRegex();
