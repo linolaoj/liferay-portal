@@ -329,8 +329,8 @@ public class DDMFormDisplayContext {
 			Group scopeGroup = _groupLocalService.getGroup(
 				PortalUtil.getScopeGroupId(_renderRequest));
 
-			if ((group != null) && group.isStagingGroup() &&
-				!scopeGroup.isStagingGroup()) {
+			if ((group != null) && (scopeGroup != null) &&
+				group.isStagingGroup() && !scopeGroup.isStagingGroup()) {
 
 				return false;
 			}
