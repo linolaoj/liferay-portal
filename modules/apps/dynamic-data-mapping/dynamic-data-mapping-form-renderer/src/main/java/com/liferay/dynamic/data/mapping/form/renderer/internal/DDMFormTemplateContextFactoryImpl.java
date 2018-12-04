@@ -133,7 +133,9 @@ public class DDMFormTemplateContextFactoryImpl
 		List<DDMFormFieldType> ddmFormFieldTypes =
 			_ddmFormFieldTypeServicesTracker.getDDMFormFieldTypes();
 
-		templateContext.put("fieldTypes", serialize(ddmFormFieldTypes));
+		if (!ddmFormRenderingContext.isViewMode()) {
+			templateContext.put("fieldTypes", serialize(ddmFormFieldTypes));
+		}
 
 		templateContext.put("groupId", ddmFormRenderingContext.getGroupId());
 
@@ -161,7 +163,11 @@ public class DDMFormTemplateContextFactoryImpl
 					resourceBundle,
 					ddmFormRenderingContext.getHttpServletRequest())));
 
-		templateContext.put("rules", toObjectList(ddmForm.getDDMFormRules()));
+		if (!ddmFormRenderingContext.isViewMode()) {
+			templateContext.put(
+				"rules", toObjectList(ddmForm.getDDMFormRules()));
+		}
+
 		templateContext.put(
 			"showRequiredFieldsWarning",
 			ddmFormRenderingContext.isShowRequiredFieldsWarning());

@@ -39,6 +39,7 @@ import com.liferay.dynamic.data.mapping.service.DDMFormInstanceVersionLocalServi
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -98,7 +99,7 @@ public class DDMFormDisplayContext {
 			GroupLocalService groupLocalService,
 			WorkflowDefinitionLinkLocalService
 				workflowDefinitionLinkLocalService,
-			Portal portal)
+			Portal portal, PortalCache<String, String> portalCache)
 		throws PortalException {
 
 		_renderRequest = renderRequest;
@@ -116,6 +117,7 @@ public class DDMFormDisplayContext {
 		_workflowDefinitionLinkLocalService =
 			workflowDefinitionLinkLocalService;
 		_portal = portal;
+		_portalCache = portalCache;
 
 		_containerId = StringUtil.randomString();
 
@@ -123,11 +125,9 @@ public class DDMFormDisplayContext {
 			return;
 		}
 
-		DDMFormInstance ddmFormInstance =
-			_ddmFormInstanceLocalService.fetchDDMFormInstance(
-				getFormInstanceId());
+		_ddmFormInstance = getFormInstance();
 
-		if ((ddmFormInstance == null) || !hasViewPermission()) {
+		if ((_ddmFormInstance == null) || !hasViewPermission()) {
 			renderRequest.setAttribute(
 				WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, Boolean.TRUE);
 		}
@@ -165,23 +165,46 @@ public class DDMFormDisplayContext {
 			return StringPool.BLANK;
 		}
 
+		DDMFormInstanceRecordVersion ddmFormInstanceRecordVersion =
+			_ddmFormInstanceRecordVersionLocalService.
+				fetchLatestFormInstanceRecordVersion(
+					getUserId(), ddmFormInstance.getFormInstanceId(),
+					getFormInstanceVersion(), WorkflowConstants.STATUS_DRAFT);
+
+		boolean firstRendering = false;
+
+		boolean addFormInstanceRecordPermission =
+			hasAddFormInstanceRecordPermission();
+
+		if (ddmFormInstanceRecordVersion == null) {
+			String html = null;
+
+			if (addFormInstanceRecordPermission) {
+				html = _portalCache.get(
+					String.format(
+						"%d_editable", ddmFormInstance.getFormInstanceId()));
+			}
+			else {
+				html = _portalCache.get(
+					String.format(
+						"%d_readOnly", ddmFormInstance.getFormInstanceId()));
+			}
+
+			if (html != null) {
+				return html;
+			}
+
+			firstRendering = true;
+		}
+
 		boolean requireCaptcha = isCaptchaRequired(ddmFormInstance);
 
 		DDMForm ddmForm = getDDMForm(ddmFormInstance, requireCaptcha);
-
-		DDMFormLayout ddmFormLayout = getDDMFormLayout(
-			ddmFormInstance, requireCaptcha);
 
 		DDMFormRenderingContext ddmFormRenderingContext =
 			createDDMFormRenderingContext(ddmForm);
 
 		ddmFormRenderingContext.setGroupId(ddmFormInstance.getGroupId());
-
-		DDMFormInstanceRecordVersion ddmFormInstanceRecordVersion =
-			_ddmFormInstanceRecordVersionLocalService.
-				fetchLatestFormInstanceRecordVersion(
-					getUserId(), getFormInstanceId(), getFormInstanceVersion(),
-					WorkflowConstants.STATUS_DRAFT);
 
 		if (ddmFormInstanceRecordVersion != null) {
 			DDMFormValues mergedDDMFormValues = _ddmFormValuesMerger.merge(
@@ -200,12 +223,30 @@ public class DDMFormDisplayContext {
 
 		ddmFormRenderingContext.setSubmitLabel(submitLabel);
 
-		if (!hasAddFormInstanceRecordPermission()) {
+		if (!addFormInstanceRecordPermission) {
 			ddmFormRenderingContext.setReadOnly(true);
 		}
 
-		return _ddmFormRenderer.render(
+		DDMFormLayout ddmFormLayout = getDDMFormLayout(
+			ddmFormInstance, requireCaptcha);
+
+		String html = _ddmFormRenderer.render(
 			ddmForm, ddmFormLayout, ddmFormRenderingContext);
+
+		if (firstRendering && addFormInstanceRecordPermission) {
+			_portalCache.put(
+				String.format(
+					"%d_editable", ddmFormInstance.getFormInstanceId()),
+				html, 1440);
+		}
+		else if (firstRendering) {
+			_portalCache.put(
+				String.format(
+					"%d_readOnly", ddmFormInstance.getFormInstanceId()),
+				html, 1440);
+		}
+
+		return html;
 	}
 
 	public DDMFormSuccessPageSettings getDDMFormSuccessPageSettings()
@@ -741,6 +782,7 @@ public class DDMFormDisplayContext {
 	private Boolean _hasAddFormInstanceRecordPermission;
 	private Boolean _hasViewPermission;
 	private final Portal _portal;
+	private final PortalCache<String, String> _portalCache;
 	private final RenderRequest _renderRequest;
 	private final RenderResponse _renderResponse;
 	private Boolean _showConfigurationIcon;

@@ -27,6 +27,8 @@ import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceVersionLocalService;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidationException;
+import com.liferay.portal.kernel.cache.MultiVMPool;
+import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -43,6 +45,8 @@ import com.liferay.portal.kernel.util.WebKeys;
 
 import java.io.IOException;
 
+import java.util.Map;
+
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.Portlet;
@@ -51,6 +55,7 @@ import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -162,6 +167,12 @@ public class DDMFormPortlet extends MVCPortlet {
 		super.render(renderRequest, renderResponse);
 	}
 
+	@Activate
+	protected void activate(Map<String, Object> properties) {
+		_portalCache = (PortalCache<String, String>)
+			_multiVMPool.getPortalCache(DDMFormInstance.class.getName());
+	}
+
 	protected void checkFormIsNotRestricted(
 			RenderRequest renderRequest, RenderResponse renderResponse,
 			DDMFormDisplayContext ddmFormDisplayContext)
@@ -223,7 +234,7 @@ public class DDMFormPortlet extends MVCPortlet {
 			_ddmFormInstanceRecordVersionLocalService, _ddmFormInstanceService,
 			_ddmFormInstanceVersionLocalService, _ddmFormRenderer,
 			_ddmFormValuesFactory, _ddmFormValuesMerger, _groupLocalService,
-			_workflowDefinitionLinkLocalService, _portal);
+			_workflowDefinitionLinkLocalService, _portal, _portalCache);
 
 		renderRequest.setAttribute(
 			WebKeys.PORTLET_DISPLAY_CONTEXT, ddmFormDisplayContext);
@@ -262,7 +273,12 @@ public class DDMFormPortlet extends MVCPortlet {
 	private GroupLocalService _groupLocalService;
 
 	@Reference
+	private MultiVMPool _multiVMPool;
+
+	@Reference
 	private Portal _portal;
+
+	private PortalCache<String, String> _portalCache;
 
 	@Reference
 	private WorkflowDefinitionLinkLocalService
