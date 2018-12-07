@@ -15,16 +15,11 @@
 package com.liferay.dynamic.data.mapping.internal.model.listener;
 
 import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
-import com.liferay.portal.kernel.cache.MultiVMPool;
-import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.exception.ModelListenerException;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.ModelListener;
 import com.liferay.staging.model.listener.StagingModelListener;
 
-import java.util.Map;
-
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -32,7 +27,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Akos Thurzo
  */
 @Component(immediate = true, service = ModelListener.class)
-public class DDMFormInstanceModelListener
+public class DDMFormInstanceStagingModelListener
 	extends BaseModelListener<DDMFormInstance> {
 
 	@Override
@@ -47,11 +42,6 @@ public class DDMFormInstanceModelListener
 		throws ModelListenerException {
 
 		_stagingModelListener.onAfterRemove(ddmFormInstance);
-
-		_portalCache.remove(
-			String.format("%d_readOnly", ddmFormInstance.getFormInstanceId()));
-		_portalCache.remove(
-			String.format("%d_editable", ddmFormInstance.getFormInstanceId()));
 	}
 
 	@Override
@@ -59,23 +49,7 @@ public class DDMFormInstanceModelListener
 		throws ModelListenerException {
 
 		_stagingModelListener.onAfterUpdate(ddmFormInstance);
-
-		_portalCache.remove(
-			String.format("%d_readOnly", ddmFormInstance.getFormInstanceId()));
-		_portalCache.remove(
-			String.format("%d_editable", ddmFormInstance.getFormInstanceId()));
 	}
-
-	@Activate
-	protected void activate(Map<String, Object> properties) {
-		_portalCache = (PortalCache<String, String>)
-			_multiVMPool.getPortalCache(DDMFormInstance.class.getName());
-	}
-
-	@Reference
-	private MultiVMPool _multiVMPool;
-
-	private PortalCache<String, String> _portalCache;
 
 	@Reference
 	private StagingModelListener<DDMFormInstance> _stagingModelListener;
