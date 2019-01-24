@@ -335,5 +335,55 @@ describe(
 				expect(spy).toHaveBeenCalledWith('fieldEdited', expect.any(Object));
 			}
 		);
+
+		it(
+			'should render the dropdown with search when there are more than six options',
+			() => {
+				component = new Select(
+					{
+						options: [
+							{
+								label: 'label',
+								name: 'name',
+								value: 'item'
+							},
+							{
+								label: 'label',
+								name: 'name',
+								value: 'item'
+							},
+							{
+								label: 'label',
+								name: 'name',
+								value: 'item'
+							},
+							{
+								label: 'label',
+								name: 'name',
+								value: 'item'
+							},
+							{
+								label: 'label',
+								name: 'name',
+								value: 'item'
+							},
+							{
+								label: 'label',
+								name: 'name',
+								value: 'item'
+							},
+							{
+								label: 'label',
+								name: 'name',
+								value: 'item'
+							}
+						],
+						spritemap
+					}
+				);
+
+				expect(component).toMatchSnapshot();
+			}
+		);
 	}
 );

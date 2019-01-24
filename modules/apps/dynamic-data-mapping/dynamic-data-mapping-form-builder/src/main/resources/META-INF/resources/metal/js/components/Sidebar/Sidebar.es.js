@@ -26,8 +26,7 @@ const getImplementedFieldTypes = fieldTypes => {
 				'checkbox_multiple',
 				'date',
 				'grid',
-				'radio',
-				'select'
+				'radio'
 			].some(fieldType => fieldType === name);
 		}
 	);

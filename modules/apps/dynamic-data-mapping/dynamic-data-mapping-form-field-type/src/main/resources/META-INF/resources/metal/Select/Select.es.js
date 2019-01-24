@@ -1,5 +1,6 @@
 import '../FieldBase/FieldBase.es';
 import './SelectRegister.soy.js';
+import 'clay-dropdown';
 import 'clay-icon';
 import {Config} from 'metal-state';
 import {EventHandler} from 'metal-events';
@@ -61,17 +62,13 @@ class Select extends Component {
 		fixedOptions: Config.arrayOf(
 			Config.shapeOf(
 				{
-					dataType: Config.string(),
+					active: Config.bool().value(false),
+					disabled: Config.bool().value(false),
+					id: Config.string(),
+					inline: Config.bool().value(false),
+					label: Config.string(),
 					name: Config.string(),
-					options: Config.arrayOf(
-						Config.shapeOf(
-							{
-								label: Config.string(),
-								value: Config.string()
-							}
-						)
-					),
-					type: Config.string(),
+					showLabel: Config.bool().value(true),
 					value: Config.string()
 				}
 			)
@@ -219,13 +216,45 @@ class Select extends Component {
 
 	prepareStateForRender(state) {
 		const {predefinedValue, value} = state;
+		const {fixedOptions, options} = this;
 		const predefinedValueArray = this._getArrayValue(predefinedValue);
 		const valueArray = this._getArrayValue(value);
 
 		const selectedValue = valueArray[0] || '';
 
+		let emptyOption = {
+			label: this.strings.chooseAnOption,
+			value: ''
+		};
+
+		let newOptions = [...options];
+
+		newOptions.unshift(emptyOption);
+
+		newOptions = newOptions.map(option => {
+			let active = false;
+			let type = option.type;
+
+			if (option.value === selectedValue) {
+				active = true;
+			}
+
+			return {
+				...option,
+				active,
+				type: 'item'
+			}
+		});
+
+		newOptions = newOptions.concat(fixedOptions);
+
+		if (newOptions.length > 2 && fixedOptions.length) {
+			newOptions[options.length].separator = true;
+		}
+
 		return {
 			...state,
+			options: newOptions,
 			predefinedValue: predefinedValueArray[0] || '',
 			selectedLabel: this._getSelectedLabel(selectedValue),
 			value: selectedValue
@@ -267,7 +296,7 @@ class Select extends Component {
 	}
 
 	_handleItemClicked(event) {
-		const value = [event.target.dataset.optionValue];
+		const value = [event.data.item.value];
 
 		this.setState(
 			{

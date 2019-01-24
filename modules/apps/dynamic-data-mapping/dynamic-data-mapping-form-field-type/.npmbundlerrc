@@ -3,6 +3,7 @@
 		"imports": {
 			"frontend-taglib-clay": {
 				"clay-checkbox": "^2.2.0",
+				"clay-dropdown": ">=2.1.12",
 				"clay-icon": "^2.2.0",
 				"clay-radio": "^2.2.0"
 			},

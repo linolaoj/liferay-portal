@@ -44,6 +44,7 @@
 	"dependencies": {
 		"autobind-decorator": "^2.1.0",
 		"clay-checkbox": "^2.2.0",
+		"clay-dropdown": "^2.7.0",
 		"clay-icon": "^2.2.0",
 		"clay-radio": "^2.2.0",
 		"incremental-dom-string": "0.0.2",
