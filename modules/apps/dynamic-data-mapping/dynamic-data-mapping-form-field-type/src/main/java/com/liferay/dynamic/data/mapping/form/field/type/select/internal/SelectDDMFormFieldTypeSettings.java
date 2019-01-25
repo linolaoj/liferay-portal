@@ -43,7 +43,7 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 				"setRequired('options', equals(getValue('dataSourceType'), \"manual\"))",
 				"setVisible('ddmDataProviderInstanceId', equals(getValue('dataSourceType'), \"data-provider\"))",
 				"setVisible('ddmDataProviderInstanceOutput', equals(getValue('dataSourceType'), \"data-provider\"))",
-				"setVisible('options', equals(getValue('dataSourceType'), \"manual\"))",
+				"setVisible('options', contains(getValue('dataSourceType'), \"manual\"))",
 				"setVisible('predefinedValue', equals(getValue('dataSourceType'), \"manual\"))",
 				"setVisible('validation', false)"
 			},

@@ -243,14 +243,21 @@ class Select extends Component {
 	}
 
 	_getSelectedLabel(selectedValue) {
-		const {fixedOptions, options, placeholder} = this;
+		const {fixedOptions, options, placeholder, predefinedValue} = this;
 		let selectedOption = options.find(option => option.value === selectedValue);
+		let selectedLabel = placeholder;
 
 		if (!selectedOption) {
 			selectedOption = fixedOptions.find(option => option.value === selectedValue);
 		}
 
-		return selectedOption ? selectedOption.label : placeholder;
+		if(selectedOption) {
+			selectedLabel =  selectedOption.label;
+		}else if(predefinedValue && predefinedValue.length){
+			selectedLabel =  predefinedValue[0];
+		}
+
+		return selectedLabel;
 	}
 
 	_handleDocumentClicked({target}) {

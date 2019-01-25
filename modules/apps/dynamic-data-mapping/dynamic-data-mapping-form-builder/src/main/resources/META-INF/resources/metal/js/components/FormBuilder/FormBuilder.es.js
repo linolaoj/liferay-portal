@@ -498,10 +498,21 @@ class Builder extends Component {
 					}
 
 					if (field.fieldName === fieldName) {
-						field = {
-							...field,
-							value
-						};
+						if(fieldName === 'options') {
+							field = {
+								...field,
+								value: {
+									...field.value,
+									[translationManager.get('editingLocale')]: value
+								}
+							};
+						}else {
+							field = {
+								...field,
+								value
+							};
+						}
+
 						if (field.localizable) {
 							field.localizedValue = {
 								...field.localizedValue,
