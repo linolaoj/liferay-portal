@@ -275,15 +275,20 @@ class Select extends Component {
 		const {fixedOptions, options, placeholder, predefinedValue} = this;
 		let selectedOption = options.find(option => option.value === selectedValue);
 		let selectedLabel = placeholder;
+		let predefinedLabel;
 
 		if (!selectedOption) {
-			selectedOption = fixedOptions.find(option => option.value === selectedValue);
+			selectedLabel = fixedOptions.find(option =>  option.value === selectedValue);
 		}
 
 		if(selectedOption) {
-			selectedLabel =  selectedOption.label;
-		}else if(predefinedValue && predefinedValue.length){
-			selectedLabel =  predefinedValue[0];
+			selectedLabel = selectedOption.label;
+		}else if(predefinedValue && predefinedValue.length && predefinedValue[0]){
+			predefinedLabel = options.find(option => option.value === predefinedValue[0]);
+		}
+
+		if(predefinedLabel) {
+			selectedLabel = predefinedLabel.label;
 		}
 
 		return selectedLabel;

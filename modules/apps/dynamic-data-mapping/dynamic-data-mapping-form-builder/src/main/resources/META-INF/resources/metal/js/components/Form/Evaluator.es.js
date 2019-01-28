@@ -4,6 +4,7 @@ import {debounce} from 'metal-debounce';
 import {PagesVisitor} from '../../util/visitors.es';
 import autobind from 'autobind-decorator';
 import Component from 'metal-jsx';
+import FormSupport from './FormSupport.es';
 
 const WithEvaluator = ChildComponent => {
 
@@ -14,6 +15,7 @@ const WithEvaluator = ChildComponent => {
 
 	class Evaluator extends Component {
 		static PROPS = {
+			editingLanguageId: Config.string(),
 
 			/**
 			 * @instance
@@ -80,9 +82,10 @@ const WithEvaluator = ChildComponent => {
 		 */
 
 		_mergePages(sourcePages, newPages) {
+			const {editingLanguageId} = this.props;
 			const visitor = new PagesVisitor(sourcePages);
 
-			return visitor.mapFields(
+			const settingsContext =  visitor.mapFields(
 				(field, fieldIndex, columnIndex, rowIndex, pageIndex) => {
 					const currentField = newPages[pageIndex].rows[rowIndex].columns[columnIndex].fields[fieldIndex];
 
@@ -90,7 +93,7 @@ const WithEvaluator = ChildComponent => {
 						currentField.visible = true;
 					}
 
-					return {
+					const fieldContext = {
 						...field,
 						dataType: currentField.dataType,
 						errorMessage: currentField.errorMessage,
@@ -99,9 +102,20 @@ const WithEvaluator = ChildComponent => {
 						required: currentField.required,
 						valid: currentField.valid,
 						visible: currentField.visible
-					};
+					}
+
+					return fieldContext;
 				}
 			);
+			
+			const focusedFieldContext = FormSupport.getFieldProperties(
+				{
+					pages: settingsContext
+				}, 
+				editingLanguageId
+			);
+
+			return settingsContext;
 		}
 
 		/**
@@ -159,6 +173,7 @@ const WithEvaluator = ChildComponent => {
 
 		render() {
 			const {pages} = this.state;
+			const {editingLanguageId} = this.props;
 			const events = {
 				fieldEdited: this._handleFieldEdited
 			};
@@ -166,6 +181,7 @@ const WithEvaluator = ChildComponent => {
 			return (
 				<ChildComponent
 					{...this.props}
+					editingLanguageId={editingLanguageId}
 					events={events}
 					pages={pages}
 				/>

@@ -41,6 +41,8 @@ class Builder extends Component {
 
 		activePage: Config.number().value(0),
 
+		editingLanguageId: Config.string(),
+
 		/**
 		 * @default {}
 		 * @instance
@@ -465,7 +467,7 @@ class Builder extends Component {
 	}
 
 	_processFieldUpdates(fieldInstance, value) {
-		const {focusedField, namespace} = this.props;
+		const {focusedField, namespace, editingLanguageId} = this.props;
 		const {columnIndex, instanceId, pageIndex, rowIndex, settingsContext} = focusedField;
 		const properties = {columnIndex,
 			pageIndex,
@@ -503,7 +505,7 @@ class Builder extends Component {
 								...field,
 								value: {
 									...field.value,
-									[translationManager.get('editingLocale')]: value
+									[editingLanguageId]: value
 								}
 							};
 						}else {
@@ -516,7 +518,7 @@ class Builder extends Component {
 						if (field.localizable) {
 							field.localizedValue = {
 								...field.localizedValue,
-								[translationManager.get('editingLocale')]: value
+								[editingLanguageId]: value
 							};
 						}
 					}
@@ -542,6 +544,7 @@ class Builder extends Component {
 		} = this;
 		const {
 			activePage,
+			editingLanguageId,
 			fieldTypes,
 			focusedField,
 			namespace,
@@ -583,6 +586,7 @@ class Builder extends Component {
 						<FormRenderer
 							activePage={activePage}
 							editable={true}
+							editingLanguageId={editingLanguageId}
 							events={FormRendererEvents}
 							pages={pages}
 							paginationMode={paginationMode}
@@ -641,6 +645,7 @@ class Builder extends Component {
 					</div>
 				</div>
 				<Sidebar
+					editingLanguageId={editingLanguageId}
 					events={sidebarEvents}
 					fieldTypes={fieldTypes}
 					focusedField={focusedField}
