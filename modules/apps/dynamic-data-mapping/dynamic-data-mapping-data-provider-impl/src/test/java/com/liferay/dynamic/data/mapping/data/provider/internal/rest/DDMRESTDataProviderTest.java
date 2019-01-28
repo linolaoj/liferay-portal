@@ -45,6 +45,7 @@ import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import java.io.Serializable;
 
 import java.net.ConnectException;
+import java.net.URISyntaxException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +89,7 @@ public class DDMRESTDataProviderTest extends PowerMockito {
 	}
 
 	@Test
-	public void testBuildURL() {
+	public void testBuildURL() throws URISyntaxException {
 		String url = _ddmRESTDataProvider.buildURL(
 			_createDDMDataProviderRequest(),
 			_createDDMRESTDataProviderSettings());

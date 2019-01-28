@@ -34,7 +34,6 @@ import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -43,6 +42,13 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.net.ConnectException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,9 +63,26 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import jodd.http.HttpException;
-import jodd.http.HttpRequest;
-import jodd.http.HttpResponse;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.RequestLine;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -106,8 +129,9 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 	}
 
 	protected String buildURL(
-		DDMDataProviderRequest ddmDataProviderRequest,
-		DDMRESTDataProviderSettings ddmRESTDataProviderSettings) {
+			DDMDataProviderRequest ddmDataProviderRequest,
+			DDMRESTDataProviderSettings ddmRESTDataProviderSettings)
+		throws URISyntaxException {
 
 		Map<String, String> pathParameters = getPathParameters(
 			ddmDataProviderRequest, ddmRESTDataProviderSettings);
@@ -122,7 +146,36 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 				pathParameter.getValue());
 		}
 
-		return url;
+		URIBuilder uriBuilder = new URIBuilder(url);
+
+		Map<String, Object> parameters = ddmDataProviderRequest.getParameters();
+
+		if (ddmRESTDataProviderSettings.filterable()) {
+			uriBuilder = uriBuilder.setParameter(
+				ddmRESTDataProviderSettings.filterParameterName(),
+				(String)parameters.get("filterParameterValue"));
+		}
+
+		if (ddmRESTDataProviderSettings.pagination()) {
+			uriBuilder = uriBuilder.setParameter(
+				ddmRESTDataProviderSettings.paginationEndParameterName(),
+				(String)parameters.get("paginationStart"));
+			uriBuilder = uriBuilder.setParameter(
+				ddmRESTDataProviderSettings.paginationEndParameterName(),
+				(String)parameters.get("paginationEnd"));
+		}
+
+		Map<String, String> queryParameters = getQueryParameters(
+			ddmDataProviderRequest, ddmRESTDataProviderSettings);
+
+		for (Map.Entry<String, String> entry : queryParameters.entrySet()) {
+			uriBuilder = uriBuilder.setParameter(
+				entry.getKey(), entry.getValue());
+		}
+
+		URI uri = uriBuilder.build();
+
+		return uri.toString();
 	}
 
 	protected DDMDataProviderResponse createDDMDataProviderResponse(
@@ -243,25 +296,10 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 				ddmDataProviderInstance.get(),
 				DDMRESTDataProviderSettings.class);
 
-		HttpRequest httpRequest = HttpRequest.get(
+		HttpUriRequest httpUriRequest = new HttpGet(
 			buildURL(ddmDataProviderRequest, ddmRESTDataProviderSettings));
 
-		if (StringUtil.startsWith(
-				ddmRESTDataProviderSettings.url(), Http.HTTPS)) {
-
-			httpRequest.trustAllCerts(true);
-		}
-
-		if (Validator.isNotNull(ddmRESTDataProviderSettings.username())) {
-			httpRequest.basicAuthentication(
-				ddmRESTDataProviderSettings.username(),
-				ddmRESTDataProviderSettings.password());
-		}
-
-		setRequestParameters(
-			ddmDataProviderRequest, ddmRESTDataProviderSettings, httpRequest);
-
-		String cacheKey = getCacheKey(httpRequest);
+		String cacheKey = getCacheKey(httpUriRequest);
 
 		DDMDataProviderResponse ddmDataProviderResponse = _portalCache.get(
 			cacheKey);
@@ -272,20 +310,31 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 			return ddmDataProviderResponse;
 		}
 
-		HttpResponse httpResponse = httpRequest.send();
-
-		DocumentContext documentContext = JsonPath.parse(
-			httpResponse.bodyText());
-
-		ddmDataProviderResponse = createDDMDataProviderResponse(
-			documentContext, ddmDataProviderRequest,
+		CloseableHttpClient closeableHttpClient = getCloseableHttpClient(
 			ddmRESTDataProviderSettings);
 
-		if (ddmRESTDataProviderSettings.cacheable()) {
-			_portalCache.put(cacheKey, ddmDataProviderResponse);
-		}
+		try {
+			HttpResponse httpResponse = closeableHttpClient.execute(
+				httpUriRequest);
 
-		return ddmDataProviderResponse;
+			HttpEntity entity = httpResponse.getEntity();
+
+			DocumentContext documentContext = JsonPath.parse(
+				entity.getContent());
+
+			ddmDataProviderResponse = createDDMDataProviderResponse(
+				documentContext, ddmDataProviderRequest,
+				ddmRESTDataProviderSettings);
+
+			if (ddmRESTDataProviderSettings.cacheable()) {
+				_portalCache.put(cacheKey, ddmDataProviderResponse);
+			}
+
+			return ddmDataProviderResponse;
+		}
+		finally {
+			closeableHttpClient.close();
+		}
 	}
 
 	protected Optional<DDMDataProviderInstance> fetchDDMDataProviderInstance(
@@ -308,7 +357,41 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 	}
 
 	protected String getCacheKey(HttpRequest httpRequest) {
-		return httpRequest.url();
+		RequestLine requestLine = httpRequest.getRequestLine();
+
+		return requestLine.getUri();
+	}
+
+	protected CloseableHttpClient getCloseableHttpClient(
+			DDMRESTDataProviderSettings ddmRESTDataProviderSettings)
+		throws KeyManagementException, NoSuchAlgorithmException {
+
+		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+
+		SSLContext sslContext = SSLContext.getInstance("TLS");
+
+		sslContext.init(
+			null, new TrustManager[] {new TrustAllX509TrustManager()}, null);
+
+		httpClientBuilder = httpClientBuilder.setSSLSocketFactory(
+			new SSLConnectionSocketFactory(
+				sslContext, (s, sslSession) -> true));
+
+		if (Validator.isNotNull(ddmRESTDataProviderSettings.username())) {
+			CredentialsProvider credentialsProvider =
+				new BasicCredentialsProvider();
+
+			Credentials credentials = new UsernamePasswordCredentials(
+				ddmRESTDataProviderSettings.username(),
+				ddmRESTDataProviderSettings.password());
+
+			credentialsProvider.setCredentials(AuthScope.ANY, credentials);
+
+			httpClientBuilder = httpClientBuilder.setDefaultCredentialsProvider(
+				credentialsProvider);
+		}
+
+		return httpClientBuilder.build();
 	}
 
 	protected Map<String, Object> getParameters(
@@ -400,50 +483,6 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 				multiVMPool.getPortalCache(DDMRESTDataProvider.class.getName());
 	}
 
-	protected void setRequestParameters(
-		DDMDataProviderRequest ddmDataProviderRequest,
-		DDMRESTDataProviderSettings ddmRESTDataProviderSettings,
-		HttpRequest httpRequest) {
-
-		if (ddmRESTDataProviderSettings.filterable()) {
-			Optional<String> filterParameterValue =
-				ddmDataProviderRequest.getParameterOptional(
-					"filterParameterValue", String.class);
-
-			if (filterParameterValue.isPresent()) {
-				httpRequest.query(
-					ddmRESTDataProviderSettings.filterParameterName(),
-					filterParameterValue.get());
-			}
-		}
-
-		if (ddmRESTDataProviderSettings.pagination()) {
-			Optional<String> paginationStart =
-				ddmDataProviderRequest.getParameterOptional(
-					"paginationStart", String.class);
-
-			if (paginationStart.isPresent()) {
-				httpRequest.query(
-					ddmRESTDataProviderSettings.paginationStartParameterName(),
-					paginationStart.get());
-			}
-
-			Optional<String> paginationEnd =
-				ddmDataProviderRequest.getParameterOptional(
-					"paginationEnd", String.class);
-
-			if (paginationEnd.isPresent()) {
-				httpRequest.query(
-					ddmRESTDataProviderSettings.paginationEndParameterName(),
-					paginationEnd.get());
-			}
-		}
-
-		httpRequest.query(
-			getQueryParameters(
-				ddmDataProviderRequest, ddmRESTDataProviderSettings));
-	}
-
 	@Reference
 	protected DDMDataProviderInstanceService ddmDataProviderInstanceService;
 
@@ -460,5 +499,26 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 		"\\{(.*)\\}");
 
 	private PortalCache<String, DDMDataProviderResponse> _portalCache;
+
+	private static class TrustAllX509TrustManager implements X509TrustManager {
+
+		@Override
+		public void checkClientTrusted(
+				X509Certificate[] x509Certificates, String s)
+			throws CertificateException {
+		}
+
+		@Override
+		public void checkServerTrusted(
+				X509Certificate[] x509Certificates, String s)
+			throws CertificateException {
+		}
+
+		@Override
+		public X509Certificate[] getAcceptedIssuers() {
+			return null;
+		}
+
+	}
 
 }
