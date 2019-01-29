@@ -184,6 +184,7 @@
 					{param binaryOperator: $condition.binaryOperator /}
 					{param fieldOptions: $fieldOptions /}
 					{param firstOperandType: $condition.operands[0].type /}
+					{param firstOperandOptions: $condition.firstOperandOptions /}
 					{param firstOperandValueSelected: $condition.operands[0].value /}
 					{param fixedOptions: $fixedOptions /}
 					{param index: index($condition) /}
@@ -193,7 +194,6 @@
 					{param roles: $roles /}
 					{param secondOperandFieldName: '' /}
 					{param secondOperandType: isNonnull($condition.operands[1]) ? $condition.operands[1].type : '' /}
-					{param secondOperandDataType: isNonnull($condition.operands[1]) ? $condition.operands[1].dataType : '' /}
 					{param secondOperandValue: isNonnull($condition.operands[1]) ? $condition.operands[1].value : '' /}
 					{param selectedOperator: $condition.operator /}
 					{param spritemap: $spritemap /}
@@ -625,7 +625,6 @@
 
 	{@param? secondOperandFieldName: string}
 	{@param? secondOperandType: string}
-	{@param? secondOperandDataType: string}
 	{@param? secondOperandValue: any}
 	{@param? selectedOperator: string}
 
@@ -678,9 +677,9 @@
 								{/call}
 
 								{let $fieldHasOptions:
-									($secondOperandDataType == 'select' or
-									$secondOperandDataType == 'checkbox_multiple' or
-									$secondOperandDataType == 'radio')
+									($secondOperandType == 'select' or
+									$secondOperandType == 'checkbox_multiple' or
+									$secondOperandType == 'radio')
 								/}
 
 								<div class="condition-type-value form-group-item" condition-type-value-index="{$index}">
