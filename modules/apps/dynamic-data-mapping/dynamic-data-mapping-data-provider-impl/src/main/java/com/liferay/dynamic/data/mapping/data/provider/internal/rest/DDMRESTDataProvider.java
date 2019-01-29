@@ -41,6 +41,8 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.io.IOException;
+
 import java.net.ConnectException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -72,6 +74,7 @@ import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.RequestLine;
+import org.apache.http.StatusLine;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -319,6 +322,12 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 
 			HttpEntity entity = httpResponse.getEntity();
 
+			StatusLine statusLine = httpResponse.getStatusLine();
+
+			if (statusLine.getStatusCode() == 404) {
+				throw new IOException();
+			}
+
 			DocumentContext documentContext = JsonPath.parse(
 				entity.getContent());
 
@@ -331,6 +340,11 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 			}
 
 			return ddmDataProviderResponse;
+		}
+		catch (IOException ioe) {
+			ConnectException ce = new ConnectException();
+
+			throw new HttpException(ioe.getMessage(), ce);
 		}
 		finally {
 			closeableHttpClient.close();
