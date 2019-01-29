@@ -17,7 +17,6 @@ package com.liferay.dynamic.data.mapping.data.provider.internal.rest;
 import com.jayway.jsonpath.DocumentContext;
 
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderException;
-import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderInputParametersSettings;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderInstanceSettings;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderRequest;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderResponse;
@@ -42,8 +41,8 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 
-import java.io.Serializable;
 import java.io.IOException;
+import java.io.Serializable;
 
 import java.net.ConnectException;
 import java.net.URISyntaxException;
@@ -56,11 +55,11 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.http.HttpVersion;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.HttpException;
+import org.apache.http.message.BasicRequestLine;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,14 +68,16 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
-import org.mockito.internal.matchers.Any;
+
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * @author Rafael Praxedes
  */
+@PowerMockIgnore("javax.net.ssl.*")
 @PrepareForTest({HttpRequest.class, ResourceBundleUtil.class})
 @RunWith(PowerMockRunner.class)
 public class DDMRESTDataProviderTest extends PowerMockito {
@@ -98,116 +99,8 @@ public class DDMRESTDataProviderTest extends PowerMockito {
 			_createDDMRESTDataProviderSettings());
 
 		Assert.assertEquals(
-			"http://someservice.com/api/countries/1/regions?regionName=Region", url);
-	}
-
-	@Test
-	public void testDoGetData() throws Exception {
-		DDMDataProviderInstanceService ddmDataProviderInstanceService = mock(
-			DDMDataProviderInstanceService.class);
-
-		DDMDataProviderInstance ddmDataProviderInstance = mock(
-			DDMDataProviderInstance.class);
-
-		when(
-			ddmDataProviderInstanceService.fetchDataProviderInstance(1L)
-		).thenReturn(
-			ddmDataProviderInstance
-		);
-
-		DDMDataProviderInstanceSettings ddmDataProviderInstanceSettings = mock(
-			DDMDataProviderInstanceSettings.class);
-
-		DDMRESTDataProviderSettings ddmRESTDataProviderSettings =
-			_createDDMRESTDataProviderSettings();
-
-		when(
-			ddmDataProviderInstanceSettings.getSettings(
-				Matchers.any(DDMDataProviderInstance.class), Matchers.any())
-		).thenReturn(
-			ddmRESTDataProviderSettings
-		);
-
-		mockStatic(HttpRequest.class);
-
-		HttpRequest httpRequest = mock(HttpRequest.class);
-
-		HttpRequest spyHttpRequest = spy(httpRequest);
-
-		when(
-			httpRequest.getRequestLine()
-		).thenReturn(
-			spyHttpRequest.getRequestLine()
-		);
-
-		HttpResponse httpResponse = mock(HttpResponse.class);
-
-		HttpResponse spyHttpResponse = spy(httpResponse);
-
-		HttpUriRequest HttpUriRequest = mock(HttpUriRequest.class);
-
-		HttpGet httpGet = mock(HttpGet.class);
-
-		//mock ?
-
-		DDMDataProviderRequest.Builder builder =
-			DDMDataProviderRequest.Builder.newBuilder();
-
-		DDMDataProviderRequest ddmDataProviderRequest =
-			builder.withDDMDataProviderId(
-				"1"
-			).build();
-
-		_ddmRESTDataProvider.ddmDataProviderInstanceService =
-			ddmDataProviderInstanceService;
-		_ddmRESTDataProvider.ddmDataProviderInstanceSettings =
-			ddmDataProviderInstanceSettings;
-
-		MultiVMPool multiVMPool = mock(MultiVMPool.class);
-
-		PortalCache portalCache = mock(PortalCache.class);
-
-		PortalCache spyPortalCache = spy(portalCache);
-
-		when(
-			multiVMPool.getPortalCache(DDMRESTDataProvider.class.getName())
-		).thenReturn(
-			spyPortalCache
-		);
-
-		_ddmRESTDataProvider.setMultiVMPool(multiVMPool);
-
-		_ddmRESTDataProvider.doGetData(ddmDataProviderRequest);
-
-		ArgumentCaptor<String> userNameArgumentCaptor = ArgumentCaptor.forClass(
-			String.class);
-
-		ArgumentCaptor<String> passwordArgumentCaptor = ArgumentCaptor.forClass(
-			String.class);
-
-		//mock ?
-
-		Assert.assertEquals(
-			ddmRESTDataProviderSettings.username(),
-			userNameArgumentCaptor.getValue());
-
-		Assert.assertEquals(
-			ddmRESTDataProviderSettings.password(),
-			passwordArgumentCaptor.getValue());
-/*
-		Mockito.verify(
-			spyHttpRequest, Mockito.times(1)
-		).send();
-
-		Mockito.verify(
-			spyHttpResponse, Mockito.times(1)
-		).bodyText();
-*/
-		Mockito.verify(
-			spyPortalCache, Mockito.times(1)
-		).put(
-			Matchers.any(Serializable.class), Matchers.any()
-		);
+			"http://someservice.com/api/countries/1/regions?regionName=Region",
+			url);
 	}
 
 	@Test
@@ -243,6 +136,8 @@ public class DDMRESTDataProviderTest extends PowerMockito {
 		DDMDataProviderRequest ddmDataProviderRequest =
 			builder.withDDMDataProviderId(
 				"2"
+			).withParameter(
+				"countryId", "1"
 			).build();
 
 		_ddmRESTDataProvider.ddmDataProviderInstanceService =
@@ -372,12 +267,19 @@ public class DDMRESTDataProviderTest extends PowerMockito {
 
 		HttpRequest spy = spy(httpRequest);
 
+		when(
+			spy.getRequestLine()
+		).thenReturn(
+			new BasicRequestLine(
+				"GET", "http://someservice.com", HttpVersion.HTTP_1_1)
+		);
+
 		_ddmRESTDataProvider.getCacheKey(spy);
-/*
+
 		Mockito.verify(
 			spy, Mockito.times(1)
-		).url();
-	*/	}
+		).getRequestLine();
+	}
 
 	@Test
 	public void testGetDataCatchConnectException() throws Exception {
@@ -412,6 +314,8 @@ public class DDMRESTDataProviderTest extends PowerMockito {
 		DDMDataProviderRequest ddmDataProviderRequest =
 			builder.withDDMDataProviderId(
 				"3"
+			).withParameter(
+				"countryId", "1"
 			).build();
 
 		_ddmRESTDataProvider.ddmDataProviderInstanceService =
@@ -419,19 +323,28 @@ public class DDMRESTDataProviderTest extends PowerMockito {
 		_ddmRESTDataProvider.ddmDataProviderInstanceSettings =
 			ddmDataProviderInstanceSettings;
 
-		HttpRequest httpRequest = mock(HttpRequest.class);
-		
-		ConnectException ce = new ConnectException();
-		
-		IOException ioException = new IOException(ce.getMessage(),ce);
-
-		CloseableHttpClient closeableHttpClient = mock(CloseableHttpClient.class);
+		CloseableHttpClient closeableHttpClient = mock(
+			CloseableHttpClient.class);
 
 		when(
 			closeableHttpClient.execute(Matchers.any(HttpUriRequest.class))
 		).thenThrow(
-			ioException
+			new IOException(new ConnectException())
 		);
+
+		MultiVMPool multiVMPool = mock(MultiVMPool.class);
+
+		PortalCache portalCache = mock(PortalCache.class);
+
+		PortalCache spyPortalCache = spy(portalCache);
+
+		when(
+			multiVMPool.getPortalCache(DDMRESTDataProvider.class.getName())
+		).thenReturn(
+			spyPortalCache
+		);
+
+		_ddmRESTDataProvider.setMultiVMPool(multiVMPool);
 
 		DDMDataProviderResponse ddmDataProviderResponse =
 			_ddmRESTDataProvider.getData(ddmDataProviderRequest);
@@ -497,18 +410,13 @@ public class DDMRESTDataProviderTest extends PowerMockito {
 		_ddmRESTDataProvider.ddmDataProviderInstanceSettings =
 			ddmDataProviderInstanceSettings;
 
-		HttpRequest httpRequest = mock(HttpRequest.class);
-
-		Exception e = new Exception();
-
-		IOException ioException = new IOException(e.getMessage(), e);
-		
-		CloseableHttpClient closeableHttpClient = mock(CloseableHttpClient.class);
+		CloseableHttpClient closeableHttpClient = mock(
+			CloseableHttpClient.class);
 
 		when(
 			closeableHttpClient.execute(Matchers.any(HttpUriRequest.class))
 		).thenThrow(
-			ioException
+			new IOException()
 		);
 
 		_ddmRESTDataProvider.getData(ddmDataProviderRequest);
