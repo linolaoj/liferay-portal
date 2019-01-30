@@ -191,6 +191,9 @@ class RuleList extends Component {
 												if (operand.type === 'field') {
 													label = this._getFieldLabel(operand.value);
 												}
+												else if (operand.type === 'select') {
+													label = this._setOperandValue(operand);
+												}
 												else if (index == 1 && condition.operands[0].type === 'user' && roles.length) {
 													label = roles.find(role => role.id === operand.value).label;
 												}
@@ -318,6 +321,49 @@ class RuleList extends Component {
 		return fieldLabel;
 	}
 
+	_getOptionsFieldLabel(fieldName) {
+		const pages = this.pages;
+
+		let fieldLabel = null;
+
+		if (pages && fieldName) {
+			const visitor = new PagesVisitor(pages);
+
+			const field = visitor.findField(field =>
+				{
+					let optionSelected = '';
+					let optionIndex = 0;
+
+					if (field.options) {
+						field.options.map(
+							(option, index) => {
+								if (option.value == fieldName) {
+									optionSelected = option;
+									optionIndex = index;
+								}
+						});
+
+						return field.options[optionIndex] == optionSelected;
+					}
+
+					return null;
+				}
+			);
+
+			if (field) {
+				let option = field.options.map(option =>
+					{
+						if (option.value == fieldName) {
+							fieldLabel = option.label;
+						}
+					}
+				);
+			}
+		}
+
+		return fieldLabel;
+	}
+
 	_getRulesCardOptions() {
 		const rulesCardOptions = [
 			{
@@ -415,6 +461,9 @@ class RuleList extends Component {
 
 		if (operand.type === 'field') {
 			field = this._getFieldLabel(operand.value);
+		}
+		else if (operand.type === 'select') {
+			field = this._getOptionsFieldLabel(operand.value);
 		}
 		else {
 			field = operand.value;

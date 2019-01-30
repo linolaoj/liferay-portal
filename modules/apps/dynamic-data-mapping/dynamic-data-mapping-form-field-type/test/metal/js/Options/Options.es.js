@@ -18,8 +18,10 @@ const valueOptions = {
 };
 
 describe(
-	'Select',
+	'Options',
 	() => {
+        beforeEach(() => jest.useFakeTimers());
+
 		afterEach(
 			() => {
 				if (component) {
@@ -61,6 +63,39 @@ describe(
                 );
 
 				expect(component.items.length).toEqual(before - 1);
+			}
+        );
+
+        it(
+			'should allow the user to order the fieldName options by dragging and dropping the options',
+			() => {
+				component = new Options(
+                    {
+                        value: valueOptions,
+                        spritemap
+                    }
+                );
+
+				const source =  {
+						dataset: {
+							index: '1'
+						}
+					};
+				const target = {
+                    dataset: {
+                        index: '0'
+                    }
+                };
+
+                jest.runAllTimers();
+
+                component._handleDragAndDropEnd({source, target});
+
+                jest.runAllTimers();
+
+                expect(component).toMatchSnapshot();
+
+                expect(spy).toHaveBeenCalledWith('fieldEdited', expect.anything());
 			}
 		);
     }

@@ -181,6 +181,21 @@ describe(
 		);
 
 		it(
+			'should put an asterisk when field is required',
+			() => {
+				component = new Select(
+					{
+						label: 'This is the label',
+						required: true,
+						spritemap
+					}
+				);
+
+				expect(component).toMatchSnapshot();
+			}
+		);
+
+		it(
 			'should render Label if showLabel is true',
 			() => {
 				component = new Select(
