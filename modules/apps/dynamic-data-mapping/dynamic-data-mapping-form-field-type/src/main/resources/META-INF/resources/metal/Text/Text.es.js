@@ -197,6 +197,17 @@ class Text extends Component {
 		);
 	}
 
+	_handleFieldFocused(event) {
+		this.emit(
+			'fieldFocused',
+			{
+				fieldInstance: this,
+				originalEvent: event,
+				value: event.target.value
+			}
+		)
+	}
+
 	_internalValueFn() {
 		const {value} = this;
 

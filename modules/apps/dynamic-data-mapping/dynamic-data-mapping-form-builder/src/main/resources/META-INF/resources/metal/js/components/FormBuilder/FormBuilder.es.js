@@ -467,7 +467,7 @@ class Builder extends Component {
 	}
 
 	_processFieldUpdates(fieldInstance, value) {
-		const {focusedField, namespace, editingLanguageId} = this.props;
+		const {focusedField, editingLanguageId} = this.props;
 		const {columnIndex, instanceId, pageIndex, rowIndex, settingsContext} = focusedField;
 		const properties = {columnIndex,
 			pageIndex,
@@ -483,8 +483,6 @@ class Builder extends Component {
 		}
 
 		const visitor = new PagesVisitor(settingsContext.pages);
-
-		const translationManager = Liferay.component(`${namespace}translationManager`);
 
 		properties.settingsContext = {
 			...settingsContext,

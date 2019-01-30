@@ -197,7 +197,9 @@ class Select extends Component {
 		 * @type {?(string|undefined)}
 		 */
 
-		value: Config.oneOfType([Config.array(), Config.string()])
+		value: Config.oneOfType([Config.array(), Config.string()]),
+
+		visible: Config.bool().value(true)
 	};
 
 	attached() {

@@ -102,7 +102,7 @@ class Options extends Component {
 
 		key: Config.string(),
 
-		placeholder: Config.string(),
+		placeholder: Config.string().value(Liferay.Language.get('enter-an-option')),
 
 		/**
 		 * @default undefined
@@ -115,15 +115,23 @@ class Options extends Component {
 
 		value: Config.object(),
 
-		visible: Config.bool().value(true)
+		visible: Config.bool().value(true),
+
+		defaultOption: Config.bool().internal().value(false)
 	};
 
 	created() {
 		const currentLanguage = this.getCurrentLanguage();
 		const options = [...this.value[currentLanguage]];
+		let defaultOption = false;
+
+		if((options.length == 1) && (options[0].label == Liferay.Language.get('option'))) {
+			defaultOption = true;
+		}
 
 		this.setState({
-			items: this.getItems(options)
+			items: this.getItems(options),
+			defaultOption
 		});
 
 		this._startDrag();
@@ -304,6 +312,18 @@ class Options extends Component {
 		}
 
 		this._handleFieldEdited(event, options);
+	}
+
+	_handleTextFocused({originalEvent: {target}}){
+		if(!this.defaultOption) {
+			return;
+		}
+
+		target.value = "";
+
+		this.setState({
+			defaultOption: false
+		});
 	}
 
 	_handleFieldEdited({originalEvent}, options) {

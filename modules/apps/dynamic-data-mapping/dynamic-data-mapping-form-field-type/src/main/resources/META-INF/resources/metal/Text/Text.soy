@@ -3,6 +3,7 @@
 {template .render}
 	{@param name: string}
 	{@param? _handleFieldChanged: any}
+	{@param? _handleFieldFocused: any}
 	{@param? _value: string}
 	{@param? displayStyle: string}
 	{@param? id: string}
@@ -21,6 +22,7 @@
 		{param contentRenderer kind="html"}
 			{call .content}
 				{param _handleFieldChanged: $_handleFieldChanged /}
+				{param _handleFieldFocused: $_handleFieldFocused /}
 				{param displayStyle: $displayStyle /}
 				{param id: $id /}
 				{param name: $name /}
@@ -44,6 +46,7 @@
 {template .content}
 	{@param name: string}
 	{@param? _handleFieldChanged: any}
+	{@param? _handleFieldFocused: any}
 	{@param? displayStyle: string}
 	{@param? id: string}
 	{@param? placeholder: string}
@@ -54,19 +57,21 @@
 	{let $attributes kind="attributes"}
 		class="form-control"
 
-		{if $id}
-			id="{$id}"
-		{/if}
-
 		name="{$name}"
-
-		{if $placeholder}
-			placeholder="{$placeholder}"
-		{/if}
 
 		type="text"
 
 		data-oninput="{$_handleFieldChanged}"
+
+		data-onfocus="{$_handleFieldFocused}"
+
+		{if $id}
+			id="{$id}"
+		{/if}
+
+		{if $placeholder}
+			placeholder="{$placeholder}"
+		{/if}
 
 		{if $readOnly}
 			disabled="disabled"

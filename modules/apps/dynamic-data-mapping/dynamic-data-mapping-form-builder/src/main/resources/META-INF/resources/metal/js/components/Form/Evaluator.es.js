@@ -82,7 +82,6 @@ const WithEvaluator = ChildComponent => {
 		 */
 
 		_mergePages(sourcePages, newPages) {
-			const {editingLanguageId} = this.props;
 			const visitor = new PagesVisitor(sourcePages);
 
 			const settingsContext =  visitor.mapFields(
@@ -93,26 +92,8 @@ const WithEvaluator = ChildComponent => {
 						currentField.visible = true;
 					}
 
-					const fieldContext = {
-						...field,
-						dataType: currentField.dataType,
-						errorMessage: currentField.errorMessage,
-						options: currentField.options,
-						readOnly: currentField.readOnly,
-						required: currentField.required,
-						valid: currentField.valid,
-						visible: currentField.visible
-					}
-
-					return fieldContext;
+					return currentField;
 				}
-			);
-			
-			const focusedFieldContext = FormSupport.getFieldProperties(
-				{
-					pages: settingsContext
-				}, 
-				editingLanguageId
 			);
 
 			return settingsContext;
