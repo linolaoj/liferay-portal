@@ -76,11 +76,14 @@ describe(
                     }
                 );
 
+				const spy = jest.spyOn(component, 'emit');
+
 				const source =  {
-						dataset: {
-							index: '1'
-						}
-					};
+                    dataset: {
+                        index: '1'
+                    }
+                };
+
 				const target = {
                     dataset: {
                         index: '0'

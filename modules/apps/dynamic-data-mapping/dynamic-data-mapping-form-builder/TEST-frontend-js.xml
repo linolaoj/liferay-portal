@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite hostname="" id="0" errors="0" failures="0" name="Jest" package="" skipped="0" tests="216" time="0" timestamp="1549289529043">
+  <testcase classname="LayoutProvider" name="LayoutProvider should receive pages through PROPS and move to the internal state" time="0.035">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider should attach the events to the child component" time="0.011">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider should pass to the child component the pages of the internal state" time="0.005">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider should pass to the child component the focusedField" time="0.01">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider should receive ruleAdded event to save a rule" time="0.01">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider should receive ruleSaved event to edit a rule" time="0.005">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider should pass to the child component the mode" time="0.004">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events fieldMoved should listen to the fieldMoved event and move the field to the row in pages" time="0.013">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events fieldMoved should listen to the pagesUpdated event" time="0.006">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events fieldMoved should listen to the fieldMoved event and move the field to the column in pages" time="0.007">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events fieldMoved should move the field to the column in pages and remove the row if there are no fields" time="0.007">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events fieldMoved should move the field to the row in pages and remove the row if there are no fields" time="0.006">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events fieldAdded should listen the fieldAdded event and add the field in the column to the pages" time="0.006">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events fieldAdded should listen the fieldAdded event and add the field in the row to the pages" time="0.006">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events fieldAdded should update the focusedField with the location of the new field when adding to the pages" time="0.005">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events fieldDeleted should listen the fieldDeleted event and delete the field in the column to the pages" time="0.009">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events fieldDuplicated should listen the duplicate field event and add this field in the pages" time="0.01">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events fieldClicked should listen the fieldClicked event and change the state of the focusedField to the data receive" time="0.004">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events fieldBlurred should listen the fieldBlurred event and change the state of the focusedField to the data receive" time="0.004">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events fieldEdited should listen the fieldEdited event and change the state of the focusedField and pages for the data wich was received" time="0.006">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events fieldChangesCanceled should listen the fieldChangesCanceled event and change the state of the focusedField and pages for the data wich was received" time="0.007">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events focusedFieldUpdated should listen the focusedFieldUpdated event and change the state of the focusedField and pages for the data wich was received" time="0.007">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events pageDeleted should listen the pageDeleted event and change the state of pages for the data wich was received" time="0.005">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events pageAdded should listen the pageAdded event and change the state of pages for the data wich was received" time="0.011">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events pageReset should listen the pageReset event and change the state of pages for the data wich was received" time="0.006">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events paginationModeUpdated should listen the paginationModeUpdated event and change the state of pagination mode for the data wich was received" time="0.007">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events paginationModeUpdated should listen the paginationModeUpdated event and change the state of pagination mode from pagination to wizard" time="0.007">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events successPageChanged should listen the successPageChanged event and change the state of success page for the data wich was received" time="0.005">
+  </testcase>
+  <testcase classname="LayoutProvider" name="LayoutProvider Field events activePageUpdated should listen the activePageUpdated event and change the state of the active page for the data wich was received" time="0.005">
+  </testcase>
+  <testcase classname="PageRenderer" name="PageRenderer should resize a specific column on the drag and drop layout" time="0.138">
+  </testcase>
+  <testcase classname="PageRenderer" name="PageRenderer should display empty drag message when there are rows with no columns specified" time="0.007">
+  </testcase>
+  <testcase classname="PageRenderer" name="PageRenderer should change the page title" time="0.131">
+  </testcase>
+  <testcase classname="PageRenderer" name="PageRenderer should change the page title" time="0.083">
+  </testcase>
+  <testcase classname="PageRenderer" name="PageRenderer should render a layout and emit an event when delete button is clicked" time="0.071">
+  </testcase>
+  <testcase classname="PageRenderer" name="PageRenderer should render a layout and emit an event when duplicate button is clicked" time="0.061">
+  </testcase>
+  <testcase classname="PageRenderer" name="PageRenderer should render a layout with emit an field clicked event" time="0.067">
+  </testcase>
+  <testcase classname="PageRenderer" name="PageRenderer should emit a fieldClicked event with the field location" time="0.051">
+  </testcase>
+  <testcase classname="FormSupport" name="FormSupport add a new row to the pages and reorder" time="0.005">
+  </testcase>
+  <testcase classname="FormSupport" name="FormSupport should return an implementation of a row for the pages" time="0.001">
+  </testcase>
+  <testcase classname="FormSupport" name="FormSupport should get a specific field through the pages" time="0.002">
+  </testcase>
+  <testcase classname="FormSupport" name="FormSupport add a new field to column to the pages" time="0.002">
+  </testcase>
+  <testcase classname="FormSupport" name="FormSupport should not add an empty object to the column when the field is not passed" time="0.001">
+  </testcase>
+  <testcase classname="FormSupport" name="FormSupport should add a new fields to column void" time="0.002">
+  </testcase>
+  <testcase classname="FormSupport" name="FormSupport should not add new fields to the column as a way to remove" time="0.001">
+  </testcase>
+  <testcase classname="FormSupport" name="FormSupport should remove a column from pages and reorder" time="0.003">
+  </testcase>
+  <testcase classname="FormSupport" name="FormSupport should remove a fields to column from pages" time="0.002">
+  </testcase>
+  <testcase classname="FormSupport" name="FormSupport should remove a row from pages and reorder" time="0.002">
+  </testcase>
+  <testcase classname="FormSupport" name="FormSupport should get a column from pages" time="0.001">
+  </testcase>
+  <testcase classname="FormSupport" name="FormSupport should get a row from pages" time="0.001">
+  </testcase>
+  <testcase classname="FormSupport" name="FormSupport should return true if there are fields in a row" time="0.001">
+  </testcase>
+  <testcase classname="FormSupport" name="FormSupport should return false if there are fields in a row" time="0.001">
+  </testcase>
+  <testcase classname="FormSupport" name="FormSupport should extract the location of the field through the element" time="0.002">
+  </testcase>
+  <testcase classname="FormSupport" name="FormSupport should extract the location of the row through the element" time="0.002">
+  </testcase>
+  <testcase classname="FormSupport" name="FormSupport should update a field" time="0.005">
+  </testcase>
+  <testcase classname="RuleList" name="RuleList should return the field label for each action" time="0.089">
+  </testcase>
+  <testcase classname="RuleList" name="RuleList should show message when rule list is empty" time="0.021">
+  </testcase>
+  <testcase classname="Calculator" name="Calculator Acceptance Criteria when the user selects Calculate in the Actions options should show the calculator when a Result is selected" time="0.069">
+  </testcase>
+  <testcase classname="Calculator" name="Calculator Acceptance Criteria when the user selects Calculate in the Actions options should only show the valid fields when a Calculate action is selected" time="0.04">
+  </testcase>
+  <testcase classname="Calculator" name="Calculator Acceptance Criteria when the user selects Calculate in the Actions options should disable the Add Field button when there&apos;s no numeric field options" time="0.033">
+  </testcase>
+  <testcase classname="Calculator" name="Calculator Acceptance Criteria when the user selects Calculate in the Actions options should not allow type two repeated signs" time="0.052">
+  </testcase>
+  <testcase classname="Calculator" name="Calculator Acceptance Criteria when the user selects Calculate in the Actions options should clear the expression when changing the result field" time="0.051">
+  </testcase>
+  <testcase classname="Calculator" name="Calculator Acceptance Criteria when the user selects Calculate in the Actions options should compose an expression by interacting with the calculator fields" time="0.046">
+  </testcase>
+  <testcase classname="Calculator" name="Calculator Acceptance Criteria when the user selects Calculate in the Actions options should compose an expression by interacting with the calculator Add Field button" time="0.051">
+  </testcase>
+  <testcase classname="Evaluator" name="Evaluator should render default markup" time="0.015">
+  </testcase>
+  <testcase classname="Evaluator" name="Evaluator should continue propagating the fieldEdited event" time="0.005">
+  </testcase>
+  <testcase classname="Evaluator" name="Evaluator should continue propagating the fieldEdited event when it is evaluable" time="0.011">
+  </testcase>
+  <testcase classname="Evaluator" name="Evaluator should update the state of the evaluator&apos;s pages when it receives a new page as it props" time="0.003">
+  </testcase>
+  <testcase classname="Evaluator" name="Evaluator should not update the state of the evaluator&apos;s pages when it receives any property which is not pages" time="0.002">
+  </testcase>
+  <testcase classname="SuccessPage" name="SuccessPage should render the default layour" time="0.014">
+  </testcase>
+  <testcase classname="SuccessPage" name="SuccessPage should emit success page changed when success page title is changed" time="0.007">
+  </testcase>
+  <testcase classname="SuccessPage" name="SuccessPage should emit success page changed when success page body is changed" time="0.01">
+  </testcase>
+  <testcase classname="Internationlization" name="Internationlization should create a localized property for a specific object string value" time="0.003">
+  </testcase>
+  <testcase classname="Internationlization" name="Internationlization should replace a localized value for a specific object string" time="0">
+  </testcase>
+  <testcase classname="PagesVisitor" name="PagesVisitor should not multate the fields of the original array" time="0.005">
+  </testcase>
+  <testcase classname="PagesVisitor" name="PagesVisitor should be able to change pages" time="0.005">
+  </testcase>
+  <testcase classname="PagesVisitor" name="PagesVisitor should be able to change rows" time="0.001">
+  </testcase>
+  <testcase classname="PagesVisitor" name="PagesVisitor should be able to change columns" time="0.003">
+  </testcase>
+  <testcase classname="PagesVisitor" name="PagesVisitor should be able to change fields" time="0.002">
+  </testcase>
+  <testcase classname="Sidebar" name="Sidebar should render the default markup" time="0.108">
+  </testcase>
+  <testcase classname="Sidebar" name="Sidebar should render a Sidebar open" time="0.049">
+  </testcase>
+  <testcase classname="Sidebar" name="Sidebar should render a Sidebar closed" time="0.053">
+  </testcase>
+  <testcase classname="Sidebar" name="Sidebar should render a Sidebar with fieldTypes" time="0.06">
+  </testcase>
+  <testcase classname="Sidebar" name="Sidebar should close the sidebar when the mouse down event is not on it" time="0.04">
+  </testcase>
+  <testcase classname="Sidebar" name="Sidebar should emit fieldMoved when the dragEnd method is called" time="0.044">
+  </testcase>
+  <testcase classname="Sidebar" name="Sidebar should emit the fieldDuplicated event when the duplicate field option is clicked on the sidebar settings" time="0.086">
+  </testcase>
+  <testcase classname="Sidebar" name="Sidebar should emit the fieldDeleted event when the delete field option is clicked on the sidebar settings" time="0.055">
+  </testcase>
+  <testcase classname="Sidebar" name="Sidebar should emit the fieldChangesCanceled event when the cancel field chages option is clicked on the sidebar settings" time="0.068">
+  </testcase>
+  <testcase classname="Sidebar" name="Sidebar should render a Sidebar with spritemap" time="0.046">
+  </testcase>
+  <testcase classname="Sidebar" name="Sidebar should close the sidebar in edition mode" time="0.118">
+  </testcase>
+  <testcase classname="Sidebar" name="Sidebar should close the sidebar in edition mode" time="0.158">
+  </testcase>
+  <testcase classname="Sidebar" name="Sidebar should propagates evaluator changed event" time="0.091">
+  </testcase>
+  <testcase classname="Sidebar" name="Sidebar should propagates field edited event" time="0.106">
+  </testcase>
+  <testcase classname="Sidebar" name="Sidebar Interaction with markup should close Sidebar when click the button close" time="0.029">
+  </testcase>
+  <testcase classname="Sidebar" name="Sidebar Changing field type should always be enabled" time="0.052">
+  </testcase>
+  <testcase classname="Sidebar" name="Sidebar Changing field type should keep basic properties after changing field type" time="0.064">
+  </testcase>
+  <testcase classname="Sidebar" name="Sidebar Changing field type should not keep validation settings between field type" time="0.06">
+  </testcase>
+  <testcase classname="Sidebar" name="Sidebar Changing field type should emit an event with new field type settings" time="0.062">
+  </testcase>
+  <testcase classname="FieldsLoader" name="FieldsLoader should list the packages that depend on the list of past dependencies" time="0.003">
+  </testcase>
+  <testcase classname="FieldsLoader" name="FieldsLoader should list the packages that depend on the list of past dependencies and ignore themselves" time="0.001">
+  </testcase>
+  <testcase classname="FieldsLoader" name="FieldsLoader should return an empty list when dependencies to compare are not passed" time="0.001">
+  </testcase>
+  <testcase classname="FieldsLoader" name="FieldsLoader should load fields when there are packages with dependencies from the list of past dependencies" time="0.005">
+  </testcase>
+  <testcase classname="FieldsLoader" name="FieldsLoader should not load fields when the dependencies to compare are empty and only call the callback" time="0.002">
+  </testcase>
+  <testcase classname="FieldsLoader" name="FieldsLoader should not load fields when the dependencies to compare is not passed and only call the callback" time="0.001">
+  </testcase>
+  <testcase classname="RulesSupport" name="RulesSupport should clear the action target value" time="0.002">
+  </testcase>
+  <testcase classname="RulesSupport" name="RulesSupport should clear the first operand value" time="0.001">
+  </testcase>
+  <testcase classname="RulesSupport" name="RulesSupport should clear the operator value" time="0">
+  </testcase>
+  <testcase classname="RulesSupport" name="RulesSupport should clear the second operand value" time="0.001">
+  </testcase>
+  <testcase classname="RuleBuilder" name="RuleBuilder should render the list of rules when mode is set to view" time="0.174">
+  </testcase>
+  <testcase classname="RuleBuilder" name="RuleBuilder should render rule screen creator when click add button" time="0.233">
+  </testcase>
+  <testcase classname="RuleBuilder" name="RuleBuilder should receive ruleAdded event to save a rule" time="0.2">
+  </testcase>
+  <testcase classname="RuleBuilder" name="RuleBuilder should change the view mode from view to edit" time="0.132">
+  </testcase>
+  <testcase classname="RuleBuilder" name="RuleBuilder should receive ruleCancel event to discard a rule creation" time="0.166">
+  </testcase>
+  <testcase classname="RuleBuilder" name="RuleBuilder should fetch roles when rendered" time="0.088">
+  </testcase>
+  <testcase classname="RuleBuilder" name="RuleBuilder should be able to edit a rule when more than one is available in the Rules list" time="0.174">
+  </testcase>
+  <testcase classname="RuleBuilder" name="RuleBuilder should be able to edit a rule when there&apos;s only one rule available in the Rules list" time="0.176">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should render default markup" time="0.111">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should render a layout in wizard mode" time="0.035">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should render a layout in pagination mode" time="0.033">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should render a layout with pages in mode of list" time="0.01">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should render a layout in editable mode" time="0.08">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should render a layout with disabled drag and drop" time="0.083">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should receive an update page event and propage it" time="0.097">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should receive a delete button event and propage it" time="0.101">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should receive a duplicate button event and propage it" time="0.089">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should continue to propagate the fieldEdited event" time="0.075">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should continue to propagate the fieldClicked event" time="0.076">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should change the active page" time="0.068">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should change the pagination mode when switch pagination mode is clicked" time="0.061">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should back the pagination mode to wizard mode when user clicks in switch page on the settings menu" time="0.082">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should change the active page for a empty page" time="0.026">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should change the active by clicking on the pagination when the page mode is in pagination mode" time="0.151">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should change the active page by clicking on the arrow right icon in the pagination button" time="0.07">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should change the page from a normal page to a success page by clicking on the arrow right" time="0.064">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should change the page from a success page to a normal page by clicking on the arrow left" time="0.094">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should change the active by clicking on the arrow left icon in the pagination button" time="0.072">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should propagate field edit event" time="0.066">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should render a layout and emit the field move event" time="0.07">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should render a layout and ignore the field move when there is no target" time="0.078">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should render a layout and reset drag and drop to every change of API pages when editable is true" time="0.083">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should render a layout and if it is not editable should not reset the drag-and-drop feature for all API page changes" time="0.024">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should render a layout and if it is disabled should not reset the drag-and-drop feature for all API page changes" time="0.07">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should render a layout with an empty field only in editable mode" time="0.041">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should not render the layout with the field empty in non-editable mode" time="0.016">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should change the form page title" time="0.037">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer should change the form page description" time="0.043">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer PagesSettings should add a new page on the layout render" time="0.029">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer PagesSettings should reset the current page on layout render" time="0.042">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer PagesSettings should add a success page" time="0.039">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer PagesSettings should delete the success page" time="0.064">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer PagesSettings should propagate success page changed when some success page field is changed" time="0.035">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer PagesSettings should show delete-field option, when the form builder has more than one page" time="0.037">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer PagesSettings should show reset-field option, when the form builder has only one page" time="0.054">
+  </testcase>
+  <testcase classname="FormRenderer" name="FormRenderer PagesSettings should delete the current page on layout render" time="0.059">
+  </testcase>
+  <testcase classname="Builder" name="Builder should render the default markup" time="0.307">
+  </testcase>
+  <testcase classname="Builder" name="Builder should continue to propagate the fieldAdded event" time="0.166">
+  </testcase>
+  <testcase classname="Builder" name="Builder should continue to propagate the fieldBlurred event" time="0.138">
+  </testcase>
+  <testcase classname="Builder" name="Builder should continue to propagate the fieldClicked event" time="0.106">
+  </testcase>
+  <testcase classname="Builder" name="Builder should open the sidebar when attached and there are no fields on the active page" time="0.124">
+  </testcase>
+  <testcase classname="Builder" name="Builder should open the sidebar when a field is clicked" time="0.133">
+  </testcase>
+  <testcase classname="Builder" name="Builder should continue to propagate the pageAdded event" time="0.104">
+  </testcase>
+  <testcase classname="Builder" name="Builder should continue to propagate the pageDeleted event" time="0.094">
+  </testcase>
+  <testcase classname="Builder" name="Builder should continue to propagate the pagesUpdated event" time="0.13">
+  </testcase>
+  <testcase classname="Builder" name="Builder should continue to propagate the activePageUpdated event" time="0.109">
+  </testcase>
+  <testcase classname="Builder" name="Builder should continue to propagate the fieldDuplicated event" time="0.144">
+  </testcase>
+  <testcase classname="Builder" name="Builder should continue to propagate the fieldEdited event" time="0.153">
+  </testcase>
+  <testcase classname="Builder" name="Builder should continue to propagate the fieldEdited event when the edited field is predefined value" time="0.12">
+  </testcase>
+  <testcase classname="Builder" name="Builder should continue to propagate the fieldMoved event" time="0.052">
+  </testcase>
+  <testcase classname="Builder" name="Builder should open sidebar when the &quot;pageReset&quot; event is received" time="0.049">
+  </testcase>
+  <testcase classname="Builder" name="Builder should open sidebar when activePage changes and new page has no fields" time="0.06">
+  </testcase>
+  <testcase classname="Builder" name="Builder should not open sidebar when activePage changes and new page has fields" time="0.096">
+  </testcase>
+  <testcase classname="Builder" name="Builder should show modal when fieldChangesCanceled event is trigered from sidebar" time="0.1">
+  </testcase>
+  <testcase classname="Builder" name="Builder should emit fieldChangesCanceled event when yes is clicked in the modal" time="0.097">
+  </testcase>
+  <testcase classname="Builder" name="Builder should show modal when trash button gets clicked" time="0.082">
+  </testcase>
+  <testcase classname="Builder" name="Builder should emit deleteField event when yes is clicked in the modal" time="0.046">
+  </testcase>
+  <testcase classname="Builder" name="Builder should propagate successPageChanged event" time="0.051">
+  </testcase>
+  <testcase classname="Builder" name="Builder should not open sidebar when the delete current page option item is clicked" time="0.084">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria When a condition is added and there&apos;s more than one condition, there must be an option the delete the condition should display a confirmation modal when trying to delete a condition" time="0.283">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria When a condition is added and there&apos;s more than one condition, there must be an option the delete the condition should delete a condition of user accepts confirmation modal" time="0.168">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria The OR select must be disabled by default should disable the &quot;AND&quot; or &quot;OR&quot; selector when there&apos;s only one condtion" time="0.089">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria The OR select must be activated if the are more than one condition should enable the &quot;AND&quot; or &quot;OR&quot; selector when there&apos;s more than one condtion" time="0.108">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria Clear all fields when first operand is not selected should make operators field &quot;read only&quot; when first operand is not selected" time="0.076">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria Clear all fields when first operand is not selected should hide the second operand type selector when first operand is not selected" time="0.06">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria Clear all fields when first operand is not selected should hide the second operand when first operand is not selected" time="0.066">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria Clear all fields when first operand is not selected should reset the operator, and hide the second operand type selector and second operand" time="0.118">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria Clear all fields when first operand is not selected should reset the operator, and hide the second operand type selector and second operand" time="0.113">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria Clear all fields when first operand is not selected should not reset second operand type selector nor second operand when operator changes from a binary type to another binary type" time="0.107">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria Clear all fields when first operand is not selected should hide second operand type selector and hide second operand when operator changes from a binary type to an unary type" time="0.099">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria Clear all fields when first operand is not selected should not make operators field &quot;read only&quot; when first operand is selected" time="0.066">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria should configure the conditions according to the first operand type should populate operators when the first selected operand is a field" time="0.068">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria should configure the conditions according to the first operand type should populate operators when the first selected operand is an user" time="0.055">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria should configure the conditions according to the first operand type should keep operator values the same when first operand changes to another value of the same type" time="0.076">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria should configure the conditions according to the first operand type should clear first operand when field is removed from pages" time="0.086">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria should configure the conditions according to the first operand type should not clear first operand when pages are changed and first operand is User" time="0.081">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria should configure the conditions according to the first operand type should not clear first operand when pages were changed but selected field was not removed" time="0.05">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria should configure the conditions according to the first operand type should not clear second operand value when pages were changed but selected field was not removed" time="0.068">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria should configure the conditions according to the first operand type should not display second operand type selector (&quot;Other Field&quot; or &quot;Value&quot;) when operator is empty" time="0.059">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria should configure the conditions according to the first operand type should reset second operand type selector (&quot;Other Field&quot; or &quot;Value&quot;) and hide second operand when selected field is removed" time="0.047">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria should configure the conditions according to the first operand type should reset second operand type selector (&quot;Other Field&quot; or &quot;Value&quot;) and hide second operand when first operand field is changed" time="0.061">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria should configure the conditions according to the first operand type should add a new condition to the conditions array" time="0.054">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria should configure the conditions according to the first operand type should change all logical operators when changing it via the global logical operator selector" time="0.054">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria When the user choose any of the options of the action a select target should be displayed should display the action target according to action type (Show, Enable or Required)" time="0.028">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria When the user choose any of the options of the action a select target should be displayed should add to the deletedField all the fields removed from the FormBuilder" time="0.037">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria When the user choose any of the options of the action a select target should be displayed should not reset the target after setting a target to an action and click in the action selected without changing it" time="0.034">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria When the user choose any of the options of the action a select target should be displayed should show Result field when the action Calculate is selected" time="0.032">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria When the user choose any of the options of the action a select target should be displayed should show Result field when the action Calculate is selected" time="0.048">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria When the user choose any of the options of the action a select target should be displayed should refresh the target when the user changes any of the options of the first action select between (Show, Enable or Required)" time="0.071">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria When the user choose any of the options of the action a select target should be displayed should refresh the target when the user changes de Action from autofill to Show, Enable or Required" time="0.076">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria When the user choose any of the options of the action a select target should be displayed should display the action target according to action type (Autofill)" time="0.03">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria When the user choose any of the options of the action a select target should be displayed should display only one data-provider label everytime an autofill target is selected" time="0.024">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria When the user choose any of the options of the action a select target should be displayed should duplicate an action when duplicate field is clicked" time="0.039">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria When a rule is not fully filled with actions and conditions the save rule button must be disabled" time="0.026">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria When a rule is fully filled with actions and conditions the save rule button must be enabled" time="0.05">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria When a rule is fully filled with actions and conditions should be possible to save a rule" time="0.045">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria When a rule is fully filled with actions and conditions should be possible to cancel a rule" time="0.049">
+  </testcase>
+  <testcase classname="Rule Editor" name="Rule Editor Acceptance Criteria When a rule is fully filled with actions and conditions should edit an existent rule" time="0.042">
+  </testcase>
+  <testcase classname="Regression" name="Regression LPS-86162 The filled value is being lost when re-selecting Value in the rule builder should not clear second operand value when there were no changes on second oprand type" time="0.035">
+  </testcase>
+</testsuite>

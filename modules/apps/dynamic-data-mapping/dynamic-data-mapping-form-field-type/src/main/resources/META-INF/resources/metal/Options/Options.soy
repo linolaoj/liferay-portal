@@ -44,7 +44,7 @@
 											'fieldFocused' : $_handleTextFocused
 										] /}
 										{param readOnly: $readOnly ? $readOnly : $option.disabled /}
-										{param name: $option.name /}
+										{param name: 'option'+index($option) /}
 										{param ref: 'text'+index($option) /}
 										{param showLabel: false /}
 										{param spritemap: $spritemap /}

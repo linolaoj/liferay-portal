@@ -10,7 +10,7 @@
 	{@param? errorMessage: string}
 	{@param? label: string}
 	{@param? parameterMessage: string}
-	{@param? strings: [chooseAnOption: string, email: string, errorMessage: string, ifInput: string, showErrorMessage: string, theValue: string, url: string, validationMessage: string]}
+	{@param? strings: [chooseAnOption: string, dynamicallyLoadedData: string, email: string, errorMessage: string, ifInput: string, showErrorMessage: string, theValue: string, url: string, validationMessage: string]}
 	{@param? selectedValidation: [parameterMessage: string, value: string]}
 	{@param? validations: list<[
 		checked: bool,
@@ -50,7 +50,7 @@
 	{@param? parameterMessage: string}
 	{@param? selectedValidation: [parameterMessage: string, value: string]}
 	{@param spritemap: string}
-	{@param? strings: [chooseAnOption: string, email: string, errorMessage: string, ifInput: string, showErrorMessage: string, theValue: string, url: string, validationMessage: string]}
+	{@param? strings: [chooseAnOption: string, email: string, dynamicallyLoadedData: string, errorMessage: string, ifInput: string, showErrorMessage: string, theValue: string, url: string, validationMessage: string]}
 	{@param? validations: list<[
 		checked: bool,
 		disabled: bool,
@@ -84,7 +84,11 @@
 			{param placeholder: $strings?.chooseAnOption /}
 			{param ref: 'selectedValidation' /}
 			{param spritemap: $spritemap /}
-			{param strings: ['chooseAnOption': $strings?.chooseAnOption] /}
+			{param strings: [
+				'chooseAnOption': $strings?.chooseAnOption,
+				'dynamicallyLoadedData': $strings?.dynamicallyLoadedData
+				]
+			/}
 			{param value: $selectedValidation?.value /}
 			{param visible: $enableValidation /}
 		{/call}

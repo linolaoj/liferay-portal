@@ -2,6 +2,8 @@ import '../FieldBase/FieldBase.es';
 import './SelectRegister.soy.js';
 import 'clay-dropdown';
 import 'clay-icon';
+import 'dynamic-data-mapping-form-field-type/metal/FieldBase/index.es';
+import 'dynamic-data-mapping-form-field-type/metal/Text/index.es';
 import {Config} from 'metal-state';
 import {EventHandler} from 'metal-events';
 import Component from 'metal-component';
@@ -20,6 +22,15 @@ class Select extends Component {
 		 */
 
 		dataType: Config.string().value('string'),
+
+		/**
+		 * @default 'string'
+		 * @instance
+		 * @memberof Text
+		 * @type {?(string|undefined)}
+		 */
+
+		dataSourceType: Config.string(),
 
 		/**
 		 * @default false
@@ -177,7 +188,8 @@ class Select extends Component {
 
 		strings: Config.object().value(
 			{
-				chooseAnOption: Liferay.Language.get('choose-an-option')
+				chooseAnOption: Liferay.Language.get('choose-an-option'),
+				dynamicallyLoadedData: Liferay.Language.get('dynamically-loaded-data')
 			}
 		),
 
@@ -201,6 +213,14 @@ class Select extends Component {
 
 		visible: Config.bool().value(true)
 	};
+
+	willReceiveState({options}) {
+		if(options && options.newVal) {
+			this.setState({
+				options: options.newVal.filter(({label}) => label)
+			})
+		}
+	}
 
 	attached() {
 		this._eventHandler = new EventHandler();

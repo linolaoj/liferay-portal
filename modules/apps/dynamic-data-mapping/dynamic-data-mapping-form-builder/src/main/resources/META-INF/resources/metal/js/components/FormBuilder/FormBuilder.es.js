@@ -397,7 +397,31 @@ class Builder extends Component {
 	 */
 	@autobind
 	_handleFocusedFieldUpdated(focusedField) {
-		this.emit('focusedFieldUpdated', focusedField);
+		let settingsContext = focusedField.settingsContext;
+
+		if(focusedField.dataSourceType && focusedField.dataSourceType != 'manual') {
+			focusedField.value = Liferay.Language.get('dynamically-loaded-data');
+			focusedField.predefinedValue = [];
+
+
+			const visitor = new PagesVisitor(settingsContext.pages);
+
+			settingsContext.pages = visitor.mapFields(
+				field => {
+					if (field.fieldName === 'predefinedValue') {
+						field.value = [];
+					}
+
+					return field;
+				}
+			)
+			
+		}
+
+		this.emit('focusedFieldUpdated', {
+			...focusedField,
+			settingsContext
+		});
 	}
 
 	_handlePageAdded() {

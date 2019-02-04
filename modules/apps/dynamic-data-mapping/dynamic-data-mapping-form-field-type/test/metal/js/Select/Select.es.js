@@ -7,6 +7,12 @@ const spritemap = 'icons.svg';
 describe(
 	'Select',
 	() => {
+		beforeEach(
+			() => {
+				jest.useFakeTimers();
+			}
+		);
+
 		afterEach(
 			() => {
 				if (component) {
@@ -258,9 +264,12 @@ describe(
 
 				const events = {fieldEdited: handleFieldEdited};
 
+				jest.useFakeTimers();
+
 				component = new Select(
 					{
 						events,
+						dataSourceType: 'manual',
 						options: [
 							{
 								checked: false,
@@ -277,13 +286,21 @@ describe(
 					}
 				);
 
-				MetalTestUtil.triggerEvent(
-					component.element.querySelector('.dropdown-menu'),
-					'click',
-					{}
+				const spy = jest.spyOn(component, 'emit');
+
+				jest.runAllTimers();
+
+				component._handleItemClicked(
+					{
+						data: {
+							item: {
+								value: 'Liferay'
+							}
+						}
+					}
 				);
 
-				expect(handleFieldEdited).toHaveBeenCalled();
+				expect(spy).toHaveBeenCalled();
 			}
 		);
 
@@ -292,6 +309,7 @@ describe(
 			() => {
 				component = new Select(
 					{
+						dataSourceType: 'manual',
 						options: [
 							{
 								checked: false,
@@ -322,6 +340,7 @@ describe(
 			() => {
 				component = new Select(
 					{
+						dataSourceType: 'manual',
 						options: [
 							{
 								checked: false,
@@ -340,10 +359,16 @@ describe(
 
 				const spy = jest.spyOn(component, 'emit');
 
-				MetalTestUtil.triggerEvent(
-					component.element.querySelector('.dropdown-menu'),
-					'click',
-					{}
+				jest.runAllTimers();
+
+				component._handleItemClicked(
+					{
+						data: {
+							item: {
+								value: 'Liferay'
+							}
+						}
+					}
 				);
 
 				expect(spy).toHaveBeenCalled();
@@ -356,6 +381,7 @@ describe(
 			() => {
 				component = new Select(
 					{
+						dataSourceType: 'manual',
 						options: [
 							{
 								label: 'label',

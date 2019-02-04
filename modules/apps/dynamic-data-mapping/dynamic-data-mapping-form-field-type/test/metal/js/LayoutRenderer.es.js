@@ -48,6 +48,9 @@ describe(
 							{
 								name: 'optionsField',
 								spritemap,
+								value: {
+									en_US: []
+								},
 								type: 'options'
 							}
 						]

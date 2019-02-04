@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Layout Render should render fields 1`] = `
+<div class="container">
+  <div class="form-group">
+    <label class="ddm-toggle-switch toggle-switch">
+      <input checked="" class="toggle-switch-check" type="checkbox">
+      <span aria-hidden="true" class="toggle-switch-bar">
+        <span class="toggle-switch-handle"></span>
+        <span class="toggle-switch-text toggle-switch-text-right"></span>
+      </span>
+    </label>
+  </div>
+  <div class="form-group">
+    <div class="input-group">
+      <div class="input-group-item input-group-prepend">
+        <input class="form-control" placeholder="__/__/____" type="text" disabled="">
+      </div>
+      <div class="input-group-append input-group-item input-group-item-shrink">
+        <span class="input-group-text">
+          <svg aria-hidden="true" class="lexicon-icon lexicon-icon-calendar" focusable="false">
+            <title>calendar</title>
+            <use xlink:href="icons.svg#calendar"></use>
+          </svg>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="liferay-ddm-form-field-grid table-responsive">
+      <table class="table table-autofit table-list table-striped">
+        <thead>
+          <tr>
+            <th></th>
+            <th>col1</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr name="jehf">
+            <td>row</td>
+            <td>
+              <input class="form-builder-grid-field" data-row-index="0" name="jehf" type="radio" value="fieldId">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="form-group">
+      <input class="form-control" name="dynamicLoadedData" type="text" disabled="disabled" value="dynamically-loaded-data">
+    </div>
+  </div>
+  <div class="form-group">
+    <input class="form-control" name="textField" type="text" value="">
+  </div>
+  <div class="form-group">
+    <div class="ddm-field-options-container">
+      <div class="ddm-options-target" data-index="0"></div>
+      <div class="ddm-field-options" data-index="0">
+        <svg aria-hidden="true" class="lexicon-icon ddm-options-drag lexicon-icon-drag">
+          <use xlink:href="icons.svg#drag"></use>
+        </svg>
+        <div>
+          <div class="form-group">
+            <input class="form-control" name="option0" type="text" placeholder="enter-an-option" value="">
+          </div>
+          <div class="active key-value-editor">
+            <label class="control-label key-value-label">Field Name:</label>
+            <input class="key-value-input" type="text" value="">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
