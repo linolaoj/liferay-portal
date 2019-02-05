@@ -78,7 +78,7 @@ describe(
 
 				const spy = jest.spyOn(component, 'emit');
 
-				const source =  {
+				const source = {
                     dataset: {
                         index: '1'
                     }

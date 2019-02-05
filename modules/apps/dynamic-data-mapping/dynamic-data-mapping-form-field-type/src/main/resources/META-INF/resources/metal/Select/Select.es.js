@@ -17,16 +17,25 @@ class Select extends Component {
 		/**
 		 * @default 'string'
 		 * @instance
-		 * @memberof Text
+		 * @memberof Select
 		 * @type {?(string|undefined)}
 		 */
 
 		dataType: Config.string().value('string'),
 
+
+		/**
+		 * @default 'boolean'
+		 * @instance
+		 * @memberof Select
+		 * @type {?(boolean|undefined)}
+		 */
+		evaluable: Config.bool().value(false), 
+
 		/**
 		 * @default 'string'
 		 * @instance
-		 * @memberof Text
+		 * @memberof Select
 		 * @type {?(string|undefined)}
 		 */
 
@@ -228,6 +237,10 @@ class Select extends Component {
 		this._eventHandler.add(
 			dom.on(document, 'click', this._handleDocumentClicked.bind(this))
 		);
+
+		this.setState({
+			visible: true
+		})
 	}
 
 	disposeInternal() {
