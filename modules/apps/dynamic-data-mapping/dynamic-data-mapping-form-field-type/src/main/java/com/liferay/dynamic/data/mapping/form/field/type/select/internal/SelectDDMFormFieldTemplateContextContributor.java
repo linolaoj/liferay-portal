@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
@@ -66,10 +67,7 @@ public class SelectDDMFormFieldTemplateContextContributor
 
 		Map<String, Object> parameters = new HashMap<>();
 
-		parameters.put(
-			"dataSourceType",
-			GetterUtil.getString(
-				ddmFormField.getProperty("dataSourceType"), "manual"));
+		parameters.put("dataSourceType", _getDataSourceType(ddmFormField));
 		parameters.put(
 			"multiple",
 			getMultiple(ddmFormField, ddmFormFieldRenderingContext));
@@ -240,6 +238,17 @@ public class SelectDDMFormFieldTemplateContextContributor
 
 	@Reference
 	protected Portal portal;
+
+	private String _getDataSourceType(DDMFormField ddmFormField) {
+		if (Objects.equals(
+				ddmFormField.getName(), "ddmDataProviderInstanceId")) {
+
+			return "manual";
+		}
+
+		return GetterUtil.getString(
+			ddmFormField.getProperty("dataSourceType"), "manual");
+	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		SelectDDMFormFieldTemplateContextContributor.class);
