@@ -24,7 +24,7 @@
 		<!-- Other fields -->
 
 		<column localized="true" name="name" type="String" />
-		<column name="description" type="String" />
+		<column db-name="description_" name="description" type="String" />
 		<column name="data" type="String" />
 
 		<!-- Finder methods -->
@@ -61,7 +61,7 @@
 		<!-- Other fields -->
 
 		<column localized="true" name="name" type="String" />
-		<column localized="true" name="description" type="String" />
+		<column db-name="description_" localized="true" name="description" type="String" />
 		<column name="definition" type="String" />
 		<column name="type" type="String" />
 
@@ -133,7 +133,7 @@
 		<column name="structureId" type="long" />
 		<column name="version" type="String" />
 		<column localized="true" name="name" type="String" />
-		<column localized="true" name="description" type="String" />
+		<column db-name="description_" localized="true" name="description" type="String" />
 		<column name="settings" type="String" />
 		<column name="lastPublishDate" type="Date" />
 
@@ -281,7 +281,7 @@
 		<column name="formInstanceId" type="long" />
 		<column name="structureVersionId" type="long" />
 		<column localized="true" name="name" type="String" />
-		<column localized="true" name="description" type="String" />
+		<column db-name="description_" localized="true" name="description" type="String" />
 		<column name="settings" type="String" />
 		<column name="version" type="String" />
 		<column name="status" type="int" />
@@ -363,7 +363,7 @@
 		<column name="structureKey" type="String" />
 		<column name="version" type="String" />
 		<column localized="true" name="name" type="String" />
-		<column localized="true" name="description" type="String" />
+		<column db-name="description_" localized="true" name="description" type="String" />
 		<column name="definition" type="String" />
 		<column name="storageType" type="String" />
 		<column name="type" type="int" />
@@ -514,7 +514,7 @@
 		<column name="version" type="String" />
 		<column name="parentStructureId" type="long" />
 		<column localized="true" name="name" type="String" />
-		<column localized="true" name="description" type="String" />
+		<column db-name="description_" localized="true" name="description" type="String" />
 		<column name="definition" type="String" />
 		<column name="storageType" type="String" />
 		<column name="type" type="int" />
@@ -565,7 +565,7 @@
 		<column name="templateKey" type="String" />
 		<column name="version" type="String" />
 		<column localized="true" name="name" type="String" />
-		<column localized="true" name="description" type="String" />
+		<column db-name="description_" localized="true" name="description" type="String" />
 		<column name="type" type="String" />
 		<column name="mode" type="String" />
 		<column name="language" type="String" />
@@ -694,7 +694,7 @@
 		<column name="templateId" type="long" />
 		<column name="version" type="String" />
 		<column localized="true" name="name" type="String" />
-		<column localized="true" name="description" type="String" />
+		<column db-name="description_" localized="true" name="description" type="String" />
 		<column name="language" type="String" />
 		<column name="script" type="String" />
 		<column name="status" type="int" />
