@@ -102,8 +102,7 @@ exports[`Select should put an asterisk when field is required 1`] = `
 <div class="form-group">
   <label>This is the label
     <span class="reference-mark">
-      <svg aria-hidden="true" class="lexicon-icon lexicon-icon-asterisk" focusable="false">
-        <title>asterisk</title>
+      <svg class="lexicon-icon lexicon-icon-asterisk" focusable="false" role="presentation">
         <use xlink:href="icons.svg#asterisk"></use>
       </svg>
     </span>
@@ -142,13 +141,12 @@ exports[`Select should render options 1`] = `
 exports[`Select should render the dropdown with search when there are more than six options 1`] = `
 <div class="form-group">
   <div class="dropdown ddm-btn-full">
-    <button aria-expanded="false" aria-haspopup="true" aria-label="toggle" class="dropdown-toggle btn btn-unstyled" ref="triggerButton" type="button">
+    <button aria-expanded="false" aria-haspopup="true" class="dropdown-toggle btn btn-unstyled" ref="triggerButton" type="button">
       <div class="form-builder-select-field input-group-container">
         <div class="form-control select-field-trigger">
           <div class="option-selected option-selected-placeholder">choose-an-option</div>
           <a class="select-arrow-down-container" href="javascript:;">
-            <svg aria-hidden="true" class="lexicon-icon lexicon-icon-caret-double" focusable="false">
-              <title>caret-double</title>
+            <svg class="lexicon-icon lexicon-icon-caret-double" focusable="false" role="presentation">
               <use xlink:href="icons.svg#caret-double"></use>
             </svg>
           </a>
@@ -165,8 +163,7 @@ exports[`Select should render the dropdown with search when there are more than 
           <input aria-label="Search for..." class="form-control input-group-inset input-group-inset-after" placeholder="Search for..." type="text" ref="searchInput">
           <span class="input-group-inset-item input-group-inset-item-after">
             <button class="btn btn-link" aria-label="search" type="button">
-              <svg aria-hidden="true" class="lexicon-icon lexicon-icon-search" focusable="false">
-                <title>search</title>
+              <svg class="lexicon-icon lexicon-icon-search" focusable="false" role="presentation">
                 <use xlink:href="icons.svg#search"></use>
               </svg>
             </button>

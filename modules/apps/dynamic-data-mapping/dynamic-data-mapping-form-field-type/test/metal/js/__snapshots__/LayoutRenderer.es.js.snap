@@ -18,8 +18,7 @@ exports[`Layout Render should render fields 1`] = `
       </div>
       <div class="input-group-append input-group-item input-group-item-shrink">
         <span class="input-group-text">
-          <svg aria-hidden="true" class="lexicon-icon lexicon-icon-calendar" focusable="false">
-            <title>calendar</title>
+          <svg class="lexicon-icon lexicon-icon-calendar" focusable="false" role="presentation">
             <use xlink:href="icons.svg#calendar"></use>
           </svg>
         </span>

@@ -1,9 +1,9 @@
 import '../FieldBase/FieldBase.es';
+import '../FieldBase/index.es';
+import '../Text/index.es';
 import './SelectRegister.soy.js';
 import 'clay-dropdown';
 import 'clay-icon';
-import 'dynamic-data-mapping-form-field-type/metal/FieldBase/index.es';
-import 'dynamic-data-mapping-form-field-type/metal/Text/index.es';
 import {Config} from 'metal-state';
 import {EventHandler} from 'metal-events';
 import Component from 'metal-component';
