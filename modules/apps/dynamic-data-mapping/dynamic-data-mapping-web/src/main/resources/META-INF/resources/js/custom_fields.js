@@ -1236,7 +1236,7 @@ AUI.add(
 
 			if (type == 'ddm-image' || type == 'text') {
 				indexTypeOptions = {
-					'': Liferay.Language.get('not-indexable'),
+					'none': Liferay.Language.get('not-indexable'),
 					'keyword': Liferay.Language.get('indexable-keyword'),
 					'text': Liferay.Language.get('indexable-text')
 				};
