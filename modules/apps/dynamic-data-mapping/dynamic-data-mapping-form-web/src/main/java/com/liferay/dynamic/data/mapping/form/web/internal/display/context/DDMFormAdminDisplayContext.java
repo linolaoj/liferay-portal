@@ -39,6 +39,7 @@ import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesSerializerSerializeR
 import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesSerializerSerializeResponse;
 import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesSerializerTracker;
 import com.liferay.dynamic.data.mapping.io.exporter.DDMFormInstanceRecordWriterTracker;
+import com.liferay.dynamic.data.mapping.model.DDMDataProviderInstance;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord;
@@ -77,10 +78,17 @@ import com.liferay.portal.kernel.json.JSONSerializer;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Portlet;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
+import com.liferay.portal.kernel.portlet.PortletProvider;
+import com.liferay.portal.kernel.portlet.PortletProviderUtil;
+import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
+import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -100,10 +108,11 @@ import java.util.function.Consumer;
 
 import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
+import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-
+import javax.portlet.WindowStateException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -674,10 +683,82 @@ public class DDMFormAdminDisplayContext {
 						navigationItem.setLabel(
 							LanguageUtil.get(request, "element-sets"));
 					});
+				
+				add(
+					navigationItem -> {
+						navigationItem.setActive(
+								currentTab.equals("data-provider"));
+						_populateMetadataSetsNavigationItem(navigationItem);
+					});
 			}
 		};
 	}
+	
+	private Portlet _getPortlet(ThemeDisplay themeDisplay) {
+		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
 
+		return PortletLocalServiceUtil.getPortletById(portletDisplay.getId());
+	}
+
+	private void _populateMetadataSetsNavigationItem(
+			NavigationItem navigationItem) {
+
+			Portlet portlet = _getPortlet(formAdminRequestHelper.getThemeDisplay());
+
+			PortletURL viewMetadataSetsURL = PortletURLFactoryUtil.create(
+					formAdminRequestHelper.getLiferayPortletRequest(),
+					PortletProviderUtil.getPortletId(
+							DDMDataProviderInstance.class.getName(),
+							PortletProvider.Action.EDIT),
+				PortletRequest.RENDER_PHASE);
+
+			viewMetadataSetsURL.setParameter("mvcPath", "/view.jsp");
+			viewMetadataSetsURL.setParameter(
+				"backURL", formAdminRequestHelper.getThemeDisplay().getURLCurrent());
+			viewMetadataSetsURL.setParameter(
+				"groupId", String.valueOf(formAdminRequestHelper.getThemeDisplay().getScopeGroupId()));
+			viewMetadataSetsURL.setParameter(
+				"refererPortletName", DDMPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN);
+			
+			navigationItem.setHref(viewMetadataSetsURL.toString());
+
+			navigationItem.setLabel(
+				LanguageUtil.get(
+						formAdminRequestHelper.getLiferayPortletRequest().getHttpServletRequest(),
+					"data-providers"));
+		}
+	
+	public String getDataProviderPortletURL() {
+		
+		PortletRequest portletRequest = _renderRequest;
+		PortletResponse portletResponse = _renderResponse;
+
+			String portletId = PortletProviderUtil.getPortletId(
+				DDMDataProviderInstance.class.getName(),
+				PortletProvider.Action.EDIT);
+
+			PortletURL portletURL = PortletURLFactoryUtil.create(
+				portletRequest, portletId, PortletRequest.RENDER_PHASE);
+
+			try {
+				portletURL.setWindowState(LiferayWindowState.NORMAL);
+				portletURL.setParameter("backURL", getBackURL(portletRequest));
+			}
+			catch (WindowStateException wse) {
+				_log.error(wse, wse);
+			}
+
+			return portletURL.toString();
+	}
+
+	protected String getBackURL(PortletRequest portletRequest) {
+		PortletURL redirectURL = PortletURLFactoryUtil.create(
+			portletRequest, DDMPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN,
+			PortletRequest.RENDER_PHASE);
+
+		return redirectURL.toString();
+	}
+	
 	public String getOrderByCol() {
 		return ParamUtil.getString(
 			_renderRequest, "orderByCol", "modified-date");
