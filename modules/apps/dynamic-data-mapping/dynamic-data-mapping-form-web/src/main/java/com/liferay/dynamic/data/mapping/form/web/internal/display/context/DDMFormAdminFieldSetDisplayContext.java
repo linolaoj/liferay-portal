@@ -148,8 +148,8 @@ public class DDMFormAdminFieldSetDisplayContext
 				addPrimaryDropdownItem(
 					dropdownItem -> {
 						dropdownItem.setHref(
-							renderResponse.createRenderURL(), "mvcPath",
-							"/admin/edit_element_set.jsp", "redirect",
+							renderResponse.createRenderURL(), "mvcRenderCommandName",
+							"/admin/edit_element_set", "redirect",
 							PortalUtil.getCurrentURL(request), "groupId",
 							String.valueOf(themeDisplay.getScopeGroupId()));
 
