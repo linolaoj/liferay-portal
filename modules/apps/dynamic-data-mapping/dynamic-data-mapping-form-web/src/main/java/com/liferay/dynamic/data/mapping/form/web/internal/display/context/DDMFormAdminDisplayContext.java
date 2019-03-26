@@ -434,6 +434,13 @@ public class DDMFormAdminDisplayContext {
 		};
 	}
 
+	public JSONArray getFieldSets() throws PortalException {
+		DDMFormBuilderSettingsResponse ddmFormBuilderSettingsResponse =
+			getDDMFormBuilderSettingsResponse();
+
+		return ddmFormBuilderSettingsResponse.getFieldSets();
+	}
+
 	public List<DropdownItem> getFilterItemsDropdownItems() {
 		HttpServletRequest request = formAdminRequestHelper.getRequest();
 

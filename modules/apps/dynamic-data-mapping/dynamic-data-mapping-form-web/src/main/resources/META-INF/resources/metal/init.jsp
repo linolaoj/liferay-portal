@@ -19,6 +19,7 @@
 <%
 String dataProviderInstanceParameterSettingsURL = ddmFormAdminDisplayContext.getDataProviderInstanceParameterSettingsURL();
 String dataProviderInstancesURL = ddmFormAdminDisplayContext.getDataProviderInstancesURL();
+JSONArray fieldSets = ddmFormAdminDisplayContext.getFieldSets();
 String functionsMetadata = ddmFormAdminDisplayContext.getFunctionsMetadata();
 String functionsURL = ddmFormAdminDisplayContext.getFunctionsURL();
 String mainRequire = ddmFormAdminDisplayContext.getMainRequire();

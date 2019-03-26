@@ -72,7 +72,8 @@ class Sidebar extends Component {
 			{
 				add: {
 					items: [
-						Liferay.Language.get('elements')
+						Liferay.Language.get('elements'),
+						Liferay.Language.get('element-sets'),
 					]
 				},
 				edit: {

@@ -187,6 +187,8 @@ if (!isFormPublished && isFormSaved) {
 						context.pages = initialPages;
 					}
 
+					console.log(<%= ddmFormAdminDisplayContext.getFieldSets() %>);
+
 					Liferay.Forms.instance = new packageName.Form(
 						{
 							context: context,
