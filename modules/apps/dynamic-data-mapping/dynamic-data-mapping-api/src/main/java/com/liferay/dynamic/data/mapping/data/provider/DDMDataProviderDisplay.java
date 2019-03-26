@@ -1,4 +1,3 @@
-<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -12,11 +11,28 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
---%>
 
-<%@ include file="/init.jsp" %>
+package com.liferay.dynamic.data.mapping.data.provider;
 
-<clay:navigation-bar
-	inverted="<%= true %>"
-	navigationItems="<%= ddmDataProviderDisplayContext.getNavigationItems(liferayPortletRequest, liferayPortletResponse) %>"
-/>
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.dynamic.data.mapping.util.DDMDisplayTabItem;
+
+import java.util.List;
+import java.util.Locale;
+
+/**
+ * @author Lino Alves
+ */
+@ProviderType
+public interface DDMDataProviderDisplay {
+
+	public DDMDisplayTabItem getDefaultTabItem();
+
+	public String getPortletId();
+
+	public List<DDMDisplayTabItem> getTabItems();
+
+	public String getTitle(Locale locale);
+
+}
