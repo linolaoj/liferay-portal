@@ -676,6 +676,14 @@ public class LayoutServiceImpl extends LayoutServiceBaseImpl {
 
 	@Override
 	public List<Layout> getLayouts(
+		long groupId, boolean privateLayout, String type) {
+
+		return layoutPersistence.filterFindByG_P_T_Head(
+			groupId, privateLayout, type, false);
+	}
+	
+	@Override
+	public List<Layout> getLayouts(
 		long groupId, String type, int start, int end) {
 
 		return layoutPersistence.filterFindByG_T_Head(
