@@ -22,6 +22,7 @@ import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
+import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.log.Log;
@@ -32,6 +33,7 @@ import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.List;
@@ -74,9 +76,11 @@ public class DDMFormFieldOptionsFactoryImpl
 		Object options = ddmFormFieldRenderingContext.getProperty("options");
 
 		if (Objects.equals(dataSourceType, "from-autofill")) {
-			List<?> list = (List<?>)options;
+			List<Map<String, String>> list = (List<Map<String, String>>)options;
 
-			if (list.size() > 1) {
+			if ((list.size() > 1) ||
+				_hasOnlyOneOptionValue(ddmFormFieldRenderingContext, list)) {
+
 				return createDDMFormFieldOptions(
 					ddmFormField, ddmFormFieldRenderingContext, options);
 			}
@@ -89,6 +93,13 @@ public class DDMFormFieldOptionsFactoryImpl
 			return ddmFormFieldOptions;
 		}
 		else if (Objects.equals(dataSourceType, "data-provider")) {
+			List<?> list = (List<?>)options;
+
+			if ((options != null) && (list.size() > 1)) {
+				return createDDMFormFieldOptions(
+					ddmFormField, ddmFormFieldRenderingContext, options);
+			}
+
 			return createDDMFormFieldOptionsFromDataProvider(
 				ddmFormField, ddmFormFieldRenderingContext);
 		}
