@@ -345,6 +345,15 @@ public class DDMFormFieldTemplateContextFactory {
 			createDDDMFormFieldRenderingContext(
 				changedProperties, ddmFormFieldTemplateContext);
 
+		ddmFormFieldRenderingContext.setProperty(
+			"isDraft",
+			GetterUtil.getBoolean(
+				_ddmFormRenderingContext.getProperty("isDraft")));
+
+		ddmFormFieldRenderingContext.setProperty(
+			"draftDDMFormFieldValuesMap",
+			_ddmFormRenderingContext.getProperty("draftDDMFormFieldValuesMap"));
+
 		Map<String, Object> contributedParameters =
 			ddmFormFieldTemplateContextContributor.getParameters(
 				ddmFormField, ddmFormFieldRenderingContext);
