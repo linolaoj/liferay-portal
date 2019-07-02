@@ -191,11 +191,20 @@ public class DDMFormDisplayContext {
 					WorkflowConstants.STATUS_DRAFT);
 
 		if (ddmFormInstanceRecordVersion != null) {
+			DDMFormValues ddmFormValues =
+				ddmFormInstanceRecordVersion.getDDMFormValues();
+
 			DDMFormValues mergedDDMFormValues = _ddmFormValuesMerger.merge(
-				ddmFormInstanceRecordVersion.getDDMFormValues(),
-				ddmFormRenderingContext.getDDMFormValues());
+				ddmFormValues, ddmFormRenderingContext.getDDMFormValues());
 
 			ddmFormRenderingContext.setDDMFormValues(mergedDDMFormValues);
+
+			ddmFormRenderingContext.addProperty(
+				"isDraft", Boolean.TRUE.toString());
+
+			ddmFormRenderingContext.addProperty(
+				"draftDDMFormFieldValuesMap",
+				ddmFormValues.getDDMFormFieldValuesMap());
 		}
 
 		if (!hasAddFormInstanceRecordPermission()) {
