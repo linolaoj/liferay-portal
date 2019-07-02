@@ -20,6 +20,7 @@ import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderResponse;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldOptionsFactory;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
+import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -54,6 +55,18 @@ public class DDMFormFieldOptionsFactoryImpl
 	public DDMFormFieldOptions create(
 		DDMFormField ddmFormField,
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
+
+		boolean draft = GetterUtil.getBoolean(
+			ddmFormFieldRenderingContext.getProperty("isDraft"));
+
+		if (draft) {
+			Value value = _getSelectedValue(ddmFormFieldRenderingContext);
+
+			if (value != null) {
+				ddmFormFieldRenderingContext.setValue(
+					value.getString(ddmFormFieldRenderingContext.getLocale()));
+			}
+		}
 
 		String dataSourceType = GetterUtil.getString(
 			ddmFormField.getProperty("dataSourceType"), "manual");
@@ -207,6 +220,59 @@ public class DDMFormFieldOptionsFactoryImpl
 
 	@Reference
 	protected Portal portal;
+
+	private Value _getSelectedValue(
+		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
+
+		Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap =
+			(Map<String, List<DDMFormFieldValue>>)
+				ddmFormFieldRenderingContext.getProperty(
+					"draftDDMFormFieldValuesMap");
+
+		if (ddmFormFieldValuesMap == null) {
+			return null;
+		}
+
+		List<DDMFormFieldValue> ddmFormFieldValues = ddmFormFieldValuesMap.get(
+			ddmFormFieldRenderingContext.getProperty("fieldName"));
+
+		DDMFormFieldValue ddmFormFieldValue = ddmFormFieldValues.get(0);
+
+		return ddmFormFieldValue.getValue();
+	}
+
+	private boolean _hasOnlyOneOptionValue(
+		DDMFormFieldRenderingContext ddmFormFieldRenderingContext,
+		List<Map<String, String>> options) {
+
+		if (options.isEmpty()) {
+			return false;
+		}
+
+		Map<String, String> option = options.get(0);
+
+		return _isOptionSelected(
+			option.get("value"), ddmFormFieldRenderingContext);
+	}
+
+	private boolean _isOptionSelected(
+		String optionValue,
+		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
+
+		Value value = _getSelectedValue(ddmFormFieldRenderingContext);
+		String valueString = null;
+
+		if (value == null) {
+			valueString = ddmFormFieldRenderingContext.getValue();
+		}
+		else {
+			valueString = value.getString(value.getDefaultLocale());
+		}
+
+		valueString = getJSONArrayFirstValue(valueString);
+
+		return StringUtil.equals(valueString, optionValue);
+	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		DDMFormFieldOptionsFactoryImpl.class);
