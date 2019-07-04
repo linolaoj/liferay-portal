@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.List;
@@ -281,6 +282,10 @@ public class DDMFormFieldOptionsFactoryImpl
 		}
 
 		valueString = getJSONArrayFirstValue(valueString);
+
+		if (Validator.isNull(valueString)) {
+			return true;
+		}
 
 		return StringUtil.equals(valueString, optionValue);
 	}
