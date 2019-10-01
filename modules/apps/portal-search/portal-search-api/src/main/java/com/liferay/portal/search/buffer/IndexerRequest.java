@@ -85,6 +85,8 @@ public class IndexerRequest {
 	}
 
 	public void execute() throws Exception {
+		_executing = true;
+
 		try (ProxyModeThreadLocalCloseable proxyModeThreadLocalCloseable =
 				new ProxyModeThreadLocalCloseable()) {
 
@@ -98,6 +100,11 @@ public class IndexerRequest {
 			else {
 				_method.invoke(_indexer, _modelClassName, _modelPrimaryKey);
 			}
+
+			_executed = true;
+		}
+		finally {
+			_executing = false;
 		}
 	}
 
@@ -115,12 +122,28 @@ public class IndexerRequest {
 		return hashCode;
 	}
 
+	public boolean isExecuted() {
+		return _executed;
+	}
+
+	public boolean isExecuting() {
+		return _executing;
+	}
+
+	public boolean isForceSync() {
+		return _forceSync;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(13);
+		StringBundler sb = new StringBundler(15);
 
 		sb.append("{classModel=");
 		sb.append(_classedModel);
+		sb.append(", executed=");
+		sb.append(_executed);
+		sb.append(", executing=");
+		sb.append(_executing);
 		sb.append(", forceSync=");
 		sb.append(_forceSync);
 		sb.append(", indexer=");
@@ -137,6 +160,8 @@ public class IndexerRequest {
 	}
 
 	private final ClassedModel _classedModel;
+	private boolean _executed;
+	private boolean _executing;
 	private final boolean _forceSync;
 	private final Indexer<?> _indexer;
 	private final Method _method;

@@ -25,7 +25,11 @@ import com.liferay.portal.search.buffer.IndexerRequestBufferExecutor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
@@ -50,8 +54,6 @@ public class DefaultIndexerRequestBufferExecutor
 
 		Set<String> searchEngineIds = new HashSet<>();
 
-		Collection<IndexerRequest> completedIndexerRequests = new ArrayList<>();
-
 		if (_log.isDebugEnabled()) {
 			Collection<IndexerRequest> indexerRequests =
 				indexerRequestBuffer.getIndexerRequests();
@@ -62,28 +64,85 @@ public class DefaultIndexerRequestBufferExecutor
 					" to execute ", numRequests, " requests"));
 		}
 
-		int i = 0;
+		List<IndexerRequest> queuedIndexerRequests = new ArrayList<>();
 
 		for (IndexerRequest indexerRequest :
 				indexerRequestBuffer.getIndexerRequests()) {
 
-			if (_log.isDebugEnabled()) {
-				_log.debug(
-					StringBundler.concat(
-						"Executing indexer request ", i++, ": ",
-						indexerRequest));
+			IndexerRequest newIndexerRequest =
+				_queuedIndexerRequests.computeIfAbsent(
+					indexerRequest, Function.identity());
+
+			if ((indexerRequest.isForceSync()) ||
+				(indexerRequest == newIndexerRequest)) {
+
+				queuedIndexerRequests.add(newIndexerRequest);
+			}
+			else {
+				queuedIndexerRequests.add(null);
 			}
 
-			executeIndexerRequest(searchEngineIds, indexerRequest);
-
-			completedIndexerRequests.add(indexerRequest);
-
-			if (completedIndexerRequests.size() == numRequests) {
+			if (queuedIndexerRequests.size() == numRequests) {
 				break;
 			}
 		}
 
-		for (IndexerRequest indexerRequest : completedIndexerRequests) {
+		int i = 0;
+
+		for (IndexerRequest indexerRequest : queuedIndexerRequests) {
+			i++;
+
+			if (indexerRequest == null) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(
+						StringBundler.concat(
+							"Skipping indexer request ", i,
+							" handled by another thread: ", indexerRequest));
+				}
+
+				continue;
+			}
+
+			if (indexerRequest.isExecuted() || indexerRequest.isExecuting()) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(
+						StringBundler.concat(
+							"Already executed indexer request ", i,
+							" in another thread: ", indexerRequest));
+				}
+
+				continue;
+			}
+
+			synchronized (indexerRequest) {
+				if (indexerRequest.isExecuted()) {
+					if (_log.isDebugEnabled()) {
+						_log.debug(
+							StringBundler.concat(
+								"Already executed indexer request ", i,
+								" in another thread: ", indexerRequest));
+					}
+
+					continue;
+				}
+
+				if (_log.isDebugEnabled()) {
+					_log.debug(
+						StringBundler.concat(
+							"Executing indexer request ", i, ": ",
+							indexerRequest));
+				}
+
+				try {
+					executeIndexerRequest(searchEngineIds, indexerRequest);
+				}
+				finally {
+					_queuedIndexerRequests.remove(indexerRequest);
+				}
+			}
+		}
+
+		for (IndexerRequest indexerRequest : queuedIndexerRequests) {
 			indexerRequestBuffer.remove(indexerRequest);
 		}
 
@@ -115,5 +174,7 @@ public class DefaultIndexerRequestBufferExecutor
 
 	private ServiceTracker<IndexWriterHelper, IndexWriterHelper>
 		_indexWriterHelperServiceTracker;
+	private final ConcurrentMap<IndexerRequest, IndexerRequest>
+		_queuedIndexerRequests = new ConcurrentHashMap<>();
 
 }
