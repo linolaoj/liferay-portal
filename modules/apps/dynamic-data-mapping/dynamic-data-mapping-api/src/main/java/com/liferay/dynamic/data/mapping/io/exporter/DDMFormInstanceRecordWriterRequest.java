@@ -14,8 +14,13 @@
 
 package com.liferay.dynamic.data.mapping.io.exporter;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 
 /**
  * @author Leonardo Barros
@@ -40,6 +45,8 @@ public final class DDMFormInstanceRecordWriterRequest {
 		}
 
 		public DDMFormInstanceRecordWriterRequest build() {
+			formatLabels(_ddmFormInstanceRecordWriterRequest._ddmFormFieldsLabel);
+			
 			return _ddmFormInstanceRecordWriterRequest;
 		}
 
@@ -48,12 +55,50 @@ public final class DDMFormInstanceRecordWriterRequest {
 			List<Map<String, String>> ddmFormFieldValues) {
 
 			_ddmFormInstanceRecordWriterRequest._ddmFormFieldsLabel =
-				ddmFormFieldsLabel;
+					ddmFormFieldsLabel;
 
 			_ddmFormInstanceRecordWriterRequest._ddmFormFieldValues =
 				ddmFormFieldValues;
 		}
 
+		private Map<String, String> formatLabels(Map<String, String> ddmFormFieldsLabel) {
+			Map<String, String> labelsFieldName = new HashMap<>();
+			
+			ddmFormFieldsLabel.forEach((fieldName,label)->{
+				
+				if (!labelsFieldName.containsKey(label)) {
+					ddmFormFieldsLabel.put(fieldName, label);
+				}else {
+					String previousFieldName = labelsFieldName.get(label);
+
+					ddmFormFieldsLabel.put(
+						previousFieldName,
+						_formatLabelString(previousFieldName, label));
+
+					ddmFormFieldsLabel.put(
+						fieldName,
+						_formatLabelString(fieldName, label));
+				}
+
+				labelsFieldName.put(label, fieldName);
+				
+			});
+
+			return ddmFormFieldsLabel;
+		}
+		
+		private String _formatLabelString(String fieldName, String label) {
+			StringBundler sb = new StringBundler(5);
+
+			sb.append(label);
+			sb.append(StringPool.SPACE);
+			sb.append(StringPool.OPEN_PARENTHESIS);
+			sb.append(fieldName);
+			sb.append(StringPool.CLOSE_PARENTHESIS);
+
+			return sb.toString();
+		}
+		
 		private final DDMFormInstanceRecordWriterRequest
 			_ddmFormInstanceRecordWriterRequest =
 				new DDMFormInstanceRecordWriterRequest();
