@@ -193,7 +193,8 @@ public class DDMFormInstanceRecordLocalServiceImpl
 
 			long storageId = ddmFormInstanceRecordVersion.getStorageId();
 
-			deleteStorage(storageId);
+			deleteStorage(
+				storageId, ddmFormInstanceRecordVersion.getFormInstance());
 
 			_ddmStorageLinkLocalService.deleteClassStorageLink(storageId);
 
@@ -247,6 +248,11 @@ public class DDMFormInstanceRecordLocalServiceImpl
 			ddmFormInstanceRecordId);
 	}
 
+	/**
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link
+	 *             #getDDMFormValues(long, DDMFormInstance)}
+	 */
+	@Deprecated
 	@Override
 	public DDMFormValues getDDMFormValues(long storageId, DDMForm ddmForm)
 		throws StorageException {
@@ -263,6 +269,32 @@ public class DDMFormInstanceRecordLocalServiceImpl
 			ddmStorageAdapter.get(ddmStorageAdapterGetRequest);
 
 		return ddmStorageAdapterGetResponse.getDDMFormValues();
+	}
+
+	@Override
+	public DDMFormValues getDDMFormValues(
+			long storageId, DDMFormInstance ddmFormInstance)
+		throws StorageException {
+
+		try {
+			DDMStorageAdapter ddmStorageAdapter = getDDMStorageAdapter(
+				ddmFormInstance);
+
+			DDMStorageAdapterGetRequest.Builder builder =
+				DDMStorageAdapterGetRequest.Builder.newBuilder(
+					storageId, ddmFormInstance.getDDMForm());
+
+			DDMStorageAdapterGetRequest ddmStorageAdapterGetRequest =
+				builder.build();
+
+			DDMStorageAdapterGetResponse ddmStorageAdapterGetResponse =
+				ddmStorageAdapter.get(ddmStorageAdapterGetRequest);
+
+			return ddmStorageAdapterGetResponse.getDDMFormValues();
+		}
+		catch (PortalException pe) {
+			throw new StorageException(pe);
+		}
 	}
 
 	@Override
@@ -430,7 +462,9 @@ public class DDMFormInstanceRecordLocalServiceImpl
 			ddmFormInstanceRecordVersionPersistence.remove(
 				ddmFormInstanceRecordVersion);
 
-			deleteStorage(ddmFormInstanceRecordVersion.getStorageId());
+			deleteStorage(
+				ddmFormInstanceRecordVersion.getStorageId(),
+				ddmFormInstanceRecordVersion.getFormInstance());
 
 			return ddmFormInstanceRecord;
 		}
@@ -589,15 +623,16 @@ public class DDMFormInstanceRecordLocalServiceImpl
 				DDMStorageLink.class.getName()
 			).build();
 
-		DDMStorageAdapter ddmStorageAdapter = getDDMStorageAdapter();
+		DDMFormInstance ddmFormInstance =
+			ddmFormInstancePersistence.findByPrimaryKey(ddmFormInstanceId);
+
+		DDMStorageAdapter ddmStorageAdapter = getDDMStorageAdapter(
+			ddmFormInstance);
 
 		DDMStorageAdapterSaveResponse ddmStorageAdapterSaveResponse =
 			ddmStorageAdapter.save(ddmStorageAdapterSaveRequest);
 
 		long primaryKey = ddmStorageAdapterSaveResponse.getPrimaryKey();
-
-		DDMFormInstance ddmFormInstance =
-			ddmFormInstancePersistence.findByPrimaryKey(ddmFormInstanceId);
 
 		DDMStructure ddmStructure = ddmFormInstance.getStructure();
 
@@ -611,8 +646,29 @@ public class DDMFormInstanceRecordLocalServiceImpl
 		return primaryKey;
 	}
 
+	/**
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link
+	 *             #deleteStorage(long, DDMFormInstance)}
+	 */
+	@Deprecated
 	protected void deleteStorage(long storageId) throws StorageException {
 		DDMStorageAdapter ddmStorageAdapter = getDDMStorageAdapter();
+
+		DDMStorageAdapterDeleteRequest.Builder builder =
+			DDMStorageAdapterDeleteRequest.Builder.newBuilder(storageId);
+
+		DDMStorageAdapterDeleteRequest ddmStorageAdapterDeleteRequest =
+			builder.build();
+
+		ddmStorageAdapter.delete(ddmStorageAdapterDeleteRequest);
+	}
+
+	protected void deleteStorage(
+			long storageId, DDMFormInstance ddmFormInstance)
+		throws StorageException {
+
+		DDMStorageAdapter ddmStorageAdapter = getDDMStorageAdapter(
+			ddmFormInstance);
 
 		DDMStorageAdapterDeleteRequest.Builder builder =
 			DDMStorageAdapterDeleteRequest.Builder.newBuilder(storageId);
@@ -639,6 +695,24 @@ public class DDMFormInstanceRecordLocalServiceImpl
 	protected DDMStorageAdapter getDDMStorageAdapter() {
 		return _ddmStorageAdapterTracker.getDDMStorageAdapter(
 			StorageType.JSON.toString());
+	}
+
+	protected DDMStorageAdapter getDDMStorageAdapter(
+		DDMFormInstance ddmFormInstance) {
+
+		try {
+			DDMStructure ddmStructure = ddmFormInstance.getStructure();
+
+			return _ddmStorageAdapterTracker.getDDMStorageAdapter(
+				ddmStructure.getStorageType());
+		}
+		catch (PortalException pe) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(pe, pe);
+			}
+		}
+
+		return getDDMStorageAdapter();
 	}
 
 	protected List<DDMFormInstanceRecord> getFormInstanceRecords(Hits hits)
@@ -834,7 +908,8 @@ public class DDMFormInstanceRecordLocalServiceImpl
 				ddmFormInstanceRecordVersion.getStorageId()
 			).build();
 
-		DDMStorageAdapter ddmStorageAdapter = getDDMStorageAdapter();
+		DDMStorageAdapter ddmStorageAdapter = getDDMStorageAdapter(
+			ddmFormInstanceRecordVersion.getFormInstance());
 
 		ddmStorageAdapter.save(ddmStorageAdapterSaveRequest);
 	}
