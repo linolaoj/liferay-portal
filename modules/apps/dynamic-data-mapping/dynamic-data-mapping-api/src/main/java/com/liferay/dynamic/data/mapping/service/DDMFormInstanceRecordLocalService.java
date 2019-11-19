@@ -16,6 +16,7 @@ package com.liferay.dynamic.data.mapping.service;
 
 import com.liferay.dynamic.data.mapping.exception.StorageException;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
@@ -307,8 +308,18 @@ public interface DDMFormInstanceRecordLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getDDMFormInstanceRecordsCount();
 
+	/**
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link
+	 #getDDMFormValues(long, DDMFormInstance)}
+	 */
+	@Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public DDMFormValues getDDMFormValues(long storageId, DDMForm ddmForm)
+		throws StorageException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public DDMFormValues getDDMFormValues(
+			long storageId, DDMFormInstance ddmFormInstance)
 		throws StorageException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)

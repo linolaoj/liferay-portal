@@ -349,6 +349,11 @@ public class DDMFormInstanceRecordLocalServiceUtil {
 		return getService().getDDMFormInstanceRecordsCount();
 	}
 
+	/**
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link
+	 #getDDMFormValues(long, DDMFormInstance)}
+	 */
+	@Deprecated
 	public static com.liferay.dynamic.data.mapping.storage.DDMFormValues
 			getDDMFormValues(
 				long storageId,
@@ -356,6 +361,16 @@ public class DDMFormInstanceRecordLocalServiceUtil {
 		throws com.liferay.dynamic.data.mapping.exception.StorageException {
 
 		return getService().getDDMFormValues(storageId, ddmForm);
+	}
+
+	public static com.liferay.dynamic.data.mapping.storage.DDMFormValues
+			getDDMFormValues(
+				long storageId,
+				com.liferay.dynamic.data.mapping.model.DDMFormInstance
+					ddmFormInstance)
+		throws com.liferay.dynamic.data.mapping.exception.StorageException {
+
+		return getService().getDDMFormValues(storageId, ddmFormInstance);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery

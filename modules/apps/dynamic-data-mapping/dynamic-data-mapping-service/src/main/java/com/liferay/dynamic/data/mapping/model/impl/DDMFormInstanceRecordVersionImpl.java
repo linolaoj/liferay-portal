@@ -46,7 +46,7 @@ public class DDMFormInstanceRecordVersionImpl
 	@Override
 	public DDMFormValues getDDMFormValues() throws PortalException {
 		return DDMFormInstanceRecordLocalServiceUtil.getDDMFormValues(
-			getStorageId(), getDDMForm());
+			getStorageId(), getFormInstance());
 	}
 
 	@Override

@@ -383,6 +383,11 @@ public class DDMFormInstanceRecordLocalServiceWrapper
 			getDDMFormInstanceRecordsCount();
 	}
 
+	/**
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link
+	 #getDDMFormValues(long, DDMFormInstance)}
+	 */
+	@Deprecated
 	@Override
 	public com.liferay.dynamic.data.mapping.storage.DDMFormValues
 			getDDMFormValues(
@@ -392,6 +397,18 @@ public class DDMFormInstanceRecordLocalServiceWrapper
 
 		return _ddmFormInstanceRecordLocalService.getDDMFormValues(
 			storageId, ddmForm);
+	}
+
+	@Override
+	public com.liferay.dynamic.data.mapping.storage.DDMFormValues
+			getDDMFormValues(
+				long storageId,
+				com.liferay.dynamic.data.mapping.model.DDMFormInstance
+					ddmFormInstance)
+		throws com.liferay.dynamic.data.mapping.exception.StorageException {
+
+		return _ddmFormInstanceRecordLocalService.getDDMFormValues(
+			storageId, ddmFormInstance);
 	}
 
 	@Override
