@@ -2566,6 +2566,8 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 
 		// Layout friendly URLs
 
+		_updateDraftLayoutFriendlyURL(friendlyURLMap, layout, serviceContext);
+
 		layoutFriendlyURLLocalService.updateLayoutFriendlyURLs(
 			serviceContext.getUserId(), layout.getCompanyId(),
 			layout.getGroupId(), layout.getPlid(), layout.isPrivateLayout(),
@@ -3501,6 +3503,40 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 			portalPreferencesImpl.resetValues(
 				CustomizedPages.namespacePlid(layout.getPlid()));
 		}
+	}
+
+	private void _updateDraftLayoutFriendlyURL(
+			Map<Locale, String> friendlyURLMap, Layout layout,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		Layout draftLayout = fetchLayout(
+			classNameLocalService.getClassNameId(Layout.class),
+			layout.getPlid());
+
+		if (draftLayout == null) {
+			return;
+		}
+
+		String draftFriendlyURL = draftLayout.getFriendlyURL();
+
+		if (draftFriendlyURL.contains(layout.getFriendlyURL())) {
+			return;
+		}
+
+		Map<Locale, String> draftFriendlyURLMap = new HashMap<>();
+
+		friendlyURLMap.forEach(
+			(key, value) -> draftFriendlyURLMap.put(key, value + "-draft"));
+
+		draftLayout.setFriendlyURL(layout.getFriendlyURL() + "-draft");
+
+		draftLayout = layoutLocalService.updateLayout(draftLayout);
+
+		layoutFriendlyURLLocalService.updateLayoutFriendlyURLs(
+			serviceContext.getUserId(), draftLayout.getCompanyId(),
+			draftLayout.getGroupId(), draftLayout.getPlid(),
+			draftLayout.isPrivateLayout(), draftFriendlyURLMap, serviceContext);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
