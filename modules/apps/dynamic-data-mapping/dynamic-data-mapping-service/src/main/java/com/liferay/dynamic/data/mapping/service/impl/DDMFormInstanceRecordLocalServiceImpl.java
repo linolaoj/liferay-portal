@@ -132,7 +132,8 @@ public class DDMFormInstanceRecordLocalServiceImpl
 			ddmFormInstance.getVersion());
 		ddmFormInstanceRecord.setVersion(_VERSION_DEFAULT);
 
-		ddmFormInstanceRecordPersistence.update(ddmFormInstanceRecord);
+		ddmFormInstanceRecord = ddmFormInstanceRecordPersistence.update(
+			ddmFormInstanceRecord);
 
 		int status = GetterUtil.getInteger(
 			serviceContext.getAttribute("status"),
@@ -473,8 +474,9 @@ public class DDMFormInstanceRecordLocalServiceImpl
 		formInstanceRecordVersion.setStatusByUserName(user.getFullName());
 		formInstanceRecordVersion.setStatusDate(new Date());
 
-		ddmFormInstanceRecordVersionPersistence.update(
-			formInstanceRecordVersion);
+		formInstanceRecordVersion =
+			ddmFormInstanceRecordVersionPersistence.update(
+				formInstanceRecordVersion);
 
 		// Record
 
@@ -501,7 +503,8 @@ public class DDMFormInstanceRecordLocalServiceImpl
 				formInstanceRecord.setVersion(
 					formInstanceRecordVersion.getVersion());
 
-				ddmFormInstanceRecordPersistence.update(formInstanceRecord);
+				formInstanceRecord = ddmFormInstanceRecordPersistence.update(
+					formInstanceRecord);
 			}
 		}
 		else {
@@ -516,6 +519,10 @@ public class DDMFormInstanceRecordLocalServiceImpl
 						formInstanceRecord.getFormInstanceRecordId(),
 						WorkflowConstants.STATUS_APPROVED);
 
+				formInstanceRecord =
+					ddmFormInstanceRecordPersistence.findByPrimaryKey(
+						formInstanceRecordVersion.getFormInstanceRecordId());
+
 				if (!approvedRecordVersions.isEmpty()) {
 					DDMFormInstanceRecordVersion firstApprovedVersion =
 						approvedRecordVersions.get(0);
@@ -525,7 +532,8 @@ public class DDMFormInstanceRecordLocalServiceImpl
 
 				formInstanceRecord.setVersion(newVersion);
 
-				ddmFormInstanceRecordPersistence.update(formInstanceRecord);
+				formInstanceRecord = ddmFormInstanceRecordPersistence.update(
+					formInstanceRecord);
 			}
 		}
 
@@ -564,8 +572,9 @@ public class DDMFormInstanceRecordLocalServiceImpl
 		ddmFormInstanceRecordVersion.setStatusDate(
 			ddmFormInstanceRecord.getModifiedDate());
 
-		ddmFormInstanceRecordVersionPersistence.update(
-			ddmFormInstanceRecordVersion);
+		ddmFormInstanceRecordVersion =
+			ddmFormInstanceRecordVersionPersistence.update(
+				ddmFormInstanceRecordVersion);
 
 		return ddmFormInstanceRecordVersion;
 	}
