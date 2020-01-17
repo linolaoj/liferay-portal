@@ -188,9 +188,6 @@ public class DDMFormValuesToFieldsConverterImpl
 			if (type.equals(FieldConstants.NUMBER) ||
 				type.equals(FieldConstants.DOUBLE)) {
 
-				String stringValue = GetterUtil.getString(
-					value.getString(availableLocales));
-
 				NumberFormat numberFormat = NumberFormat.getInstance(
 					availableLocales);
 
@@ -199,7 +196,12 @@ public class DDMFormValuesToFieldsConverterImpl
 				}
 
 				try {
-					serializable = numberFormat.parse(stringValue);
+					Number number = numberFormat.parse(
+						GetterUtil.getString(
+							value.getString(availableLocales)));
+
+					serializable = FieldConstants.getSerializable(
+						type, number.toString());
 				}
 				catch (ParseException pe) {
 					serializable = FieldConstants.getSerializable(
