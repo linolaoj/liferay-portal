@@ -64,7 +64,7 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class AddFormInstanceRecordMVCActionCommand
 	extends BaseMVCActionCommand {
-
+//testing commit
 	@Override
 	protected void doProcessAction(
 			ActionRequest actionRequest, ActionResponse actionResponse)
