@@ -28,17 +28,23 @@ import templates from './Text.soy.js';
 
 class Text extends Component {
 	created() {
-		this.debouncedUpdate = debounce(_value => {
+		this.debouncedUpdate = debounce((value, event) => {
 			if (this.animationFrameRequest) {
 				window.cancelAnimationFrame(this.animationFrameRequest);
 			}
 
 			this.animationFrameRequest = window.requestAnimationFrame(() => {
 				if (!this.isDisposed()) {
-					this.setState({_value});
+					this.setState(
+						{
+							_value: value,
+							value
+						},
+						() => this.dispatchEvent(event, 'fieldEdited', value)
+					);
 				}
 			});
-		}, 300);
+		}, 800);
 	}
 
 	attached() {
@@ -93,9 +99,12 @@ class Text extends Component {
 	}
 
 	willReceiveState(changes) {
-		if (changes.value) {
-			cancelDebounce(this.debouncedUpdate);
-			this.debouncedUpdate(changes.value.newVal);
+		const {autocompleteEnabled} = this;
+
+		if (changes.value && autocompleteEnabled) {
+			this.setState({
+				_value: changes.value.newVal
+			});
 		}
 	}
 
@@ -153,12 +162,9 @@ class Text extends Component {
 			target.value = value;
 		}
 
-		this.setState(
-			{
-				value
-			},
-			() => this.dispatchEvent(event, 'fieldEdited', value)
-		);
+		cancelDebounce(this.debouncedUpdate);
+
+		this.debouncedUpdate(value, event);
 	}
 
 	_handleFieldFocused(event) {
