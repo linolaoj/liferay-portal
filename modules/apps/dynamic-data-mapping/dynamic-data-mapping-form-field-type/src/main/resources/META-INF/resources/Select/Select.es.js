@@ -160,11 +160,6 @@ class Select extends Component {
 				fieldInstance: this,
 				originalEvent: window.event
 			});
-		} else {
-			this.emit('fieldBlurred', {
-				fieldInstance: this,
-				originalEvent: window.event
-			});
 		}
 
 		this.expanded = newVal;
