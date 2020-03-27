@@ -72,6 +72,7 @@
 	{@param? value: string}
 
 	{if $options}
+		<fieldset> <legend>  </legend>
 		<div
 			class="ddm-radio"
 			data-onblur="{$_handleFieldBlurred}"
@@ -91,5 +92,6 @@
 				{/call}
 			{/foreach}
 		</div>
+		</fieldset>
 	{/if}
 {/template}

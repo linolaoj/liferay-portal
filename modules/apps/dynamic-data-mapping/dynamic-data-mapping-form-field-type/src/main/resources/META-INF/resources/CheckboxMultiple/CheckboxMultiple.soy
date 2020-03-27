@@ -79,6 +79,7 @@
 
 	<div class="lfr-ddm-checkbox-multiple">
 		{if $options}
+		<fieldset> <legend> </legend>
 			{foreach $option in $options}
 				{let $checked kind="text"}
 					{if $displayValue}
@@ -146,6 +147,7 @@
 					</div>
 				{/if}
 			{/foreach}
+		</fieldset>
 		{/if}
 	</div>
 {/template}
