@@ -649,7 +649,7 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 					"field1", "field1_instanceId"));
 
 		Assert.assertEquals(
-			ddmFormFieldPropertyChanges.toString(), 1,
+			ddmFormFieldPropertyChanges.toString(), 2,
 			ddmFormFieldPropertyChanges.size());
 
 		Assert.assertFalse((boolean)ddmFormFieldPropertyChanges.get("visible"));
