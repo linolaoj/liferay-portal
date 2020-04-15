@@ -136,13 +136,13 @@ public class DDMFormEvaluatorHelper {
 		stream.filter(
 			DDMFormRule::isEnabled
 		).forEach(
-			rule -> {
-				evaluateDDMFormRule(rule);
+			ddmFormRule -> {
+				evaluateDDMFormRule(ddmFormRule);
 
 				_ddmFormFieldsPropertyChanges.forEach(
-					(key, value) -> {
-						if (!isFieldVisible(key)) {
-							value.put("value", StringPool.BLANK);
+					(ddmFormFieldContextKey, property) -> {
+						if (!isFieldVisible(ddmFormFieldContextKey)) {
+							property.put("value", StringPool.BLANK);
 						}
 					});
 			}
