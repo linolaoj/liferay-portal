@@ -50,13 +50,13 @@ const getDateMask = (dateFormat, dateDelimiter) => {
 			let currentFormat;
 
 			if (item === '%Y') {
-				currentFormat = 'YYYY';
+				currentFormat = 'yyyy';
 			}
 			else if (item === '%m') {
 				currentFormat = 'MM';
 			}
 			else {
-				currentFormat = 'DD';
+				currentFormat = 'dd';
 			}
 
 			return currentFormat;
@@ -190,7 +190,7 @@ const DatePicker = ({
 					}
 
 					if (moment(value).isValid()) {
-						onChange(moment(value).format(dateMask));
+						onChange(moment(value).format(dateMask.toUpperCase()));
 					}
 				}}
 				ref={inputRef}
