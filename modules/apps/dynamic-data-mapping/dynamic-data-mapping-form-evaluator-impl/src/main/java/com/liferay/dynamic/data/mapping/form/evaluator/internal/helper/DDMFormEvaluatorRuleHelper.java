@@ -18,6 +18,7 @@ import com.liferay.dynamic.data.mapping.expression.UpdateFieldPropertyRequest;
 import com.liferay.dynamic.data.mapping.form.evaluator.internal.expression.DDMFormEvaluatorExpressionObserver;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
+import com.liferay.petra.string.StringPool;
 
 import java.util.Collection;
 import java.util.List;
@@ -101,6 +102,9 @@ public class DDMFormEvaluatorRuleHelper {
 
 			_ddmFormEvaluatorExpressionObserver.updateFieldProperty(
 				builder.build());
+
+			resetFieldValueAffectedBySetVisibleAction(
+				ddmFormRule, ddmFormField);
 		}
 	}
 
@@ -117,6 +121,17 @@ public class DDMFormEvaluatorRuleHelper {
 
 		return stream.anyMatch(
 			action -> Objects.equals(setBooleanPropertyAction, action));
+	}
+
+	protected void resetFieldValueAffectedBySetVisibleAction(
+		DDMFormRule ddmFormRule, DDMFormField ddmFormField) {
+
+		UpdateFieldPropertyRequest.Builder builder =
+			UpdateFieldPropertyRequest.Builder.newBuilder(
+				ddmFormField.getName(), "value", StringPool.BLANK);
+
+		_ddmFormEvaluatorExpressionObserver.updateFieldProperty(
+			builder.build());
 	}
 
 	private final DDMFormEvaluatorExpressionObserver
