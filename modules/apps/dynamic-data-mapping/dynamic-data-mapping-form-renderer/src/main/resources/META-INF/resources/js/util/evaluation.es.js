@@ -145,7 +145,15 @@ export const mergePages = (
 				};
 			}
 
-			if (newField.localizable) {
+			if (newField.valueChanged && !newField.visible) {
+				newField = {
+					...newField,
+					value: {
+						...newField.value,
+					},
+				};
+			}
+			else if (newField.localizable) {
 				newField = {
 					...newField,
 					localizedValue: {

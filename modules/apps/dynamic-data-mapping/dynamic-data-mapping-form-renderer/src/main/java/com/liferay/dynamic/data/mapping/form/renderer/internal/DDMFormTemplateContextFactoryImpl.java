@@ -220,6 +220,10 @@ public class DDMFormTemplateContextFactoryImpl
 		DDMForm ddmForm, DDMFormLayout ddmFormLayout,
 		DDMFormRenderingContext ddmFormRenderingContext) {
 
+		for (DDMFormField formField : ddmForm.getDDMFormFields()) {
+			formField.setProperty("editingMode", true);
+		}
+
 		DDMFormPagesTemplateContextFactory ddmFormPagesTemplateContextFactory =
 			new DDMFormPagesTemplateContextFactory(
 				ddmForm, ddmFormLayout, ddmFormRenderingContext,
