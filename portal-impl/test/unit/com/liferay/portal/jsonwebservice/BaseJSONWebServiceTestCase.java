@@ -29,8 +29,10 @@ import com.liferay.portal.kernel.jsonwebservice.JSONWebServiceNaming;
 import com.liferay.portal.kernel.jsonwebservice.NoSuchJSONWebServiceException;
 import com.liferay.portal.kernel.servlet.HttpMethods;
 import com.liferay.portal.kernel.util.MethodParametersResolverUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.util.MethodParametersResolverImpl;
+import com.liferay.portal.util.PortalImpl;
 import com.liferay.portal.util.PropsImpl;
 import com.liferay.registry.BasicRegistryImpl;
 import com.liferay.registry.RegistryUtil;
@@ -56,6 +58,10 @@ import org.springframework.mock.web.MockServletContext;
 public abstract class BaseJSONWebServiceTestCase extends PowerMockito {
 
 	protected static void initPortalServices() {
+		PortalUtil portalUtil = new PortalUtil();
+
+		portalUtil.setPortal(new PortalImpl());
+
 		PropsUtil.setProps(new PropsImpl());
 
 		JSONFactoryUtil jsonFactoryUtil = new JSONFactoryUtil();
