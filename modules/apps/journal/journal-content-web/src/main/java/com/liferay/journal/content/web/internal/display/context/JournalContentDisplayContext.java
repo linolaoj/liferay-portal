@@ -27,6 +27,7 @@ import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.criteria.AssetEntryItemSelectorReturnType;
 import com.liferay.item.selector.criteria.asset.criterion.AssetEntryItemSelectorCriterion;
+import com.liferay.journal.constants.JournalContentPortletKeys;
 import com.liferay.journal.constants.JournalPortletKeys;
 import com.liferay.journal.constants.JournalWebKeys;
 import com.liferay.journal.content.asset.addon.entry.ContentMetadataAssetAddonEntry;
@@ -118,6 +119,15 @@ public class JournalContentDisplayContext {
 					WebKeys.THEME_DISPLAY);
 
 			PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
+
+			String portletResource = portletDisplay.getPortletResource();
+
+			if (Validator.isNotNull(portletResource) &&
+				!portletResource.contains(
+					JournalContentPortletKeys.JOURNAL_CONTENT)) {
+
+				portletDisplay.setPortletResource(StringPool.BLANK);
+			}
 
 			JournalContentPortletInstanceConfiguration
 				journalContentPortletInstanceConfiguration =
