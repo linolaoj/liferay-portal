@@ -64,7 +64,7 @@ const RichText = ({
 				contents={currentValue}
 				data={currentValue}
 				editorConfig={editorConfig}
-				name={name.replaceAll('$', '_')}
+				name={name ? name.replaceAll('$', '_') : name}
 				onChange={(data) => {
 					if (currentValue?.trim() !== data?.trim()) {
 						setCurrentValue(data);
