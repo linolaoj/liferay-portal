@@ -120,7 +120,7 @@ const DocumentLibrary = ({
 							id={`${name}inputFile`}
 							lang={editingLanguageId}
 							onClick={onSelectButtonClicked}
-							value={transformedFileEntryTitle || ''}
+							defaultValue={transformedFileEntryTitle || ''}
 						/>
 					</ClayInput.GroupItem>
 
@@ -159,7 +159,7 @@ const DocumentLibrary = ({
 				name={name}
 				placeholder={placeholder}
 				type="hidden"
-				value={getValue(value)}
+				defaultValue={getValue(value)}
 			/>
 
 			{message && <div className="form-feedback-item">{message}</div>}
@@ -199,7 +199,7 @@ const GuestUploadFile = ({
 						disabled={readOnly}
 						onClick={onUploadSelectButtonClicked}
 						type="text"
-						value={transformedFileEntryTitle || ''}
+						defaultValue={transformedFileEntryTitle || ''}
 					/>
 				</ClayInput.GroupItem>
 				<ClayInput.GroupItem append shrink>
@@ -242,7 +242,7 @@ const GuestUploadFile = ({
 				name={name}
 				placeholder={placeholder}
 				type="hidden"
-				value={getValue(value)}
+				defaultValue={getValue(value)}
 			/>
 
 			{progress !== 0 && <ClayProgressBar value={progress} />}

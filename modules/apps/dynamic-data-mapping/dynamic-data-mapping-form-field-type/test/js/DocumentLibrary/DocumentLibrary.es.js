@@ -242,7 +242,7 @@ describe('Field DocumentLibrary', () => {
 		const {container} = render(
 			<DocumentLibraryWithProvider
 				{...defaultDocumentLibraryConfig}
-				value='{"id":"123"}'
+				defaultValue='{"id":"123"}'
 			/>
 		);
 
@@ -262,7 +262,7 @@ describe('Field DocumentLibrary', () => {
 			<DocumentLibraryWithProvider
 				{...defaultDocumentLibraryConfig}
 				allowGuestUsers={true}
-				value='{"id":"123"}'
+				defaultValue='{"id":"123"}'
 			/>
 		);
 
@@ -286,7 +286,7 @@ describe('Field DocumentLibrary', () => {
 			<DocumentLibraryWithProvider
 				{...defaultDocumentLibraryConfig}
 				allowGuestUsers={false}
-				value='{"id":"123"}'
+				defaultValue='{"id":"123"}'
 			/>
 		);
 
