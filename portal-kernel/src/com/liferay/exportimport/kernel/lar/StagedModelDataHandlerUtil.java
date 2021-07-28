@@ -91,7 +91,7 @@ public class StagedModelDataHandlerUtil {
 				true);
 		}
 
-		exportStagedModel(portletDataContext, stagedModel);
+		_exportReferenceStagedModel(portletDataContext, stagedModel);
 
 		return portletDataContext.addReferenceElement(
 			referrerPortlet, portletDataContext.getExportDataRootElement(),
@@ -117,7 +117,7 @@ public class StagedModelDataHandlerUtil {
 				PortletDataContext.REFERENCE_TYPE_DEPENDENCY, true);
 		}
 
-		exportStagedModel(portletDataContext, stagedModel);
+		_exportReferenceStagedModel(portletDataContext, stagedModel);
 
 		return portletDataContext.addReferenceElement(
 			referrerStagedModel, referrerStagedModelElement, stagedModel,
@@ -143,7 +143,7 @@ public class StagedModelDataHandlerUtil {
 				PortletDataContext.REFERENCE_TYPE_DEPENDENCY, true);
 		}
 
-		exportStagedModel(portletDataContext, stagedModel);
+		_exportReferenceStagedModel(portletDataContext, stagedModel);
 
 		return portletDataContext.addReferenceElement(
 			referrerStagedModel, referrerStagedModelElement, stagedModel,
@@ -556,6 +556,22 @@ public class StagedModelDataHandlerUtil {
 		}
 
 		return false;
+	}
+
+	private static <T extends StagedModel> void _exportReferenceStagedModel(
+			PortletDataContext portletDataContext, T stagedModel)
+		throws PortletDataException {
+
+		ManifestSummary manifestSummary =
+			portletDataContext.getManifestSummary();
+
+		long count = manifestSummary.getModelAdditionCount(
+			stagedModel.getStagedModelType());
+
+		exportStagedModel(portletDataContext, stagedModel);
+
+		manifestSummary.addModelAdditionCount(
+			stagedModel.getStagedModelType(), Math.max(0, count));
 	}
 
 	private static StagedModel _getReferenceStagedModel(
