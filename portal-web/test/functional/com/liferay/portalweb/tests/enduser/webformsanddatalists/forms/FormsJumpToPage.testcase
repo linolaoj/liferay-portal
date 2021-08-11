@@ -318,11 +318,16 @@ definition {
 				FormFields.viewTextField(
 					fieldLabel = "Destiny ${option}",
 					fieldName = "${fieldNameDestiny2}");
+
+				FormPortlet.previousPage();
 			}
 			else {
 				FormFields.viewTextField(
 					fieldLabel = "Destiny ${option}",
 					fieldName = "${fieldNameDestiny3}");
+
+				FormPortlet.previousPage();
+				FormPortlet.previousPage();
 			}
 			FormPortlet.previousPage();
 		}
