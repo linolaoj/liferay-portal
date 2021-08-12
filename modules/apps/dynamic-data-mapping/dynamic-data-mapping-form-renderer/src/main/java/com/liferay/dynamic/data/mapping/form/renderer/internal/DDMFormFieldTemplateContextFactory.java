@@ -767,7 +767,7 @@ public class DDMFormFieldTemplateContextFactory {
 
 			Object localizedValue = valueByLocale;
 
-			if (valueByLocale.isEmpty() &&
+			if (Validator.isNotNull(valueByLocale) && valueByLocale.isEmpty() &&
 				(ddmFormField.getProperty("localizedValue") !=
 					localizedValue)) {
 

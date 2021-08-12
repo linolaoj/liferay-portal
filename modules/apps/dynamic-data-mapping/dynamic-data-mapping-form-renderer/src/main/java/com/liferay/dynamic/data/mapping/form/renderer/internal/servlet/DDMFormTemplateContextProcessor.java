@@ -390,6 +390,10 @@ public class DDMFormTemplateContextProcessor {
 	protected void setDDMFormFieldPredefinedValue(
 		String text, DDMFormField ddmFormField) {
 
+		if (text == null) {
+			return;
+		}
+
 		ddmFormField.setProperty(
 			"predefinedValue", getLocalizedValue(GetterUtil.getString(text)));
 	}
