@@ -74,6 +74,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.json.JSONObject;
+
 /**
  * @author Rafael Praxedes
  */
@@ -997,21 +999,30 @@ public class DDMFormEvaluatorHelper {
 	private void _resetInvisibleFieldValue() {
 		_ddmFormFieldsPropertyChanges.forEach(
 			(ddmFormFieldContextKey, ddmFormFieldProperties) -> {
+				DDMFormField currentField = _ddmFormFieldsMap.get(
+					ddmFormFieldContextKey.getName());
+
+				Object hasDirection = currentField.getProperty("direction");
+
+				boolean hasDirectionValue = true;
+
+				if (hasDirection == null) {
+					hasDirectionValue = false;
+				}
+				else if (hasDirection == JSONObject.NULL) {
+					hasDirectionValue = false;
+				}
+
 				if (_ddmFormEvaluatorEvaluateRequest.isViewMode() &&
 					_ddmFormEvaluatorEvaluateRequest.isEditingFieldValue() &&
-					!isFieldVisible(ddmFormFieldContextKey)) {
+					!isFieldVisible(ddmFormFieldContextKey) &&
+					hasDirectionValue) {
 
-					ddmFormFieldProperties.put("value", StringPool.BLANK);
+					String value =
+						_ddmFormEvaluatorRuleHelper.getIfHasPredefinedValue(
+							currentField);
 
-					DDMFormFieldValue ddmFormFieldValue =
-						_ddmFormEvaluatorFormValuesHelper.getDDMFormFieldValue(
-							ddmFormFieldContextKey);
-
-					Value value = ddmFormFieldValue.getValue();
-
-					for (Locale availableLocale : value.getAvailableLocales()) {
-						value.addString(availableLocale, StringPool.BLANK);
-					}
+					ddmFormFieldProperties.put("value", value);
 				}
 			});
 	}

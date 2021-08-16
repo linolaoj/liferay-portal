@@ -69,16 +69,7 @@ public class DDMFormEvaluatorRuleHelper {
 				ddmFormRule, "calculate", ddmFormField.getName(),
 				GetterUtil.getString(properties.get("value")))) {
 
-			String value = StringPool.BLANK;
-			LocalizedValue predefinedValue = (LocalizedValue)properties.get(
-				"predefinedValue");
-
-			if (predefinedValue != null) {
-				Locale locale = new Locale(
-					(String)ddmFormField.getProperty("locale"));
-
-				value = predefinedValue.getString(locale);
-			}
+			String value = getIfHasPredefinedValue(ddmFormField);
 
 			UpdateFieldPropertyRequest.Builder builder =
 				UpdateFieldPropertyRequest.Builder.newBuilder(
@@ -151,6 +142,21 @@ public class DDMFormEvaluatorRuleHelper {
 
 		return stream.anyMatch(
 			action -> Objects.equals(setPropertyAction, action));
+	}
+
+	protected String getIfHasPredefinedValue(DDMFormField ddmFormField) {
+		Map<String, Object> properties = ddmFormField.getProperties();
+
+		LocalizedValue predefinedValue = (LocalizedValue)properties.get(
+			"predefinedValue");
+
+		if (predefinedValue == null) {
+			return StringPool.BLANK;
+		}
+
+		Locale locale = new Locale((String)ddmFormField.getProperty("locale"));
+
+		return predefinedValue.getString(locale);
 	}
 
 	private final DDMFormEvaluatorExpressionObserver
