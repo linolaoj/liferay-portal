@@ -29,6 +29,21 @@ export const useSyncValue = (newValue, isDelay = true, forceValue) => {
 
 	const [value, setValue] = useState(newValue);
 
+	if (
+		value !== newValue &&
+		value != null &&
+		newValue != null &&
+		!(typeof value == 'object') &&
+		!(typeof newValue == 'object') &&
+		!(
+			value.length == 10 &&
+			value.charAt(2) == '/' &&
+			value.charAt(5) == '/'
+		)
+	) {
+		setValue(newValue);
+	}
+
 	useEffect(() => {
 		const handler = setTimeout(
 			() => {
