@@ -26,21 +26,15 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
-import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
-import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.upload.UniqueFileNameProvider;
 import com.liferay.upload.UploadFileEntryHandler;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -59,36 +53,8 @@ public class DDMUserPersonalFolderUploadFileEntryHandler
 	public FileEntry upload(UploadPortletRequest uploadPortletRequest)
 		throws IOException, PortalException {
 
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)uploadPortletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
-		long folderId = ParamUtil.getLong(uploadPortletRequest, "folderId");
-
-		ModelResourcePermissionUtil.check(
-			_folderModelResourcePermission, themeDisplay.getPermissionChecker(),
-			themeDisplay.getScopeGroupId(), folderId, ActionKeys.ADD_DOCUMENT);
-
-		String fileName = uploadPortletRequest.getFileName(_PARAMETER_NAME);
-		long size = uploadPortletRequest.getSize(_PARAMETER_NAME);
-
-		_dlValidator.validateFileSize(fileName, size);
-
-		try (InputStream inputStream = uploadPortletRequest.getFileAsStream(
-				_PARAMETER_NAME)) {
-
-			String uniqueFileName = _uniqueFileNameProvider.provide(
-				fileName,
-				curFileName -> _exists(
-					themeDisplay.getScopeGroupId(), folderId, curFileName));
-
-			return _dlAppService.addFileEntry(
-				null, themeDisplay.getScopeGroupId(), folderId, uniqueFileName,
-				uploadPortletRequest.getContentType(_PARAMETER_NAME),
-				uniqueFileName, _getDescription(uploadPortletRequest),
-				StringPool.BLANK, inputStream, size, null, null,
-				_getServiceContext(uploadPortletRequest));
-		}
+		return _ddmFormUploadFileEntryHandler.upload(
+			uploadPortletRequest, _PARAMETER_NAME);
 	}
 
 	private boolean _exists(long groupId, long folderId, String fileName) {
@@ -172,6 +138,9 @@ public class DDMUserPersonalFolderUploadFileEntryHandler
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		DDMUserPersonalFolderUploadFileEntryHandler.class);
+
+	@Reference
+	private DDMFormUploadFileEntryHandler _ddmFormUploadFileEntryHandler;
 
 	@Reference
 	private DLAppService _dlAppService;
