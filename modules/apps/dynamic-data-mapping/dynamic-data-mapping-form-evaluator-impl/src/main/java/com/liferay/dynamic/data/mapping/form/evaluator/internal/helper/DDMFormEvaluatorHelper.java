@@ -46,6 +46,7 @@ import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.util.NumericDDMFormFieldUtil;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -556,6 +557,20 @@ public class DDMFormEvaluatorHelper {
 
 		DDMFormFieldValueAccessor<?> ddmFormFieldValueAccessor =
 			getDDMFormFieldValueAccessor(ddmFormField.getType());
+
+		JSONObject localizedValueEditedJSONObject = (JSONObject)ddmFormField.getProperty("localizedValueEdited");
+
+		if(localizedValueEditedJSONObject != null && localizedValueEditedJSONObject.getBoolean(_ddmFormEvaluatorEvaluateRequest.getLocale().toString()) &&
+		   GetterUtil.getBoolean(ddmFormField.getProperty("valueChanged"))) {
+
+			if (Validator.isNotNull(ddmFormField.getProperty("value"))) {
+				return false;
+			}
+			else {
+				return true;
+			}
+
+		}
 
 		if (ddmFormFieldValueAccessor.isEmpty(
 				ddmFormFieldValue,
