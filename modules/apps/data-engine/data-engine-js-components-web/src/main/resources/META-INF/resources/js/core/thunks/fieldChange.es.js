@@ -146,6 +146,11 @@ export default function fieldChange({
 					payload: mergedPages,
 					type: EVENT_TYPES.FIELD.EVALUATE,
 				});
+
+				dispatch({
+					payload: objectFields,
+					type: EVENT_TYPES.FORM_BUILDER.OBJECT_FIELDS.UPDATE,
+				});
 			}
 			catch (error) {
 				dispatch({

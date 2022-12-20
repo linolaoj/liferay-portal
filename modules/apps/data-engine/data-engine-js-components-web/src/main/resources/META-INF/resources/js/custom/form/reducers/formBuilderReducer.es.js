@@ -30,6 +30,17 @@ export default function formBuilderReducer(state, action) {
 				},
 			};
 		}
+		case EVENT_TYPES.FORM_BUILDER.OBJECT_FIELDS.UPDATE: {
+			const {objectFields} = action.payload;
+
+			return {
+				formBuilder: {
+					...state.formBuilder,
+					objectFields,
+				},
+			};
+		}
+		
 		case EVENT_TYPES.FORM_BUILDER.FOCUSED_FIELD.CHANGE: {
 			const {focusedField} = action.payload;
 
