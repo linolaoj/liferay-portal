@@ -96,6 +96,7 @@ export function useStateSync() {
 		paginationMode,
 		rules,
 		successPageSettings,
+		objectFields,
 	} = useFormState();
 
 	return useCallback(() => {
@@ -109,6 +110,7 @@ export function useStateSync() {
 			rules,
 			sidebarPanels,
 			successPageSettings,
+			objectFields,
 		};
 
 		Object.keys(state.name).forEach((key) => {
