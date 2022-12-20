@@ -19,6 +19,9 @@ const FORM_BUILDER = {
 	PAGES: {
 		UPDATE: 'form_builder_pages_update',
 	},
+	OBJECT_FIELDS: {
+		UPDATE: 'form_builder_object_fields_update',
+	},
 };
 
 const OBJECT = {

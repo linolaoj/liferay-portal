@@ -20,6 +20,9 @@ export declare const EVENT_TYPES: {
 		PAGES: {
 			UPDATE: string;
 		};
+		OBJECT_FIELDS: {
+			UPDATE: string;
+		};
 	};
 	OBJECT: {
 		FIELDS_CHANGE: string;

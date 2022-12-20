@@ -16,6 +16,16 @@ const LEGACY_EVENTS = {
 	FIELD_EVALUATION_ERROR: 'evaluationError',
 };
 
+const FORM_BUILDER = {
+	OBJECT_FIELDS: {
+		UPDATE: 'form_builder_object_fields_update',
+	},
+};
+
+const OBJECT_FIELDS = {
+	UPDATE: 'object_fields_update'
+};
+
 const PAGE = {
 	CHANGE: 'page_change',
 	UPDATE: 'pages_update',
@@ -60,6 +70,8 @@ const LANGUAGE = {
 	UPDATE: 'language_update',
 };
 
+
+
 export const EVENT_TYPES = {
 	...LEGACY_EVENTS,
 	DATA_LAYOUT,
@@ -69,4 +81,5 @@ export const EVENT_TYPES = {
 	LANGUAGE,
 	PAGE,
 	SECTION,
+	FORM_BUILDER,
 };
