@@ -81,6 +81,8 @@ public class DDMFormJSONDeserializer implements DDMFormDeserializer {
 			setDDMFormSuccessPageSettings(
 				jsonObject.getJSONObject("successPage"), ddmForm);
 
+			ddmForm.setObjectFieldsJSONArray(jsonObject.getJSONArray("objectFields"));
+
 			return builder.build();
 		}
 		catch (Exception exception) {

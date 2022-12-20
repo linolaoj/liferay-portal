@@ -115,6 +115,7 @@ public class DDMFormContextToDDMForm
 		_setDDMFormSuccessPageSettings(
 			jsonObject.getJSONObject("successPageSettings"), ddmForm);
 
+		ddmForm.setObjectFieldsJSONArray( jsonObject.getJSONArray(("objectFields")));
 		return ddmForm;
 	}
 

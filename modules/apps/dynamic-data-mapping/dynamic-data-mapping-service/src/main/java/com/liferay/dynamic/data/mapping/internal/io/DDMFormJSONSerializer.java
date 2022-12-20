@@ -70,6 +70,8 @@ public class DDMFormJSONSerializer implements DDMFormSerializer {
 			ddmForm.getDDMFormFields(), _ddmFormFieldTypeServicesRegistry,
 			_jsonFactory, jsonObject);
 
+		jsonObject.put("objectFields", ddmForm.getObjectFieldsJSONArray());
+
 		DDMFormSerializerSerializeResponse.Builder builder =
 			DDMFormSerializerSerializeResponse.Builder.newBuilder(
 				jsonObject.toString());

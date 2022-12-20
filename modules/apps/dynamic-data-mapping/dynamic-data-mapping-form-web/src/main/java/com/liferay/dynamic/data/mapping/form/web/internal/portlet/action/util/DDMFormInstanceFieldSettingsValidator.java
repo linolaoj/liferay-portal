@@ -201,6 +201,8 @@ public class DDMFormInstanceFieldSettingsValidator {
 			ParamUtil.getLong(portletRequest, "formInstanceId")
 		).withGroupId(
 			ParamUtil.getLong(portletRequest, "groupId")
+		).withObjectFieldsJSONArray(
+			ddmForm.getObjectFieldsJSONArray()
 		).withUserId(
 			_portal.getUserId(portletRequest)
 		);
@@ -314,6 +316,8 @@ public class DDMFormInstanceFieldSettingsValidator {
 
 			DDMForm ddmFormFieldTypeSettingsDDMForm = DDMFormFactory.create(
 				ddmFormFieldType.getDDMFormFieldTypeSettings());
+
+			ddmFormFieldTypeSettingsDDMForm.setObjectFieldsJSONArray(_ddmForm.getObjectFieldsJSONArray());
 
 			if (StringUtil.equals(ddmFormField.getDataType(), "integer") &&
 				GetterUtil.getBoolean(ddmFormField.getProperty("inputMask"))) {
