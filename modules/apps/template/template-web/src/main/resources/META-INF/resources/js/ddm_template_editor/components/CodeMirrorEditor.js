@@ -50,6 +50,10 @@ import CodeMirror from 'codemirror';
 import PropTypes from 'prop-types';
 import React, {useEffect, useRef, useState} from 'react';
 
+import {debounce} from 'frontend-js-web';
+
+
+
 export function CodeMirrorEditor({
 	autocompleteData,
 	content,
@@ -245,10 +249,11 @@ export function CodeMirrorEditor({
 		}
 
 		const handleChange = () => {
+			
 			onChange(editor.getValue());
 		};
 
-		editor.on('change', handleChange);
+		editor.on('change', debounce(handleChange));
 
 		return () => {
 			editor.off('change', handleChange);
@@ -302,4 +307,4 @@ CodeMirrorEditor.propTypes = {
 		}),
 	]),
 	onChange: PropTypes.func.isRequired,
-};
+}; 
