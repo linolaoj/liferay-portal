@@ -93,6 +93,7 @@ import com.liferay.portal.kernel.portlet.PortletProviderUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
@@ -363,10 +364,13 @@ public class AssetPublisherDisplayContext {
 			AssetListEntry assetListEntry = fetchAssetListEntry();
 
 			if (assetListEntry != null) {
+				SearchContainer<AssetEntry> searchContainer =
+					getSearchContainer();
+
 				assetEntries = _assetListAssetEntryProvider.getAssetEntries(
 					assetListEntry, _getSegmentsEntryIds(assetListEntry), null,
 					null, StringPool.BLANK, _getSegmentsAnonymousUserId(),
-					QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+					searchContainer.getStart(), searchContainer.getEnd());
 			}
 			else {
 				if (Validator.isNull(getInfoListProviderKey())) {
@@ -479,7 +483,9 @@ public class AssetPublisherDisplayContext {
 
 		SearchContainer<AssetEntry> searchContainer = getSearchContainer();
 
-		searchContainer.setResultsAndTotal(assetEntries);
+		searchContainer.setResultsAndTotal(
+			new BaseModelSearchResult<>(
+				assetEntries, _getAssetEntriesCount(assetEntries)));
 
 		List<AssetEntryResult> assetEntryResults = new ArrayList<>();
 
@@ -2253,6 +2259,22 @@ public class AssetPublisherDisplayContext {
 		}
 
 		return filteredAssetEntries;
+	}
+
+	private int _getAssetEntriesCount(List<AssetEntry> assetEntries)
+		throws Exception {
+
+		AssetListEntry assetListEntry = fetchAssetListEntry();
+
+		if ((assetListEntry != null) && isSelectionStyleAssetList() &&
+			(assetListEntry != null)) {
+
+			return _assetListAssetEntryProvider.getAssetEntriesCount(
+				assetListEntry, _getSegmentsEntryIds(assetListEntry), null,
+				null, StringPool.BLANK, _getSegmentsAnonymousUserId());
+		}
+
+		return assetEntries.size();
 	}
 
 	private String _getAssetEntryItemSelectorPortletURL(
