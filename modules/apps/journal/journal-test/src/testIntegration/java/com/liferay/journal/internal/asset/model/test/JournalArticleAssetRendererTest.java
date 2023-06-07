@@ -59,6 +59,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Date;
+
 /**
  * @author Jürgen Kappler
  */
@@ -157,6 +159,29 @@ public class JournalArticleAssetRendererTest {
 		Assert.assertEquals(
 			StringPool.BLANK,
 			HttpComponentsUtil.getParameter(urlViewInContext, "version"));
+	}
+
+	@Test
+	public void testWithoutName() throws Exception {
+		JournalArticle article = JournalTestUtil.addArticleWithWorkflow(
+			_group.getGroupId(), true);
+
+
+
+		AssetRendererFactory<JournalArticle> assetRendererFactory =
+			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClass(
+				JournalArticle.class);
+
+
+		AssetRenderer<JournalArticle> assetRenderer =
+			assetRendererFactory.getAssetRenderer(article.getClassPK(),1);
+		Assert.assertEquals(article.getStatus(), assetRenderer.getStatus());
+
+		//article.getVersion();
+//		assetRenderer.getStatus();
+//		assetRenderer.getAssetObject();
+//		article.setStatus(1);
+//		article.
 	}
 
 	private LiferayPortletRequest _getLiferayPortletRequest(
