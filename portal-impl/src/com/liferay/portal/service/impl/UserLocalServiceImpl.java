@@ -3477,6 +3477,30 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 	@Override
 	public List<User> searchBySocial(
+		long companyId, long[] groupIds, long[] userGroupIds, String keywords,
+		int start, int end, OrderByComparator<User> orderByComparator) {
+
+		LinkedHashMap<String, Object> userParams =
+			LinkedHashMapBuilder.<String, Object>put(
+				"wildcardMode", WildcardMode.TRAILING
+			).build();
+
+		if (!ArrayUtil.isEmpty(groupIds)) {
+			userParams.put("usersGroups", ArrayUtil.toLongArray(groupIds));
+		}
+
+		if (!ArrayUtil.isEmpty(userGroupIds)) {
+			userParams.put(
+				"usersUserGroups", ArrayUtil.toLongArray(userGroupIds));
+		}
+
+		return userFinder.findByKeywords(
+			companyId, keywords, WorkflowConstants.STATUS_APPROVED, userParams,
+			start, end, orderByComparator);
+	}
+
+	@Override
+	public List<User> searchBySocial(
 		long companyId, long[] groupIds, String keywords, int start, int end) {
 
 		return searchBySocial(companyId, groupIds, keywords, start, end, null);
@@ -3495,29 +3519,6 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 				"wildcardMode", WildcardMode.TRAILING
 			).build(),
 			start, end, orderByComparator);
-	}
-	
-	@Override
-	public List<User> searchBySocial(
-		long companyId, long[] groupIds, long[] userGroupIds, String keywords, int start, int end,
-		OrderByComparator<User> orderByComparator) {
-		
-		LinkedHashMap<String, Object> userParams =
-				LinkedHashMapBuilder.<String, Object>put(
-					"wildcardMode", WildcardMode.TRAILING
-				).build();
-		
-		if (!ArrayUtil.isEmpty(groupIds)) {
-			userParams.put("usersGroups", ArrayUtil.toLongArray(groupIds));
-		}
-		
-		if (!ArrayUtil.isEmpty(userGroupIds)) {
-			userParams.put("usersUserGroups", ArrayUtil.toLongArray(userGroupIds));
-		}
-		
-		return userFinder.findByKeywords(
-			companyId, keywords, WorkflowConstants.STATUS_APPROVED,
-			userParams, start, end, orderByComparator);
 	}
 
 	@Override
