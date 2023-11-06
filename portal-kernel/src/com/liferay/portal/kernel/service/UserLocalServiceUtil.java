@@ -2235,6 +2235,14 @@ public class UserLocalServiceUtil {
 	}
 
 	public static List<User> searchBySocial(
+		long companyId, long[] groupIds, long[] userGroupIds, String keywords, int start, int end,
+		OrderByComparator<User> orderByComparator) {
+
+		return getService().searchBySocial(
+			companyId, groupIds, userGroupIds, keywords, start, end, orderByComparator);
+	}
+
+	public static List<User> searchBySocial(
 			long[] groupIds, long userId, int[] socialRelationTypes,
 			String keywords, int start, int end)
 		throws PortalException {

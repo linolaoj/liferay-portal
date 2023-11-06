@@ -1819,6 +1819,11 @@ public interface UserLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<User> searchBySocial(
+		long companyId, long[] groupIds, long[] userGroupIds, String keywords, int start, int end,
+		OrderByComparator<User> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<User> searchBySocial(
 			long[] groupIds, long userId, int[] socialRelationTypes,
 			String keywords, int start, int end)
 		throws PortalException;
