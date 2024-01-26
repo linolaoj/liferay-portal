@@ -2883,12 +2883,24 @@ public class ObjectEntryLocalServiceImpl
 			_objectFieldLocalService.fetchObjectField(
 				objectDefinition.getTitleObjectFieldId());
 
-		Table<?> table = _objectFieldLocalService.getTable(
-			objectDefinition.getObjectDefinitionId(),
-			titleObjectField.getName());
+		DynamicObjectDefinitionTable dynamicObjectDefinitionTable = null;
 
 		if (Objects.equals(
-				table.getColumn(titleObjectField.getDBColumnName()),
+				titleObjectField.getDBTableName(),
+				objectDefinition.getDBTableName())) {
+
+			dynamicObjectDefinitionTable = _getDynamicObjectDefinitionTable(
+				objectDefinition.getObjectDefinitionId());
+		}
+		else {
+			dynamicObjectDefinitionTable =
+				_getExtensionDynamicObjectDefinitionTable(
+					objectDefinition.getObjectDefinitionId());
+		}
+
+		if (Objects.equals(
+				dynamicObjectDefinitionTable.getColumn(
+					titleObjectField.getDBColumnName()),
 				ObjectEntryTable.INSTANCE.objectEntryId)) {
 
 			return ObjectEntrySearchUtil.getObjectFieldPredicate(
@@ -2897,7 +2909,8 @@ public class ObjectEntryLocalServiceImpl
 
 		Predicate relatedModelsPredicate =
 			ObjectEntrySearchUtil.getRelatedModelsPredicate(
-				objectDefinition, _objectFieldLocalService, search, table);
+				objectDefinition, _objectFieldLocalService, search,
+				dynamicObjectDefinitionTable);
 
 		if (relatedModelsPredicate == null) {
 			return null;
@@ -2905,9 +2918,10 @@ public class ObjectEntryLocalServiceImpl
 
 		return column.in(
 			DSLQueryFactoryUtil.select(
-				table.getColumn(objectDefinition.getPKObjectFieldDBColumnName())
+				dynamicObjectDefinitionTable.getColumn(
+					objectDefinition.getPKObjectFieldDBColumnName())
 			).from(
-				table
+				dynamicObjectDefinitionTable
 			).where(
 				relatedModelsPredicate
 			));
