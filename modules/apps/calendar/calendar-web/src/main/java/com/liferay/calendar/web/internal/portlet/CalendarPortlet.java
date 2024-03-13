@@ -959,10 +959,22 @@ public class CalendarPortlet extends MVCPortlet {
 
 		int hour = ParamUtil.getInteger(portletRequest, name + "Hour");
 
-		if (ParamUtil.getInteger(portletRequest, name + "AmPm") ==
-				java.util.Calendar.PM) {
+		int minute = ParamUtil.getInteger(portletRequest, name + "Minute");
 
-			hour += 12;
+		String time = ParamUtil.getString(portletRequest, name + "Time");
+
+		String[] hourMinute = time.split(":");
+
+		if (hourMinute.length == 2) {
+			hour = GetterUtil.getInteger(hourMinute[0], hour);
+			minute = GetterUtil.getInteger(hourMinute[1], minute);
+		}
+		else {
+			if (ParamUtil.getInteger(portletRequest, name + "AmPm") ==
+					java.util.Calendar.PM) {
+
+				hour += 12;
+			}
 		}
 
 		TimeZone timeZone = ParamUtil.getBoolean(portletRequest, "allDay") ?
@@ -972,9 +984,8 @@ public class CalendarPortlet extends MVCPortlet {
 		return JCalendarUtil.getJCalendar(
 			ParamUtil.getInteger(portletRequest, name + "Year"),
 			ParamUtil.getInteger(portletRequest, name + "Month"),
-			ParamUtil.getInteger(portletRequest, name + "Day"), hour,
-			ParamUtil.getInteger(portletRequest, name + "Minute"), 0, 0,
-			timeZone);
+			ParamUtil.getInteger(portletRequest, name + "Day"), hour, minute, 0,
+			0, timeZone);
 	}
 
 	private String _getNotificationTypeSettings(
