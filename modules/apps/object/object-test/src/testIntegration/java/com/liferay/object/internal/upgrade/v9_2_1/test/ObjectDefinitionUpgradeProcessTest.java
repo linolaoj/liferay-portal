@@ -108,7 +108,7 @@ public class ObjectDefinitionUpgradeProcessTest {
 
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
-				userId, 0, false, false, false,
+				userId, 0, false, false, false, false,
 				LocalizedMapUtil.getLocalizedMap("Test"), "Test", null, null,
 				LocalizedMapUtil.getLocalizedMap("Tests"), true,
 				ObjectDefinitionConstants.SCOPE_COMPANY,

@@ -40,16 +40,12 @@ public class ObjectDefinitionUpgradeProcess extends UpgradeProcess {
 								"userId is null and ObjectDefinition.",
 								"companyId = ?"))) {
 
-					User user = _userLocalService.fetchUserByScreenName(
+					User user = _userLocalService.getUserByScreenName(
 						company.getCompanyId(), "default-service-account");
-
-					if (user == null) {
-						throw new UpgradeException(
-							"Default service account is null");
-					}
 
 					preparedStatement1.setLong(1, user.getUserId());
 					preparedStatement1.setLong(2, company.getCompanyId());
+
 					preparedStatement1.executeUpdate();
 				}
 			});

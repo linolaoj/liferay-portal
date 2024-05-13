@@ -9,12 +9,14 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
+import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.test.system.TestSystemObjectDefinitionManager;
 import com.liferay.object.system.SystemObjectDefinitionManager;
 import com.liferay.object.test.util.ObjectDefinitionTestUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
@@ -100,11 +102,13 @@ public class UserModelListenerTest {
 
 	@Test
 	public void testOnAfterRemove() throws Exception {
+		UserTestUtil.addUser("default-service-account");
+
 		User user = UserTestUtil.addUser();
 
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
-				user.getUserId(), 0, false, false, false,
+				user.getUserId(), 0, false, false, false, false,
 				LocalizedMapUtil.getLocalizedMap("Able"), "Able", null, null,
 				LocalizedMapUtil.getLocalizedMap("Ables"), true,
 				ObjectDefinitionConstants.SCOPE_COMPANY,
@@ -117,7 +121,7 @@ public class UserModelListenerTest {
 			objectDefinition.getObjectDefinitionId());
 
 		User defaultServiceAccountUser =
-			_userLocalService.fetchUserByScreenName(
+			_userLocalService.getUserByScreenName(
 				TestPropsValues.getCompanyId(), "default-service-account");
 
 		Assert.assertEquals(
