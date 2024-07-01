@@ -2213,8 +2213,6 @@ definition {
 	@description = "View that Custom Range is selected with shown input date"
 	@priority = 5
 	test VerifyCustomRangeDateInput {
-		property portal.acceptance = "quarantine";
-
 		var siteName = TestCase.getSiteName(siteName = ${siteName});
 
 		ProductMenu.gotoPortlet(
