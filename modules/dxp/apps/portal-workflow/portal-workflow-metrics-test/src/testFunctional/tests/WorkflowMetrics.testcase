@@ -567,7 +567,6 @@ definition {
 	@description = "LRQA-57667 - Automate LPS-108138: As a Operation Manager, I want to transition a multi-task workflow instance while analyzing my process metrics"
 	@priority = 5
 	test BulkTransitionWorkflowTasks {
-		property portal.acceptance = "quarantine";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
@@ -2213,8 +2212,6 @@ definition {
 	@description = "View that Custom Range is selected with shown input date"
 	@priority = 5
 	test VerifyCustomRangeDateInput {
-		property portal.acceptance = "quarantine";
-
 		var siteName = TestCase.getSiteName(siteName = ${siteName});
 
 		ProductMenu.gotoPortlet(
@@ -3020,7 +3017,6 @@ definition {
 	@description = "LRQA-53631 Automate LPS-97666: [Performance] View top assignee performance"
 	@priority = 5
 	test ViewTopAsigneePerformance {
-		property portal.acceptance = "quarantine";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 

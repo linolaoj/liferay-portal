@@ -1089,7 +1089,6 @@ definition {
 	@description = "LPS-92053 - Verify that, in the item detail modal, Resolved each due date has an icon according to the status On Time or Overdue, SLA name, due date and resolution status resolved on time or overdue"
 	@priority = 4
 	test DueDateHasIconSlaNameDueDateAndResolutionStatus {
-		property portal.upstream = "quarantine";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
@@ -2668,8 +2667,6 @@ definition {
 	@description = "LPS-98517 - Verify that tasks can be assigned to more than one user and listed with commas"
 	@priority = 3
 	test TaskReassignedToMultipleUsers {
-		property portal.upstream = "quarantine";
-
 		task ("Given a primary user who creates a secondary Power user with a membership") {
 			property test.liferay.virtual.instance = "false";
 			property test.run.type = "single";

@@ -1619,7 +1619,6 @@ definition {
 	@description = "Verify that the user can delete notification role types"
 	@priority = 3
 	test CanDeleteNotificationRoleTypes {
-		property portal.upstream = "quarantine";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
