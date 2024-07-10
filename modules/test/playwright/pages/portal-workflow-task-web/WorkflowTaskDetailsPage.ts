@@ -12,27 +12,51 @@ export class WorkflowTaskDetailsPage {
 	readonly approveMenuItem: Locator;
 	readonly assignee: FrameLocator;
 	readonly assignToMenuItem: Locator;
+	readonly subscribeButton: Locator;
 	readonly doneAssigneeButton: Locator;
 	readonly doneButton: Locator;
+	readonly commentBox: Locator;
+	readonly commentSectionButton: Locator;
 	readonly page: Page;
+	readonly rejectMenuItem: Locator;
+	readonly reply: Locator;
+	readonly viewButton: Locator;
 	readonly reviewActionMenu: Locator;
 	readonly reviewComment: Locator;
 	readonly workflowTasksPage: WorkflowTasksPage;
+	readonly detailsMessage: Locator;
+	readonly previewMessageBoards: Locator;
+	readonly activitiesButton: Locator;
+	readonly viewUsagesButton: Locator;
 
 	constructor(page: Page) {
 		this.approveMenuItem = page.getByRole('menuitem', {name: 'approve'});
 		this.assignToMenuItem = page.getByRole('link', {name: 'Assign to...'});
+		this.activitiesButton = page.getByRole('button', { name: 'Activities' });
+		this.commentBox = page.frameLocator('iframe').getByRole('textbox');
+		this.commentSectionButton = page.getByRole('button', {
+			name: 'Comments',
+		});
+		this.detailsMessage = page.getByLabel(
+			'Ask a user to work on the item.'
+		);
 		this.doneAssigneeButton = page
 			.frameLocator(
 				'iframe[name="_com_liferay_portal_workflow_task_web_portlet_MyWorkflowTaskPortlet_assignToDialog_iframe_"]'
 			)
 			.getByRole('button', {name: 'Done'});
 		this.doneButton = page.getByRole('button', {name: 'Done'});
+		this.page = page;
+		this.previewMessageBoards = page.getByRole('button', { name: 'Preview of Message Boards' });
+		this.rejectMenuItem = page.getByRole('menuitem', {name: 'reject'});
+		this.reply = page.getByRole('button', {name: 'Reply'});
 		this.reviewActionMenu = page.locator(
 			'[id="_com_liferay_portal_workflow_task_web_portlet_MyWorkflowTaskPortlet_kldx___menu"]'
 		);
 		this.reviewComment = page.getByRole('textbox', {name: 'Comment'});
-		this.page = page;
+		this.subscribeButton = page.getByLabel('Subscribe to Comments');
+		this.viewButton = page.getByRole('link', {exact: true, name: 'View'});
+		this.viewUsagesButton = page.getByRole('link', { name: 'View Usages' });
 		this.workflowTasksPage = new WorkflowTasksPage(page);
 	}
 
@@ -40,6 +64,10 @@ export class WorkflowTaskDetailsPage {
 		await this.doneButton.click();
 
 		await waitForSuccessAlert(this.page);
+	}
+
+	async fillReviewComment(comment: string) {
+		await this.commentBox.fill(comment);
 	}
 
 	async goTo(assetTitle: string) {
@@ -60,5 +88,30 @@ export class WorkflowTaskDetailsPage {
 			)
 			.getByLabel('Assign to')
 			.selectOption(assignee);
+	}
+
+	async clickDoneAssigneeButton() {
+		await this.page
+			.frameLocator(
+				'iframe[name="_com_liferay_portal_workflow_task_web_portlet_MyWorkflowTaskPortlet_assignToDialog_iframe_"]'
+			)
+			.getByRole('button', {name: 'Done'})
+			.click();
+
+		await waitForSuccessAlert(this.page);
+	}
+
+	async writeTaskComment(threadTitle,comment){
+		await this.selectAsset(threadTitle);
+
+		await this.commentSectionButton.first().click();
+
+		await this.subscribeButton.click();
+
+		await this.commentSectionButton.first().click();
+
+		await this.fillReviewComment(comment);
+
+		await this.reply.click();
 	}
 }
