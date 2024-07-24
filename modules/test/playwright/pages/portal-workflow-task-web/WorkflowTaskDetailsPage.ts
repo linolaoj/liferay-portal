@@ -32,7 +32,7 @@ export class WorkflowTaskDetailsPage {
 	constructor(page: Page) {
 		this.approveMenuItem = page.getByRole('menuitem', {name: 'approve'});
 		this.assignToMenuItem = page.getByRole('link', {name: 'Assign to...'});
-		this.activitiesButton = page.getByRole('button', { name: 'Activities' });
+		this.activitiesButton = page.getByRole('button', {name: 'Activities'});
 		this.commentBox = page.frameLocator('iframe').getByRole('textbox');
 		this.commentSectionButton = page.getByRole('button', {
 			name: 'Comments',
@@ -47,7 +47,9 @@ export class WorkflowTaskDetailsPage {
 			.getByRole('button', {name: 'Done'});
 		this.doneButton = page.getByRole('button', {name: 'Done'});
 		this.page = page;
-		this.previewMessageBoards = page.getByRole('button', { name: 'Preview of Message Boards' });
+		this.previewMessageBoards = page.getByRole('button', {
+			name: 'Preview of Message Boards',
+		});
 		this.rejectMenuItem = page.getByRole('menuitem', {name: 'reject'});
 		this.reply = page.getByRole('button', {name: 'Reply'});
 		this.reviewActionMenu = page.locator(
@@ -56,7 +58,7 @@ export class WorkflowTaskDetailsPage {
 		this.reviewComment = page.getByRole('textbox', {name: 'Comment'});
 		this.subscribeButton = page.getByLabel('Subscribe to Comments');
 		this.viewButton = page.getByRole('link', {exact: true, name: 'View'});
-		this.viewUsagesButton = page.getByRole('link', { name: 'View Usages' });
+		this.viewUsagesButton = page.getByRole('link', {name: 'View Usages'});
 		this.workflowTasksPage = new WorkflowTasksPage(page);
 	}
 
@@ -101,7 +103,7 @@ export class WorkflowTaskDetailsPage {
 		await waitForSuccessAlert(this.page);
 	}
 
-	async writeTaskComment(threadTitle,comment){
+	async writeTaskComment(threadTitle, comment) {
 		await this.selectAsset(threadTitle);
 
 		await this.commentSectionButton.first().click();

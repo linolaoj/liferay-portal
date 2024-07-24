@@ -5,6 +5,7 @@
 
 import {expect, mergeTests} from '@playwright/test';
 import {readFileSync} from 'fs';
+import path from 'path';
 
 import {apiHelpersTest} from '../../fixtures/apiHelpersTest';
 import {isolatedSiteTest} from '../../fixtures/isolatedSiteTest';
@@ -14,9 +15,11 @@ import {userPersonalBarPagesTest} from '../../fixtures/userPersonalBarPagesTest'
 import {workflowPagesTest} from '../../fixtures/workflowPagesTest';
 import {getRandomInt} from '../../utils/getRandomInt';
 import getRandomString from '../../utils/getRandomString';
-import performLogin, {performLogout, performUserSwitch} from '../../utils/performLogin';
+import performLogin, {
+	performLogout,
+	performUserSwitch,
+} from '../../utils/performLogin';
 import {blogsPagesTest} from '../blogs-web/fixtures/blogsPagesTest';
-import path from 'path';
 
 export const test = mergeTests(
 	isolatedSiteTest,
@@ -173,26 +176,30 @@ test('logged user must be able to see workflow task at least from a read-only pe
 	workflowTaskDetailsPage,
 	workflowTasksPage,
 }) => {
-	const user = await apiHelpers.headlessAdminUser.getUserAccountByEmailAddress(
-		'demo.unprivileged@liferay.com'
-	);
+	const user =
+		await apiHelpers.headlessAdminUser.getUserAccountByEmailAddress(
+			'demo.unprivileged@liferay.com'
+		);
 
 	const defaultUser =
 		await apiHelpers.headlessAdminUser.getUserAccountByEmailAddress(
 			'test@liferay.com'
 		);
 
-	const content = JSON.parse(readFileSync(
-		path.join(
-		__dirname,
-		'../message-boards-web/dependencies/message-board-permissions.json'),
-		'utf-8'
-	));
+	const content = JSON.parse(
+		readFileSync(
+			path.join(
+				__dirname,
+				'../message-boards-web/dependencies/message-board-permissions.json'
+			),
+			'utf-8'
+		)
+	);
 
 	const role = await apiHelpers.headlessAdminUser.postRole({
 		name: 'AdminWorkflowTask' + getRandomInt(),
 		rolePermissions: content,
-		roleType: 'regular'
+		roleType: 'regular',
 	});
 
 	const roleName = role.name;
@@ -256,7 +263,7 @@ test('logged user must be able to see workflow task at least from a read-only pe
 
 	await workflowTasksPage.reject(threadTitle);
 
-	await performUserSwitch(page,user.alternateName);
+	await performUserSwitch(page, user.alternateName);
 
 	await page.goto(`/web/${site.name}`);
 
@@ -277,7 +284,10 @@ test('logged user must be able to see workflow task at least from a read-only pe
 
 	await workflowTasksPage.goto();
 
-	await workflowTaskDetailsPage.writeTaskComment(threadTitle,getRandomString());
+	await workflowTaskDetailsPage.writeTaskComment(
+		threadTitle,
+		getRandomString()
+	);
 
 	await performUserSwitch(page, user.alternateName);
 
