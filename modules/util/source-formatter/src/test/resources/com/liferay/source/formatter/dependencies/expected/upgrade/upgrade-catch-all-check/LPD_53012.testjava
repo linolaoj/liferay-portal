@@ -20,13 +20,13 @@ public class LPD_53012 {
 		_commercePriceEntryService.fetchCommercePriceEntryByExternalReferenceCode(externalReferenceCode, companyId);
 		CommercePriceEntryServiceUtil.fetchCommercePriceEntryByExternalReferenceCode(externalReferenceCode, companyId);
 
-        CommercePriceEntryLocalServiceUtil.fetchCommercePriceEntryByExternalReferenceCode(externalReferenceCode, companyId);
+		CommercePriceEntryLocalServiceUtil.fetchCommercePriceEntryByExternalReferenceCode(externalReferenceCode, companyId);
 		CommercePriceEntryLocalServiceUtil.fetchCommercePriceEntryByReferenceCode(123, externalReferenceCode);
 		_commercePriceEntryLocalService.fetchCommercePriceEntryByExternalReferenceCode(externalReferenceCode, companyId);
 		_commercePriceEntryService.fetchCommercePriceEntryByExternalReferenceCode(externalReferenceCode, companyId);
 		CommercePriceEntryServiceUtil.fetchCommercePriceEntryByExternalReferenceCode(externalReferenceCode, companyId);
 
-    }
+	}
 
 	@Reference
 	private CommercePriceEntryLocalService _commercePriceEntryLocalService;
