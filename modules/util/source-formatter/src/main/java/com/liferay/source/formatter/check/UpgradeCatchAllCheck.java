@@ -162,6 +162,8 @@ public class UpgradeCatchAllCheck extends BaseFileCheck {
 
 			String oldContent = content;
 
+			_hasValidClasses = true;
+			_hasValidParameters = true;
 			_newMessage = false;
 
 			if (fileName.endsWith(".java")) {
@@ -885,6 +887,8 @@ public class UpgradeCatchAllCheck extends BaseFileCheck {
 			}
 		}
 
+		_hasValidClasses = false;
+
 		return false;
 	}
 
@@ -953,6 +957,7 @@ public class UpgradeCatchAllCheck extends BaseFileCheck {
 				else if (!StringUtil.equals(
 							fromParameters.get(i), variableTypeName)) {
 
+					_hasValidParameters = false;
 					valid = false;
 
 					break;
@@ -1151,6 +1156,14 @@ public class UpgradeCatchAllCheck extends BaseFileCheck {
 			Set<String> keys = jsonObject.keySet();
 
 			if (keys.contains("hasMessage")) {
+				String from = jsonObject.getString("from");
+
+				if (from.contains(StringPool.OPEN_PARENTHESIS) &&
+					(!_hasValidClasses || !_hasValidParameters)) {
+
+					return newContent;
+				}
+
 				Pattern pattern = _getPattern(jsonObject);
 
 				Matcher matcher = pattern.matcher(content);
@@ -1225,6 +1238,8 @@ public class UpgradeCatchAllCheck extends BaseFileCheck {
 		"\\w+#(\\d+)#");
 	private static boolean _testMode;
 
+	private boolean _hasValidClasses;
+	private boolean _hasValidParameters;
 	private boolean _newMessage;
 
 }
